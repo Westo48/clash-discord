@@ -25,7 +25,7 @@ class WarMember:
 
 RazgrizTag = 'RGQ8RGU9'
 TheMightyHeroesTag = 'JJRJGVR0'
-home_header = {
+header = {
     'Accept': 'application/json',
     'authorization': 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiIsImtpZCI6IjI4YTMxOGY3LTAwMDAtYTFlYi03ZmExLTJjNzQzM2M2Y2NhNSJ9.eyJpc3MiOiJzdXBlcmNlbGwiLCJhdWQiOiJzdXBlcmNlbGw6Z2FtZWFwaSIsImp0aSI6IjkyNWJjYzg1LWFhZDktNGM2NC05M2Y2LWM4MWEwZGVhOGUwNiIsImlhdCI6MTU3NDYyMjY3Nywic3ViIjoiZGV2ZWxvcGVyLzdjZmJkOWFjLTFlYzAtNDI3OS1jODM2LTU0YzMxN2FlZmE4NiIsInNjb3BlcyI6WyJjbGFzaCJdLCJsaW1pdHMiOlt7InRpZXIiOiJkZXZlbG9wZXIvc2lsdmVyIiwidHlwZSI6InRocm90dGxpbmcifSx7ImNpZHJzIjpbIjEwOC4yMTEuOTUuMjU0Il0sInR5cGUiOiJjbGllbnQifV19.gdc-4-OEZzsYBLk8HfqZBH-idvlK1vX9nim91XEqLgwNAyarfZquxfkZDKPsswUGyiXRIFV7Am3RB7iWtd9T5w'
 }
@@ -37,14 +37,14 @@ def get_response():
 
 def get_user(user_tag):
     # return user profile info
-    response = requests.get('https://api.clashofclans.com/v1/players/%23' + user_tag, headers=home_header)
+    response = requests.get('https://api.clashofclans.com/v1/players/%23' + user_tag, headers=header)
     user_json = response.json()
     print(user_json['name'])
 
 
 def get_user_levels(user_tag):
     # return user profile level info
-    response = requests.get('https://api.clashofclans.com/v1/players/%23' + user_tag, headers=home_header)
+    response = requests.get('https://api.clashofclans.com/v1/players/%23' + user_tag, headers=header)
     user_json = response.json()
     print(user_json['name'] + ' is a ' + user_json['role'] + ' in ' + user_json['clan']['name'])
     for hero in user_json['heroes']:
@@ -67,19 +67,19 @@ def json_response(tag, responder):
     members_closer = '/members'
 
     if responder == 'clans':
-        response = requests.get(f'{clans_url}{tag}', headers=home_header)
+        response = requests.get(f'{clans_url}{tag}', headers=header)
 
     elif responder == 'currentwar':
-        response = requests.get(f'{clans_url}{tag}{current_war_closer}', headers=home_header)
+        response = requests.get(f'{clans_url}{tag}{current_war_closer}', headers=header)
 
     elif responder == 'members':
-        response = requests.get(f'{clans_url}{tag}{members_closer}', headers=home_header)
+        response = requests.get(f'{clans_url}{tag}{members_closer}', headers=header)
 
     elif responder == 'players':
-        response = requests.get(f'{players_url}{tag}{members_closer}', headers=home_header)
+        response = requests.get(f'{players_url}{tag}{members_closer}', headers=header)
 
     else:
-        response = requests.get(f'{clans_url}{tag}{current_war_closer}', headers=home_header)
+        response = requests.get(f'{clans_url}{tag}{current_war_closer}', headers=header)
         print('Something went wrong. Breakpoint: json_response responder')
 
     return response.json()
@@ -168,7 +168,7 @@ def long_war_overview(clan_tag):
 
 def search_clans():
     # search for a clan
-    response = requests.get('https://api.clashofclans.com/v1/clans?name=test', headers=home_header)
+    response = requests.get('https://api.clashofclans.com/v1/clans?name=test', headers=header)
     clan_json = response.json()
     for clan in clan_json['items']:
         print(clan['name'] + ' is level ' + str(clan['clanLevel']))
@@ -231,7 +231,7 @@ def date_time_calculator(datef):
 
 
 def calculate_win_lose(clan_tag):
-    response = requests.get('https://api.clashofclans.com/v1/clans/%23' + clan_tag + '/currentwar', headers=home_header)
+    response = requests.get('https://api.clashofclans.com/v1/clans/%23' + clan_tag + '/currentwar', headers=header)
     war_json = response.json()
     clan_stars = war_json['clan']['stars']
     clan_destruction = war_json['clan']['destructionPercentage']
@@ -408,6 +408,7 @@ def all_attacks(clan_tag):
         # dt_string = dt_now.strftime("%Y%m%d%H%M%S")
 
         war_members = []
+        return_line = []
 
         # gets the info for war members
         for member in war_json['clan']['members']:
@@ -448,9 +449,9 @@ def all_attacks(clan_tag):
                           member_attack2_destruction))
 
         sorted_war_members = sorted(war_members, key=lambda x: x.map_pos, reverse=False)
-        war_member_text = f'{curr_war_overview(TheMightyHeroesTag)}\n\n'
+        return_line.append(f'{curr_war_overview(TheMightyHeroesTag)}')
         for obj in sorted_war_members:
-            war_member_text += f'{obj.name} is a th {obj.th} position {obj.map_pos}'
+            return_line.append(f'{obj.name} is a th {obj.th} position {obj.map_pos}')
 
             if obj.has_attacked:
                 if obj.attacks > 1:
@@ -464,38 +465,35 @@ def all_attacks(clan_tag):
                 else:
                     star_text = 'stars'
 
-                war_member_text += f' and has made {obj.attacks} {attacks_text} for {obj.stars} {star_text}'
+                return_line.append(f' and has made {obj.attacks} {attacks_text} for {obj.stars} {star_text}')
 
                 for i in range(obj.attacks):
                     if i == 0:
                         attack_position = find_enemy_position(clan_tag, obj.attack1_tag)
-                        if obj.attack1_stars == 1:
-                            atk_text = 'star'
-
-                        else:
-                            atk_text = 'stars'
+                        atk_stars = obj.attack1_stars
 
                     else:
                         attack_position = find_enemy_position(clan_tag, obj.attack2_tag)
-                        if obj.attack2_stars == 1:
-                            atk_text = 'star'
+                        atk_stars = obj.attack2_stars
 
-                        else:
-                            atk_text = 'stars'
+                    if atk_stars == 1:
+                        atk_text = 'star'
 
-                    war_member_text += f'\n{obj.name} attacked enemy position {attack_position} for {obj.attack1_stars} {atk_text}'
+                    else:
+                        atk_text = 'stars'
+
+                    return_line.append(f'\n{obj.name} attacked enemy position {attack_position} for {atk_stars} {atk_text}')
 
             else:
-                war_member_text += ' and has NOT made an attack'
+                return_line.append(f'{obj.name} has NOT made an attack')
 
-            war_member_text += f'\n---------\n'
+            return_line.append(f'\n---------\n')
 
             # find some way to simplify this to not give all that info
             # use \n to specify each new line
             # print(war_member_text)
             # print('---------')
-
-        return war_member_text
+        return return_line
 
     elif check_war_state(war_json) == 'warEnded':
         opponent_name = war_json['opponent']['name']
