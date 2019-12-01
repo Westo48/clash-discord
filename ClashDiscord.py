@@ -48,6 +48,12 @@ async def noattack(ctx):
     await ctx.send(f'{no_atk(TheMightyHeroesTag)}')
 
 
+@client.command(aliases=['allatk'],description='showing all attacks for every member', hidden=True)
+async def allattacks(ctx):
+    for message_line in all_attacks(TheMightyHeroesTag):
+        await ctx.send(f'{message_line}')
+
+
 @client.event
 async def on_member_join(member):
     print(f'{member} has joined the server')
