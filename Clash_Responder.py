@@ -1,5 +1,6 @@
 import requests
 from datetime import datetime, timedelta
+import json
 
 
 class WarMember:
@@ -76,7 +77,7 @@ def json_response(tag, responder):
         response = requests.get(f'{clans_url}{tag}{members_closer}', headers=header)
 
     elif responder == 'players':
-        response = requests.get(f'{players_url}{tag}{members_closer}', headers=header)
+        response = requests.get(f'{players_url}{tag}', headers=header)
 
     else:
         response = requests.get(f'{clans_url}{tag}{current_war_closer}', headers=header)
@@ -124,7 +125,7 @@ def long_war_overview(clan_tag):
                           member_attack2_destruction))
 
         sorted_war_members = sorted(war_members, key=lambda x: x.map_pos, reverse=False)
-        war_member_text = f'{curr_war_overview(TheMightyHeroesTag)}\n\n'
+        war_member_text = f'{curr_war_overview(TheMightyHeroesTag)}'
         for obj in sorted_war_members:
             war_member_text += f'{obj.name} is a th {obj.th} position {obj.map_pos}'
             if obj.stars == 1:
@@ -144,12 +145,7 @@ def long_war_overview(clan_tag):
             else:
                 war_member_text += ' and has NOT made an attack'
 
-            war_member_text += f'\n---------\n'
-
-            # find some way to simplify this to not give all that info
-            # use \n to specify each new line
-            # print(war_member_text)
-            # print('---------')
+            war_member_text += f'---------'
 
         return war_member_text
 
@@ -395,7 +391,7 @@ def score_calculator(clan_tag):
     return scoreboard_string
 
 
-def all_attacks(clan_tag):
+def all_attack_stars(clan_tag):
     war_json = json_response(clan_tag, 'currentwar')
 
     if check_war_state(war_json) == 'preparation':
@@ -403,55 +399,14 @@ def all_attacks(clan_tag):
         return f'{date_time_calculator(war_start_time)} until the war starts.'
 
     elif check_war_state(war_json) == 'inWar':
-        # war_end_time = time_string_changer(war_json['endTime'])
-        # dt_now = datetime.now()
-        # dt_string = dt_now.strftime("%Y%m%d%H%M%S")
-
-        war_members = []
         return_line = []
 
-        # gets the info for war members
-        for member in war_json['clan']['members']:
-            star_points = 0
-            number_of_attacks = 0
-            member_attack1_tag = ''
-            member_attack1_stars = 0
-            member_attack1_destruction = 0
-            member_attack2_tag = ''
-            member_attack2_stars = 0
-            member_attack2_destruction = 0
-            if 'attacks' in member:
-                attacked = True
-                for points in member['attacks']:
-                    star_points += points['stars']
-                    number_of_attacks += 1
-                    if number_of_attacks == 1:
-                        member_attack1_tag = points['defenderTag']
-                        member_attack1_stars = points['stars']
-                        member_attack1_destruction = ['destructionPercentage']
+        # gets war member data
+        sorted_war_members = get_war_member_info(war_json)
 
-                    elif number_of_attacks == 2:
-                        member_attack2_tag = points['defenderTag']
-                        member_attack2_stars = points['stars']
-                        member_attack2_destruction = ['destructionPercentage']
-
-                    else:
-                        print('something went wrong, breakpoint: getting attack information from all attacks method')
-
-            else:
-                attacked = False
-
-            # make attack one stars, attack one percent and attack two stars and attack two percent
-            war_members.append(
-                WarMember(member['mapPosition'], member['townhallLevel'], member['name'], member['tag'], attacked,
-                          number_of_attacks, star_points, member_attack1_tag, member_attack1_stars,
-                          member_attack1_destruction, member_attack2_tag, member_attack2_stars,
-                          member_attack2_destruction))
-
-        sorted_war_members = sorted(war_members, key=lambda x: x.map_pos, reverse=False)
         return_line.append(f'{curr_war_overview(TheMightyHeroesTag)}')
+
         for obj in sorted_war_members:
-            return_line.append(f'{obj.name} is a th {obj.th} position {obj.map_pos}')
 
             if obj.has_attacked:
                 if obj.attacks > 1:
@@ -465,40 +420,46 @@ def all_attacks(clan_tag):
                 else:
                     star_text = 'stars'
 
-                return_line.append(f' and has made {obj.attacks} {attacks_text} for {obj.stars} {star_text}')
-
-                for i in range(obj.attacks):
-                    if i == 0:
-                        attack_position = find_enemy_position(clan_tag, obj.attack1_tag)
-                        atk_stars = obj.attack1_stars
-
-                    else:
-                        attack_position = find_enemy_position(clan_tag, obj.attack2_tag)
-                        atk_stars = obj.attack2_stars
-
-                    if atk_stars == 1:
-                        atk_text = 'star'
-
-                    else:
-                        atk_text = 'stars'
-
-                    return_line.append(f'\n{obj.name} attacked enemy position {attack_position} for {atk_stars} {atk_text}')
+                return_line.append(
+                    f'{obj.name} is a th {obj.th} position {obj.map_pos} and has made {obj.attacks} {attacks_text} for {obj.stars} {star_text}')
 
             else:
-                return_line.append(f'{obj.name} has NOT made an attack')
+                return_line.append(f'{obj.name} is a th {obj.th} position {obj.map_pos} has NOT made an attack')
 
-            return_line.append(f'\n---------\n')
+            return_line.append(f'---------')
 
-            # find some way to simplify this to not give all that info
-            # use \n to specify each new line
-            # print(war_member_text)
-            # print('---------')
         return return_line
 
     elif check_war_state(war_json) == 'warEnded':
-        opponent_name = war_json['opponent']['name']
+        return_line = []
 
-        return f'The war against {opponent_name} has ended, TheMightyHeroes {calculate_win_lose(clan_tag)}'
+        # gets war member data
+        sorted_war_members = get_war_member_info(war_json)
+
+        return_line.append(f'{curr_war_overview(TheMightyHeroesTag)}')
+        for obj in sorted_war_members:
+
+            if obj.has_attacked:
+                if obj.attacks > 1:
+                    attacks_text = 'attacks'
+                else:
+                    attacks_text = 'attack'
+
+                if obj.stars == 1:
+                    star_text = 'star'
+
+                else:
+                    star_text = 'stars'
+
+                return_line.append(
+                    f'{obj.name} is a th {obj.th} position {obj.map_pos} and made {obj.attacks} {attacks_text} for {obj.stars} {star_text}')
+
+            else:
+                return_line.append(f'{obj.name} is a th {obj.th} position {obj.map_pos} and did NOT made an attack')
+
+            return_line.append(f'---------')
+
+        return return_line
 
     elif check_war_state(war_json) == 'notInWar':
 
@@ -508,14 +469,160 @@ def all_attacks(clan_tag):
         return 'Well... something went wrong'
 
 
-def find_enemy_position(clan_tag, user_tag):
+def all_attacks(clan_tag):
     war_json = json_response(clan_tag, 'currentwar')
+
+    if check_war_state(war_json) == 'preparation':
+        war_start_time = time_string_changer(war_json['startTime'])
+        return f'{date_time_calculator(war_start_time)} until the war starts.'
+
+    elif check_war_state(war_json) == 'inWar':
+        return_line = []
+
+        # gets war member data
+        sorted_war_members = get_war_member_info(war_json)
+
+        return_line.append(f'{curr_war_overview(TheMightyHeroesTag)}')
+
+        for obj in sorted_war_members:
+
+            if obj.has_attacked:
+                if obj.attacks > 1:
+                    attacks_text = 'attacks'
+                else:
+                    attacks_text = 'attack'
+
+                if obj.stars == 1:
+                    star_text = 'star'
+
+                else:
+                    star_text = 'stars'
+
+                return_line.append(
+                    f'{obj.name} is a th {obj.th} position {obj.map_pos} and has made {obj.attacks} {attacks_text} for {obj.stars} {star_text}')
+
+                for i in range(obj.attacks):
+                    return_line.append(get_each_attack(i, war_json, obj))
+
+            else:
+                return_line.append(f'{obj.name} is a th {obj.th} position {obj.map_pos} has NOT made an attack')
+
+            return_line.append(f'---------')
+
+        return return_line
+
+    elif check_war_state(war_json) == 'warEnded':
+        return_line = []
+
+        # gets war member data
+        sorted_war_members = get_war_member_info(war_json)
+
+        return_line.append(f'{curr_war_overview(TheMightyHeroesTag)}')
+        for obj in sorted_war_members:
+
+            if obj.has_attacked:
+                if obj.attacks > 1:
+                    attacks_text = 'attacks'
+                else:
+                    attacks_text = 'attack'
+
+                if obj.stars == 1:
+                    star_text = 'star'
+
+                else:
+                    star_text = 'stars'
+
+                return_line.append(
+                    f'{obj.name} is a th {obj.th} position {obj.map_pos} and made {obj.attacks} {attacks_text} for {obj.stars} {star_text}')
+
+                for i in range(obj.attacks):
+                    return_line.append(get_each_attack(i, war_json, obj))
+
+            else:
+                return_line.append(f'{obj.name} is a th {obj.th} position {obj.map_pos} and did NOT made an attack')
+
+            return_line.append(f'---------')
+
+        return return_line
+
+    elif check_war_state(war_json) == 'notInWar':
+
+        return f'Currently searching for war'
+
+    else:
+        return 'Well... something went wrong'
+
+
+def get_each_attack(count, json_data, mem):
+    if count == 0:
+        attack_position = find_enemy_position(json_data, mem.attack1_tag)
+        atk_stars = mem.attack1_stars
+
+    else:
+        attack_position = find_enemy_position(json_data, mem.attack2_tag)
+        atk_stars = mem.attack2_stars
+
+    if atk_stars == 1:
+        star_text = 'star'
+
+    else:
+        star_text = 'stars'
+
+    return f'{mem.name} attacked enemy position {attack_position} for {atk_stars} {star_text}'
+
+
+def find_enemy_position(json_data, enemy_tag):
+    war_json = json_data
     enemy_position = '*enemy position not found*'
     for enemy in war_json['opponent']['members']:
-        if user_tag == enemy['tag']:
+        if enemy_tag == enemy['tag']:
             enemy_position = enemy['mapPosition']
 
     return enemy_position
+
+
+# have this return the sorted war member data
+def get_war_member_info(json_data):
+    war_members = []
+
+    # gets the info for war members
+    for member in json_data['clan']['members']:
+        star_points = 0
+        number_of_attacks = 0
+        member_attack1_tag = ''
+        member_attack1_stars = 0
+        member_attack1_destruction = 0
+        member_attack2_tag = ''
+        member_attack2_stars = 0
+        member_attack2_destruction = 0
+        if 'attacks' in member:
+            attacked = True
+            for points in member['attacks']:
+                star_points += points['stars']
+                number_of_attacks += 1
+                if number_of_attacks == 1:
+                    member_attack1_tag = points['defenderTag']
+                    member_attack1_stars = points['stars']
+                    member_attack1_destruction = ['destructionPercentage']
+
+                elif number_of_attacks == 2:
+                    member_attack2_tag = points['defenderTag']
+                    member_attack2_stars = points['stars']
+                    member_attack2_destruction = ['destructionPercentage']
+
+                else:
+                    print('something went wrong, breakpoint: getting attack information from all attacks method')
+
+        else:
+            attacked = False
+
+        war_members.append(
+            WarMember(member['mapPosition'], member['townhallLevel'], member['name'], member['tag'], attacked,
+                      number_of_attacks, star_points, member_attack1_tag, member_attack1_stars,
+                      member_attack1_destruction, member_attack2_tag, member_attack2_stars,
+                      member_attack2_destruction))
+
+    return sorted(war_members, key=lambda x: x.map_pos, reverse=False)
 
 
 def no_atk(clan_tag):
@@ -621,6 +728,57 @@ def no_atk(clan_tag):
 
     else:
         return f'something went wrong finding out who did not attack. Breakpoint: no_atk/warStatus'
+
+
+def check_user_troop(player_name, troop_name):
+    members_json = json_response(TheMightyHeroesTag, 'members')
+    player_tag = ''
+    max_for_th = ''
+    player_troop_lvl = ''
+    player_name.lower()
+    troop_name.lower()
+
+    for mem in members_json['items']:
+        if mem['name'].lower() == player_name.lower():
+            player_name = mem['name']
+            player_tag = mem['tag']
+
+    if player_tag == '':
+        return 'something went wrong with the player tag'
+
+    player_tag = player_tag[1:]
+    player_json = json_response(player_tag, 'players')
+    player_th = player_json['townHallLevel']
+
+    for troop in player_json['troops']:
+        if troop['name'].lower() == troop_name.lower():
+            player_troop_lvl = troop['level']
+
+    for hero in player_json['heroes']:
+        if hero['name'].lower() == troop_name.lower():
+            player_troop_lvl = hero['level']
+
+    for spell in player_json['spells']:
+        full_spell_name = f'{troop_name} Spell'
+        if spell['name'].lower() == full_spell_name.lower():
+            player_troop_lvl = spell['level']
+
+    if player_troop_lvl == '':
+        return 'something went wrong getting the player\'s troop lvl'
+
+    with open('Troop_Data.json') as troop_file:
+        troop_data = json.load(troop_file)
+        for item in troop_data['th'][f'{player_th}']:
+            for sub_item in troop_data['th'][f'{player_th}'][item]:
+                if sub_item['name'].lower() == troop_name:
+                    troop_name = sub_item['name']
+                    max_for_th = sub_item['thMax']
+
+    if max_for_th == '':
+        return 'something went wrong getting the troop'
+
+    return f'{player_name}\'s {troop_name} is lvl {player_troop_lvl}, max for TH {player_th} is {max_for_th}'
+
 
 # get_user(RazgrizTag)
 # get_user_levels(RazgrizTag)
