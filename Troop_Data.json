@@ -1,0 +1,580 @@
+{
+  "th": {
+    "1": {
+      "hero": [
+        { "name": "Barbarian King", "thMax": 0, "type": "Dark Elixir" },
+        { "name": "Archer Queen", "thMax": 0, "type": "Dark Elixir" },
+        { "name": "Grand Warden", "thMax": 0, "type": "Elixir" }
+      ],
+      "troop": [
+        { "name": "Barbarian", "thMax": 1, "type": "Elixir" },
+        { "name": "Archer", "thMax": 1, "type": "Elixir" },
+        { "name": "Giant", "thMax": 1, "type": "Elixir" },
+        { "name": "Goblin", "thMax": 0, "type": "Elixir" },
+        { "name": "Wall Breaker", "thMax": 0, "type": "Elixir" },
+        { "name": "Balloon", "thMax": 0, "type": "Elixir" },
+        { "name": "Wizard", "thMax": 0, "type": "Elixir" },
+        { "name": "Healer", "thMax": 0, "type": "Elixir" },
+        { "name": "Dragon", "thMax": 0, "type": "Elixir" },
+        { "name": "Pekka", "thMax": 0, "type": "Elixir" },
+        { "name": "Baby Dragon", "thMax": 0, "type": "Elixir" },
+        { "name": "Miner", "thMax": 0, "type": "Elixir" },
+        { "name": "Electro Dragon", "thMax": 0, "type": "Elixir" },
+        { "name": "Minion", "thMax": 0, "type": "Dark Elixir" },
+        { "name": "Hog Rider", "thMax": 0, "type": "Dark Elixir" },
+        { "name": "Valkyrie", "thMax": 0, "type": "Dark Elixir" },
+        { "name": "Golem", "thMax": 0, "type": "Dark Elixir" },
+        { "name": "Witch", "thMax": 0, "type": "Dark Elixir" },
+        { "name": "Lava Hound", "thMax": 0, "type": "Dark Elixir" },
+        { "name": "Bowler", "thMax": 0, "type": "Dark Elixir" },
+        { "name": "Ice Golem", "thMax": 0, "type": "Dark Elixir" }
+      ],
+      "spell": [
+        { "name": "Lightning", "thMax": 0, "type": "Elixir" },
+        { "name": "Healing", "thMax": 0, "type": "Elixir" },
+        { "name": "Rage", "thMax": 0, "type": "Elixir" },
+        { "name": "Jump", "thMax": 0, "type": "Elixir" },
+        { "name": "Freeze", "thMax": 0, "type": "Elixir" },
+        { "name": "Clone", "thMax": 0, "type": "Elixir" },
+        { "name": "Poison", "thMax": 0, "type": "Dark Elixir" },
+        { "name": "Earthquake", "thMax": 0, "type": "Dark Elixir" },
+        { "name": "Haste", "thMax": 0, "type": "Dark Elixir" },
+        { "name": "Skeleton", "thMax": 0, "type": "Dark Elixir" },
+        { "name": "Bat", "thMax": 0, "type": "Dark Elixir" }
+      ],
+      "machine": [
+        { "name": "Wall Wrecker", "thMax": 0, "type": "Gold" },
+        { "name": "Battle Blimp", "thMax": 0, "type": "Gold" },
+        { "name": "Stone Slammer", "thMax": 0, "type": "Gold" }
+      ]
+    },
+    "2": {
+      "hero": [
+        { "name": "Barbarian King", "thMax": 0, "type": "Dark Elixir" },
+        { "name": "Archer Queen", "thMax": 0, "type": "Dark Elixir" },
+        { "name": "Grand Warden", "thMax": 0, "type": "Elixir" }
+      ],
+      "troop": [
+        { "name": "Barbarian", "thMax": 1, "type": "Elixir" },
+        { "name": "Archer", "thMax": 1, "type": "Elixir" },
+        { "name": "Giant", "thMax": 1, "type": "Elixir" },
+        { "name": "Goblin", "thMax": 1, "type": "Elixir" },
+        { "name": "Wall Breaker", "thMax": 0, "type": "Elixir" },
+        { "name": "Balloon", "thMax": 0, "type": "Elixir" },
+        { "name": "Wizard", "thMax": 0, "type": "Elixir" },
+        { "name": "Healer", "thMax": 0, "type": "Elixir" },
+        { "name": "Dragon", "thMax": 0, "type": "Elixir" },
+        { "name": "Pekka", "thMax": 0, "type": "Elixir" },
+        { "name": "Baby Dragon", "thMax": 0, "type": "Elixir" },
+        { "name": "Miner", "thMax": 0, "type": "Elixir" },
+        { "name": "Electro Dragon", "thMax": 0, "type": "Elixir" },
+        { "name": "Minion", "thMax": 0, "type": "Dark Elixir" },
+        { "name": "Hog Rider", "thMax": 0, "type": "Dark Elixir" },
+        { "name": "Valkyrie", "thMax": 0, "type": "Dark Elixir" },
+        { "name": "Golem", "thMax": 0, "type": "Dark Elixir" },
+        { "name": "Witch", "thMax": 0, "type": "Dark Elixir" },
+        { "name": "Lava Hound", "thMax": 0, "type": "Dark Elixir" },
+        { "name": "Bowler", "thMax": 0, "type": "Dark Elixir" },
+        { "name": "Ice Golem", "thMax": 0, "type": "Dark Elixir" }
+      ],
+      "spell": [
+        { "name": "Lightning", "thMax": 0, "type": "Elixir" },
+        { "name": "Healing", "thMax": 0, "type": "Elixir" },
+        { "name": "Rage", "thMax": 0, "type": "Elixir" },
+        { "name": "Jump", "thMax": 0, "type": "Elixir" },
+        { "name": "Freeze", "thMax": 0, "type": "Elixir" },
+        { "name": "Clone", "thMax": 0, "type": "Elixir" },
+        { "name": "Poison", "thMax": 0, "type": "Dark Elixir" },
+        { "name": "Earthquake", "thMax": 0, "type": "Dark Elixir" },
+        { "name": "Haste", "thMax": 0, "type": "Dark Elixir" },
+        { "name": "Skeleton", "thMax": 0, "type": "Dark Elixir" },
+        { "name": "Bat", "thMax": 0, "type": "Dark Elixir" }
+      ],
+      "machine": [
+        { "name": "Wall Wrecker", "thMax": 0, "type": "Gold" },
+        { "name": "Battle Blimp", "thMax": 0, "type": "Gold" },
+        { "name": "Stone Slammer", "thMax": 0, "type": "Gold" }
+      ]
+    },
+    "3": {
+      "hero": [
+        { "name": "Barbarian King", "thMax": 0, "type": "Dark Elixir" },
+        { "name": "Archer Queen", "thMax": 0, "type": "Dark Elixir" },
+        { "name": "Grand Warden", "thMax": 0, "type": "Elixir" }
+      ],
+      "troop": [
+        { "name": "Barbarian", "thMax": 2, "type": "Elixir" },
+        { "name": "Archer", "thMax": 2, "type": "Elixir" },
+        { "name": "Giant", "thMax": 1, "type": "Elixir" },
+        { "name": "Goblin", "thMax": 2, "type": "Elixir" },
+        { "name": "Wall Breaker", "thMax": 1, "type": "Elixir" },
+        { "name": "Balloon", "thMax": 0, "type": "Elixir" },
+        { "name": "Wizard", "thMax": 0, "type": "Elixir" },
+        { "name": "Healer", "thMax": 0, "type": "Elixir" },
+        { "name": "Dragon", "thMax": 0, "type": "Elixir" },
+        { "name": "Pekka", "thMax": 0, "type": "Elixir" },
+        { "name": "Baby Dragon", "thMax": 0, "type": "Elixir" },
+        { "name": "Miner", "thMax": 0, "type": "Elixir" },
+        { "name": "Electro Dragon", "thMax": 0, "type": "Elixir" },
+        { "name": "Minion", "thMax": 0, "type": "Dark Elixir" },
+        { "name": "Hog Rider", "thMax": 0, "type": "Dark Elixir" },
+        { "name": "Valkyrie", "thMax": 0, "type": "Dark Elixir" },
+        { "name": "Golem", "thMax": 0, "type": "Dark Elixir" },
+        { "name": "Witch", "thMax": 0, "type": "Dark Elixir" },
+        { "name": "Lava Hound", "thMax": 0, "type": "Dark Elixir" },
+        { "name": "Bowler", "thMax": 0, "type": "Dark Elixir" },
+        { "name": "Ice Golem", "thMax": 0, "type": "Dark Elixir" }
+      ],
+      "spell": [
+        { "name": "Lightning", "thMax": 0, "type": "Elixir" },
+        { "name": "Healing", "thMax": 0, "type": "Elixir" },
+        { "name": "Rage", "thMax": 0, "type": "Elixir" },
+        { "name": "Jump", "thMax": 0, "type": "Elixir" },
+        { "name": "Freeze", "thMax": 0, "type": "Elixir" },
+        { "name": "Clone", "thMax": 0, "type": "Elixir" },
+        { "name": "Poison", "thMax": 0, "type": "Dark Elixir" },
+        { "name": "Earthquake", "thMax": 0, "type": "Dark Elixir" },
+        { "name": "Haste", "thMax": 0, "type": "Dark Elixir" },
+        { "name": "Skeleton", "thMax": 0, "type": "Dark Elixir" },
+        { "name": "Bat", "thMax": 0, "type": "Dark Elixir" }
+      ],
+      "machine": [
+        { "name": "Wall Wrecker", "thMax": 0, "type": "Gold" },
+        { "name": "Battle Blimp", "thMax": 0, "type": "Gold" },
+        { "name": "Stone Slammer", "thMax": 0, "type": "Gold" }
+      ]
+    },
+    "4": {
+      "hero": [
+        { "name": "Barbarian King", "thMax": 0, "type": "Dark Elixir" },
+        { "name": "Archer Queen", "thMax": 0, "type": "Dark Elixir" },
+        { "name": "Grand Warden", "thMax": 0, "type": "Elixir" }
+      ],
+      "troop": [
+        { "name": "Barbarian", "thMax": 2, "type": "Elixir" },
+        { "name": "Archer", "thMax": 2, "type": "Elixir" },
+        { "name": "Giant", "thMax": 2, "type": "Elixir" },
+        { "name": "Goblin", "thMax": 2, "type": "Elixir" },
+        { "name": "Wall Breaker", "thMax": 2, "type": "Elixir" },
+        { "name": "Balloon", "thMax": 2, "type": "Elixir" },
+        { "name": "Wizard", "thMax": 0, "type": "Elixir" },
+        { "name": "Healer", "thMax": 0, "type": "Elixir" },
+        { "name": "Dragon", "thMax": 0, "type": "Elixir" },
+        { "name": "Pekka", "thMax": 0, "type": "Elixir" },
+        { "name": "Baby Dragon", "thMax": 0, "type": "Elixir" },
+        { "name": "Miner", "thMax": 0, "type": "Elixir" },
+        { "name": "Electro Dragon", "thMax": 0, "type": "Elixir" },
+        { "name": "Minion", "thMax": 0, "type": "Dark Elixir" },
+        { "name": "Hog Rider", "thMax": 0, "type": "Dark Elixir" },
+        { "name": "Valkyrie", "thMax": 0, "type": "Dark Elixir" },
+        { "name": "Golem", "thMax": 0, "type": "Dark Elixir" },
+        { "name": "Witch", "thMax": 0, "type": "Dark Elixir" },
+        { "name": "Lava Hound", "thMax": 0, "type": "Dark Elixir" },
+        { "name": "Bowler", "thMax": 0, "type": "Dark Elixir" },
+        { "name": "Ice Golem", "thMax": 0, "type": "Dark Elixir" }
+      ],
+      "spell": [
+        { "name": "Lightning", "thMax": 0, "type": "Elixir" },
+        { "name": "Healing", "thMax": 0, "type": "Elixir" },
+        { "name": "Rage", "thMax": 0, "type": "Elixir" },
+        { "name": "Jump", "thMax": 0, "type": "Elixir" },
+        { "name": "Freeze", "thMax": 0, "type": "Elixir" },
+        { "name": "Clone", "thMax": 0, "type": "Elixir" },
+        { "name": "Poison", "thMax": 0, "type": "Dark Elixir" },
+        { "name": "Earthquake", "thMax": 0, "type": "Dark Elixir" },
+        { "name": "Haste", "thMax": 0, "type": "Dark Elixir" },
+        { "name": "Skeleton", "thMax": 0, "type": "Dark Elixir" },
+        { "name": "Bat", "thMax": 0, "type": "Dark Elixir" }
+      ],
+      "machine": [
+        { "name": "Wall Wrecker", "thMax": 0, "type": "Gold" },
+        { "name": "Battle Blimp", "thMax": 0, "type": "Gold" },
+        { "name": "Stone Slammer", "thMax": 0, "type": "Gold" }
+      ]
+    },
+    "5": {
+      "hero": [
+        { "name": "Barbarian King", "thMax": 0, "type": "Dark Elixir" },
+        { "name": "Archer Queen", "thMax": 0, "type": "Dark Elixir" },
+        { "name": "Grand Warden", "thMax": 0, "type": "Elixir" }
+      ],
+      "troop": [
+        { "name": "Barbarian", "thMax": 3, "type": "Elixir" },
+        { "name": "Archer", "thMax": 3, "type": "Elixir" },
+        { "name": "Giant", "thMax": 2, "type": "Elixir" },
+        { "name": "Goblin", "thMax": 3, "type": "Elixir" },
+        { "name": "Wall Breaker", "thMax": 2, "type": "Elixir" },
+        { "name": "Balloon", "thMax": 2, "type": "Elixir" },
+        { "name": "Wizard", "thMax": 2, "type": "Elixir" },
+        { "name": "Healer", "thMax": 0, "type": "Elixir" },
+        { "name": "Dragon", "thMax": 0, "type": "Elixir" },
+        { "name": "Pekka", "thMax": 0, "type": "Elixir" },
+        { "name": "Baby Dragon", "thMax": 0, "type": "Elixir" },
+        { "name": "Miner", "thMax": 0, "type": "Elixir" },
+        { "name": "Electro Dragon", "thMax": 0, "type": "Elixir" },
+        { "name": "Minion", "thMax": 0, "type": "Dark Elixir" },
+        { "name": "Hog Rider", "thMax": 0, "type": "Dark Elixir" },
+        { "name": "Valkyrie", "thMax": 0, "type": "Dark Elixir" },
+        { "name": "Golem", "thMax": 0, "type": "Dark Elixir" },
+        { "name": "Witch", "thMax": 0, "type": "Dark Elixir" },
+        { "name": "Lava Hound", "thMax": 0, "type": "Dark Elixir" },
+        { "name": "Bowler", "thMax": 0, "type": "Dark Elixir" },
+        { "name": "Ice Golem", "thMax": 0, "type": "Dark Elixir" }
+      ],
+      "spell": [
+        { "name": "Lightning", "thMax": 4, "type": "Elixir" },
+        { "name": "Healing", "thMax": 0, "type": "Elixir" },
+        { "name": "Rage", "thMax": 0, "type": "Elixir" },
+        { "name": "Jump", "thMax": 0, "type": "Elixir" },
+        { "name": "Freeze", "thMax": 0, "type": "Elixir" },
+        { "name": "Clone", "thMax": 0, "type": "Elixir" },
+        { "name": "Poison", "thMax": 0, "type": "Dark Elixir" },
+        { "name": "Earthquake", "thMax": 0, "type": "Dark Elixir" },
+        { "name": "Haste", "thMax": 0, "type": "Dark Elixir" },
+        { "name": "Skeleton", "thMax": 0, "type": "Dark Elixir" },
+        { "name": "Bat", "thMax": 0, "type": "Dark Elixir" }
+      ],
+      "machine": [
+        { "name": "Wall Wrecker", "thMax": 0, "type": "Gold" },
+        { "name": "Battle Blimp", "thMax": 0, "type": "Gold" },
+        { "name": "Stone Slammer", "thMax": 0, "type": "Gold" }
+      ]
+    },
+    "6": {
+      "hero": [
+        { "name": "Barbarian King", "thMax": 0, "type": "Dark Elixir" },
+        { "name": "Archer Queen", "thMax": 0, "type": "Dark Elixir" },
+        { "name": "Grand Warden", "thMax": 0, "type": "Elixir" }
+      ],
+      "troop": [
+        { "name": "Barbarian", "thMax": 3, "type": "Elixir" },
+        { "name": "Archer", "thMax": 3, "type": "Elixir" },
+        { "name": "Giant", "thMax": 3, "type": "Elixir" },
+        { "name": "Goblin", "thMax": 3, "type": "Elixir" },
+        { "name": "Wall Breaker", "thMax": 3, "type": "Elixir" },
+        { "name": "Balloon", "thMax": 3, "type": "Elixir" },
+        { "name": "Wizard", "thMax": 3, "type": "Elixir" },
+        { "name": "Healer", "thMax": 1, "type": "Elixir" },
+        { "name": "Dragon", "thMax": 0, "type": "Elixir" },
+        { "name": "Pekka", "thMax": 0, "type": "Elixir" },
+        { "name": "Baby Dragon", "thMax": 0, "type": "Elixir" },
+        { "name": "Miner", "thMax": 0, "type": "Elixir" },
+        { "name": "Electro Dragon", "thMax": 0, "type": "Elixir" },
+        { "name": "Minion", "thMax": 0, "type": "Dark Elixir" },
+        { "name": "Hog Rider", "thMax": 0, "type": "Dark Elixir" },
+        { "name": "Valkyrie", "thMax": 0, "type": "Dark Elixir" },
+        { "name": "Golem", "thMax": 0, "type": "Dark Elixir" },
+        { "name": "Witch", "thMax": 0, "type": "Dark Elixir" },
+        { "name": "Lava Hound", "thMax": 0, "type": "Dark Elixir" },
+        { "name": "Bowler", "thMax": 0, "type": "Dark Elixir" },
+        { "name": "Ice Golem", "thMax": 0, "type": "Dark Elixir" }
+      ],
+      "spell": [
+        { "name": "Lightning", "thMax": 4, "type": "Elixir" },
+        { "name": "Healing", "thMax": 3, "type": "Elixir" },
+        { "name": "Rage", "thMax": 0, "type": "Elixir" },
+        { "name": "Jump", "thMax": 0, "type": "Elixir" },
+        { "name": "Freeze", "thMax": 0, "type": "Elixir" },
+        { "name": "Clone", "thMax": 0, "type": "Elixir" },
+        { "name": "Poison", "thMax": 0, "type": "Dark Elixir" },
+        { "name": "Earthquake", "thMax": 0, "type": "Dark Elixir" },
+        { "name": "Haste", "thMax": 0, "type": "Dark Elixir" },
+        { "name": "Skeleton", "thMax": 0, "type": "Dark Elixir" },
+        { "name": "Bat", "thMax": 0, "type": "Dark Elixir" }
+      ],
+      "machine": [
+        { "name": "Wall Wrecker", "thMax": 0, "type": "Gold" },
+        { "name": "Battle Blimp", "thMax": 0, "type": "Gold" },
+        { "name": "Stone Slammer", "thMax": 0, "type": "Gold" }
+      ]
+    },
+    "7": {
+      "hero": [
+        { "name": "Barbarian King", "thMax": 5, "type": "Dark Elixir" },
+        { "name": "Archer Queen", "thMax": 0, "type": "Dark Elixir" },
+        { "name": "Grand Warden", "thMax": 0, "type": "Elixir" }
+      ],
+      "troop": [
+        { "name": "Barbarian", "thMax": 4, "type": "Elixir" },
+        { "name": "Archer", "thMax": 4, "type": "Elixir" },
+        { "name": "Giant", "thMax": 4, "type": "Elixir" },
+        { "name": "Goblin", "thMax": 4, "type": "Elixir" },
+        { "name": "Wall Breaker", "thMax": 4, "type": "Elixir" },
+        { "name": "Balloon", "thMax": 4, "type": "Elixir" },
+        { "name": "Wizard", "thMax": 4, "type": "Elixir" },
+        { "name": "Healer", "thMax": 2, "type": "Elixir" },
+        { "name": "Dragon", "thMax": 2, "type": "Elixir" },
+        { "name": "Pekka", "thMax": 0, "type": "Elixir" },
+        { "name": "Baby Dragon", "thMax": 0, "type": "Elixir" },
+        { "name": "Miner", "thMax": 0, "type": "Elixir" },
+        { "name": "Electro Dragon", "thMax": 0, "type": "Elixir" },
+        { "name": "Minion", "thMax": 2, "type": "Dark Elixir" },
+        { "name": "Hog Rider", "thMax": 2, "type": "Dark Elixir" },
+        { "name": "Valkyrie", "thMax": 0, "type": "Dark Elixir" },
+        { "name": "Golem", "thMax": 0, "type": "Dark Elixir" },
+        { "name": "Witch", "thMax": 0, "type": "Dark Elixir" },
+        { "name": "Lava Hound", "thMax": 0, "type": "Dark Elixir" },
+        { "name": "Bowler", "thMax": 0, "type": "Dark Elixir" },
+        { "name": "Ice Golem", "thMax": 0, "type": "Dark Elixir" }
+      ],
+      "spell": [
+        { "name": "Lightning", "thMax": 4, "type": "Elixir" },
+        { "name": "Healing", "thMax": 4, "type": "Elixir" },
+        { "name": "Rage", "thMax": 4, "type": "Elixir" },
+        { "name": "Jump", "thMax": 0, "type": "Elixir" },
+        { "name": "Freeze", "thMax": 0, "type": "Elixir" },
+        { "name": "Clone", "thMax": 0, "type": "Elixir" },
+        { "name": "Poison", "thMax": 0, "type": "Dark Elixir" },
+        { "name": "Earthquake", "thMax": 0, "type": "Dark Elixir" },
+        { "name": "Haste", "thMax": 0, "type": "Dark Elixir" },
+        { "name": "Skeleton", "thMax": 0, "type": "Dark Elixir" },
+        { "name": "Bat", "thMax": 0, "type": "Dark Elixir" }
+      ],
+      "machine": [
+        { "name": "Wall Wrecker", "thMax": 0, "type": "Gold" },
+        { "name": "Battle Blimp", "thMax": 0, "type": "Gold" },
+        { "name": "Stone Slammer", "thMax": 0, "type": "Gold" }
+      ]
+    },
+    "8": {
+      "hero": [
+        { "name": "Barbarian King", "thMax": 10, "type": "Dark Elixir" },
+        { "name": "Archer Queen", "thMax": 0, "type": "Dark Elixir" },
+        { "name": "Grand Warden", "thMax": 0, "type": "Elixir" }
+      ],
+      "troop": [
+        { "name": "Barbarian", "thMax": 5, "type": "Elixir" },
+        { "name": "Archer", "thMax": 5, "type": "Elixir" },
+        { "name": "Giant", "thMax": 5, "type": "Elixir" },
+        { "name": "Goblin", "thMax": 5, "type": "Elixir" },
+        { "name": "Wall Breaker", "thMax": 5, "type": "Elixir" },
+        { "name": "Balloon", "thMax": 5, "type": "Elixir" },
+        { "name": "Wizard", "thMax": 5, "type": "Elixir" },
+        { "name": "Healer", "thMax": 3, "type": "Elixir" },
+        { "name": "Dragon", "thMax": 3, "type": "Elixir" },
+        { "name": "Pekka", "thMax": 3, "type": "Elixir" },
+        { "name": "Baby Dragon", "thMax": 0, "type": "Elixir" },
+        { "name": "Miner", "thMax": 0, "type": "Elixir" },
+        { "name": "Electro Dragon", "thMax": 0, "type": "Elixir" },
+        { "name": "Minion", "thMax": 4, "type": "Dark Elixir" },
+        { "name": "Hog Rider", "thMax": 4, "type": "Dark Elixir" },
+        { "name": "Valkyrie", "thMax": 2, "type": "Dark Elixir" },
+        { "name": "Golem", "thMax": 2, "type": "Dark Elixir" },
+        { "name": "Witch", "thMax": 0, "type": "Dark Elixir" },
+        { "name": "Lava Hound", "thMax": 0, "type": "Dark Elixir" },
+        { "name": "Bowler", "thMax": 0, "type": "Dark Elixir" },
+        { "name": "Ice Golem", "thMax": 0, "type": "Dark Elixir" }
+      ],
+      "spell": [
+        { "name": "Lightning", "thMax": 5, "type": "Elixir" },
+        { "name": "Healing", "thMax": 5, "type": "Elixir" },
+        { "name": "Rage", "thMax": 5, "type": "Elixir" },
+        { "name": "Jump", "thMax": 0, "type": "Elixir" },
+        { "name": "Freeze", "thMax": 0, "type": "Elixir" },
+        { "name": "Clone", "thMax": 0, "type": "Elixir" },
+        { "name": "Poison", "thMax": 2, "type": "Dark Elixir" },
+        { "name": "Earthquake", "thMax": 2, "type": "Dark Elixir" },
+        { "name": "Haste", "thMax": 0, "type": "Dark Elixir" },
+        { "name": "Skeleton", "thMax": 0, "type": "Dark Elixir" },
+        { "name": "Bat", "thMax": 0, "type": "Dark Elixir" }
+      ],
+      "machine": [
+        { "name": "Wall Wrecker", "thMax": 0, "type": "Gold" },
+        { "name": "Battle Blimp", "thMax": 0, "type": "Gold" },
+        { "name": "Stone Slammer", "thMax": 0, "type": "Gold" }
+      ]
+    },
+    "9": {
+      "hero": [
+        { "name": "Barbarian King", "thMax": 30, "type": "Dark Elixir" },
+        { "name": "Archer Queen", "thMax": 30, "type": "Dark Elixir" },
+        { "name": "Grand Warden", "thMax": 0, "type": "Elixir" }
+      ],
+      "troop": [
+        { "name": "Barbarian", "thMax": 6, "type": "Elixir" },
+        { "name": "Archer", "thMax": 6, "type": "Elixir" },
+        { "name": "Giant", "thMax": 6, "type": "Elixir" },
+        { "name": "Goblin", "thMax": 6, "type": "Elixir" },
+        { "name": "Wall Breaker", "thMax": 5, "type": "Elixir" },
+        { "name": "Balloon", "thMax": 6, "type": "Elixir" },
+        { "name": "Wizard", "thMax": 6, "type": "Elixir" },
+        { "name": "Healer", "thMax": 4, "type": "Elixir" },
+        { "name": "Dragon", "thMax": 4, "type": "Elixir" },
+        { "name": "Pekka", "thMax": 4, "type": "Elixir" },
+        { "name": "Baby Dragon", "thMax": 2, "type": "Elixir" },
+        { "name": "Miner", "thMax": 0, "type": "Elixir" },
+        { "name": "Electro Dragon", "thMax": 0, "type": "Elixir" },
+        { "name": "Minion", "thMax": 5, "type": "Dark Elixir" },
+        { "name": "Hog Rider", "thMax": 5, "type": "Dark Elixir" },
+        { "name": "Valkyrie", "thMax": 4, "type": "Dark Elixir" },
+        { "name": "Golem", "thMax": 4, "type": "Dark Elixir" },
+        { "name": "Witch", "thMax": 2, "type": "Dark Elixir" },
+        { "name": "Lava Hound", "thMax": 2, "type": "Dark Elixir" },
+        { "name": "Bowler", "thMax": 0, "type": "Dark Elixir" },
+        { "name": "Ice Golem", "thMax": 0, "type": "Dark Elixir" }
+      ],
+      "spell": [
+        { "name": "Lightning", "thMax": 6, "type": "Elixir" },
+        { "name": "Healing", "thMax": 6, "type": "Elixir" },
+        { "name": "Rage", "thMax": 5, "type": "Elixir" },
+        { "name": "Jump", "thMax": 2, "type": "Elixir" },
+        { "name": "Freeze", "thMax": 1, "type": "Elixir" },
+        { "name": "Clone", "thMax": 0, "type": "Elixir" },
+        { "name": "Poison", "thMax": 3, "type": "Dark Elixir" },
+        { "name": "Earthquake", "thMax": 3, "type": "Dark Elixir" },
+        { "name": "Haste", "thMax": 2, "type": "Dark Elixir" },
+        { "name": "Skeleton", "thMax": 1, "type": "Dark Elixir" },
+        { "name": "Bat", "thMax": 0, "type": "Dark Elixir" }
+      ],
+      "machine": [
+        { "name": "Wall Wrecker", "thMax": 0, "type": "Gold" },
+        { "name": "Battle Blimp", "thMax": 0, "type": "Gold" },
+        { "name": "Stone Slammer", "thMax": 0, "type": "Gold" }
+      ]
+    },
+    "10": {
+      "hero": [
+        { "name": "Barbarian King", "thMax": 40, "type": "Dark Elixir" },
+        { "name": "Archer Queen", "thMax": 40, "type": "Dark Elixir" },
+        { "name": "Grand Warden", "thMax": 0, "type": "Elixir" }
+      ],
+      "troop": [
+        { "name": "Barbarian", "thMax": 7, "type": "Elixir" },
+        { "name": "Archer", "thMax": 7, "type": "Elixir" },
+        { "name": "Giant", "thMax": 7, "type": "Elixir" },
+        { "name": "Goblin", "thMax": 7, "type": "Elixir" },
+        { "name": "Wall Breaker", "thMax": 6, "type": "Elixir" },
+        { "name": "Balloon", "thMax": 6, "type": "Elixir" },
+        { "name": "Wizard", "thMax": 7, "type": "Elixir" },
+        { "name": "Healer", "thMax": 4, "type": "Elixir" },
+        { "name": "Dragon", "thMax": 5, "type": "Elixir" },
+        { "name": "Pekka", "thMax": 6, "type": "Elixir" },
+        { "name": "Baby Dragon", "thMax": 4, "type": "Elixir" },
+        { "name": "Miner", "thMax": 3, "type": "Elixir" },
+        { "name": "Electro Dragon", "thMax": 0, "type": "Elixir" },
+        { "name": "Minion", "thMax": 6, "type": "Dark Elixir" },
+        { "name": "Hog Rider", "thMax": 6, "type": "Dark Elixir" },
+        { "name": "Valkyrie", "thMax": 5, "type": "Dark Elixir" },
+        { "name": "Golem", "thMax": 5, "type": "Dark Elixir" },
+        { "name": "Witch", "thMax": 3, "type": "Dark Elixir" },
+        { "name": "Lava Hound", "thMax": 3, "type": "Dark Elixir" },
+        { "name": "Bowler", "thMax": 2, "type": "Dark Elixir" },
+        { "name": "Ice Golem", "thMax": 0, "type": "Dark Elixir" }
+      ],
+      "spell": [
+        { "name": "Lightning", "thMax": 7, "type": "Elixir" },
+        { "name": "Healing", "thMax": 7, "type": "Elixir" },
+        { "name": "Rage", "thMax": 5, "type": "Elixir" },
+        { "name": "Jump", "thMax": 3, "type": "Elixir" },
+        { "name": "Freeze", "thMax": 5, "type": "Elixir" },
+        { "name": "Clone", "thMax": 3, "type": "Elixir" },
+        { "name": "Poison", "thMax": 4, "type": "Dark Elixir" },
+        { "name": "Earthquake", "thMax": 4, "type": "Dark Elixir" },
+        { "name": "Haste", "thMax": 4, "type": "Dark Elixir" },
+        { "name": "Skeleton", "thMax": 3, "type": "Dark Elixir" },
+        { "name": "Bat", "thMax": 3, "type": "Dark Elixir" }
+      ],
+      "machine": [
+        { "name": "Wall Wrecker", "thMax": 0, "type": "Gold" },
+        { "name": "Battle Blimp", "thMax": 0, "type": "Gold" },
+        { "name": "Stone Slammer", "thMax": 0, "type": "Gold" }
+      ]
+    },
+    "11": {
+      "hero": [
+        { "name": "Barbarian King", "thMax": 50, "type": "Dark Elixir" },
+        { "name": "Archer Queen", "thMax": 50, "type": "Dark Elixir" },
+        { "name": "Grand Warden", "thMax": 20, "type": "Elixir" }
+      ],
+      "troop": [
+        { "name": "Barbarian", "thMax": 8, "type": "Elixir" },
+        { "name": "Archer", "thMax": 8, "type": "Elixir" },
+        { "name": "Giant", "thMax": 8, "type": "Elixir" },
+        { "name": "Goblin", "thMax": 7, "type": "Elixir" },
+        { "name": "Wall Breaker", "thMax": 7, "type": "Elixir" },
+        { "name": "Balloon", "thMax": 7, "type": "Elixir" },
+        { "name": "Wizard", "thMax": 8, "type": "Elixir" },
+        { "name": "Healer", "thMax": 5, "type": "Elixir" },
+        { "name": "Dragon", "thMax": 6, "type": "Elixir" },
+        { "name": "Pekka", "thMax": 7, "type": "Elixir" },
+        { "name": "Baby Dragon", "thMax": 5, "type": "Elixir" },
+        { "name": "Miner", "thMax": 5, "type": "Elixir" },
+        { "name": "Electro Dragon", "thMax": 2, "type": "Elixir" },
+        { "name": "Minion", "thMax": 7, "type": "Dark Elixir" },
+        { "name": "Hog Rider", "thMax": 7, "type": "Dark Elixir" },
+        { "name": "Valkyrie", "thMax": 6, "type": "Dark Elixir" },
+        { "name": "Golem", "thMax": 7, "type": "Dark Elixir" },
+        { "name": "Witch", "thMax": 4, "type": "Dark Elixir" },
+        { "name": "Lava Hound", "thMax": 4, "type": "Dark Elixir" },
+        { "name": "Bowler", "thMax": 3, "type": "Dark Elixir" },
+        { "name": "Ice Golem", "thMax": 3, "type": "Dark Elixir" }
+      ],
+      "spell": [
+        { "name": "Lightning", "thMax": 7, "type": "Elixir" },
+        { "name": "Healing", "thMax": 7, "type": "Elixir" },
+        { "name": "Rage", "thMax": 5, "type": "Elixir" },
+        { "name": "Jump", "thMax": 3, "type": "Elixir" },
+        { "name": "Freeze", "thMax": 6, "type": "Elixir" },
+        { "name": "Clone", "thMax": 5, "type": "Elixir" },
+        { "name": "Poison", "thMax": 5, "type": "Dark Elixir" },
+        { "name": "Earthquake", "thMax": 5, "type": "Dark Elixir" },
+        { "name": "Haste", "thMax": 5, "type": "Dark Elixir" },
+        { "name": "Skeleton", "thMax": 4, "type": "Dark Elixir" },
+        { "name": "Bat", "thMax": 4, "type": "Dark Elixir" }
+      ],
+      "machine": [
+        { "name": "Wall Wrecker", "thMax": 0, "type": "Gold" },
+        { "name": "Battle Blimp", "thMax": 0, "type": "Gold" },
+        { "name": "Stone Slammer", "thMax": 0, "type": "Gold" }
+      ]
+    },
+    "12": {
+      "hero": [
+        { "name": "Barbarian King", "thMax": 65, "type": "Dark Elixir" },
+        { "name": "Archer Queen", "thMax": 65, "type": "Dark Elixir" },
+        { "name": "Grand Warden", "thMax": 40, "type": "Elixir" }
+      ],
+      "troop": [
+        { "name": "Barbarian", "thMax": 8, "type": "Elixir" },
+        { "name": "Archer", "thMax": 8, "type": "Elixir" },
+        { "name": "Giant", "thMax": 9, "type": "Elixir" },
+        { "name": "Goblin", "thMax": 7, "type": "Elixir" },
+        { "name": "Wall Breaker", "thMax": 8, "type": "Elixir" },
+        { "name": "Balloon", "thMax": 8, "type": "Elixir" },
+        { "name": "Wizard", "thMax": 9, "type": "Elixir" },
+        { "name": "Healer", "thMax": 5, "type": "Elixir" },
+        { "name": "Dragon", "thMax": 7, "type": "Elixir" },
+        { "name": "Pekka", "thMax": 8, "type": "Elixir" },
+        { "name": "Baby Dragon", "thMax": 6, "type": "Elixir" },
+        { "name": "Miner", "thMax": 6, "type": "Elixir" },
+        { "name": "Electro Dragon", "thMax": 3, "type": "Elixir" },
+        { "name": "Minion", "thMax": 8, "type": "Dark Elixir" },
+        { "name": "Hog Rider", "thMax": 9, "type": "Dark Elixir" },
+        { "name": "Valkyrie", "thMax": 7, "type": "Dark Elixir" },
+        { "name": "Golem", "thMax": 9, "type": "Dark Elixir" },
+        { "name": "Witch", "thMax": 5, "type": "Dark Elixir" },
+        { "name": "Lava Hound", "thMax": 5, "type": "Dark Elixir" },
+        { "name": "Bowler", "thMax": 4, "type": "Dark Elixir" },
+        { "name": "Ice Golem", "thMax": 5, "type": "Dark Elixir" }
+      ],
+      "spell": [
+        { "name": "Lightning", "thMax": 7, "type": "Elixir" },
+        { "name": "Healing", "thMax": 7, "type": "Elixir" },
+        { "name": "Rage", "thMax": 6, "type": "Elixir" },
+        { "name": "Jump", "thMax": 3, "type": "Elixir" },
+        { "name": "Freeze", "thMax": 7, "type": "Elixir" },
+        { "name": "Clone", "thMax": 5, "type": "Elixir" },
+        { "name": "Poison", "thMax": 6, "type": "Dark Elixir" },
+        { "name": "Earthquake", "thMax": 5, "type": "Dark Elixir" },
+        { "name": "Haste", "thMax": 5, "type": "Dark Elixir" },
+        { "name": "Skeleton", "thMax": 6, "type": "Dark Elixir" },
+        { "name": "Bat", "thMax": 5, "type": "Dark Elixir" }
+      ],
+      "machine": [
+        { "name": "Wall Wrecker", "thMax": 3, "type": "Gold" },
+        { "name": "Battle Blimp", "thMax": 3, "type": "Gold" },
+        { "name": "Stone Slammer", "thMax": 3, "type": "Gold" }
+      ]
+    }
+  }
+}
