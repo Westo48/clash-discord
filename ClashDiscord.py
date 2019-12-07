@@ -34,7 +34,7 @@ async def ping(ctx):
 
 
 @client.command(description='enter your player name and troop/hero/spell you are looking for')
-async def trooplvl(ctx, player, troop):
+async def trooplvl(ctx, player, *, troop):
     await ctx.send(f'{check_user_troop(player, troop)}')
 
 
