@@ -1,6 +1,7 @@
 import requests
 from datetime import datetime, timedelta
 import json
+import os
 
 
 class WarMember:
@@ -766,7 +767,7 @@ def check_user_troop(player_name, troop_name):
     if player_troop_lvl == '':
         return 'something went wrong getting the player\'s troop lvl'
 
-    with open('Troop_Data.json') as troop_file:
+    with open(r'C:\Users\Weston\PycharmProjects\ClashDiscord\Troop_Data.json') as troop_file:
         troop_data = json.load(troop_file)
         for item in troop_data['th'][f'{player_th}']:
             for sub_item in troop_data['th'][f'{player_th}'][item]:
@@ -778,7 +779,6 @@ def check_user_troop(player_name, troop_name):
         return 'something went wrong getting the troop'
 
     return f'{player_name}\'s {troop_name} is lvl {player_troop_lvl}, max for TH {player_th} is {max_for_th}'
-
 
 # get_user(RazgrizTag)
 # get_user_levels(RazgrizTag)
