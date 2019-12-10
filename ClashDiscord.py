@@ -45,18 +45,28 @@ async def waroverview(ctx):
 
 @client.command()
 async def wartime(ctx):
-    await ctx.send(f'{war_time(TheMightyHeroesTag)}')
+    await ctx.send(f'{curr_war_time(TheMightyHeroesTag)}')
 
 
 @client.command(aliases=['noatk'])
 async def noattack(ctx):
-    await ctx.send(f'{no_atk(TheMightyHeroesTag)}')
+    await ctx.send(f'{curr_no_atk(TheMightyHeroesTag)}')
 
 
 @client.command(aliases=['allatk'],description='showing all attacks for every member', hidden=True)
 async def allattacks(ctx):
     for message_line in all_attacks(TheMightyHeroesTag):
         await ctx.send(f'{message_line}')
+
+
+@client.command(aliases=['cwltime'],description='shows time remaining in the current clan war league')
+async def cwlwartime(ctx):
+    await ctx.send(f'{cwl_war_time(TheMightyHeroesTag)}')
+
+
+@client.command(aliases=['cwlwar'],description='shows the overview of the current war')
+async def cwlwaroverview(ctx):
+    await ctx.send(f'{cwl_curr_war_overview(TheMightyHeroesTag)}')
 
 
 @client.event
