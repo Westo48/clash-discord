@@ -1,14 +1,9 @@
 import discord
 from discord.ext import commands
-from Time_Calculator import *
 from Clash_Responder import *
 
 RazgrizTag = 'RGQ8RGU9'
 TheMightyHeroesTag = 'JJRJGVR0'
-headers = {
-    'Accept': 'application/json',
-    'authorization': 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiIsImtpZCI6IjI4YTMxOGY3LTAwMDAtYTFlYi03ZmExLTJjNzQzM2M2Y2NhNSJ9.eyJpc3MiOiJzdXBlcmNlbGwiLCJhdWQiOiJzdXBlcmNlbGw6Z2FtZWFwaSIsImp0aSI6IjkyNWJjYzg1LWFhZDktNGM2NC05M2Y2LWM4MWEwZGVhOGUwNiIsImlhdCI6MTU3NDYyMjY3Nywic3ViIjoiZGV2ZWxvcGVyLzdjZmJkOWFjLTFlYzAtNDI3OS1jODM2LTU0YzMxN2FlZmE4NiIsInNjb3BlcyI6WyJjbGFzaCJdLCJsaW1pdHMiOlt7InRpZXIiOiJkZXZlbG9wZXIvc2lsdmVyIiwidHlwZSI6InRocm90dGxpbmcifSx7ImNpZHJzIjpbIjEwOC4yMTEuOTUuMjU0Il0sInR5cGUiOiJjbGllbnQifV19.gdc-4-OEZzsYBLk8HfqZBH-idvlK1vX9nim91XEqLgwNAyarfZquxfkZDKPsswUGyiXRIFV7Am3RB7iWtd9T5w'
-}
 
 client = commands.Bot(command_prefix='!')
 
@@ -33,9 +28,15 @@ async def ping(ctx):
     await ctx.send(f'pong {round(client.latency) * 1000}ms')
 
 
-@client.command(description='enter your player name and troop/hero/spell you are looking for')
+@client.command(description='enter your player name and hero/troop/spell you are looking for')
 async def trooplvl(ctx, player, *, troop):
-    await ctx.send(f'{check_user_troop(player, troop)}')
+    await ctx.send(f'{user_troop_levels(player, troop)}')
+
+
+@client.command(description='enter your player name and get all your player troop levels', hidden=True)
+async def alltrooplvl(ctx, player):
+    for message_line in all_user_levels(player):
+        await ctx.send(f'{message_line}')
 
 
 @client.command(aliases=['war', 'scoreboard'])
@@ -46,6 +47,12 @@ async def waroverview(ctx):
 @client.command()
 async def wartime(ctx):
     await ctx.send(f'{curr_war_time(TheMightyHeroesTag)}')
+
+# todo make war members call
+@client.command(aliases=['warmembers', 'warmember', 'warmem', 'warmemstar', 'warmemstars'],description='overview of all members in war', hidden=True)
+async def warmemberstars(ctx):
+    for message_line in all_attack_stars(TheMightyHeroesTag):
+        await ctx.send(f'{message_line}')
 
 
 @client.command(aliases=['noatk'])
