@@ -1,6 +1,7 @@
 import requests
 from datetime import datetime, timedelta
 import json
+import re
 import os
 
 
@@ -127,6 +128,7 @@ def all_attack_stars(clan_tag):
 
             return_line.append(f'---------')
 
+        del return_line[-1]
         return return_line
 
     elif check_war_state(war_json) == 'warEnded':
@@ -159,6 +161,7 @@ def all_attack_stars(clan_tag):
 
             return_line.append(f'---------')
 
+        del return_line[-1]
         return return_line
 
     elif check_war_state(war_json) == 'notInWar':
@@ -257,14 +260,17 @@ def all_attacks(clan_tag):
 
 # player calls
 
-def check_user_troop(player_name, troop_name):
+def user_troop_levels(player_name, troop_name):
+    with open(r'C:\Users\Weston\PycharmProjects\ClashDiscord\Troop_Data.json') as troop_file:
+        troop_data = json.load(troop_file)
+
+    player_name = re.sub('[-]', ' ', player_name)
     members_json = json_response(TheMightyHeroesTag, 'members')
     player_tag = ''
     max_for_th = ''
     player_troop_lvl = ''
-    player_name.lower()
-    troop_name.lower()
 
+    # getting the player tag in the list of members in the clan
     for mem in members_json['items']:
         if mem['name'].lower() == player_name.lower():
             player_name = mem['name']
@@ -290,16 +296,14 @@ def check_user_troop(player_name, troop_name):
         if spell['name'].lower() == full_spell_name.lower():
             player_troop_lvl = spell['level']
 
+    for item in troop_data['th'][f'{player_th}']:
+        for sub_item in troop_data['th'][f'{player_th}'][item]:
+            if sub_item['name'].lower() == troop_name.lower():
+                troop_name = sub_item['name']
+                max_for_th = sub_item['thMax']
+
     if player_troop_lvl == '':
         return 'something went wrong getting the player\'s troop lvl'
-
-    with open(r'C:\Users\Weston\PycharmProjects\ClashDiscord\Troop_Data.json') as troop_file:
-        troop_data = json.load(troop_file)
-        for item in troop_data['th'][f'{player_th}']:
-            for sub_item in troop_data['th'][f'{player_th}'][item]:
-                if sub_item['name'].lower() == troop_name:
-                    troop_name = sub_item['name']
-                    max_for_th = sub_item['thMax']
 
     if max_for_th == '':
         return 'something went wrong getting the troop'
@@ -307,24 +311,81 @@ def check_user_troop(player_name, troop_name):
     return f'{player_name}\'s {troop_name} is lvl {player_troop_lvl}, max for TH {player_th} is {max_for_th}'
 
 
+# show every given troop, the max for their TH, and the absolute max
+# maybe not absolute max
+def all_user_levels(player_name):
+    with open(r'C:\Users\Weston\PycharmProjects\ClashDiscord\Troop_Data.json') as troop_file:
+        troop_json = json.load(troop_file)
+
+    player_name = re.sub('[-]', ' ', player_name)
+    members_json = json_response(TheMightyHeroesTag, 'members')
+    player_tag = ''
+
+    return_line = []
+
+    # getting the player tag in the list of members in the clan
+    for mem in members_json['items']:
+        if mem['name'].lower() == player_name.lower():
+            player_name = mem['name']
+            player_tag = mem['tag']
+
+    if player_tag == '':
+        return 'something went wrong with the player tag'
+
+    player_tag = player_tag[1:]
+    player_json = json_response(player_tag, 'players')
+    player_th = player_json['townHallLevel']
+
+    return_line.append(f'{player_name} is a TH {player_th}')
+    return_line.append('---------')
+
+    for player_hero in player_json['heroes']:
+        if player_hero['village'] == 'home':
+            hero_th_max = 'error, breakpoint: hero_th_max'
+            hero_name = player_hero['name']
+            hero_lvl = player_hero['level']
+            for troop_hero in troop_json['th'][f'{player_th}']['hero']:
+                if troop_hero['name'] == player_hero['name']:
+                    hero_th_max = troop_hero['thMax']
+            hero_max = player_hero['maxLevel']
+            return_line.append(
+                f'{player_name}\'s {hero_name} is lvl {hero_lvl}, max for TH {player_th} is lvl {hero_th_max}.')
+            return_line.append('---------')
+
+    for player_troop in player_json['troops']:
+        if player_troop['village'] == 'home':
+            troop_th_max = 'error, breakpoint: troop_th_max'
+            troop_name = player_troop['name']
+            formatted_troop_name = re.sub('[.]', '', troop_name)
+            troop_lvl = player_troop['level']
+            for troop_troop in troop_json['th'][f'{player_th}']['troop']:
+                if troop_troop['name'].lower() == formatted_troop_name.lower():
+                    troop_th_max = troop_troop['thMax']
+            troop_max = player_troop['maxLevel']
+            return_line.append(
+                f'{player_name}\'s {troop_name} is lvl {troop_lvl}, max for TH {player_th} is lvl {troop_th_max}.')
+            return_line.append('---------')
+
+    for player_spell in player_json['spells']:
+        spell_name = re.sub(' Spell', '', player_spell['name'])
+        spell_th_max = 'error, breakpoint: spell_th_max'
+        spell_lvl = player_spell['level']
+        for troop_spell in troop_json['th'][f'{player_th}']['spell']:
+            if troop_spell['name'] == spell_name:
+                spell_th_max = troop_spell['thMax']
+        spell_max = player_spell['maxLevel']
+        return_line.append(f'{player_name}\'s {player_spell["name"]} is lvl {spell_lvl}, max for TH {player_th} is lvl {spell_th_max}.')
+        return_line.append('---------')
+
+    del return_line[-1]
+    return return_line
+
+
 def get_user(user_tag):
     # return user profile info
     response = requests.get('https://api.clashofclans.com/v1/players/%23' + user_tag, headers=header)
     user_json = response.json()
     print(user_json['name'])
-
-
-def get_user_levels(user_tag):
-    # return user profile level info
-    response = requests.get('https://api.clashofclans.com/v1/players/%23' + user_tag, headers=header)
-    user_json = response.json()
-    print(user_json['name'] + ' is a ' + user_json['role'] + ' in ' + user_json['clan']['name'])
-    for hero in user_json['heroes']:
-        print(hero['name'] + ' is level ' + str(hero['level']) + ' max is ' + str(hero['maxLevel']))
-    for troop in user_json['troops']:
-        print(troop['name'] + ' is level ' + str(troop['level']) + ' max is ' + str(troop['maxLevel']))
-    for spell in user_json['spells']:
-        print(spell['name'] + ' is level ' + str(spell['level']) + ' max is ' + str(spell['maxLevel']))
 
 
 # clan calls
@@ -378,7 +439,6 @@ def war_overview(war_json):
         return f'Something went wrong. Breakpoint: war_overview'
 
 
-# use curr_war_time to make this a reference
 def war_time(war_json):
 
     if check_war_state(war_json) == 'preparation':
@@ -483,7 +543,6 @@ def score_calculator(war_json, clan_status, opp_status):
     return scoreboard_string
 
 
-# changing to take war_json info
 def calculate_win_lose(war_json, clan_status, opp_status):
     clan_stars = war_json[clan_status]['stars']
     clan_destruction = war_json[clan_status]['destructionPercentage']
@@ -500,6 +559,50 @@ def calculate_win_lose(war_json, clan_status, opp_status):
             return 'lost.'
         else:
             return 'tied.'
+
+
+# returns the sorted war member data
+def get_war_member_info(json_data, clan_status):
+    war_members = []
+
+    # gets the info for war members
+    for member in json_data[clan_status]['members']:
+        star_points = 0
+        number_of_attacks = 0
+        member_attack1_tag = ''
+        member_attack1_stars = 0
+        member_attack1_destruction = 0
+        member_attack2_tag = ''
+        member_attack2_stars = 0
+        member_attack2_destruction = 0
+        if 'attacks' in member:
+            attacked = True
+            for points in member['attacks']:
+                star_points += points['stars']
+                number_of_attacks += 1
+                if number_of_attacks == 1:
+                    member_attack1_tag = points['defenderTag']
+                    member_attack1_stars = points['stars']
+                    member_attack1_destruction = ['destructionPercentage']
+
+                elif number_of_attacks == 2:
+                    member_attack2_tag = points['defenderTag']
+                    member_attack2_stars = points['stars']
+                    member_attack2_destruction = ['destructionPercentage']
+
+                else:
+                    print('something went wrong, breakpoint: getting attack information from all attacks method')
+
+        else:
+            attacked = False
+
+        war_members.append(
+            WarMember(member['mapPosition'], member['townhallLevel'], member['name'], member['tag'], attacked,
+                      number_of_attacks, star_points, member_attack1_tag, member_attack1_stars,
+                      member_attack1_destruction, member_attack2_tag, member_attack2_stars,
+                      member_attack2_destruction))
+
+    return sorted(war_members, key=lambda x: x.map_pos, reverse=False)
 
 
 def no_atk(war_json):
@@ -681,7 +784,6 @@ def long_war_overview(war_json):
         return 'Well... something went wrong'
 
 
-# may not be able to use this since it needs to return two variables
 def clan_opp_status(war_json):
     if war_json['clan']['tag'] == fullClanTag:
         clan_status = 'clan'
@@ -841,47 +943,3 @@ def date_time_calculator(datef):
     time_remainder = time_remainder[:-2]
 
     return time_remainder
-
-
-# have this return the sorted war member data
-def get_war_member_info(json_data, clan_status):
-    war_members = []
-
-    # gets the info for war members
-    for member in json_data[clan_status]['members']:
-        star_points = 0
-        number_of_attacks = 0
-        member_attack1_tag = ''
-        member_attack1_stars = 0
-        member_attack1_destruction = 0
-        member_attack2_tag = ''
-        member_attack2_stars = 0
-        member_attack2_destruction = 0
-        if 'attacks' in member:
-            attacked = True
-            for points in member['attacks']:
-                star_points += points['stars']
-                number_of_attacks += 1
-                if number_of_attacks == 1:
-                    member_attack1_tag = points['defenderTag']
-                    member_attack1_stars = points['stars']
-                    member_attack1_destruction = ['destructionPercentage']
-
-                elif number_of_attacks == 2:
-                    member_attack2_tag = points['defenderTag']
-                    member_attack2_stars = points['stars']
-                    member_attack2_destruction = ['destructionPercentage']
-
-                else:
-                    print('something went wrong, breakpoint: getting attack information from all attacks method')
-
-        else:
-            attacked = False
-
-        war_members.append(
-            WarMember(member['mapPosition'], member['townhallLevel'], member['name'], member['tag'], attacked,
-                      number_of_attacks, star_points, member_attack1_tag, member_attack1_stars,
-                      member_attack1_destruction, member_attack2_tag, member_attack2_stars,
-                      member_attack2_destruction))
-
-    return sorted(war_members, key=lambda x: x.map_pos, reverse=False)
