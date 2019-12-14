@@ -2,8 +2,9 @@ import discord
 from discord.ext import commands
 from Clash_Responder import *
 
-RazgrizTag = 'RGQ8RGU9'
-TheMightyHeroesTag = 'JJRJGVR0'
+# enter player tag and clan tag here
+player_tag = 'RGQ8RGU9'
+clan_tag = 'JJRJGVR0'
 
 client = commands.Bot(command_prefix='!')
 
@@ -41,39 +42,39 @@ async def alltrooplvl(ctx, player):
 
 @client.command(aliases=['war', 'scoreboard'])
 async def waroverview(ctx):
-    await ctx.send(f'{curr_war_overview(TheMightyHeroesTag)}')
+    await ctx.send(f'{curr_war_overview(clan_tag)}')
 
 
 @client.command()
 async def wartime(ctx):
-    await ctx.send(f'{curr_war_time(TheMightyHeroesTag)}')
+    await ctx.send(f'{curr_war_time(clan_tag)}')
 
 # todo make war members call
 @client.command(aliases=['warmembers', 'warmember', 'warmem', 'warmemstar', 'warmemstars'],description='overview of all members in war', hidden=True)
 async def warmemberstars(ctx):
-    for message_line in all_attack_stars(TheMightyHeroesTag):
+    for message_line in all_attack_stars(clan_tag):
         await ctx.send(f'{message_line}')
 
 
 @client.command(aliases=['noatk'])
 async def noattack(ctx):
-    await ctx.send(f'{curr_no_atk(TheMightyHeroesTag)}')
+    await ctx.send(f'{curr_no_atk(clan_tag)}')
 
 
 @client.command(aliases=['allatk'],description='showing all attacks for every member', hidden=True)
 async def allattacks(ctx):
-    for message_line in all_attacks(TheMightyHeroesTag):
+    for message_line in all_attacks(clan_tag):
         await ctx.send(f'{message_line}')
 
 
 @client.command(aliases=['cwltime'],description='shows time remaining in the current clan war league')
 async def cwlwartime(ctx):
-    await ctx.send(f'{cwl_war_time(TheMightyHeroesTag)}')
+    await ctx.send(f'{cwl_war_time(clan_tag)}')
 
 
 @client.command(aliases=['cwlwar'],description='shows the overview of the current war')
 async def cwlwaroverview(ctx):
-    await ctx.send(f'{cwl_curr_war_overview(TheMightyHeroesTag)}')
+    await ctx.send(f'{cwl_curr_war_overview(clan_tag)}')
 
 
 @client.event
@@ -85,5 +86,5 @@ async def on_member_join(member):
 async def on_member_remove(member):
     print(f'{member} has left the server')
 
-
-client.run('NjQ5MTA3MTU2OTg5Mzc4NTcx.Xd3-7g.YMM0SYwbNfzDdUvYi6ibbh3g_Ck')
+# enter discord client token here
+client.run('')
