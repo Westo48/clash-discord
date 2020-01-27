@@ -4,7 +4,8 @@
       "hero": [
         { "name": "Barbarian King", "thMax": 0, "type": "Dark Elixir" },
         { "name": "Archer Queen", "thMax": 0, "type": "Dark Elixir" },
-        { "name": "Grand Warden", "thMax": 0, "type": "Elixir" }
+        { "name": "Grand Warden", "thMax": 0, "type": "Elixir" },
+        { "name": "Royal Champion", "thMax": 0, "type": "Dark Elixir" }
       ],
       "troop": [
         { "name": "Barbarian", "thMax": 1, "type": "Elixir" },
@@ -20,6 +21,7 @@
         { "name": "Baby Dragon", "thMax": 0, "type": "Elixir" },
         { "name": "Miner", "thMax": 0, "type": "Elixir" },
         { "name": "Electro Dragon", "thMax": 0, "type": "Elixir" },
+        { "name": "Yeti", "thMax": 0, "type": "Elixir" },
         { "name": "Minion", "thMax": 0, "type": "Dark Elixir" },
         { "name": "Hog Rider", "thMax": 0, "type": "Dark Elixir" },
         { "name": "Valkyrie", "thMax": 0, "type": "Dark Elixir" },
@@ -45,14 +47,21 @@
       "machine": [
         { "name": "Wall Wrecker", "thMax": 0, "type": "Gold" },
         { "name": "Battle Blimp", "thMax": 0, "type": "Gold" },
-        { "name": "Stone Slammer", "thMax": 0, "type": "Gold" }
+        { "name": "Stone Slammer", "thMax": 0, "type": "Gold" },
+        { "name": "Siege Barracks", "thMax": 0, "type": "Gold" }
+      ],
+      "storage": [
+        { "name": "Gold Storage", "thMax": 1 },
+        { "name": "Elixir Storage", "thMax": 1 },
+        { "name": "Dark Elixir Storage", "thMax": 0 }
       ]
     },
     "2": {
       "hero": [
         { "name": "Barbarian King", "thMax": 0, "type": "Dark Elixir" },
         { "name": "Archer Queen", "thMax": 0, "type": "Dark Elixir" },
-        { "name": "Grand Warden", "thMax": 0, "type": "Elixir" }
+        { "name": "Grand Warden", "thMax": 0, "type": "Elixir" },
+        { "name": "Royal Champion", "thMax": 0, "type": "Dark Elixir" }
       ],
       "troop": [
         { "name": "Barbarian", "thMax": 1, "type": "Elixir" },
@@ -68,6 +77,7 @@
         { "name": "Baby Dragon", "thMax": 0, "type": "Elixir" },
         { "name": "Miner", "thMax": 0, "type": "Elixir" },
         { "name": "Electro Dragon", "thMax": 0, "type": "Elixir" },
+        { "name": "Yeti", "thMax": 0, "type": "Elixir" },
         { "name": "Minion", "thMax": 0, "type": "Dark Elixir" },
         { "name": "Hog Rider", "thMax": 0, "type": "Dark Elixir" },
         { "name": "Valkyrie", "thMax": 0, "type": "Dark Elixir" },
@@ -93,14 +103,21 @@
       "machine": [
         { "name": "Wall Wrecker", "thMax": 0, "type": "Gold" },
         { "name": "Battle Blimp", "thMax": 0, "type": "Gold" },
-        { "name": "Stone Slammer", "thMax": 0, "type": "Gold" }
+        { "name": "Stone Slammer", "thMax": 0, "type": "Gold" },
+        { "name": "Siege Barracks", "thMax": 0, "type": "Gold" }
+      ],
+      "storage": [
+        { "name": "Gold Storage", "thMax": 1 },
+        { "name": "Elixir Storage", "thMax": 1 },
+        { "name": "Dark Elixir Storage", "thMax": 0 }
       ]
     },
     "3": {
       "hero": [
         { "name": "Barbarian King", "thMax": 0, "type": "Dark Elixir" },
         { "name": "Archer Queen", "thMax": 0, "type": "Dark Elixir" },
-        { "name": "Grand Warden", "thMax": 0, "type": "Elixir" }
+        { "name": "Grand Warden", "thMax": 0, "type": "Elixir" },
+        { "name": "Royal Champion", "thMax": 0, "type": "Dark Elixir" }
       ],
       "troop": [
         { "name": "Barbarian", "thMax": 2, "type": "Elixir" },
@@ -116,6 +133,7 @@
         { "name": "Baby Dragon", "thMax": 0, "type": "Elixir" },
         { "name": "Miner", "thMax": 0, "type": "Elixir" },
         { "name": "Electro Dragon", "thMax": 0, "type": "Elixir" },
+        { "name": "Yeti", "thMax": 0, "type": "Elixir" },
         { "name": "Minion", "thMax": 0, "type": "Dark Elixir" },
         { "name": "Hog Rider", "thMax": 0, "type": "Dark Elixir" },
         { "name": "Valkyrie", "thMax": 0, "type": "Dark Elixir" },
@@ -141,14 +159,21 @@
       "machine": [
         { "name": "Wall Wrecker", "thMax": 0, "type": "Gold" },
         { "name": "Battle Blimp", "thMax": 0, "type": "Gold" },
-        { "name": "Stone Slammer", "thMax": 0, "type": "Gold" }
+        { "name": "Stone Slammer", "thMax": 0, "type": "Gold" },
+        { "name": "Siege Barracks", "thMax": 0, "type": "Gold" }
+      ],
+      "storage": [
+        { "name": "Gold Storage", "thMax": 2 },
+        { "name": "Elixir Storage", "thMax": 2 },
+        { "name": "Dark Elixir Storage", "thMax": 0 }
       ]
     },
     "4": {
       "hero": [
         { "name": "Barbarian King", "thMax": 0, "type": "Dark Elixir" },
         { "name": "Archer Queen", "thMax": 0, "type": "Dark Elixir" },
-        { "name": "Grand Warden", "thMax": 0, "type": "Elixir" }
+        { "name": "Grand Warden", "thMax": 0, "type": "Elixir" },
+        { "name": "Royal Champion", "thMax": 0, "type": "Dark Elixir" }
       ],
       "troop": [
         { "name": "Barbarian", "thMax": 2, "type": "Elixir" },
@@ -164,6 +189,7 @@
         { "name": "Baby Dragon", "thMax": 0, "type": "Elixir" },
         { "name": "Miner", "thMax": 0, "type": "Elixir" },
         { "name": "Electro Dragon", "thMax": 0, "type": "Elixir" },
+        { "name": "Yeti", "thMax": 0, "type": "Elixir" },
         { "name": "Minion", "thMax": 0, "type": "Dark Elixir" },
         { "name": "Hog Rider", "thMax": 0, "type": "Dark Elixir" },
         { "name": "Valkyrie", "thMax": 0, "type": "Dark Elixir" },
@@ -189,14 +215,21 @@
       "machine": [
         { "name": "Wall Wrecker", "thMax": 0, "type": "Gold" },
         { "name": "Battle Blimp", "thMax": 0, "type": "Gold" },
-        { "name": "Stone Slammer", "thMax": 0, "type": "Gold" }
+        { "name": "Stone Slammer", "thMax": 0, "type": "Gold" },
+        { "name": "Siege Barracks", "thMax": 0, "type": "Gold" }
+      ],
+      "storage": [
+        { "name": "Gold Storage", "thMax": 2 },
+        { "name": "Elixir Storage", "thMax": 2 },
+        { "name": "Dark Elixir Storage", "thMax": 0 }
       ]
     },
     "5": {
       "hero": [
         { "name": "Barbarian King", "thMax": 0, "type": "Dark Elixir" },
         { "name": "Archer Queen", "thMax": 0, "type": "Dark Elixir" },
-        { "name": "Grand Warden", "thMax": 0, "type": "Elixir" }
+        { "name": "Grand Warden", "thMax": 0, "type": "Elixir" },
+        { "name": "Royal Champion", "thMax": 0, "type": "Dark Elixir" }
       ],
       "troop": [
         { "name": "Barbarian", "thMax": 3, "type": "Elixir" },
@@ -212,6 +245,7 @@
         { "name": "Baby Dragon", "thMax": 0, "type": "Elixir" },
         { "name": "Miner", "thMax": 0, "type": "Elixir" },
         { "name": "Electro Dragon", "thMax": 0, "type": "Elixir" },
+        { "name": "Yeti", "thMax": 0, "type": "Elixir" },
         { "name": "Minion", "thMax": 0, "type": "Dark Elixir" },
         { "name": "Hog Rider", "thMax": 0, "type": "Dark Elixir" },
         { "name": "Valkyrie", "thMax": 0, "type": "Dark Elixir" },
@@ -237,14 +271,21 @@
       "machine": [
         { "name": "Wall Wrecker", "thMax": 0, "type": "Gold" },
         { "name": "Battle Blimp", "thMax": 0, "type": "Gold" },
-        { "name": "Stone Slammer", "thMax": 0, "type": "Gold" }
+        { "name": "Stone Slammer", "thMax": 0, "type": "Gold" },
+        { "name": "Siege Barracks", "thMax": 0, "type": "Gold" }
+      ],
+      "storage": [
+        { "name": "Gold Storage", "thMax": 2 },
+        { "name": "Elixir Storage", "thMax": 2 },
+        { "name": "Dark Elixir Storage", "thMax": 0 }
       ]
     },
     "6": {
       "hero": [
         { "name": "Barbarian King", "thMax": 0, "type": "Dark Elixir" },
         { "name": "Archer Queen", "thMax": 0, "type": "Dark Elixir" },
-        { "name": "Grand Warden", "thMax": 0, "type": "Elixir" }
+        { "name": "Grand Warden", "thMax": 0, "type": "Elixir" },
+        { "name": "Royal Champion", "thMax": 0, "type": "Dark Elixir" }
       ],
       "troop": [
         { "name": "Barbarian", "thMax": 3, "type": "Elixir" },
@@ -260,6 +301,7 @@
         { "name": "Baby Dragon", "thMax": 0, "type": "Elixir" },
         { "name": "Miner", "thMax": 0, "type": "Elixir" },
         { "name": "Electro Dragon", "thMax": 0, "type": "Elixir" },
+        { "name": "Yeti", "thMax": 0, "type": "Elixir" },
         { "name": "Minion", "thMax": 0, "type": "Dark Elixir" },
         { "name": "Hog Rider", "thMax": 0, "type": "Dark Elixir" },
         { "name": "Valkyrie", "thMax": 0, "type": "Dark Elixir" },
@@ -285,14 +327,21 @@
       "machine": [
         { "name": "Wall Wrecker", "thMax": 0, "type": "Gold" },
         { "name": "Battle Blimp", "thMax": 0, "type": "Gold" },
-        { "name": "Stone Slammer", "thMax": 0, "type": "Gold" }
+        { "name": "Stone Slammer", "thMax": 0, "type": "Gold" },
+        { "name": "Siege Barracks", "thMax": 0, "type": "Gold" }
+      ],
+      "storage": [
+        { "name": "Gold Storage", "thMax": 2 },
+        { "name": "Elixir Storage", "thMax": 2 },
+        { "name": "Dark Elixir Storage", "thMax": 0 }
       ]
     },
     "7": {
       "hero": [
         { "name": "Barbarian King", "thMax": 5, "type": "Dark Elixir" },
         { "name": "Archer Queen", "thMax": 0, "type": "Dark Elixir" },
-        { "name": "Grand Warden", "thMax": 0, "type": "Elixir" }
+        { "name": "Grand Warden", "thMax": 0, "type": "Elixir" },
+        { "name": "Royal Champion", "thMax": 0, "type": "Dark Elixir" }
       ],
       "troop": [
         { "name": "Barbarian", "thMax": 4, "type": "Elixir" },
@@ -308,6 +357,7 @@
         { "name": "Baby Dragon", "thMax": 0, "type": "Elixir" },
         { "name": "Miner", "thMax": 0, "type": "Elixir" },
         { "name": "Electro Dragon", "thMax": 0, "type": "Elixir" },
+        { "name": "Yeti", "thMax": 0, "type": "Elixir" },
         { "name": "Minion", "thMax": 2, "type": "Dark Elixir" },
         { "name": "Hog Rider", "thMax": 2, "type": "Dark Elixir" },
         { "name": "Valkyrie", "thMax": 0, "type": "Dark Elixir" },
@@ -333,14 +383,21 @@
       "machine": [
         { "name": "Wall Wrecker", "thMax": 0, "type": "Gold" },
         { "name": "Battle Blimp", "thMax": 0, "type": "Gold" },
-        { "name": "Stone Slammer", "thMax": 0, "type": "Gold" }
+        { "name": "Stone Slammer", "thMax": 0, "type": "Gold" },
+        { "name": "Siege Barracks", "thMax": 0, "type": "Gold" }
+      ],
+      "storage": [
+        { "name": "Gold Storage", "thMax": 2 },
+        { "name": "Elixir Storage", "thMax": 2 },
+        { "name": "Dark Elixir Storage", "thMax": 1 }
       ]
     },
     "8": {
       "hero": [
         { "name": "Barbarian King", "thMax": 10, "type": "Dark Elixir" },
         { "name": "Archer Queen", "thMax": 0, "type": "Dark Elixir" },
-        { "name": "Grand Warden", "thMax": 0, "type": "Elixir" }
+        { "name": "Grand Warden", "thMax": 0, "type": "Elixir" },
+        { "name": "Royal Champion", "thMax": 0, "type": "Dark Elixir" }
       ],
       "troop": [
         { "name": "Barbarian", "thMax": 5, "type": "Elixir" },
@@ -356,6 +413,7 @@
         { "name": "Baby Dragon", "thMax": 0, "type": "Elixir" },
         { "name": "Miner", "thMax": 0, "type": "Elixir" },
         { "name": "Electro Dragon", "thMax": 0, "type": "Elixir" },
+        { "name": "Yeti", "thMax": 0, "type": "Elixir" },
         { "name": "Minion", "thMax": 4, "type": "Dark Elixir" },
         { "name": "Hog Rider", "thMax": 4, "type": "Dark Elixir" },
         { "name": "Valkyrie", "thMax": 2, "type": "Dark Elixir" },
@@ -381,14 +439,21 @@
       "machine": [
         { "name": "Wall Wrecker", "thMax": 0, "type": "Gold" },
         { "name": "Battle Blimp", "thMax": 0, "type": "Gold" },
-        { "name": "Stone Slammer", "thMax": 0, "type": "Gold" }
+        { "name": "Stone Slammer", "thMax": 0, "type": "Gold" },
+        { "name": "Siege Barracks", "thMax": 0, "type": "Gold" }
+      ],
+      "storage": [
+        { "name": "Gold Storage", "thMax": 3 },
+        { "name": "Elixir Storage", "thMax": 3 },
+        { "name": "Dark Elixir Storage", "thMax": 1 }
       ]
     },
     "9": {
       "hero": [
         { "name": "Barbarian King", "thMax": 30, "type": "Dark Elixir" },
         { "name": "Archer Queen", "thMax": 30, "type": "Dark Elixir" },
-        { "name": "Grand Warden", "thMax": 0, "type": "Elixir" }
+        { "name": "Grand Warden", "thMax": 0, "type": "Elixir" },
+        { "name": "Royal Champion", "thMax": 0, "type": "Dark Elixir" }
       ],
       "troop": [
         { "name": "Barbarian", "thMax": 6, "type": "Elixir" },
@@ -404,6 +469,7 @@
         { "name": "Baby Dragon", "thMax": 2, "type": "Elixir" },
         { "name": "Miner", "thMax": 0, "type": "Elixir" },
         { "name": "Electro Dragon", "thMax": 0, "type": "Elixir" },
+        { "name": "Yeti", "thMax": 0, "type": "Elixir" },
         { "name": "Minion", "thMax": 5, "type": "Dark Elixir" },
         { "name": "Hog Rider", "thMax": 5, "type": "Dark Elixir" },
         { "name": "Valkyrie", "thMax": 4, "type": "Dark Elixir" },
@@ -429,14 +495,21 @@
       "machine": [
         { "name": "Wall Wrecker", "thMax": 0, "type": "Gold" },
         { "name": "Battle Blimp", "thMax": 0, "type": "Gold" },
-        { "name": "Stone Slammer", "thMax": 0, "type": "Gold" }
+        { "name": "Stone Slammer", "thMax": 0, "type": "Gold" },
+        { "name": "Siege Barracks", "thMax": 0, "type": "Gold" }
+      ],
+      "storage": [
+        { "name": "Gold Storage", "thMax": 4 },
+        { "name": "Elixir Storage", "thMax": 4 },
+        { "name": "Dark Elixir Storage", "thMax": 1 }
       ]
     },
     "10": {
       "hero": [
         { "name": "Barbarian King", "thMax": 40, "type": "Dark Elixir" },
         { "name": "Archer Queen", "thMax": 40, "type": "Dark Elixir" },
-        { "name": "Grand Warden", "thMax": 0, "type": "Elixir" }
+        { "name": "Grand Warden", "thMax": 0, "type": "Elixir" },
+        { "name": "Royal Champion", "thMax": 0, "type": "Dark Elixir" }
       ],
       "troop": [
         { "name": "Barbarian", "thMax": 7, "type": "Elixir" },
@@ -452,6 +525,7 @@
         { "name": "Baby Dragon", "thMax": 4, "type": "Elixir" },
         { "name": "Miner", "thMax": 3, "type": "Elixir" },
         { "name": "Electro Dragon", "thMax": 0, "type": "Elixir" },
+        { "name": "Yeti", "thMax": 0, "type": "Elixir" },
         { "name": "Minion", "thMax": 6, "type": "Dark Elixir" },
         { "name": "Hog Rider", "thMax": 6, "type": "Dark Elixir" },
         { "name": "Valkyrie", "thMax": 5, "type": "Dark Elixir" },
@@ -477,14 +551,21 @@
       "machine": [
         { "name": "Wall Wrecker", "thMax": 0, "type": "Gold" },
         { "name": "Battle Blimp", "thMax": 0, "type": "Gold" },
-        { "name": "Stone Slammer", "thMax": 0, "type": "Gold" }
+        { "name": "Stone Slammer", "thMax": 0, "type": "Gold" },
+        { "name": "Siege Barracks", "thMax": 0, "type": "Gold" }
+      ],
+      "storage": [
+        { "name": "Gold Storage", "thMax": 4 },
+        { "name": "Elixir Storage", "thMax": 4 },
+        { "name": "Dark Elixir Storage", "thMax": 1 }
       ]
     },
     "11": {
       "hero": [
         { "name": "Barbarian King", "thMax": 50, "type": "Dark Elixir" },
         { "name": "Archer Queen", "thMax": 50, "type": "Dark Elixir" },
-        { "name": "Grand Warden", "thMax": 20, "type": "Elixir" }
+        { "name": "Grand Warden", "thMax": 20, "type": "Elixir" },
+        { "name": "Royal Champion", "thMax": 0, "type": "Dark Elixir" }
       ],
       "troop": [
         { "name": "Barbarian", "thMax": 8, "type": "Elixir" },
@@ -500,6 +581,7 @@
         { "name": "Baby Dragon", "thMax": 5, "type": "Elixir" },
         { "name": "Miner", "thMax": 5, "type": "Elixir" },
         { "name": "Electro Dragon", "thMax": 2, "type": "Elixir" },
+        { "name": "Yeti", "thMax": 0, "type": "Elixir" },
         { "name": "Minion", "thMax": 7, "type": "Dark Elixir" },
         { "name": "Hog Rider", "thMax": 7, "type": "Dark Elixir" },
         { "name": "Valkyrie", "thMax": 6, "type": "Dark Elixir" },
@@ -525,14 +607,21 @@
       "machine": [
         { "name": "Wall Wrecker", "thMax": 0, "type": "Gold" },
         { "name": "Battle Blimp", "thMax": 0, "type": "Gold" },
-        { "name": "Stone Slammer", "thMax": 0, "type": "Gold" }
+        { "name": "Stone Slammer", "thMax": 0, "type": "Gold" },
+        { "name": "Siege Barracks", "thMax": 0, "type": "Gold" }
+      ],
+      "storage": [
+        { "name": "Gold Storage", "thMax": 4 },
+        { "name": "Elixir Storage", "thMax": 4 },
+        { "name": "Dark Elixir Storage", "thMax": 1 }
       ]
     },
     "12": {
       "hero": [
         { "name": "Barbarian King", "thMax": 65, "type": "Dark Elixir" },
         { "name": "Archer Queen", "thMax": 65, "type": "Dark Elixir" },
-        { "name": "Grand Warden", "thMax": 40, "type": "Elixir" }
+        { "name": "Grand Warden", "thMax": 40, "type": "Elixir" },
+        { "name": "Royal Champion", "thMax": 0, "type": "Dark Elixir" }
       ],
       "troop": [
         { "name": "Barbarian", "thMax": 8, "type": "Elixir" },
@@ -548,6 +637,7 @@
         { "name": "Baby Dragon", "thMax": 6, "type": "Elixir" },
         { "name": "Miner", "thMax": 6, "type": "Elixir" },
         { "name": "Electro Dragon", "thMax": 3, "type": "Elixir" },
+        { "name": "Yeti", "thMax": 2, "type": "Elixir" },
         { "name": "Minion", "thMax": 8, "type": "Dark Elixir" },
         { "name": "Hog Rider", "thMax": 9, "type": "Dark Elixir" },
         { "name": "Valkyrie", "thMax": 7, "type": "Dark Elixir" },
@@ -573,7 +663,69 @@
       "machine": [
         { "name": "Wall Wrecker", "thMax": 3, "type": "Gold" },
         { "name": "Battle Blimp", "thMax": 3, "type": "Gold" },
-        { "name": "Stone Slammer", "thMax": 3, "type": "Gold" }
+        { "name": "Stone Slammer", "thMax": 3, "type": "Gold" },
+        { "name": "Siege Barracks", "thMax": 0, "type": "Gold" }
+      ],
+      "storage": [
+        { "name": "Gold Storage", "thMax": 4 },
+        { "name": "Elixir Storage", "thMax": 4 },
+        { "name": "Dark Elixir Storage", "thMax": 1 }
+      ]
+    },
+    "13": {
+      "hero": [
+        { "name": "Barbarian King", "thMax": 70, "type": "Dark Elixir" },
+        { "name": "Archer Queen", "thMax": 70, "type": "Dark Elixir" },
+        { "name": "Grand Warden", "thMax": 50, "type": "Elixir" },
+        { "name": "Royal Champion", "thMax": 20, "type": "Dark Elixir" }
+      ],
+      "troop": [
+        { "name": "Barbarian", "thMax": 8, "type": "Elixir" },
+        { "name": "Archer", "thMax": 8, "type": "Elixir" },
+        { "name": "Giant", "thMax": 9, "type": "Elixir" },
+        { "name": "Goblin", "thMax": 7, "type": "Elixir" },
+        { "name": "Wall Breaker", "thMax": 9, "type": "Elixir" },
+        { "name": "Balloon", "thMax": 9, "type": "Elixir" },
+        { "name": "Wizard", "thMax": 9, "type": "Elixir" },
+        { "name": "Healer", "thMax": 6, "type": "Elixir" },
+        { "name": "Dragon", "thMax": 8, "type": "Elixir" },
+        { "name": "Pekka", "thMax": 9, "type": "Elixir" },
+        { "name": "Baby Dragon", "thMax": 6, "type": "Elixir" },
+        { "name": "Miner", "thMax": 6, "type": "Elixir" },
+        { "name": "Electro Dragon", "thMax": 4, "type": "Elixir" },
+        { "name": "Yeti", "thMax": 3, "type": "Elixir" },
+        { "name": "Minion", "thMax": 8, "type": "Dark Elixir" },
+        { "name": "Hog Rider", "thMax": 10, "type": "Dark Elixir" },
+        { "name": "Valkyrie", "thMax": 7, "type": "Dark Elixir" },
+        { "name": "Golem", "thMax": 9, "type": "Dark Elixir" },
+        { "name": "Witch", "thMax": 5, "type": "Dark Elixir" },
+        { "name": "Lava Hound", "thMax": 5, "type": "Dark Elixir" },
+        { "name": "Bowler", "thMax": 5, "type": "Dark Elixir" },
+        { "name": "Ice Golem", "thMax": 5, "type": "Dark Elixir" }
+      ],
+      "spell": [
+        { "name": "Lightning", "thMax": 7, "type": "Elixir" },
+        { "name": "Healing", "thMax": 8, "type": "Elixir" },
+        { "name": "Rage", "thMax": 6, "type": "Elixir" },
+        { "name": "Jump", "thMax": 4, "type": "Elixir" },
+        { "name": "Freeze", "thMax": 7, "type": "Elixir" },
+        { "name": "Clone", "thMax": 5, "type": "Elixir" },
+        { "name": "Poison", "thMax": 6, "type": "Dark Elixir" },
+        { "name": "Earthquake", "thMax": 5, "type": "Dark Elixir" },
+        { "name": "Haste", "thMax": 5, "type": "Dark Elixir" },
+        { "name": "Skeleton", "thMax": 7, "type": "Dark Elixir" },
+        { "name": "Bat", "thMax": 5, "type": "Dark Elixir" }
+      ],
+      "machine": [
+        { "name": "Wall Wrecker", "thMax": 3, "type": "Gold" },
+        { "name": "Battle Blimp", "thMax": 3, "type": "Gold" },
+        { "name": "Stone Slammer", "thMax": 3, "type": "Gold" },
+        { "name": "Siege Barracks", "thMax": 4, "type": "Gold" }
+      ],
+      "storage": [
+        { "name": "Gold Storage", "thMax": 4 },
+        { "name": "Elixir Storage", "thMax": 4 },
+        { "name": "Dark Elixir Storage", "thMax": 1 }
       ]
     }
   }
