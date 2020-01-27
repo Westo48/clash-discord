@@ -308,6 +308,7 @@ def user_troop_levels(player_name, troop_name):
 
 
 def donation_checker(player_name, troop_name):
+    player_name = re.sub('[-]', ' ', player_name)
     player = get_user_troop_level(player_name, troop_name)
     # if they can donate the max for that specific troop then send it through that they can donate the max
     if player.max_for_troop <= (player.player_troop_lvl + 2):
@@ -348,7 +349,7 @@ def donation_checker(player_name, troop_name):
 
 def war_weight(THlvl, amount):
     # ! change this to Weston user for importing to desktop comp
-    with open(r'C:\Users\westo\Documents\My Documents\Software Development\Python\ClashDiscord\Troop_Data.json') as troop_file:
+    with open(r'C:\Users\Weston\PycharmProjects\ClashDiscord\Troop_Data.json') as troop_file:
         troop_data = json.load(troop_file)
     
     storage_num = int(troop_data['th'][f'{THlvl}']['storage'][0]['thMax'])
@@ -451,7 +452,7 @@ def search_clans():
 # references
 
 def get_user_troop_level(player_name, troop_name):
-    with open(r'C:\Users\westo\Documents\My Documents\Software Development\Python\ClashDiscord\Troop_Data.json') as troop_file:
+    with open(r'C:\Users\Weston\PycharmProjects\ClashDiscord\Troop_Data.json') as troop_file:
         troop_data = json.load(troop_file)
 
     player_name = re.sub('[-]', ' ', player_name)
