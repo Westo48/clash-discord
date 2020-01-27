@@ -26,6 +26,21 @@ class WarMember:
         pass
 
 
+class PlayerTroop:
+    def __init__(self, player_tag, player_name, troop_name, troop_display_name, player_troop_lvl, player_th, max_for_th, max_for_troop):
+        self.player_tag = player_tag
+        self.player_name = player_name
+        self.troop_name = troop_name
+        self.troop_display_name = troop_display_name
+        self.player_troop_lvl = player_troop_lvl
+        self.player_th = player_th
+        self.max_for_th = max_for_th
+        self.max_for_troop = max_for_troop
+
+    def get(self, param):
+        pass
+
+
 RazgrizTag = 'RGQ8RGU9'
 TheMightyHeroesTag = 'JJRJGVR0'
 fullClanTag = '#JJRJGVR0'
@@ -37,25 +52,50 @@ header = {
 
 # Clan War League calls
 
+# todo make this an overview of the entire cwl, not just the current war
+# ! cwl_overview is not quite finished
+def cwl_overview(clan_tag):
+    cwl_group_json = json_response(clan_tag, 'cwlGroup')
+    cwl_state = cwl_group_json['state']
+    clan_stars = 0
+    ended_rounds = 0
+    clan_wins = 0
+    clan_losses = 0
+    clan_ties = 0
+    round_list = get_cwl_rounds(cwl_group_json)
+    for cwl_round in round_list:
+        if not cwl_round[0] == '#0':
+            # checking if the specified round is not in preparation
+            cwl_war_json = json_response(cwl_round[0][1:], 'cwlWar')
+            if not cwl_war_json['state'] == 'preparation':
+                # check each war in the current round for TheMightyHeroes in 'clan' or 'opponent'
+                for cwl_war in cwl_round:
+                    curr_war_json = json_response(cwl_war[1:], 'cwlWar')
+                    # if this is the war that TheMightyHeroes are in or were in...
+                    if curr_war_json['clan']['tag'] == fullClanTag or curr_war_json['opponent']['tag'] == fullClanTag:
+                        # sets the clan and opponent accordingly (clan or opp status = 'clan' or 'opponent')
+                        clan_status, opp_status = clan_opp_status(curr_war_json)
+                        clan_stars += curr_war_json[clan_status]['stars']
+                        # showing how many rounds have ended
+                        # keeping score for win/lose/tie only run this if clan is not currently in war (do not add current war to win/lose/tie)
+                        if not curr_war_json['state'] == 'inWar':
+                            ended_rounds += 1
+                            win_lose_tie = calculate_win_lose(curr_war_json, clan_status, opp_status)
+                            if win_lose_tie == 'won!':
+                                clan_wins += 1
+                            elif win_lose_tie == 'lost.':
+                                clan_losses += 1
+                            else:
+                                clan_ties += 1
+
+    return f'Out of {ended_rounds} rounds you have won {clan_wins}, lost {clan_losses}, and tied {clan_ties} rounds. TheMightyHeroes have earned {clan_stars} stars.'
+
+
 def cwl_war_time(clan_tag):
-    cwl_war_tag = get_curr_cwl_war(clan_tag)
+    cwl_group_json = json_response(clan_tag, 'cwlGroup')
+    cwl_war_tag = get_curr_cwl_war(cwl_group_json)
     cwl_war_json = json_response(cwl_war_tag[1:], 'cwlWar')
     return war_time(cwl_war_json)
-
-
-def cwl_overview(clan_tag):
-    # this returns the tag for getting json info
-    cwl_war_tag = get_curr_cwl_war(clan_tag)
-    cwl_war_json = json_response(cwl_war_tag[1:], 'cwlWar')
-
-    # figure out if the TheMightyHeroes is clan or opponent
-
-    clan_status, opp_status = clan_opp_status(cwl_war_json)
-
-    opponent_name = cwl_war_json[opp_status]['name']
-    war_end_time = time_string_changer(cwl_war_json['endTime'])
-
-    return f'You are currently in war against {opponent_name}'
 
 
 def cwl_curr_war_overview(clan_tag):
@@ -260,55 +300,60 @@ def all_attacks(clan_tag):
 
 # player calls
 
+# todo change this to return values that can be used by donation_checker
 def user_troop_levels(player_name, troop_name):
-    with open(r'C:\Users\Weston\PycharmProjects\ClashDiscord\Troop_Data.json') as troop_file:
+    player = get_user_troop_level(player_name, troop_name)
+
+    return f'{player.player_name}\'s {player.troop_display_name} is lvl {player.player_troop_lvl}, max for TH {player.player_th} is {player.max_for_th}'
+
+
+def donation_checker(player_name, troop_name):
+    player = get_user_troop_level(player_name, troop_name)
+    # if they can donate the max for that specific troop then send it through that they can donate the max
+    if player.max_for_troop <= (player.player_troop_lvl + 2):
+        return f'{player.player_name} can donate max {player.troop_name} which is lvl {player.max_for_troop}'
+
+    clan_members_json = json_response(TheMightyHeroesTag, 'members')
+    member_name_list = []
+    player_troop_list = []
+    donor_list = []
+    donor_string = ''
+    for i in range(0, 10):
+        member_name = clan_members_json['items'][i]['name']
+        member_name_list.append(member_name)
+    # filling the player troop list with the PlayerTroop objects
+    for member in member_name_list:
+        player_troop_list.append(get_user_troop_level(member, troop_name))
+
+    troop_max = max(member.player_troop_lvl for member in player_troop_list)
+    # set each member that can donate into the donor_list
+    for member in player_troop_list:
+        if member.player_troop_lvl >= troop_max:
+            donor_list.append(member)
+
+    if len(donor_list) == 1:
+        if player.max_for_troop <= (troop_max + 2):
+            return f'{donor_list[0].player_name} can donate max {donor_list[0].troop_display_name} which is level {min(troop_max + 2, player.max_for_troop)} '
+        return f'{donor_list[0].player_name} can donate level {min(troop_max + 2, player.max_for_troop)} {donor_list[0].troop_display_name}'
+
+    for donor in donor_list:
+        donor_string += f'{donor.player_name}, '
+
+    donor_string = donor_string[:-2]
+    if player.max_for_troop <= (troop_max + 2):
+        return f'{donor_string} are able to donate max {player.troop_display_name} which is level {min(troop_max + 2, player.max_for_troop)}'
+
+    return f'{donor_string} are able to donate level {min(troop_max + 2, player.max_for_troop)} {player.troop_display_name}'
+
+
+def war_weight(THlvl, amount):
+    # ! change this to Weston user for importing to desktop comp
+    with open(r'C:\Users\westo\Documents\My Documents\Software Development\Python\ClashDiscord\Troop_Data.json') as troop_file:
         troop_data = json.load(troop_file)
-
-    player_name = re.sub('[-]', ' ', player_name)
-    members_json = json_response(TheMightyHeroesTag, 'members')
-    player_tag = ''
-    max_for_th = ''
-    player_troop_lvl = ''
-
-    # getting the player tag in the list of members in the clan
-    for mem in members_json['items']:
-        if mem['name'].lower() == player_name.lower():
-            player_name = mem['name']
-            player_tag = mem['tag']
-
-    if player_tag == '':
-        return 'something went wrong with the player tag'
-
-    player_tag = player_tag[1:]
-    player_json = json_response(player_tag, 'players')
-    player_th = player_json['townHallLevel']
-
-    for troop in player_json['troops']:
-        if troop['name'].lower() == troop_name.lower():
-            player_troop_lvl = troop['level']
-
-    for hero in player_json['heroes']:
-        if hero['name'].lower() == troop_name.lower():
-            player_troop_lvl = hero['level']
-
-    for spell in player_json['spells']:
-        full_spell_name = f'{troop_name} Spell'
-        if spell['name'].lower() == full_spell_name.lower():
-            player_troop_lvl = spell['level']
-
-    for item in troop_data['th'][f'{player_th}']:
-        for sub_item in troop_data['th'][f'{player_th}'][item]:
-            if sub_item['name'].lower() == troop_name.lower():
-                troop_name = sub_item['name']
-                max_for_th = sub_item['thMax']
-
-    if player_troop_lvl == '':
-        return 'something went wrong getting the player\'s troop lvl'
-
-    if max_for_th == '':
-        return 'something went wrong getting the troop'
-
-    return f'{player_name}\'s {troop_name} is lvl {player_troop_lvl}, max for TH {player_th} is {max_for_th}'
+    
+    storage_num = int(troop_data['th'][f'{THlvl}']['storage'][0]['thMax'])
+    weight = (storage_num + 1) * int(amount)
+    return weight
 
 
 # show every given troop, the max for their TH, and the absolute max
@@ -404,6 +449,79 @@ def search_clans():
 
 
 # references
+
+def get_user_troop_level(player_name, troop_name):
+    with open(r'C:\Users\westo\Documents\My Documents\Software Development\Python\ClashDiscord\Troop_Data.json') as troop_file:
+        troop_data = json.load(troop_file)
+
+    player_name = re.sub('[-]', ' ', player_name)
+    members_json = json_response(TheMightyHeroesTag, 'members')
+    player_tag = ''
+    max_for_th = ''
+    player_troop_lvl = ''
+    max_for_troop = ''
+
+    # getting the player tag in the list of members in the clan
+    for mem in members_json['items']:
+        if mem['name'].lower() == player_name.lower():
+            player_name = mem['name']
+            player_tag = mem['tag']
+
+    if player_tag == '':
+        return 'something went wrong with the player tag'
+
+    player_tag = player_tag[1:]
+    player_json = json_response(player_tag, 'players')
+    player_th = player_json['townHallLevel']
+    troop_display_name = ''
+    found = False
+
+    if not found:
+        for troop in player_json['troops']:
+            if troop['name'].lower() == troop_name.lower():
+                player_troop_lvl = troop['level']
+                troop_display_name = troop['name']
+                max_for_troop = troop['maxLevel']
+                found = True
+                break
+
+    if not found:
+        for hero in player_json['heroes']:
+            if hero['name'].lower() == troop_name.lower():
+                player_troop_lvl = hero['level']
+                troop_display_name = hero['name']
+                max_for_troop = hero['maxLevel']
+                found = True
+                break
+
+    if not found:
+        for spell in player_json['spells']:
+            full_spell_name = f'{troop_name} Spell'
+            if spell['name'].lower() == full_spell_name.lower():
+                player_troop_lvl = spell['level']
+                troop_display_name = spell['name']
+                max_for_troop = spell['maxLevel']
+                found = True
+                break
+
+    for item in troop_data['th'][f'{player_th}']:
+        for sub_item in troop_data['th'][f'{player_th}'][item]:
+            if sub_item['name'].lower() == troop_name.lower():
+                troop_name = sub_item['name']
+                max_for_th = sub_item['thMax']
+
+    if player_troop_lvl == '':
+        return 'something went wrong getting the player\'s troop lvl'
+
+    if max_for_th == '':
+        return 'something went wrong getting the troop'
+
+    player = PlayerTroop(player_tag, player_name, troop_name, troop_display_name, player_troop_lvl, player_th, max_for_th, max_for_troop)
+
+    return player
+
+    # return f'{player_name}\'s {troop_display_name} is lvl {player_troop_lvl}, max for TH {player_th} is {max_for_th}'
+
 
 def war_overview(war_json):
     if check_war_state(war_json) == 'preparation':
@@ -831,30 +949,38 @@ def json_response(tag, responder):
     return response.json()
 
 
-# either use the json data or the clan tag
 def check_war_state(json_data):
     return json_data['state']
 
 
-def get_curr_cwl_war(clan_tag):
-    cwl_group_json = json_response(clan_tag, 'cwlGroup')
-    cwl_group_state = cwl_group_json['state']
-    round_list = []
-    for cwl_round in cwl_group_json['rounds']:
-        war_tag_list = []
-        for war_tag in cwl_round['warTags']:
-            war_tag_list.append(war_tag)
-        round_list.append(war_tag_list)
+# todo get this to work for preparation or ended
+def get_curr_cwl_war(cwl_group_json):
+    cwl_state = cwl_group_json['state']
+    # round_list is a list containing all the lists of war tags
+
+    round_list = get_cwl_rounds(cwl_group_json)
+    # goes through every round to find the current war
     for cwl_round in reversed(round_list):
         if not cwl_round[0] == '#0':
+            # checking if the specified round is the current round
             cwl_war_json = json_response(cwl_round[0][1:], 'cwlWar')
-            if cwl_war_json['state'] == 'inWar':
+            if cwl_war_json['state'] == cwl_state:
                 # check each war in the current round for TheMightyHeroes in 'clan' or 'opponent'
                 for cwl_war in cwl_round:
                     curr_war_json = json_response(cwl_war[1:], 'cwlWar')
                     if curr_war_json['clan']['tag'] == fullClanTag or curr_war_json['opponent']['tag'] == fullClanTag:
                         return cwl_war
     return 'something went wrong. Breakpoint: get_curr_cwl_war'
+
+
+def get_cwl_rounds(cwl_group_json):
+    cwl_rounds = []
+    for cwl_round in cwl_group_json['rounds']:
+        war_tag_list = []
+        for war_tag in cwl_round['warTags']:
+            war_tag_list.append(war_tag)
+        cwl_rounds.append(war_tag_list)
+    return cwl_rounds
 
 
 def get_response():
