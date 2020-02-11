@@ -83,7 +83,7 @@ def all_attacks_response():
 
 def cwl_war_response():
     cwl_group_object = cwl_group(heroes_tag, header)
-    if cwl_group_object.state == 'warEnded':
+    if cwl_group_object.state == 'ended':
         return 'Clan Wars have ended.'
 
     cwl_war_object = find_cwl_war(cwl_group_object, heroes_tag)
@@ -102,7 +102,7 @@ def cwl_war_response():
 
 def cwl_no_attack_response():
     cwl_group_object = cwl_group(heroes_tag, header)
-    if cwl_group_object.state == 'warEnded':
+    if cwl_group_object.state == 'ended':
         return 'Clan Wars have ended.'
     elif cwl_group_object.state == 'notInWar':
         return 'You are not in war.'
@@ -134,7 +134,7 @@ def cwl_no_attack_response():
 
 def cwl_all_attacks_response():
     cwl_group_object = cwl_group(heroes_tag, header)
-    if cwl_group_object.state == 'warEnded':
+    if cwl_group_object.state == 'ended':
         return 'Clan Wars have ended.'
     elif cwl_group_object.state == 'notInWar':
         return 'You are not in war.'
