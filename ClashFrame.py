@@ -83,8 +83,8 @@ def cwl_group(clan_tag, header):
     cwl_group_json = json_response(clan_tag, 'cwlGroup', header)
     clans = []
     # gets a list of CWLClan class objects
-    for clan in cwl_group_json['clans']:
-        clans.append(CWLClan(clan['tag'], clan['name'], clan['clanLevel']))
+    for item in cwl_group_json['clans']:
+        clans.append(CWLClan(item['tag'], item['name'], item['clanLevel']))
 
     # rounds is a list of war_tags list which is a list of war tags in a specified round
     rounds = []
