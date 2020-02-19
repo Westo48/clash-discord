@@ -50,7 +50,10 @@ def no_attack_response():
                 no_attack_string += f'{member.name}, '
             # removes the last 2 characters (comma and space) of the string
             no_attack_string = no_attack_string[:-2]
-            no_attack_string += ' has not attacked.'
+            if len(no_attack_list) == 1:
+                no_attack_string += ' has not attacked.'
+            else:
+                no_attack_string += ' have not attacked.'
     elif war_object.state == 'warEnded':
         for member in war_object.clan_members:
             if len(member.attacks) == 0:
