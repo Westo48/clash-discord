@@ -42,14 +42,16 @@ def get(war_tag, clan_tag, header):
         clan_members = []
         for member in war_json[clan_status]['members']:
             member_attacks = []
+            stars = 0
 
             if 'attacks' in member:
                 for member_attack in member['attacks']:
+                    stars += member_attack['stars']
                     member_attacks.append(CWLWarMemberAttack(
                         member_attack['attackerTag'], member_attack['defenderTag'], member_attack['stars'], member_attack['destructionPercentage'], member_attack['order']))
             # adding the current member to the list of clan members (including the member attacks)
             clan_members.append(CWLWarMember(
-                member['tag'], member['name'], member['townhallLevel'], member['mapPosition'], member_attacks))
+                member['tag'], member['name'], member['townhallLevel'], member['mapPosition'], stars, member_attacks))
         # sorting clan members by map position
         clan_members = sorted(
             clan_members, key=lambda x: x.map_position, reverse=False)
@@ -61,14 +63,16 @@ def get(war_tag, clan_tag, header):
         opp_members = []
         for member in war_json[opp_status]['members']:
             member_attacks = []
+            stars = 0
 
             if 'attacks' in member:
                 for member_attack in member['attacks']:
+                    stars += member_attack['stars']
                     member_attacks.append(CWLWarMemberAttack(
                         member_attack['attackerTag'], member_attack['defenderTag'], member_attack['stars'], member_attack['destructionPercentage'], member_attack['order']))
             # adding the current member to the list of opp members (including the member attacks)
             opp_members.append(CWLWarMember(
-                member['tag'], member['name'], member['townhallLevel'], member['mapPosition'], member_attacks))
+                member['tag'], member['name'], member['townhallLevel'], member['mapPosition'], stars, member_attacks))
         # sorting opp members by map position
         opp_members = sorted(
             opp_members, key=lambda x: x.map_position, reverse=False)
