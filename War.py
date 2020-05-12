@@ -205,7 +205,7 @@ def get(clan_tag, header):
 
             if 'attacks' in member:
                 for member_attack in member['attacks']:
-                    stars += member_attack.stars
+                    stars += member_attack['stars']
                     member_attacks.append(WarMemberAttack(
                         member_attack['attackerTag'], member_attack['defenderTag'], member_attack['stars'], member_attack['destructionPercentage'], member_attack['order']))
             # adding the current member to the list of clan members (including the member attacks)
@@ -225,7 +225,7 @@ def get(clan_tag, header):
 
             if 'attacks' in member:
                 for member_attack in member['attacks']:
-                    stars += member_attack.stars
+                    stars += member_attack['stars']
                     member_attacks.append(WarMemberAttack(
                         member_attack['attackerTag'], member_attack['defenderTag'], member_attack['stars'], member_attack['destructionPercentage'], member_attack['order']))
             # adding the current member to the list of opp members (including the member attacks)
