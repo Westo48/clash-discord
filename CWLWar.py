@@ -4,8 +4,6 @@ import War
 from War import clan_opp_status
 
 
-# should also have war_time
-# ? either super(CWLWar, self).__init__ or super().__init__
 class CWLWar(War.War):
     def __init__(self, tag, state, team_size, preparation_start_time, start_time, end_time, clan, opponent):
         super(CWLWar, self).__init__(state, team_size,
@@ -13,34 +11,29 @@ class CWLWar(War.War):
         self.tag = tag
 
 
-# ? either super(CWLWarClan, self).__init__ or super().__init__
 class CWLWarClan(War.WarClan):
     def __init__(self, status, tag, name, lvl, attack_count, stars, destruction_percentage, members):
         War.WarClan.__init__(self, status, tag, name, lvl,
                              attack_count, stars, destruction_percentage, members)
 
 
-# ? either super(CWLWarMember, self).__init__ or super().__init__
 class CWLWarMember(War.WarMember):
     def __init__(self, tag, name, th_lvl, map_position, stars, attacks):
         War.WarMember.__init__(self, tag, name, th_lvl,
                                map_position, stars, attacks)
 
 
-# ? either super(CWLWarAttack, self).__init__ or super().__init__
 class CWLWarMemberAttack(War.WarMemberAttack):
     def __init__(self, attacker_tag, defender_tag, stars, destruction_percent, order):
         War.WarMemberAttack.__init__(
             self, attacker_tag, defender_tag, stars, destruction_percent, order)
 
 
-# todo finish
 # getting the requested CWLWar data
 def get(war_tag, clan_tag, header):
     war_json = json_response(war_tag, header)
     if war_json['state'] == 'notInWar':
         return CWLWar(war_tag, war_json['state'], 0, 0, 0, 0, 0, 0)
-    # todo test this for war states
     else:
         # find whether the clan in clan_tag is clan or opponent in the war_json
         clan_status, opp_status = clan_opp_status(war_json, clan_tag)
