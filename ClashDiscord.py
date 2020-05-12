@@ -7,6 +7,7 @@ from ClashResponder import *
 client = commands.Bot(command_prefix='!')
 raz_tag = '#RGQ8RGU9'
 heroes_tag = '#JJRJGVR0'
+time_zone = (-5)
 header = {
     'Accept': 'application/json',
     'authorization': 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiIsImtpZCI6IjI4YTMxOGY3LTAwMDAtYTFlYi03ZmExLTJjNzQzM2M2Y2NhNSJ9.eyJpc3MiOiJzdXBlcmNlbGwiLCJhdWQiOiJzdXBlcmNlbGw6Z2FtZWFwaSIsImp0aSI6IjkyNWJjYzg1LWFhZDktNGM2NC05M2Y2LWM4MWEwZGVhOGUwNiIsImlhdCI6MTU3NDYyMjY3Nywic3ViIjoiZGV2ZWxvcGVyLzdjZmJkOWFjLTFlYzAtNDI3OS1jODM2LTU0YzMxN2FlZmE4NiIsInNjb3BlcyI6WyJjbGFzaCJdLCJsaW1pdHMiOlt7InRpZXIiOiJkZXZlbG9wZXIvc2lsdmVyIiwidHlwZSI6InRocm90dGxpbmcifSx7ImNpZHJzIjpbIjEwOC4yMTEuOTUuMjU0Il0sInR5cGUiOiJjbGllbnQifV19.gdc-4-OEZzsYBLk8HfqZBH-idvlK1vX9nim91XEqLgwNAyarfZquxfkZDKPsswUGyiXRIFV7Am3RB7iWtd9T5w'
@@ -58,28 +59,28 @@ async def donationchecker(ctx, *, troop_name):
 
 @client.command(aliases=['war', 'scoreboard'])
 async def waroverview(ctx):
-    await ctx.send(response_war_overview(heroes_tag, header))
+    await ctx.send(response_war_overview(heroes_tag, time_zone, header))
 
 
 @client.command()
 async def wartime(ctx):
-    await ctx.send(response_war_time(heroes_tag, header))
+    await ctx.send(response_war_time(heroes_tag, time_zone, header))
 
 
 @client.command(aliases=['noatk'])
 async def noattack(ctx):
-    await ctx.send(response_war_no_attack(heroes_tag, header))
+    await ctx.send(response_war_no_attack(heroes_tag, time_zone, header))
 
 
 @client.command(aliases=['warmembers', 'warstars', 'warmemstar', 'warmemstars'], description='overview of all members in war', hidden=True)
 async def warmemberstars(ctx):
-    for line in response_war_members_overview():
+    for line in response_war_members_overview(heroes_tag, time_zone, header):
         await ctx.send(line)
 
 
 @client.command(aliases=['allatk'], description='showing all attacks for every member', hidden=True)
 async def allattacks(ctx):
-    for line in response_war_all_attacks(heroes_tag, header):
+    for line in response_war_all_attacks(heroes_tag, time_zone, header):
         await ctx.send(f'{line}')
 
 
@@ -97,22 +98,22 @@ async def warweight(ctx, storages, *, amount):
 
 @client.command(aliases=['cwlwar'], description='shows the overview of the current war league')
 async def cwlwaroverview(ctx):
-    await ctx.send(response_cwl_war_overview(heroes_tag, header))
+    await ctx.send(response_cwl_war_overview(heroes_tag, time_zone, header))
 
 
 @client.command(aliases=['cwltime'], description='shows time remaining in the current clan war league')
 async def cwlwartime(ctx):
-    await ctx.send(response_cwl_war_time(heroes_tag, header))
+    await ctx.send(response_cwl_war_time(heroes_tag, time_zone, header))
 
 
 @client.command(aliases=['cwlnoatk'])
 async def cwlnoattack(ctx):
-    await ctx.send(response_cwl_war_no_attack(heroes_tag, header))
+    await ctx.send(response_cwl_war_no_attack(heroes_tag, time_zone, header))
 
 
 @client.command(aliases=['cwlallatk'], description='showing all attacks for every member', hidden=True)
 async def cwlallattack(ctx):
-    for line in response_cwl_war_all_attacks(heroes_tag, header):
+    for line in response_cwl_war_all_attacks(heroes_tag, time_zone, header):
         await ctx.send(line)
 
 
