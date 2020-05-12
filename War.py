@@ -3,7 +3,6 @@ import json
 from datetime import datetime, timedelta
 
 
-# todo string_overview, string_scoreboard
 class War(object):
     def __init__(self, state, team_size, preparation_start_time, start_time, end_time, clan, opponent):
         self.state = state
@@ -15,14 +14,14 @@ class War(object):
         self.opponent = opponent
 
     # returns days, hours, minutes, seconds
-    def war_time(self):
+    def war_time(self, time_zone):
         if self.state == 'preparation':
             days, hours, minutes, seconds = date_time_calculator(
-                self.start_time)
+                self.start_time, time_zone)
 
         elif self.state == 'inWar':
             days, hours, minutes, seconds = date_time_calculator(
-                self.end_time)
+                self.end_time, time_zone)
 
         # covers warEnded and notInWar states
         else:
@@ -33,10 +32,11 @@ class War(object):
 
         return days, hours, minutes, seconds
 
-    def string_date_time(self):
+    def string_date_time(self, time_zone):
         if self.state == 'warEnded' or self.state == 'notInWar':
             return ''
-        days, hours, minutes, seconds = date_time_calculator(self.start_time)
+        days, hours, minutes, seconds = date_time_calculator(
+            self.start_time, time_zone)
         return_string = ''
         if days > 0:
             if days == 1:
@@ -148,8 +148,6 @@ class WarClan(object):
         self.members = members
 
 
-# ? change th to th_lvl
-# todo add stars int
 class WarMember(object):
     def __init__(self, tag, name, th_lvl, map_position, stars, attacks):
         self.tag = tag
@@ -195,7 +193,6 @@ def get(clan_tag, header):
     war_json = json_response(clan_tag, header)
     if war_json['state'] == 'notInWar':
         return War(war_json['state'], 0, 0, 0, 0, [], [])
-    # todo test this for war states
     else:
         # find whether the clan in clan_tag is clan or opponent in the war_json
         clan_status, opp_status = clan_opp_status(war_json, clan_tag)
@@ -264,17 +261,14 @@ def clan_opp_status(war_json, clan_tag):
     return clan_status, opp_status
 
 
-# todo move this into the War class
-# todo make the user set the time difference on the front end
-def date_time_calculator(date_final):
+def date_time_calculator(date_final, time_zone):
     date_time_format = '%Y%m%d%H%M%S'
     dt_now = datetime.now()
     date_final = time_string_changer(date_final)
     dt_string = dt_now.strftime(date_time_format)
-    # todo combine the two diff variable formulas
     diff = datetime.strptime(date_final, date_time_format) - \
         datetime.strptime(dt_string, date_time_format)
-    diff = diff - timedelta(hours=5, minutes=0)
+    diff = diff + timedelta(hours=time_zone, minutes=0)
 
     days = diff.days
     seconds = diff.seconds
