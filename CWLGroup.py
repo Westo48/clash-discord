@@ -4,8 +4,6 @@ import CWLWar
 from CWLWar import get as get_cwl_war
 
 
-# todo find war method validation
-# todo heavy rework needed
 class CWLGroup(object):
     def __init__(self, state, season, clans, rounds):
         self.state = state
@@ -14,8 +12,6 @@ class CWLGroup(object):
         # list war tag lists
         self.rounds = rounds
 
-    # todo validate if there isn't a specific war to be found
-    # todo validate if CWLGroup.state == 'ended'
     # return a cwl_war object
     def find_current_war(self, clan_tag, header):
         for cwl_round in self.rounds:
