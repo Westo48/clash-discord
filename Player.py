@@ -38,7 +38,6 @@ class Player(object):
         # self.spells = spells
 
     # return a Troop object
-    # todo ? return some sort of error if they misspell something
     def find_troop(self, troop_name):
         # formatting the name from '-' to ' '
         troop_name = re.sub('[-]', ' ', troop_name)
