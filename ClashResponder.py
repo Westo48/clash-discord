@@ -124,14 +124,14 @@ def response_member_role(player_name, clan_tag, header):
 # War
 
 # returns a string of the war overview
-def response_war_overview(clan_tag, header):
+def response_war_overview(clan_tag, time_zone, header):
     war = War.get(clan_tag, header)
     if war.state == 'preparation':
-        time_string = war.string_date_time()
+        time_string = war.string_date_time(time_zone)
 
         return f'{war.clan.name} is preparing for war with {war.opponent.name} with {time_string} left before war starts.'
     elif war.state == 'inWar':
-        time_string = war.string_date_time()
+        time_string = war.string_date_time(time_zone)
         scoreboard_string = war.string_scoreboard()
 
         return f'{war.clan.name} is in war with {war.opponent.name} with {time_string} left in war. {war.clan.name} is {scoreboard_string}.'
@@ -143,12 +143,12 @@ def response_war_overview(clan_tag, header):
 
 
 # returns a string of the time remaining in war response
-def response_war_time(clan_tag, header):
+def response_war_time(clan_tag, time_zone, header):
     war = War.get(clan_tag, header)
     if war.state == 'preparation':
-        return f'{war.clan.name} is preparing for war with {war.string_date_time()} left before war starts.'
+        return f'{war.clan.name} is preparing for war with {war.string_date_time(time_zone)} left before war starts.'
     elif war.state == 'inWar':
-        return f'{war.clan.name} is in war with {war.string_date_time()} left in war.'
+        return f'{war.clan.name} is in war with {war.string_date_time(time_zone)} left in war.'
     elif war.state == 'warEnded':
         return f'The war with {war.opponent.name} has ended.'
     else:
@@ -157,11 +157,11 @@ def response_war_time(clan_tag, header):
 
 # todo if nobody has attacked logic
 # returns a string of the war no attack response
-def response_war_no_attack(clan_tag, header):
+def response_war_no_attack(clan_tag, time_zone, header):
     war = War.get(clan_tag, header)
 
     if war.state == 'preparation':
-        return f'{war.clan.name} is still preparing for war with {war.string_date_time()} before war starts, nobody has attacked.'
+        return f'{war.clan.name} is still preparing for war with {war.string_date_time(time_zone)} before war starts, nobody has attacked.'
 
     elif war.state == 'inWar':
         no_attack_list = war.no_attack()
@@ -178,7 +178,7 @@ def response_war_no_attack(clan_tag, header):
         # plural
         else:
             no_attack_string += ' have not attacked'
-        no_attack_string += f' with {war.string_date_time()} left in war.'
+        no_attack_string += f' with {war.string_date_time(time_zone)} left in war.'
         return no_attack_string
 
     elif war.state == 'warEnded':
@@ -198,7 +198,7 @@ def response_war_no_attack(clan_tag, header):
 
 
 # returns a list of all war members and their stars
-def response_war_members_overview(clan_tag, header):
+def response_war_members_overview(clan_tag, time_zone, header):
     war = War.get(clan_tag, header)
     response_list = []
 
@@ -207,7 +207,7 @@ def response_war_members_overview(clan_tag, header):
             f'{war.clan.name} is still preparaing for war, nobody has attacked.')
     elif war.state == 'inWar':
         response_list.append(
-            f'{war.clan.name} is in war with {war.opponent.name} with {war.string_date_time()} left in war. {war.clan.name} is {war.string_scoreboard()}.')
+            f'{war.clan.name} is in war with {war.opponent.name} with {war.string_date_time(time_zone)} left in war. {war.clan.name} is {war.string_scoreboard()}.')
         response_list.append('____________________')
         for member in war.clan.members:
             # no atk response
@@ -242,7 +242,7 @@ def response_war_members_overview(clan_tag, header):
 
 
 # returns a list of war attack string responses for all war members
-def response_war_all_attacks(clan_tag, header):
+def response_war_all_attacks(clan_tag, time_zone, header):
     war = War.get(clan_tag, header)
     response_list = []
 
@@ -251,7 +251,7 @@ def response_war_all_attacks(clan_tag, header):
             f'{war.clan.name} is still preparaing for war, nobody has attacked.')
     elif war.state == 'inWar':
         response_list.append(
-            f'{war.clan.name} is in war with {war.opponent.name} with {war.string_date_time()} left in war. {war.clan.name} is {war.string_scoreboard()}.')
+            f'{war.clan.name} is in war with {war.opponent.name} with {war.string_date_time(time_zone)} left in war. {war.clan.name} is {war.string_scoreboard()}.')
         response_list.append('____________________')
         for member in war.clan.members:
             # no atk response
@@ -310,12 +310,12 @@ def response_war_all_attacks(clan_tag, header):
 # CWL War
 
 # returns a string of the cwl war no attack response
-def response_cwl_war_no_attack(clan_tag, header):
+def response_cwl_war_no_attack(clan_tag, time_zone, header):
     group = CWLGroup.get(clan_tag, header)
     war = group.find_current_war()
 
     if war.state == 'preparation':
-        return '{war.clan.name} is still preparing for war, nobody has attacked.'
+        return f'{war.clan.name} is still preparing for war with {war.string_date_time(time_zone)} before war starts, nobody has attacked.'
 
     elif war.state == 'inWar':
         no_attack_list = war.no_attack()
@@ -351,14 +351,14 @@ def response_cwl_war_no_attack(clan_tag, header):
 
 
 # returns a string of the current cwl war overview
-def response_cwl_war_overview(clan_tag, header):
+def response_cwl_war_overview(clan_tag, time_zone, header):
     group = CWLGroup.get(clan_tag, header)
     war = group.find_current_war(clan_tag, header)
     if war.state == 'preparation':
-        time_string = war.string_date_time()
+        time_string = war.string_date_time(time_zone)
         return f'{war.clan.name} is preparing for war with {war.opponent.name} with {time_string} left before war starts.'
     elif war.state == 'inWar':
-        time_string = war.string_date_time()
+        time_string = war.string_date_time(time_zone)
         scoreboard_string = war.string_scoreboard()
         return f'{war.clan.name} is in war with {war.opponent.name} with {time_string} left in war. {war.clan.name} is {scoreboard_string}.'
     elif war.state == 'warEnded':
@@ -369,15 +369,15 @@ def response_cwl_war_overview(clan_tag, header):
 
 
 # returns a string of the time remaining in war response
-def response_cwl_war_time(clan_tag, header):
+def response_cwl_war_time(clan_tag, time_zone, header):
     group = CWLGroup.get(clan_tag, header)
     war = group.find_current_war(clan_tag, header)
 
     if war.state == 'preparation':
-        time_string = war.string_date_time()
+        time_string = war.string_date_time(time_zone)
         return f'{war.clan.name} is preparing for war with {time_string} left before war starts.'
     elif war.state == 'inWar':
-        time_string = war.string_date_time()
+        time_string = war.string_date_time(time_zone)
         return f'{war.clan.name} is preparing for war with {time_string} left in war.'
     elif war.state == 'warEnded':
         return f'The war with {war.opponent.name} has ended.'
@@ -386,7 +386,7 @@ def response_cwl_war_time(clan_tag, header):
 
 
 # returns a list of cwl war attack string responses for all war members
-def response_cwl_war_all_attacks(clan_tag, header):
+def response_cwl_war_all_attacks(clan_tag, time_zone, header):
     group = CWLGroup.get(clan_tag, header)
     war = group.find_current_war(clan_tag, header)
     response_list = []
@@ -395,7 +395,7 @@ def response_cwl_war_all_attacks(clan_tag, header):
             f'{war.clan.name} is still preparaing for war, nobody has attacked.')
     elif war.state == 'inWar':
         response_list.append(
-            f'{war.clan.name} is in war with {war.opponent.name} with {war.string_date_time()} left in war. {war.clan.name} is {war.string_scoreboard()}.')
+            f'{war.clan.name} is in war with {war.opponent.name} with {war.string_date_time(time_zone)} left in war. {war.clan.name} is {war.string_scoreboard()}.')
         response_list.append('____________________')
         for member in war.clan.members:
             if len(member.attacks) == 0:
