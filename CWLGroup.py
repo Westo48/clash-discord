@@ -5,11 +5,22 @@ from CWLWar import get as get_cwl_war
 
 
 class CWLGroup(object):
+    """
+    CWLGroup
+        Instance Attributes
+            state (str): CWL state
+                'preparation', 'inWar', 'ended'
+            season (str): season of clan war league
+            clans (list): list of clans in clan war league group
+                GWLClan
+            rounds (list): list of rounds
+                rounds consist of list of war tags
+    """
+
     def __init__(self, state, season, clans, rounds):
         self.state = state
         self.season = season
         self.clans = clans
-        # list war tag lists
         self.rounds = rounds
 
     # return a cwl_war object
@@ -19,7 +30,8 @@ class CWLGroup(object):
                 return cwl_round[0]
             cwl_war = get_cwl_war(cwl_round[0], clan_tag, header)
             # given the correct round is found
-            if cwl_war.state == 'inWar' or cwl_war.state == 'preparation':
+            if (cwl_war.state == 'inWar'
+                    or cwl_war.state == 'preparation'):
                 # go through the war tags to find the correct clan tag
                 for war_tag in cwl_round:
                     cwl_war = get_cwl_war(war_tag, clan_tag, header)
@@ -53,6 +65,16 @@ class CWLGroup(object):
 
 
 class CWLClan(object):
+    """
+    CWLClan
+        Instance Attributes
+            tag (str): clan's tag
+            name (str): clan's name
+            clan_lvl (int): clan's clan level
+            members (list): list of clan's war league eligable members
+                CWLClanMember
+    """
+
     def __init__(self, tag, name, clan_lvl, members):
         self.tag = tag
         self.name = name
@@ -60,8 +82,15 @@ class CWLClan(object):
         self.members = members
 
 
-# ? change player_tag and player_name to tag and name
 class CWLClanMember(object):
+    """
+    CWLClanMember
+        Instance Attributes
+            tag (str): clan member's player tag
+            name (str): clan member's player name
+            th_lvl (int): clan member's player home town hall level
+    """
+
     def __init__(self, tag, name, th_lvl):
         self.tag = tag
         self.name = name
@@ -69,6 +98,7 @@ class CWLClanMember(object):
 
 
 def get(clan_tag, header):
+    """Takes in a clan tag and returns the associated CWL group"""
     group_json = json_response(clan_tag, header)
 
     # grab a list of the clans
@@ -78,9 +108,11 @@ def get(clan_tag, header):
         members = []
         for member in clan['members']:
             members.append(CWLClanMember(
-                member['tag'], member['name'], member['townHallLevel']))
-        clans.append(
-            CWLClan(clan['tag'], clan['name'], clan['clanLevel'], members))
+                member['tag'], member['name'], member['townHallLevel'])
+            )
+        clans.append(CWLClan(
+            clan['tag'], clan['name'], clan['clanLevel'], members)
+        )
 
     # grab a list of the rounds
     rounds = []
@@ -95,5 +127,6 @@ def get(clan_tag, header):
 
 def json_response(tag, header):
     tag = tag[1:]
-    url = f'https://api.clashofclans.com/v1/clans/%23{tag}/currentwar/leaguegroup'
+    url = f'https://api.clashofclans.com/v1/clans/%23{tag}'\
+        '/currentwar/leaguegroup'
     return requests.get(url, headers=header).json()
