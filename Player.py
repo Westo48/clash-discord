@@ -255,16 +255,28 @@ troop_dict = {
                 'name': 'Yeti', 'thMax': 0, 'type': 'Elixir'
             },
             'Super Barbarian': {
-                'name': 'Super Barbarian', 'thMax': 0, 'type': 'Dark Elixir'
+                'name': 'Super Barbarian', 'thMax': 0, 'type': 'Elixir'
+            },
+            'Super Archer': {
+                'name': 'Super Archer', 'thMax': 0, 'type': 'Elixir'
             },
             'Super Wall Breaker': {
-                'name': 'Super Wall Breaker', 'thMax': 0, 'type': 'Dark Elixir'
+                'name': 'Super Wall Breaker', 'thMax': 0, 'type': 'Elixir'
             },
             'Sneaky Goblin': {
-                'name': 'Sneaky Goblin', 'thMax': 0, 'type': 'Dark Elixir'
+                'name': 'Sneaky Goblin', 'thMax': 0, 'type': 'Elixir'
             },
             'Super Giant': {
-                'name': 'Super Giant', 'thMax': 0, 'type': 'Dark Elixir'
+                'name': 'Super Giant', 'thMax': 0, 'type': 'Elixir'
+            },
+            'Inferno Dragon': {
+                'name': 'Inferno Dragon', 'thMax': 0, 'type': 'Elixir'
+            },
+            'Super Valkyrie': {
+                'name': 'Super Valkyrie', 'thMax': 0, 'type': 'Dark Elixir'
+            },
+            'Super Witch': {
+                'name': 'Super Witch', 'thMax': 0, 'type': 'Dark Elixir'
             },
             'Minion': {
                 'name': 'Minion', 'thMax': 0, 'type': 'Dark Elixir'
@@ -289,6 +301,9 @@ troop_dict = {
             },
             'Ice Golem': {
                 'name': 'Ice Golem', 'thMax': 0, 'type': 'Dark Elixir'
+            },
+            'Headhunter': {
+                'name': 'Headhunter', 'thMax': 0, 'type': 'Dark Elixir'
             },
             'Wall Wrecker': {
                 'name': 'Wall Wrecker', 'thMax': 0, 'type': 'Gold'
@@ -398,16 +413,28 @@ troop_dict = {
                 'name': 'Yeti', 'thMax': 0, 'type': 'Elixir'
             },
             'Super Barbarian': {
-                'name': 'Super Barbarian', 'thMax': 0, 'type': 'Dark Elixir'
+                'name': 'Super Barbarian', 'thMax': 0, 'type': 'Elixir'
+            },
+            'Super Archer': {
+                'name': 'Super Archer', 'thMax': 0, 'type': 'Elixir'
             },
             'Super Wall Breaker': {
-                'name': 'Super Wall Breaker', 'thMax': 0, 'type': 'Dark Elixir'
+                'name': 'Super Wall Breaker', 'thMax': 0, 'type': 'Elixir'
             },
             'Sneaky Goblin': {
-                'name': 'Sneaky Goblin', 'thMax': 0, 'type': 'Dark Elixir'
+                'name': 'Sneaky Goblin', 'thMax': 0, 'type': 'Elixir'
             },
             'Super Giant': {
-                'name': 'Super Giant', 'thMax': 0, 'type': 'Dark Elixir'
+                'name': 'Super Giant', 'thMax': 0, 'type': 'Elixir'
+            },
+            'Inferno Dragon': {
+                'name': 'Inferno Dragon', 'thMax': 0, 'type': 'Elixir'
+            },
+            'Super Valkyrie': {
+                'name': 'Super Valkyrie', 'thMax': 0, 'type': 'Dark Elixir'
+            },
+            'Super Witch': {
+                'name': 'Super Witch', 'thMax': 0, 'type': 'Dark Elixir'
             },
             'Minion': {
                 'name': 'Minion', 'thMax': 0, 'type': 'Dark Elixir'
@@ -432,6 +459,9 @@ troop_dict = {
             },
             'Ice Golem': {
                 'name': 'Ice Golem', 'thMax': 0, 'type': 'Dark Elixir'
+            },
+            'Headhunter': {
+                'name': 'Headhunter', 'thMax': 0, 'type': 'Dark Elixir'
             },
             'Wall Wrecker': {
                 'name': 'Wall Wrecker', 'thMax': 0, 'type': 'Gold'
@@ -541,16 +571,28 @@ troop_dict = {
                 'name': 'Yeti', 'thMax': 0, 'type': 'Elixir'
             },
             'Super Barbarian': {
-                'name': 'Super Barbarian', 'thMax': 0, 'type': 'Dark Elixir'
+                'name': 'Super Barbarian', 'thMax': 0, 'type': 'Elixir'
+            },
+            'Super Archer': {
+                'name': 'Super Archer', 'thMax': 0, 'type': 'Elixir'
             },
             'Super Wall Breaker': {
-                'name': 'Super Wall Breaker', 'thMax': 0, 'type': 'Dark Elixir'
+                'name': 'Super Wall Breaker', 'thMax': 0, 'type': 'Elixir'
             },
             'Sneaky Goblin': {
-                'name': 'Sneaky Goblin', 'thMax': 0, 'type': 'Dark Elixir'
+                'name': 'Sneaky Goblin', 'thMax': 0, 'type': 'Elixir'
             },
             'Super Giant': {
-                'name': 'Super Giant', 'thMax': 0, 'type': 'Dark Elixir'
+                'name': 'Super Giant', 'thMax': 0, 'type': 'Elixir'
+            },
+            'Inferno Dragon': {
+                'name': 'Inferno Dragon', 'thMax': 0, 'type': 'Elixir'
+            },
+            'Super Valkyrie': {
+                'name': 'Super Valkyrie', 'thMax': 0, 'type': 'Dark Elixir'
+            },
+            'Super Witch': {
+                'name': 'Super Witch', 'thMax': 0, 'type': 'Dark Elixir'
             },
             'Minion': {
                 'name': 'Minion', 'thMax': 0, 'type': 'Dark Elixir'
@@ -575,6 +617,9 @@ troop_dict = {
             },
             'Ice Golem': {
                 'name': 'Ice Golem', 'thMax': 0, 'type': 'Dark Elixir'
+            },
+            'Headhunter': {
+                'name': 'Headhunter', 'thMax': 0, 'type': 'Dark Elixir'
             },
             'Wall Wrecker': {
                 'name': 'Wall Wrecker', 'thMax': 0, 'type': 'Gold'
@@ -684,16 +729,28 @@ troop_dict = {
                 'name': 'Yeti', 'thMax': 0, 'type': 'Elixir'
             },
             'Super Barbarian': {
-                'name': 'Super Barbarian', 'thMax': 0, 'type': 'Dark Elixir'
+                'name': 'Super Barbarian', 'thMax': 0, 'type': 'Elixir'
+            },
+            'Super Archer': {
+                'name': 'Super Archer', 'thMax': 0, 'type': 'Elixir'
             },
             'Super Wall Breaker': {
-                'name': 'Super Wall Breaker', 'thMax': 0, 'type': 'Dark Elixir'
+                'name': 'Super Wall Breaker', 'thMax': 0, 'type': 'Elixir'
             },
             'Sneaky Goblin': {
-                'name': 'Sneaky Goblin', 'thMax': 0, 'type': 'Dark Elixir'
+                'name': 'Sneaky Goblin', 'thMax': 0, 'type': 'Elixir'
             },
             'Super Giant': {
-                'name': 'Super Giant', 'thMax': 0, 'type': 'Dark Elixir'
+                'name': 'Super Giant', 'thMax': 0, 'type': 'Elixir'
+            },
+            'Inferno Dragon': {
+                'name': 'Inferno Dragon', 'thMax': 0, 'type': 'Elixir'
+            },
+            'Super Valkyrie': {
+                'name': 'Super Valkyrie', 'thMax': 0, 'type': 'Dark Elixir'
+            },
+            'Super Witch': {
+                'name': 'Super Witch', 'thMax': 0, 'type': 'Dark Elixir'
             },
             'Minion': {
                 'name': 'Minion', 'thMax': 0, 'type': 'Dark Elixir'
@@ -718,6 +775,9 @@ troop_dict = {
             },
             'Ice Golem': {
                 'name': 'Ice Golem', 'thMax': 0, 'type': 'Dark Elixir'
+            },
+            'Headhunter': {
+                'name': 'Headhunter', 'thMax': 0, 'type': 'Dark Elixir'
             },
             'Wall Wrecker': {
                 'name': 'Wall Wrecker', 'thMax': 0, 'type': 'Gold'
@@ -827,16 +887,28 @@ troop_dict = {
                 'name': 'Yeti', 'thMax': 0, 'type': 'Elixir'
             },
             'Super Barbarian': {
-                'name': 'Super Barbarian', 'thMax': 0, 'type': 'Dark Elixir'
+                'name': 'Super Barbarian', 'thMax': 0, 'type': 'Elixir'
+            },
+            'Super Archer': {
+                'name': 'Super Archer', 'thMax': 0, 'type': 'Elixir'
             },
             'Super Wall Breaker': {
-                'name': 'Super Wall Breaker', 'thMax': 0, 'type': 'Dark Elixir'
+                'name': 'Super Wall Breaker', 'thMax': 0, 'type': 'Elixir'
             },
             'Sneaky Goblin': {
-                'name': 'Sneaky Goblin', 'thMax': 0, 'type': 'Dark Elixir'
+                'name': 'Sneaky Goblin', 'thMax': 0, 'type': 'Elixir'
             },
             'Super Giant': {
-                'name': 'Super Giant', 'thMax': 0, 'type': 'Dark Elixir'
+                'name': 'Super Giant', 'thMax': 0, 'type': 'Elixir'
+            },
+            'Inferno Dragon': {
+                'name': 'Inferno Dragon', 'thMax': 0, 'type': 'Elixir'
+            },
+            'Super Valkyrie': {
+                'name': 'Super Valkyrie', 'thMax': 0, 'type': 'Dark Elixir'
+            },
+            'Super Witch': {
+                'name': 'Super Witch', 'thMax': 0, 'type': 'Dark Elixir'
             },
             'Minion': {
                 'name': 'Minion', 'thMax': 0, 'type': 'Dark Elixir'
@@ -861,6 +933,9 @@ troop_dict = {
             },
             'Ice Golem': {
                 'name': 'Ice Golem', 'thMax': 0, 'type': 'Dark Elixir'
+            },
+            'Headhunter': {
+                'name': 'Headhunter', 'thMax': 0, 'type': 'Dark Elixir'
             },
             'Wall Wrecker': {
                 'name': 'Wall Wrecker', 'thMax': 0, 'type': 'Gold'
@@ -970,16 +1045,28 @@ troop_dict = {
                 'name': 'Yeti', 'thMax': 0, 'type': 'Elixir'
             },
             'Super Barbarian': {
-                'name': 'Super Barbarian', 'thMax': 0, 'type': 'Dark Elixir'
+                'name': 'Super Barbarian', 'thMax': 0, 'type': 'Elixir'
+            },
+            'Super Archer': {
+                'name': 'Super Archer', 'thMax': 0, 'type': 'Elixir'
             },
             'Super Wall Breaker': {
-                'name': 'Super Wall Breaker', 'thMax': 0, 'type': 'Dark Elixir'
+                'name': 'Super Wall Breaker', 'thMax': 0, 'type': 'Elixir'
             },
             'Sneaky Goblin': {
-                'name': 'Sneaky Goblin', 'thMax': 0, 'type': 'Dark Elixir'
+                'name': 'Sneaky Goblin', 'thMax': 0, 'type': 'Elixir'
             },
             'Super Giant': {
-                'name': 'Super Giant', 'thMax': 0, 'type': 'Dark Elixir'
+                'name': 'Super Giant', 'thMax': 0, 'type': 'Elixir'
+            },
+            'Inferno Dragon': {
+                'name': 'Inferno Dragon', 'thMax': 0, 'type': 'Elixir'
+            },
+            'Super Valkyrie': {
+                'name': 'Super Valkyrie', 'thMax': 0, 'type': 'Dark Elixir'
+            },
+            'Super Witch': {
+                'name': 'Super Witch', 'thMax': 0, 'type': 'Dark Elixir'
             },
             'Minion': {
                 'name': 'Minion', 'thMax': 0, 'type': 'Dark Elixir'
@@ -1004,6 +1091,9 @@ troop_dict = {
             },
             'Ice Golem': {
                 'name': 'Ice Golem', 'thMax': 0, 'type': 'Dark Elixir'
+            },
+            'Headhunter': {
+                'name': 'Headhunter', 'thMax': 0, 'type': 'Dark Elixir'
             },
             'Wall Wrecker': {
                 'name': 'Wall Wrecker', 'thMax': 0, 'type': 'Gold'
@@ -1113,16 +1203,28 @@ troop_dict = {
                 'name': 'Yeti', 'thMax': 0, 'type': 'Elixir'
             },
             'Super Barbarian': {
-                'name': 'Super Barbarian', 'thMax': 0, 'type': 'Dark Elixir'
+                'name': 'Super Barbarian', 'thMax': 0, 'type': 'Elixir'
+            },
+            'Super Archer': {
+                'name': 'Super Archer', 'thMax': 0, 'type': 'Elixir'
             },
             'Super Wall Breaker': {
-                'name': 'Super Wall Breaker', 'thMax': 0, 'type': 'Dark Elixir'
+                'name': 'Super Wall Breaker', 'thMax': 0, 'type': 'Elixir'
             },
             'Sneaky Goblin': {
-                'name': 'Sneaky Goblin', 'thMax': 0, 'type': 'Dark Elixir'
+                'name': 'Sneaky Goblin', 'thMax': 0, 'type': 'Elixir'
             },
             'Super Giant': {
-                'name': 'Super Giant', 'thMax': 0, 'type': 'Dark Elixir'
+                'name': 'Super Giant', 'thMax': 0, 'type': 'Elixir'
+            },
+            'Inferno Dragon': {
+                'name': 'Inferno Dragon', 'thMax': 0, 'type': 'Elixir'
+            },
+            'Super Valkyrie': {
+                'name': 'Super Valkyrie', 'thMax': 0, 'type': 'Dark Elixir'
+            },
+            'Super Witch': {
+                'name': 'Super Witch', 'thMax': 0, 'type': 'Dark Elixir'
             },
             'Minion': {
                 'name': 'Minion', 'thMax': 2, 'type': 'Dark Elixir'
@@ -1147,6 +1249,9 @@ troop_dict = {
             },
             'Ice Golem': {
                 'name': 'Ice Golem', 'thMax': 0, 'type': 'Dark Elixir'
+            },
+            'Headhunter': {
+                'name': 'Headhunter', 'thMax': 0, 'type': 'Dark Elixir'
             },
             'Wall Wrecker': {
                 'name': 'Wall Wrecker', 'thMax': 0, 'type': 'Gold'
@@ -1256,16 +1361,28 @@ troop_dict = {
                 'name': 'Yeti', 'thMax': 0, 'type': 'Elixir'
             },
             'Super Barbarian': {
-                'name': 'Super Barbarian', 'thMax': 0, 'type': 'Dark Elixir'
+                'name': 'Super Barbarian', 'thMax': 0, 'type': 'Elixir'
+            },
+            'Super Archer': {
+                'name': 'Super Archer', 'thMax': 0, 'type': 'Elixir'
             },
             'Super Wall Breaker': {
-                'name': 'Super Wall Breaker', 'thMax': 0, 'type': 'Dark Elixir'
+                'name': 'Super Wall Breaker', 'thMax': 0, 'type': 'Elixir'
             },
             'Sneaky Goblin': {
-                'name': 'Sneaky Goblin', 'thMax': 0, 'type': 'Dark Elixir'
+                'name': 'Sneaky Goblin', 'thMax': 0, 'type': 'Elixir'
             },
             'Super Giant': {
-                'name': 'Super Giant', 'thMax': 0, 'type': 'Dark Elixir'
+                'name': 'Super Giant', 'thMax': 0, 'type': 'Elixir'
+            },
+            'Inferno Dragon': {
+                'name': 'Inferno Dragon', 'thMax': 0, 'type': 'Elixir'
+            },
+            'Super Valkyrie': {
+                'name': 'Super Valkyrie', 'thMax': 0, 'type': 'Dark Elixir'
+            },
+            'Super Witch': {
+                'name': 'Super Witch', 'thMax': 0, 'type': 'Dark Elixir'
             },
             'Minion': {
                 'name': 'Minion', 'thMax': 4, 'type': 'Dark Elixir'
@@ -1290,6 +1407,9 @@ troop_dict = {
             },
             'Ice Golem': {
                 'name': 'Ice Golem', 'thMax': 0, 'type': 'Dark Elixir'
+            },
+            'Headhunter': {
+                'name': 'Headhunter', 'thMax': 0, 'type': 'Dark Elixir'
             },
             'Wall Wrecker': {
                 'name': 'Wall Wrecker', 'thMax': 0, 'type': 'Gold'
@@ -1399,16 +1519,28 @@ troop_dict = {
                 'name': 'Yeti', 'thMax': 0, 'type': 'Elixir'
             },
             'Super Barbarian': {
-                'name': 'Super Barbarian', 'thMax': 0, 'type': 'Dark Elixir'
+                'name': 'Super Barbarian', 'thMax': 0, 'type': 'Elixir'
+            },
+            'Super Archer': {
+                'name': 'Super Archer', 'thMax': 0, 'type': 'Elixir'
             },
             'Super Wall Breaker': {
-                'name': 'Super Wall Breaker', 'thMax': 0, 'type': 'Dark Elixir'
+                'name': 'Super Wall Breaker', 'thMax': 0, 'type': 'Elixir'
             },
             'Sneaky Goblin': {
-                'name': 'Sneaky Goblin', 'thMax': 0, 'type': 'Dark Elixir'
+                'name': 'Sneaky Goblin', 'thMax': 0, 'type': 'Elixir'
             },
             'Super Giant': {
-                'name': 'Super Giant', 'thMax': 0, 'type': 'Dark Elixir'
+                'name': 'Super Giant', 'thMax': 0, 'type': 'Elixir'
+            },
+            'Inferno Dragon': {
+                'name': 'Inferno Dragon', 'thMax': 0, 'type': 'Elixir'
+            },
+            'Super Valkyrie': {
+                'name': 'Super Valkyrie', 'thMax': 0, 'type': 'Dark Elixir'
+            },
+            'Super Witch': {
+                'name': 'Super Witch', 'thMax': 0, 'type': 'Dark Elixir'
             },
             'Minion': {
                 'name': 'Minion', 'thMax': 5, 'type': 'Dark Elixir'
@@ -1433,6 +1565,9 @@ troop_dict = {
             },
             'Ice Golem': {
                 'name': 'Ice Golem', 'thMax': 0, 'type': 'Dark Elixir'
+            },
+            'Headhunter': {
+                'name': 'Headhunter', 'thMax': 0, 'type': 'Dark Elixir'
             },
             'Wall Wrecker': {
                 'name': 'Wall Wrecker', 'thMax': 0, 'type': 'Gold'
@@ -1542,16 +1677,28 @@ troop_dict = {
                 'name': 'Yeti', 'thMax': 0, 'type': 'Elixir'
             },
             'Super Barbarian': {
-                'name': 'Super Barbarian', 'thMax': 0, 'type': 'Dark Elixir'
+                'name': 'Super Barbarian', 'thMax': 0, 'type': 'Elixir'
+            },
+            'Super Archer': {
+                'name': 'Super Archer', 'thMax': 0, 'type': 'Elixir'
             },
             'Super Wall Breaker': {
-                'name': 'Super Wall Breaker', 'thMax': 0, 'type': 'Dark Elixir'
+                'name': 'Super Wall Breaker', 'thMax': 0, 'type': 'Elixir'
             },
             'Sneaky Goblin': {
-                'name': 'Sneaky Goblin', 'thMax': 0, 'type': 'Dark Elixir'
+                'name': 'Sneaky Goblin', 'thMax': 0, 'type': 'Elixir'
             },
             'Super Giant': {
-                'name': 'Super Giant', 'thMax': 0, 'type': 'Dark Elixir'
+                'name': 'Super Giant', 'thMax': 0, 'type': 'Elixir'
+            },
+            'Inferno Dragon': {
+                'name': 'Inferno Dragon', 'thMax': 0, 'type': 'Elixir'
+            },
+            'Super Valkyrie': {
+                'name': 'Super Valkyrie', 'thMax': 0, 'type': 'Dark Elixir'
+            },
+            'Super Witch': {
+                'name': 'Super Witch', 'thMax': 0, 'type': 'Dark Elixir'
             },
             'Minion': {
                 'name': 'Minion', 'thMax': 6, 'type': 'Dark Elixir'
@@ -1576,6 +1723,9 @@ troop_dict = {
             },
             'Ice Golem': {
                 'name': 'Ice Golem', 'thMax': 0, 'type': 'Dark Elixir'
+            },
+            'Headhunter': {
+                'name': 'Headhunter', 'thMax': 0, 'type': 'Dark Elixir'
             },
             'Wall Wrecker': {
                 'name': 'Wall Wrecker', 'thMax': 0, 'type': 'Gold'
@@ -1685,16 +1835,28 @@ troop_dict = {
                 'name': 'Yeti', 'thMax': 0, 'type': 'Elixir'
             },
             'Super Barbarian': {
-                'name': 'Super Barbarian', 'thMax': 0, 'type': 'Dark Elixir'
+                'name': 'Super Barbarian', 'thMax': 0, 'type': 'Elixir'
+            },
+            'Super Archer': {
+                'name': 'Super Archer', 'thMax': 0, 'type': 'Elixir'
             },
             'Super Wall Breaker': {
-                'name': 'Super Wall Breaker', 'thMax': 0, 'type': 'Dark Elixir'
+                'name': 'Super Wall Breaker', 'thMax': 0, 'type': 'Elixir'
             },
             'Sneaky Goblin': {
-                'name': 'Sneaky Goblin', 'thMax': 0, 'type': 'Dark Elixir'
+                'name': 'Sneaky Goblin', 'thMax': 0, 'type': 'Elixir'
             },
             'Super Giant': {
-                'name': 'Super Giant', 'thMax': 0, 'type': 'Dark Elixir'
+                'name': 'Super Giant', 'thMax': 0, 'type': 'Elixir'
+            },
+            'Inferno Dragon': {
+                'name': 'Inferno Dragon', 'thMax': 0, 'type': 'Elixir'
+            },
+            'Super Valkyrie': {
+                'name': 'Super Valkyrie', 'thMax': 0, 'type': 'Dark Elixir'
+            },
+            'Super Witch': {
+                'name': 'Super Witch', 'thMax': 0, 'type': 'Dark Elixir'
             },
             'Minion': {
                 'name': 'Minion', 'thMax': 7, 'type': 'Dark Elixir'
@@ -1720,6 +1882,9 @@ troop_dict = {
             'Ice Golem': {
                 'name': 'Ice Golem', 'thMax': 3, 'type': 'Dark Elixir'
             },
+            'Headhunter': {
+                'name': 'Headhunter', 'thMax': 0, 'type': 'Dark Elixir'
+            },
             'Wall Wrecker': {
                 'name': 'Wall Wrecker', 'thMax': 0, 'type': 'Gold'
             },
@@ -1735,7 +1900,7 @@ troop_dict = {
         },
         'spell': {
             'Lightning Spell': {
-                'name': 'Lightning Spell', 'thMax': 7, 'type': 'Elixir'
+                'name': 'Lightning Spell', 'thMax': 8, 'type': 'Elixir'
             },
             'Healing Spell': {
                 'name': 'Healing Spell', 'thMax': 7, 'type': 'Elixir'
@@ -1789,7 +1954,7 @@ troop_dict = {
                 'name': 'Barbarian', 'thMax': 8, 'type': 'Elixir'
             },
             'Archer': {
-                'name': 'Archer', 'thMax': 8, 'type': 'Elixir'
+                'name': 'Archer', 'thMax': 9, 'type': 'Elixir'
             },
             'Giant': {
                 'name': 'Giant', 'thMax': 9, 'type': 'Elixir'
@@ -1828,16 +1993,28 @@ troop_dict = {
                 'name': 'Yeti', 'thMax': 2, 'type': 'Elixir'
             },
             'Super Barbarian': {
-                'name': 'Super Barbarian', 'thMax': 0, 'type': 'Dark Elixir'
+                'name': 'Super Barbarian', 'thMax': 0, 'type': 'Elixir'
+            },
+            'Super Archer': {
+                'name': 'Super Archer', 'thMax': 0, 'type': 'Elixir'
             },
             'Super Wall Breaker': {
-                'name': 'Super Wall Breaker', 'thMax': 0, 'type': 'Dark Elixir'
+                'name': 'Super Wall Breaker', 'thMax': 0, 'type': 'Elixir'
             },
             'Sneaky Goblin': {
-                'name': 'Sneaky Goblin', 'thMax': 0, 'type': 'Dark Elixir'
+                'name': 'Sneaky Goblin', 'thMax': 0, 'type': 'Elixir'
             },
             'Super Giant': {
-                'name': 'Super Giant', 'thMax': 0, 'type': 'Dark Elixir'
+                'name': 'Super Giant', 'thMax': 0, 'type': 'Elixir'
+            },
+            'Inferno Dragon': {
+                'name': 'Inferno Dragon', 'thMax': 0, 'type': 'Elixir'
+            },
+            'Super Valkyrie': {
+                'name': 'Super Valkyrie', 'thMax': 0, 'type': 'Dark Elixir'
+            },
+            'Super Witch': {
+                'name': 'Super Witch', 'thMax': 0, 'type': 'Dark Elixir'
             },
             'Minion': {
                 'name': 'Minion', 'thMax': 8, 'type': 'Dark Elixir'
@@ -1863,6 +2040,9 @@ troop_dict = {
             'Ice Golem': {
                 'name': 'Ice Golem', 'thMax': 5, 'type': 'Dark Elixir'
             },
+            'Headhunter': {
+                'name': 'Headhunter', 'thMax': 2, 'type': 'Dark Elixir'
+            },
             'Wall Wrecker': {
                 'name': 'Wall Wrecker', 'thMax': 3, 'type': 'Gold'
             },
@@ -1878,7 +2058,7 @@ troop_dict = {
         },
         'spell': {
             'Lightning Spell': {
-                'name': 'Lightning Spell', 'thMax': 7, 'type': 'Elixir'
+                'name': 'Lightning Spell', 'thMax': 9, 'type': 'Elixir'
             },
             'Healing Spell': {
                 'name': 'Healing Spell', 'thMax': 7, 'type': 'Elixir'
@@ -1915,10 +2095,10 @@ troop_dict = {
     13: {
         'hero': {
             'Barbarian King': {
-                'name': 'Barbarian King', 'thMax': 70, 'type': 'Dark Elixir'
+                'name': 'Barbarian King', 'thMax': 75, 'type': 'Dark Elixir'
             },
             'Archer Queen': {
-                'name': 'Archer Queen', 'thMax': 70, 'type': 'Dark Elixir'
+                'name': 'Archer Queen', 'thMax': 75, 'type': 'Dark Elixir'
             },
             'Grand Warden': {
                 'name': 'Grand Warden', 'thMax': 50, 'type': 'Elixir'
@@ -1932,7 +2112,7 @@ troop_dict = {
                 'name': 'Barbarian', 'thMax': 9, 'type': 'Elixir'
             },
             'Archer': {
-                'name': 'Archer', 'thMax': 8, 'type': 'Elixir'
+                'name': 'Archer', 'thMax': 9, 'type': 'Elixir'
             },
             'Giant': {
                 'name': 'Giant', 'thMax': 9, 'type': 'Elixir'
@@ -1959,7 +2139,7 @@ troop_dict = {
                 'name': 'P.E.K.K.A', 'thMax': 8, 'type': 'Elixir'
             },
             'Baby Dragon': {
-                'name': 'Baby Dragon', 'thMax': 6, 'type': 'Elixir'
+                'name': 'Baby Dragon', 'thMax': 7, 'type': 'Elixir'
             },
             'Miner': {
                 'name': 'Miner', 'thMax': 7, 'type': 'Elixir'
@@ -1971,16 +2151,28 @@ troop_dict = {
                 'name': 'Yeti', 'thMax': 3, 'type': 'Elixir'
             },
             'Super Barbarian': {
-                'name': 'Super Barbarian', 'thMax': 0, 'type': 'Dark Elixir'
+                'name': 'Super Barbarian', 'thMax': 0, 'type': 'Elixir'
+            },
+            'Super Archer': {
+                'name': 'Super Archer', 'thMax': 0, 'type': 'Elixir'
             },
             'Super Wall Breaker': {
-                'name': 'Super Wall Breaker', 'thMax': 0, 'type': 'Dark Elixir'
+                'name': 'Super Wall Breaker', 'thMax': 0, 'type': 'Elixir'
             },
             'Sneaky Goblin': {
-                'name': 'Sneaky Goblin', 'thMax': 0, 'type': 'Dark Elixir'
+                'name': 'Sneaky Goblin', 'thMax': 0, 'type': 'Elixir'
             },
             'Super Giant': {
-                'name': 'Super Giant', 'thMax': 0, 'type': 'Dark Elixir'
+                'name': 'Super Giant', 'thMax': 0, 'type': 'Elixir'
+            },
+            'Inferno Dragon': {
+                'name': 'Inferno Dragon', 'thMax': 0, 'type': 'Elixir'
+            },
+            'Super Valkyrie': {
+                'name': 'Super Valkyrie', 'thMax': 0, 'type': 'Dark Elixir'
+            },
+            'Super Witch': {
+                'name': 'Super Witch', 'thMax': 0, 'type': 'Dark Elixir'
             },
             'Minion': {
                 'name': 'Minion', 'thMax': 9, 'type': 'Dark Elixir'
@@ -1992,13 +2184,13 @@ troop_dict = {
                 'name': 'Valkyrie', 'thMax': 8, 'type': 'Dark Elixir'
             },
             'Golem': {
-                'name': 'Golem', 'thMax': 9, 'type': 'Dark Elixir'
+                'name': 'Golem', 'thMax': 10, 'type': 'Dark Elixir'
             },
             'Witch': {
                 'name': 'Witch', 'thMax': 5, 'type': 'Dark Elixir'
             },
             'Lava Hound': {
-                'name': 'Lava Hound', 'thMax': 5, 'type': 'Dark Elixir'
+                'name': 'Lava Hound', 'thMax': 6, 'type': 'Dark Elixir'
             },
             'Bowler': {
                 'name': 'Bowler', 'thMax': 5, 'type': 'Dark Elixir'
@@ -2006,14 +2198,17 @@ troop_dict = {
             'Ice Golem': {
                 'name': 'Ice Golem', 'thMax': 5, 'type': 'Dark Elixir'
             },
+            'Headhunter': {
+                'name': 'Headhunter', 'thMax': 3, 'type': 'Dark Elixir'
+            },
             'Wall Wrecker': {
-                'name': 'Wall Wrecker', 'thMax': 3, 'type': 'Gold'
+                'name': 'Wall Wrecker', 'thMax': 4, 'type': 'Gold'
             },
             'Battle Blimp': {
-                'name': 'Battle Blimp', 'thMax': 3, 'type': 'Gold'
+                'name': 'Battle Blimp', 'thMax': 4, 'type': 'Gold'
             },
             'Stone Slammer': {
-                'name': 'Stone Slammer', 'thMax': 3, 'type': 'Gold'
+                'name': 'Stone Slammer', 'thMax': 4, 'type': 'Gold'
             },
             'Siege Barracks': {
                 'name': 'Siege Barracks', 'thMax': 4, 'type': 'Gold'
@@ -2021,7 +2216,7 @@ troop_dict = {
         },
         'spell': {
             'Lightning Spell': {
-                'name': 'Lightning Spell', 'thMax': 7, 'type': 'Elixir'
+                'name': 'Lightning Spell', 'thMax': 9, 'type': 'Elixir'
             },
             'Healing Spell': {
                 'name': 'Healing Spell', 'thMax': 8, 'type': 'Elixir'
@@ -2036,7 +2231,7 @@ troop_dict = {
                 'name': 'Freeze Spell', 'thMax': 7, 'type': 'Elixir'
             },
             'Clone Spell': {
-                'name': 'Clone Spell', 'thMax': 5, 'type': 'Elixir'
+                'name': 'Clone Spell', 'thMax': 6, 'type': 'Elixir'
             },
             'Poison Spell': {
                 'name': 'Poison Spell', 'thMax': 7, 'type': 'Dark Elixir'
