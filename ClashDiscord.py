@@ -117,6 +117,12 @@ async def cwlallattack(ctx):
         await ctx.send(line)
 
 
+@client.command(aliases=['cwlscore', 'cwlbonus'], description='Lists each member and their score in CWL', hidden=True)
+async def cwlmemberscore(ctx):
+    for line in response_cwl_standing(heroes_tag, header):
+        await ctx.send(line)
+
+
 # Discord
 
 # todo get players to set nickname and use member.nick for that

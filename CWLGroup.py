@@ -53,7 +53,6 @@ class CWLGroup(object):
                         return cwl_war
 
     def find_specified_war(self, clan_tag, round_int, header):
-        round_int -= 1
         if 0 <= round_int <= 6:
             if self.rounds[round_int][0] == '#0':
                 return self.rounds[round_int][0]
