@@ -171,11 +171,12 @@ class WarClan(object):
             destruction_percentage (int): Clan's destruction percentage
             members (list): List of clan members participating in war
                 WarMember objects
+            score (int): Clan's war score
     """
 
     def __init__(
         self, status, tag, name, lvl, attack_count,
-        stars, destruction_percentage, members
+        stars, destruction_percentage, members, score
     ):
         self.status = status
         self.tag = tag
@@ -185,6 +186,7 @@ class WarClan(object):
         self.stars = stars
         self.destruction_percentage = destruction_percentage
         self.members = members
+        self.score = score
 
 
 class WarMember(object):
@@ -198,15 +200,20 @@ class WarMember(object):
             stars (int): WarMember's star count in current war
             attacks (list): List of WarMember's attacks in current war
                 WarMemberAttack objects
+            score (int): Member's war score
     """
 
-    def __init__(self, tag, name, th_lvl, map_position, stars, attacks):
+    def __init__(
+        self, tag, name, th_lvl,
+        map_position, stars, attacks, score
+    ):
         self.tag = tag
         self.name = name
         self.th_lvl = th_lvl
         self.map_position = map_position
         self.stars = stars
         self.attacks = attacks
+        self.score = score
 
     # returns 'time' or 'times'
     def string_member_attack_times(self):
@@ -232,20 +239,22 @@ class WarMemberAttack(object):
             stars (int): stars earned in attack
             destruction_percent (int): destruction percent earned in attack
             order (int): order of attack in war
+            score (int): attack score
     """
 
     def __init__(
         self, attacker_tag, defender_tag,
-        stars, destruction_percent, order
+        stars, destruction_percent, order, score
     ):
         self.attacker_tag = attacker_tag
         self.defender_tag = defender_tag
         self.stars = stars
         self.destruction_percent = destruction_percent
         self.order = order
+        self.score = score
 
-    # returns 'star' or 'stars'
     def string_attack_stars(self):
+        "returns string 'star' or 'stars'"
         if self.stars == 1:
             return 'star'
         else:
@@ -269,30 +278,47 @@ def get(clan_tag, header):
         for member in war_json[clan_status]['members']:
             member_attacks = []
             stars = 0
-
+            member_score = (-200)
             if 'attacks' in member:
                 for member_attack in member['attacks']:
+                    member_score += 100
                     stars += member_attack['stars']
+
+                    star_score = member_attack['stars']/3
+                    des_score = member_attack['destructionPercentage']/100
+                    # find opp th from attack
+                    for opponent in war_json[opp_status]['members']:
+                        if opponent['tag'] == member_attack['defenderTag']:
+                            defender_th = opponent['townhallLevel']
+                            break
+                    th_difference = defender_th-member['townhallLevel']
+                    attack_score = (((star_score*.75)+(des_score*.25))
+                                    * th_multiplier(th_difference))
+                    member_score += attack_score
                     member_attacks.append(WarMemberAttack(
                         member_attack['attackerTag'],
                         member_attack['defenderTag'], member_attack['stars'],
                         member_attack['destructionPercentage'],
-                        member_attack['order'])
-                    )
+                        member_attack['order'], attack_score
+                    ))
             # adding the current member to the list of clan members
             clan_members.append(WarMember(
                 member['tag'], member['name'], member['townhallLevel'],
-                member['mapPosition'], stars, member_attacks)
-            )
+                member['mapPosition'], stars, member_attacks, member_score
+            ))
         # sorting clan members by map position
         clan_members = sorted(
             clan_members, key=lambda x: x.map_position, reverse=False)
 
+        clan_score = 0
+        for member in clan_members:
+            clan_score += member.score
         war_clan = WarClan(
             clan_status, war_json[clan_status]['tag'],
             war_json[clan_status]['name'], war_json[clan_status]['clanLevel'],
             war_json[clan_status]['attacks'], war_json[clan_status]['stars'],
-            war_json[clan_status]['destructionPercentage'], clan_members
+            war_json[clan_status]['destructionPercentage'],
+            clan_members, clan_score
         )
 
         # filling the opp members list
@@ -300,31 +326,50 @@ def get(clan_tag, header):
         for member in war_json[opp_status]['members']:
             member_attacks = []
             stars = 0
-
+            member_score = (-200)
             if 'attacks' in member:
                 for member_attack in member['attacks']:
+                    member_score += 100
                     stars += member_attack['stars']
+
+                    star_score = member_attack['stars']/3
+                    des_score = member_attack['destructionPercentage']/100
+                    # find opp th from attack
+                    for opponent in war_json[clan_status]['members']:
+                        if opponent['tag'] == member_attack['defenderTag']:
+                            defender_th = opponent['townhallLevel']
+                            break
+                    th_difference = defender_th-member['townhallLevel']
+                    attack_score = (((star_score*.75)+(des_score*.25))
+                                    * th_multiplier(th_difference))
+                    member_score += attack_score
+
                     member_attacks.append(WarMemberAttack(
                         member_attack['attackerTag'],
                         member_attack['defenderTag'], member_attack['stars'],
                         member_attack['destructionPercentage'],
-                        member_attack['order'])
-                    )
+                        member_attack['order'], attack_score
+                    ))
             # adding the current member to the list of opp members
             opp_members.append(WarMember(
                 member['tag'], member['name'], member['townhallLevel'],
-                member['mapPosition'], stars, member_attacks)
-            )
+                member['mapPosition'], stars, member_attacks, member_score
+            ))
 
         # sorting opp members by map position
         opp_members = sorted(
             opp_members, key=lambda x: x.map_position, reverse=False)
 
+        opponent_score = 0
+        for member in opp_members:
+            opponent_score += member.score
+
         war_opp = WarClan(
             opp_status, war_json[opp_status]['tag'],
             war_json[opp_status]['name'], war_json[opp_status]['clanLevel'],
             war_json[opp_status]['attacks'], war_json[opp_status]['stars'],
-            war_json[opp_status]['destructionPercentage'], opp_members
+            war_json[opp_status]['destructionPercentage'],
+            opp_members, opponent_score
         )
 
     return War(
@@ -377,3 +422,23 @@ def time_string_changer(time):
     time = time[:-5:]
     time = time[:8] + time[8 + 1:]
     return time
+
+
+def th_multiplier(th_difference):
+    if th_difference < -2:
+        th_mult = 10
+    elif th_difference == -2:
+        th_mult = 35
+    elif th_difference == -1:
+        th_mult = 50
+    elif th_difference == 0:
+        th_mult = 100
+    elif th_difference == 1:
+        th_mult = 150
+    elif th_difference == 2:
+        th_mult = 165
+    elif th_difference > 2:
+        th_mult = 200
+    else:
+        th_mult = 100
+    return th_mult

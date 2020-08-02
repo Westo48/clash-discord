@@ -44,15 +44,16 @@ class CWLWarClan(War.WarClan):
             destruction_percentage (int): Clan's destruction percentage
             members (list): List of clan members participating in the CWL war
                 CWLWarMember objects
+            score (int): Clan's war score
     """
 
     def __init__(
         self, status, tag, name, lvl, attack_count,
-        stars, destruction_percentage, members
+        stars, destruction_percentage, members, score
     ):
         War.WarClan.__init__(
             self, status, tag, name, lvl, attack_count,
-            stars, destruction_percentage, members
+            stars, destruction_percentage, members, score
         )
 
 
@@ -67,11 +68,12 @@ class CWLWarMember(War.WarMember):
             stars (int): CWLWarMember's star count in current war
             attacks (list): List of CWLWarMember's attacks in current war
                 CWLWarMemberAttack objects
+            score (int): Member's war score
     """
 
-    def __init__(self, tag, name, th_lvl, map_position, stars, attacks):
+    def __init__(self, tag, name, th_lvl, map_position, stars, attacks, score):
         War.WarMember.__init__(
-            self, tag, name, th_lvl, map_position, stars, attacks)
+            self, tag, name, th_lvl, map_position, stars, attacks, score)
 
 
 class CWLWarMemberAttack(War.WarMemberAttack):
@@ -83,15 +85,16 @@ class CWLWarMemberAttack(War.WarMemberAttack):
             stars (int): stars earned in attack
             destruction_percent (int): destruction percent earned in attack
             order (int): order of attack in CWL war
+            score (int): attack score
     """
 
     def __init__(
         self, attacker_tag, defender_tag,
-        stars, destruction_percent, order
+        stars, destruction_percent, order, score
     ):
         War.WarMemberAttack.__init__(
             self, attacker_tag, defender_tag,
-            stars, destruction_percent, order
+            stars, destruction_percent, order, score
         )
 
 
@@ -114,30 +117,47 @@ def get(war_tag, clan_tag, header):
         for member in war_json[clan_status]['members']:
             member_attacks = []
             stars = 0
-
+            member_score = (-100)
             if 'attacks' in member:
                 for member_attack in member['attacks']:
+                    member_score += 100
                     stars += member_attack['stars']
+
+                    star_score = member_attack['stars']/3
+                    des_score = member_attack['destructionPercentage']/100
+                    # find opp th from attack
+                    for opponent in war_json[opp_status]['members']:
+                        if opponent['tag'] == member_attack['defenderTag']:
+                            defender_th = opponent['townhallLevel']
+                            break
+                    th_difference = defender_th-member['townhallLevel']
+                    attack_score = (((star_score*.75)+(des_score*.25))
+                                    * th_multiplier(th_difference))
+                    member_score += attack_score
                     member_attacks.append(CWLWarMemberAttack(
                         member_attack['attackerTag'],
                         member_attack['defenderTag'], member_attack['stars'],
                         member_attack['destructionPercentage'],
-                        member_attack['order'])
+                        member_attack['order'], attack_score)
                     )
             # adding the current member to the list of clan members
             clan_members.append(CWLWarMember(
                 member['tag'], member['name'], member['townhallLevel'],
-                member['mapPosition'], stars, member_attacks)
+                member['mapPosition'], stars, member_attacks, member_score)
             )
         # sorting clan members by map position
         clan_members = sorted(
             clan_members, key=lambda x: x.map_position, reverse=False)
 
+        clan_score = 0
+        for member in clan_members:
+            clan_score += member.score
         war_clan = CWLWarClan(
             clan_status, war_json[clan_status]['tag'],
             war_json[clan_status]['name'], war_json[clan_status]['clanLevel'],
             war_json[clan_status]['attacks'], war_json[clan_status]['stars'],
-            war_json[clan_status]['destructionPercentage'], clan_members
+            war_json[clan_status]['destructionPercentage'],
+            clan_members, clan_score
         )
 
         # filling the opp members list (including the member attacks)
@@ -145,30 +165,48 @@ def get(war_tag, clan_tag, header):
         for member in war_json[opp_status]['members']:
             member_attacks = []
             stars = 0
-
+            member_score = (-100)
             if 'attacks' in member:
                 for member_attack in member['attacks']:
+                    member_score += 100
                     stars += member_attack['stars']
+
+                    star_score = member_attack['stars']/3
+                    desscore = member_attack['destructionPercentage']/100
+                    # find opp th from attack
+                    for opponent in war_json[clan_status]['members']:
+                        if opponent['tag'] == member_attack['defenderTag']:
+                            defender_th = opponent['townhallLevel']
+                            break
+                    th_difference = defender_th-member['townhallLevel']
+                    attack_score = (((star_score*.75)+(des_score*.25))
+                                    * th_multiplier(th_difference))
+                    member_score += attack_score
+
                     member_attacks.append(CWLWarMemberAttack(
                         member_attack['attackerTag'],
                         member_attack['defenderTag'], member_attack['stars'],
                         member_attack['destructionPercentage'],
-                        member_attack['order'])
-                    )
+                        member_attack['order'], attack_score
+                    ))
             # adding the current member to the list of opp members
             opp_members.append(CWLWarMember(
                 member['tag'], member['name'], member['townhallLevel'],
-                member['mapPosition'], stars, member_attacks)
+                member['mapPosition'], stars, member_attacks, member_score)
             )
         # sorting opp members by map position
         opp_members = sorted(
             opp_members, key=lambda x: x.map_position, reverse=False)
 
+        opponent_score = 0
+        for member in opp_members:
+            opponent_score += member.score
         war_opp = CWLWarClan(
             opp_status, war_json[opp_status]['tag'],
             war_json[opp_status]['name'], war_json[opp_status]['clanLevel'],
             war_json[opp_status]['attacks'], war_json[opp_status]['stars'],
-            war_json[opp_status]['destructionPercentage'], opp_members
+            war_json[opp_status]['destructionPercentage'],
+            opp_members, opponent_score
         )
 
     return CWLWar(

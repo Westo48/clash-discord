@@ -84,6 +84,12 @@ async def allattacks(ctx):
         await ctx.send(f'{line}')
 
 
+@client.command(aliases=['warmemberscore'], description='showing every member score', hidden=True)
+async def warallmemberscore(ctx):
+    for line in response_war_all_member_standing(heroes_tag, time_zone, header):
+        await ctx.send(f'{line}')
+
+
 @client.command(description='enter the amount of storages (not including the TH) you are looking for and the amount of gold/elixir in TH or one storage')
 async def warweight(ctx, storages, *, amount):
     return (int(storages) + 1) * int(amount)
@@ -179,4 +185,4 @@ async def on_member_remove(member):
     print(f'{member} has left the server')
 
 
-client.run('NjQ5MTA3MTU2OTg5Mzc4NTcx.Xd3-7g.YMM0SYwbNfzDdUvYi6ibbh3g_Ck')
+client.run('NjQ5MTA3MTU2OTg5Mzc4NTcx.Xd3-Jg.OM20CTzSqwFPjrl0PMQQRocG87w')

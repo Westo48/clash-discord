@@ -306,6 +306,25 @@ def response_war_all_attacks(clan_tag, time_zone, header):
     return response_list
 
 
+def response_war_all_member_standing(clan_tag, time_zone, header):
+    "returns a response list of member scores"
+    war = War.get(clan_tag, header)
+    return_list = []
+    if war.state == 'preparation':
+        return_list.append('War has not started, there is no score.')
+        return return_list
+    elif war.state == 'notInWar':
+        return_list.append('You are not in war.')
+        return return_list
+    else:
+        war_members = sorted(
+            war.clan.members, key=lambda member: member.score, reverse=True)
+        # razgriz has a score of
+        for member in war_members:
+            return_list.append(
+                f'{member.name} has a score of {round(member.score, 3)}')
+        return return_list
+
 # CWL Group
 
 
@@ -451,9 +470,10 @@ def response_cwl_war_all_attacks(clan_tag, time_zone, header):
 # returns CWL standing
 def response_cwl_standing(clan_tag, header):
     class ScoredMember(object):
-        def __init__(self, tag, name, score):
+        def __init__(self, tag, name, war_count, score):
             self.tag = tag
             self.name = name
+            self.war_count = war_count
             self.score = score
     # get the CWLGroup object
     cwl_group = CWLGroup.get(clan_tag, header)
@@ -469,42 +489,20 @@ def response_cwl_standing(clan_tag, header):
         if clan.tag == clan_tag:
             # for each member in the CWLWarClan
             for member in clan.members:
-                war_count = 0
-                score_sum = 0
+                scored_member = ScoredMember(member.tag, member.name, 0, 0)
                 # for each war getting that war score and war count
                 for war in cwl_wars:
                     for war_member in war.clan.members:
                         if war_member.tag == member.tag:
-                            war_count += 1
-                            war_score = 0
-                            if len(war_member.attacks) != 0:
-                                for attack in war_member.attacks:
-                                    defender_tag = attack.defender_tag
-                                    # finding the defender_th
-                                    for opponent_member in war.opponent.members:
-                                        if opponent_member.tag == defender_tag:
-                                            defender_th = opponent_member.th_lvl
-                                            break
-                                    th_difference = defender_th-war_member.th_lvl
-                                    star_count = attack.stars
-                                    destruction_percent = (
-                                        attack.destruction_percent/100)
-                                    star_score = star_count/3*0.75
-                                    destruction_score = destruction_percent*0.25
-                                    attack_score = (
-                                        (star_score+destruction_score)
-                                        * th_multiplier(th_difference)
-                                    )
-                                    war_score += attack_score
-                            else:
-                                war_score = (-100)
-                            score_sum += war_score
-                if war_count != 0:
-                    avg_score = score_sum/war_count
-                    participation_multiplier = math.log(war_count, 7)
-                    member_score = avg_score*participation_multiplier
-                    cwl_war_members.append(ScoredMember(
-                        member.tag, member.name, member_score))
+                            scored_member.war_count += 1
+                            scored_member.score += war_member.score
+                            break
+                if scored_member.war_count != 0:
+                    avg_score = scored_member.score/scored_member.war_count
+                    participation_multiplier = math.log(
+                        scored_member.war_count, 7)
+                    scored_member.score = avg_score*participation_multiplier
+
     sorted_cwl_war_members = sorted(
         cwl_war_members, key=lambda member: member.score, reverse=True)
     return_string_list = []
