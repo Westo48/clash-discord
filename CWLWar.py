@@ -1,7 +1,7 @@
 import requests
 import json
 import War
-from War import clan_opp_status
+from War import clan_opp_status, th_multiplier
 
 
 class CWLWar(War.War):
@@ -214,26 +214,6 @@ def get(war_tag, clan_tag, header):
         war_json['preparationStartTime'], war_json['startTime'],
         war_json['endTime'], war_clan, war_opp
     )
-
-
-def th_multiplier(th_difference):
-    if th_difference < -2:
-        th_mult = 10
-    elif th_difference == -2:
-        th_mult = 35
-    elif th_difference == -1:
-        th_mult = 50
-    elif th_difference == 0:
-        th_mult = 100
-    elif th_difference == 1:
-        th_mult = 150
-    elif th_difference == 2:
-        th_mult = 165
-    elif th_difference > 2:
-        th_mult = 200
-    else:
-        th_mult = 100
-    return th_mult
 
 
 def json_response(tag, header):
