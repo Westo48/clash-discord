@@ -333,7 +333,7 @@ def response_war_all_member_standing(clan_tag, time_zone, header):
 # returns a string of the cwl war no attack response
 def response_cwl_war_no_attack(clan_tag, time_zone, header):
     group = CWLGroup.get(clan_tag, header)
-    war = group.find_current_war()
+    war = group.find_current_war(clan_tag, header)
 
     if war.state == 'preparation':
         return f'{war.clan.name} is still preparing for war with {war.string_date_time(time_zone)} before war starts, nobody has attacked.'

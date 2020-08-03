@@ -216,6 +216,26 @@ def get(war_tag, clan_tag, header):
     )
 
 
+def th_multiplier(th_difference):
+    if th_difference < -2:
+        th_mult = 10
+    elif th_difference == -2:
+        th_mult = 35
+    elif th_difference == -1:
+        th_mult = 50
+    elif th_difference == 0:
+        th_mult = 100
+    elif th_difference == 1:
+        th_mult = 150
+    elif th_difference == 2:
+        th_mult = 165
+    elif th_difference > 2:
+        th_mult = 200
+    else:
+        th_mult = 100
+    return th_mult
+
+
 def json_response(tag, header):
     tag = tag[1:]
     url = f'https://api.clashofclans.com/v1/clanwarleagues/wars/%23{tag}'
