@@ -502,6 +502,7 @@ def response_cwl_standing(clan_tag, header):
                     participation_multiplier = math.log(
                         scored_member.war_count, 7)
                     scored_member.score = avg_score*participation_multiplier
+                cwl_war_members.append(scored_member)
 
     sorted_cwl_war_members = sorted(
         cwl_war_members, key=lambda member: member.score, reverse=True)
