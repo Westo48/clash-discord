@@ -124,9 +124,14 @@ async def cwlallattack(ctx):
 
 
 @client.command(aliases=['cwlscore', 'cwlbonus'], description='Lists each member and their score in CWL', hidden=True)
-async def cwlmemberscore(ctx):
-    for line in response_cwl_standing(heroes_tag, header):
+async def cwlclancore(ctx):
+    for line in response_cwl_clan_standing(heroes_tag, header):
         await ctx.send(line)
+
+
+@client.command(aliases=['cwlmemberbonus'], description='Lists each score the member has in CWL')
+async def cwlmemberscore(ctx, *, player_name):
+    await ctx.send(response_cwl_member_standing(player_name, heroes_tag, header))
 
 
 # Discord

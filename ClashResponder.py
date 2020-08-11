@@ -467,8 +467,8 @@ def response_cwl_war_all_attacks(clan_tag, time_zone, header):
     return response_list
 
 
-# returns CWL standing
-def response_cwl_standing(clan_tag, header):
+# returns each member's CWL standing
+def response_cwl_clan_standing(clan_tag, header):
     class ScoredMember(object):
         def __init__(self, tag, name, war_count, score):
             self.tag = tag
@@ -498,10 +498,10 @@ def response_cwl_standing(clan_tag, header):
                             scored_member.score += war_member.score
                             break
                 if scored_member.war_count != 0:
-                    avg_score = scored_member.score/scored_member.war_count
+                    avg_score = scored_member.score / scored_member.war_count
                     participation_multiplier = math.log(
                         scored_member.war_count, 7)
-                    scored_member.score = avg_score*participation_multiplier
+                    scored_member.score = avg_score * participation_multiplier
                 cwl_war_members.append(scored_member)
 
     sorted_cwl_war_members = sorted(
@@ -511,6 +511,72 @@ def response_cwl_standing(clan_tag, header):
         return_string_list.append(
             f'{member.name} has a score of {round(member.score, 3)}')
     return return_string_list
+
+
+# returns each specified member's CWL War score
+def response_cwl_member_standing(player_name, clan_tag, header):
+    # find the player from the clan
+    clan = Clan.get(clan_tag, header)
+    player_tag = clan.find_member(player_name)
+    # returns a response if they provided an incorrect player name
+    if player_tag == '':
+        return f'Could not find {player_name}'
+    player = Player.get(player_tag, header)
+
+    # get the CWLGroup object
+    cwl_group = CWLGroup.get(clan_tag, header)
+    # get a list of all CWLWar objects
+    cwl_wars = []
+    for i in range(0, len(cwl_group.rounds)):
+        cwl_war = cwl_group.find_specified_war(clan_tag, i, header)
+        cwl_wars.append(cwl_war)
+    member_round_scores = []
+    # find your clan
+    found = False
+    for clan in cwl_group.clans:
+        if clan.tag == clan_tag:
+            cwl_group_clan = clan
+            found = True
+            break
+    if not found:
+        return 'Could not find your clan based on the clan tag provided'
+
+    found = False
+    for member in cwl_group_clan.members:
+        if member.tag == player.tag:
+            found = True
+            break
+    if not found:
+        return 'Could not find {player.name} in the CWL group.'
+
+    for war in cwl_wars:
+        for war_member in war.clan.members:
+            if war_member.tag == player.tag:
+                member_round_scores.append(war_member.score)
+                break
+
+    if len(member_round_scores) == 0:
+        return_string = f'{player.name} did not participate in any wars.'
+
+    elif len(member_round_scores) == 1:
+        return_string = f'{player.name} was in 1 war and had a score of {round(member_round_scores[0], 3)} for that war.'
+
+    else:
+        total_score = 0
+        for round_score in member_round_scores:
+            total_score += round_score
+        avg_score = total_score / len(member_round_scores)
+        participation_multiplier = math.log(len(member_round_scores), 7)
+        member_score = avg_score * participation_multiplier
+
+        return_string = f"{player.name} was in {len(member_round_scores)} wars with an overall score of {round(member_score, 3)}. {player.name}'s scores are: "
+        for cwl_round_score in member_round_scores:
+            return_string += f'{round(cwl_round_score, 3)}, '
+        # removes the last 2 characters ', ' of the string
+        return_string = return_string[:-2]
+        return_string += '.'
+
+    return return_string
 
 
 def th_multiplier(th_difference):
