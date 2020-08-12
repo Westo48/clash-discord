@@ -115,6 +115,17 @@ def response_donation(troop_name, clan_tag, header):
             return f'{donor_string} are able to donate lvl {donor_max + clan.donation_upgrade} {troops[0].name}, max is lvl {troops[0].max_lvl}.'
 
 
+# returns a string of the member's name
+def response_member_name(player_name, clan_tag, header):
+    "takes in the player name and returns player name, player role"
+    clan = Clan.get(clan_tag, header)
+    player_tag = clan.find_member(player_name)
+    if player_tag == "":
+        return '', ''
+    player = Player.get(player_tag, header)
+    return player.name, player.role
+
+
 # returns a string of the member's role
 def response_member_role(player_name, clan_tag, header):
     clan = Clan.get(clan_tag, header)

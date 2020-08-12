@@ -2,6 +2,7 @@ import discord
 from discord.ext import commands
 from discord.utils import get
 from ClashResponder import *
+from DiscordResponder import *
 
 
 client = commands.Bot(command_prefix='!')
@@ -138,47 +139,46 @@ async def cwlmemberscore(ctx, *, player_name):
 
 # todo get players to set nickname and use member.nick for that
 # todo set player nicknames to reflect CoC name
-@client.command(pass_context=True, aliases=['roleme'], description='this will give you your MightyHeroes role here in Discord')
+@client.command(aliases=['roleme'], description='this will give you your MightyHeroes role here in Discord')
 async def role(ctx, player_name):
-    new_role = response_member_role(player_name, heroes_tag, header)
-    if new_role == 'leader':
-        new_role = 'Leader'
-    elif new_role == 'coLeader':
-        new_role = 'Co-Leader'
-    elif new_role == 'admin':
-        new_role = 'Elder'
-    elif new_role == 'member':
-        new_role = 'Member'
-    else:
-        new_role = 'Uninitiated'
-
+    player_role = response_member_role(player_name, heroes_tag, header)
     member = ctx.message.author
-    old_role = ''
-    for item in member.roles:
-        if item.name == 'Leader':
-            old_role = 'Leader'
-            break
-        if item.name == 'Co-Leader':
-            old_role = 'Co-Leader'
-            break
-        if item.name == 'Elder':
-            old_role = 'Elder'
-            break
-        if item.name == 'Member':
-            old_role = 'Member'
-            break
-        if item.name == 'Uninitiated':
-            old_role = 'Uninitiated'
-            break
+    new_role, old_role = role_switch(player_role, member.roles)
 
-    member_role_remove = discord.utils.get(member.guild.roles, name=old_role)
-    member_role = discord.utils.get(member.guild.roles, name=new_role)
-    await member.remove_roles(member_role_remove)
-    await member.add_roles(member_role)
+    if old_role != '':
+        await member.remove_roles(
+            discord.utils.get(member.guild.roles, name=old_role))
+    if new_role != '':
+        await member.add_roles(
+            discord.utils.get(member.guild.roles, name=new_role))
+
     await ctx.send(f'{member.name} now has the role {new_role}')
 
 
-# todo have this event set that member's role to 'Uninitiated'
+@client.command(aliases=['nick'], description='This will check the clan with the given name and set your nickname to the corresponding name and reset your role')
+async def nickname(ctx, *, given_name):
+    author = ctx.message.author
+    player_name, player_role = response_member_name(
+        given_name, heroes_tag, header)
+
+    new_role, old_role = role_switch(player_role, author.roles)
+
+    if old_role != '':
+        await author.remove_roles(
+            discord.utils.get(author.guild.roles, name=old_role))
+    if new_role != '':
+        await author.add_roles(
+            discord.utils.get(author.guild.roles, name=new_role))
+
+    if player_name == '':
+        await author.edit(nick=None)
+        await ctx.send(f"Couldn't find {given_name} in the clan. You have been given the role {new_role}")
+
+    else:
+        await author.edit(nick=player_name)
+        await ctx.send(f"Your nickname has been changed to {player_name} and your role has been changed to {new_role}")
+
+
 @client.event
 async def on_member_join(member):
     member_role = discord.utils.get(member.guild.roles, name='Uninitiated')
