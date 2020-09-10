@@ -33,3 +33,25 @@ def role_switch(player_role, user_roles):
             break
 
     return new_role, old_role
+
+
+def role_check(check_role, user_roles):
+    for role in user_roles:
+        if role.name == check_role:
+            return True
+    return False
+
+
+def nickname_available(nickname, user_list):
+    for user in user_list:
+        if nickname == user.display_name:
+            return False
+    return True
+
+
+def channel_changer(ctx, send_id):
+    for channel in ctx.guild.channels:
+        if channel.id == send_id:
+            return channel
+            break
+    return ctx.channel

@@ -116,14 +116,13 @@ def response_donation(troop_name, clan_tag, header):
 
 
 # returns a string of the member's name
-def response_member_name(player_name, clan_tag, header):
-    "takes in the player name and returns player name, player role"
+def response_player(player_name, clan_tag, header):
+    "takes in the player name and returns player object"
     clan = Clan.get(clan_tag, header)
     player_tag = clan.find_member(player_name)
     if player_tag == "":
-        return '', ''
-    player = Player.get(player_tag, header)
-    return player.name, player.role
+        return ''
+    return Player.get(player_tag, header)
 
 
 # returns a string of the member's role
@@ -588,23 +587,3 @@ def response_cwl_member_standing(player_name, clan_tag, header):
         return_string += '.'
 
     return return_string
-
-
-def th_multiplier(th_difference):
-    if th_difference < -2:
-        th_mult = 10
-    elif th_difference == -2:
-        th_mult = 35
-    elif th_difference == -1:
-        th_mult = 50
-    elif th_difference == 0:
-        th_mult = 100
-    elif th_difference == 1:
-        th_mult = 150
-    elif th_difference == 2:
-        th_mult = 165
-    elif th_difference > 2:
-        th_mult = 200
-    else:
-        th_mult = 100
-    return th_mult
