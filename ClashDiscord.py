@@ -280,7 +280,6 @@ async def nickname(ctx, *, player_name):
 )
 # todo only be able to run this if author is admin
 # ! this is kind of a giant mess right now... don't use this
-# ? testing
 async def all_member_roles(ctx):
     members = ctx.guild.members
     for member in members:
