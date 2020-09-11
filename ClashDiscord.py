@@ -267,9 +267,9 @@ async def nickname(ctx, *, player_name):
                 discord.utils.get(author.guild.roles, name=new_role))
 
         await author.edit(nick=None)
-        # ! using testing channel for now
         channel = channel_changer(ctx, welcome_channel_id)
-        await channel.send(f"Couldn't find {player_name} in the clan.")
+        await channel.send(f"Couldn't find {player_name} in the clan."
+                           f"Your role and nickname have been reset.")
 
 
 @client.command(
