@@ -278,37 +278,51 @@ async def nickname(ctx, *, player_name):
                  'Does not change any current member roles.'),
     hidden=True
 )
-# todo only be able to run this if author is admin
-# ! this is kind of a giant mess right now... don't use this
 async def all_member_roles(ctx):
-    members = ctx.guild.members
-    for member in members:
-        # if the member is not initiated then leave them be
-        if role_check('Uninitiated', member.roles):
-            pass
-        # makes the player Uninitiated if they do not have a nickname set
-        elif member.nick == None:
-            new_role, old_role = role_switch('Uninitiated', member.roles)
-            if old_role != '':
-                await member.remove_roles(
-                    discord.utils.get(member.guild.roles, name=old_role))
-            if new_role != '':
-                await member.add_roles(
-                    discord.utils.get(member.guild.roles, name=new_role))
-        else:
-            player = response_player(member.nick, heroes_tag, header)
-            if player != '':
-                # makes the player Uninitiated if they are not in the clan
-                new_role, old_role = role_switch('Uninitiated', member.roles)
+    # todo only be able to run this if author is admin
+    # admin check
+    if role_check('Admin', ctx.author.roles):
+        # for each member in the clan
+        message_list = []
+        for member in ctx.guild.members:
+            # leave Uninitiated members alone
+            if role_check('Uninitiated', member.roles):
+                pass
+            # all initiated members
             else:
-                new_role, old_role = role_switch(player.role, member.roles)
+                player = response_player(
+                    member.display_name, heroes_tag, header)
 
-            if old_role != '':
-                await member.remove_roles(
-                    discord.utils.get(member.guild.roles, name=old_role))
-            if new_role != '':
-                await member.add_roles(
-                    discord.utils.get(member.guild.roles, name=new_role))
+                # the player is found in the given clan
+                if player != '':
+                    # gets the new role and current (old) role
+                    new_role, old_role = role_switch(player.role, member.roles)
+
+                    # role hasn't changed
+                    if new_role == old_role:
+                        pass
+
+                    # role has changed
+                    else:
+                        # setting the roles for the specified member
+                        if old_role != '':
+                            await member.remove_roles(
+                                discord.utils.get(ctx.guild.roles, name=old_role))
+                        if new_role != '':
+                            await member.add_roles(
+                                discord.utils.get(ctx.guild.roles, name=new_role))
+
+                        message_list.append(f'{member.display_name} now has '
+                                            'the role {new_role}')
+
+                # the player is not found in the given clan
+                else:
+                    await member.edit(nick=None)
+                    message_list.append(f"Couldn't find {member.name} "
+                                        "in the clan.")
+
+        for line in message_list:
+            await ctx.send(line)
 
 
 @client.event
