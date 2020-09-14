@@ -66,7 +66,7 @@ async def donationchecker(ctx, *, troop_name):
 # War
 # todo warmember gets a war overview for a specific war member
 
-@client.command(aliases=['war', 'scoreboard'])
+@client.command(aliases=['war'])
 async def waroverview(ctx):
     await ctx.send(response_war_overview(heroes_tag, time_zone, header))
 
@@ -76,8 +76,8 @@ async def wartime(ctx):
     await ctx.send(response_war_time(heroes_tag, time_zone, header))
 
 
-@client.command(aliases=['noatk'])
-async def noattack(ctx):
+@client.command(aliases=['warnoatk'])
+async def warnoattack(ctx):
     await ctx.send(response_war_no_attack(heroes_tag, time_zone, header))
 
 
@@ -86,27 +86,27 @@ async def noattack(ctx):
     description='overview of all members in war',
     hidden=True
 )
-async def warmemberstars(ctx):
+async def warclanstars(ctx):
     for line in response_war_members_overview(heroes_tag, time_zone, header):
         await ctx.send(line)
 
 
 @client.command(
-    aliases=['allatk'],
+    aliases=['warallatk'],
     description='showing all attacks for every member',
     hidden=True
 )
-async def allattacks(ctx):
+async def warallattacks(ctx):
     for line in response_war_all_attacks(heroes_tag, time_zone, header):
         await ctx.send(f'{line}')
 
 
 @client.command(
-    aliases=['warmemberscore'],
+    aliases=['warscore'],
     description='showing every member score',
     hidden=True
 )
-async def warallmemberscore(ctx):
+async def warclanscore(ctx):
     for line in response_war_all_member_standing(heroes_tag, time_zone, header):
         await ctx.send(f'{line}')
 
@@ -129,31 +129,30 @@ async def warweight(ctx, storages, *, amount):
 
 @client.command(
     aliases=['cwlwar'],
-    description='shows the overview of the current war league'
+    description='shows the overview of the current CWL war'
 )
 async def cwlwaroverview(ctx):
     await ctx.send(response_cwl_war_overview(heroes_tag, time_zone, header))
 
 
 @client.command(
-    aliases=['cwltime'],
-    description='shows time remaining in the current clan war league'
+    description='shows time remaining in the current CWL war'
 )
 async def cwlwartime(ctx):
     await ctx.send(response_cwl_war_time(heroes_tag, time_zone, header))
 
 
-@client.command(aliases=['cwlnoatk'])
-async def cwlnoattack(ctx):
+@client.command(aliases=['cwlwarnoatk'])
+async def cwlwarnoattack(ctx):
     await ctx.send(response_cwl_war_no_attack(heroes_tag, time_zone, header))
 
 
 @client.command(
-    aliases=['cwlallatk'],
-    description='showing all attacks for every member',
+    aliases=['cwlwarallatk'],
+    description='showing all attacks for every member in the current war',
     hidden=True
 )
-async def cwlallattack(ctx):
+async def cwlwarallattack(ctx):
     for line in response_cwl_war_all_attacks(heroes_tag, time_zone, header):
         await ctx.send(line)
 
