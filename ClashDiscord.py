@@ -121,7 +121,7 @@ async def warweight(ctx, storages, *, amount):
 
 
 # CWL Group
-# todo cwl_group overview, scoreboard
+# todo cwl_group overview, scoreboard, cwl_clan_noatk
 
 
 # CWL War
