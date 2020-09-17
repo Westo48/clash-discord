@@ -5,9 +5,22 @@ from ClashResponder import *
 from DiscordResponder import *
 
 
+class ClientClan(object):
+    def __init__(
+        self, tag, name
+    ):
+        self.tag = tag
+        self.name = name
+
+
 client = commands.Bot(command_prefix='!')
 raz_tag = '#RGQ8RGU9'
 heroes_tag = '#JJRJGVR0'
+client_clans = [
+    (ClientClan('#28LRPVP8C', '6ers')),
+    (ClientClan('#JJRJGVR0', 'TheMightyHeroes'))
+
+]
 time_zone = (-5)
 header = {
     'Accept': 'application/json',
@@ -43,13 +56,26 @@ async def ping(ctx):
 @client.command(description=('Enter troop/hero/spell to see its '
                              'current, th max, and max level.'))
 async def trooplvl(ctx, *, troop_name):
-    await ctx.send(response_troop_lvl(ctx.author.display_name, troop_name, heroes_tag, header))
+    player_name = player_name_string(ctx.author.display_name)
+    user_clan = find_user_clan(
+        player_name, client_clans, ctx.author.roles, header)
+    if user_clan != '':
+        await ctx.send(response_troop_lvl(
+            player_name, troop_name, user_clan.tag, header))
+    else:
+        await ctx.send(f"Couldn't find {ctx.author.display_name}'s clan. "
+                       "Please ensure a clan role has been given to the user.")
 
 
 @client.command(description='Get all your troop levels.', hidden=True)
 async def alltrooplvl(ctx):
-    for line in response_all_troop_level(ctx.author.display_name, heroes_tag, header):
-        await ctx.send(line)
+    user_clan = find_user_clan(client_clans, ctx.author.roles)
+    if user_clan != '':
+        for line in response_all_troop_level(ctx.author.display_name, user_clan.tag, header):
+            await ctx.send(line)
+    else:
+        await ctx.send(f"Couldn't find {ctx.author.display_name}'s clan. "
+                       "Please ensure a clan role has been given to the user.")
 
 
 # Clan
@@ -60,7 +86,12 @@ async def alltrooplvl(ctx):
     'is best suited to donate that troop.'
 )
 async def donationchecker(ctx, *, troop_name):
-    await ctx.send(response_donation(troop_name, heroes_tag, header))
+    user_clan = find_user_clan(client_clans, ctx.author.roles)
+    if user_clan != '':
+        await ctx.send(response_donation(troop_name, user_clan.tag, header))
+    else:
+        await ctx.send(f"Couldn't find {ctx.author.display_name}'s clan. "
+                       "Please ensure a clan role has been given to the user.")
 
 
 # War
@@ -68,17 +99,32 @@ async def donationchecker(ctx, *, troop_name):
 
 @client.command(aliases=['war', 'scoreboard'])
 async def waroverview(ctx):
-    await ctx.send(response_war_overview(heroes_tag, time_zone, header))
+    user_clan = find_user_clan(client_clans, ctx.author.roles)
+    if user_clan != '':
+        await ctx.send(response_war_overview(user_clan.tag, time_zone, header))
+    else:
+        await ctx.send(f"Couldn't find {ctx.author.display_name}'s clan. "
+                       "Please ensure a clan role has been given to the user.")
 
 
 @client.command()
 async def wartime(ctx):
-    await ctx.send(response_war_time(heroes_tag, time_zone, header))
+    user_clan = find_user_clan(client_clans, ctx.author.roles)
+    if user_clan != '':
+        await ctx.send(response_war_time(user_clan.tag, time_zone, header))
+    else:
+        await ctx.send(f"Couldn't find {ctx.author.display_name}'s clan. "
+                       "Please ensure a clan role has been given to the user.")
 
 
 @client.command(aliases=['noatk'])
 async def noattack(ctx):
-    await ctx.send(response_war_no_attack(heroes_tag, time_zone, header))
+    user_clan = find_user_clan(client_clans, ctx.author.roles)
+    if user_clan != '':
+        await ctx.send(response_war_no_attack(user_clan.tag, time_zone, header))
+    else:
+        await ctx.send(f"Couldn't find {ctx.author.display_name}'s clan. "
+                       "Please ensure a clan role has been given to the user.")
 
 
 @client.command(
@@ -87,8 +133,13 @@ async def noattack(ctx):
     hidden=True
 )
 async def warmemberstars(ctx):
-    for line in response_war_members_overview(heroes_tag, time_zone, header):
-        await ctx.send(line)
+    user_clan = find_user_clan(client_clans, ctx.author.roles)
+    if user_clan != '':
+        for line in response_war_members_overview(user_clan.tag, time_zone, header):
+            await ctx.send(line)
+    else:
+        await ctx.send(f"Couldn't find {ctx.author.display_name}'s clan. "
+                       "Please ensure a clan role has been given to the user.")
 
 
 @client.command(

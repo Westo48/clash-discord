@@ -1,3 +1,6 @@
+import Clan
+
+
 def role_switch(player_role, user_roles):
     """
         takes in player role and list of discord user roles,
@@ -55,3 +58,28 @@ def channel_changer(ctx, send_id):
             return channel
             break
     return ctx.channel
+
+
+def find_user_clan(player_name, client_clans, user_roles, header):
+    for client_clan in client_clans:
+        for role in user_roles:
+            if client_clan.name == role.name:
+                clan = Clan.get(client_clan.tag, header)
+                player_tag = clan.find_member(player_name)
+                if player_tag != '':
+                    return client_clan
+    return ''
+
+
+def player_name_string(display_name):
+    if '|' in display_name:
+        display_name_chars = ''
+        for char in display_name:
+            if char == '|':
+                break
+            else:
+                display_name_chars += char
+        display_name = display_name_chars
+        if display_name[-1] == ' ':
+            display_name = display_name[:-1]
+    return display_name
