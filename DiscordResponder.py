@@ -62,6 +62,7 @@ def channel_changer(ctx, send_id):
 
 
 def find_user_clan(player_name, client_clans, user_roles, header):
+    '''Returns a client clan if one is found'''
     for client_clan in client_clans:
         for role in user_roles:
             if client_clan.name == role.name:

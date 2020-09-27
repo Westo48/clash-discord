@@ -23,7 +23,7 @@ header = {
     'Accept': 'application/json',
     'authorization': 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiIsImtpZCI6IjI4YTMxOGY3LTAwMDAtYTFlYi03ZmExLTJjNzQzM2M2Y2NhNSJ9.eyJpc3MiOiJzdXBlcmNlbGwiLCJhdWQiOiJzdXBlcmNlbGw6Z2FtZWFwaSIsImp0aSI6IjkyNWJjYzg1LWFhZDktNGM2NC05M2Y2LWM4MWEwZGVhOGUwNiIsImlhdCI6MTU3NDYyMjY3Nywic3ViIjoiZGV2ZWxvcGVyLzdjZmJkOWFjLTFlYzAtNDI3OS1jODM2LTU0YzMxN2FlZmE4NiIsInNjb3BlcyI6WyJjbGFzaCJdLCJsaW1pdHMiOlt7InRpZXIiOiJkZXZlbG9wZXIvc2lsdmVyIiwidHlwZSI6InRocm90dGxpbmcifSx7ImNpZHJzIjpbIjEwOC4yMTEuOTUuMjU0Il0sInR5cGUiOiJjbGllbnQifV19.gdc-4-OEZzsYBLk8HfqZBH-idvlK1vX9nim91XEqLgwNAyarfZquxfkZDKPsswUGyiXRIFV7Am3RB7iWtd9T5w'
 }
-client = commands.Bot(command_prefix='!')
+client = commands.Bot(command_prefix='/')
 client_clans = [
     (ClientClan('#28LRPVP8C', '6ers', 753096212969816144)),
     (ClientClan('#88UUULPU', 'Regis', 753096189213278298))
@@ -152,7 +152,8 @@ async def embedtest(ctx):
     author = ctx.message.author
 
     embed = discord.Embed(
-        colour=discord.Colour.teal()
+        colour=discord.Colour.teal(),
+        title='Test title'
     )
     embed.set_author(
         name="[!] RazClashBot", icon_url="https://cdn.discordapp.com/avatars/649107156989378571/053f201109188da026d0a980dd4136e0.webp")
@@ -308,6 +309,205 @@ async def ping(ctx):
 
 
 # Player
+
+@client.command(
+    brief='player',
+    description="Enter a player's tag and get a player's information"
+)
+async def player(ctx, *, player_tag):
+    if '#' not in player_tag:
+        player_tag = '#'+player_tag
+
+    player = Player.get(player_tag, header)
+
+    if player.tag == 0:
+        await ctx.send(f"Could not find player with tag {player_tag}")
+        return
+
+    embed = discord.Embed(
+        colour=discord.Colour.blue(),
+        title=player.name,
+    )
+    embed.set_author(
+        name="[!] RazClashBot", icon_url="https://cdn.discordapp.com/avatars/649107156989378571/053f201109188da026d0a980dd4136e0.webp")
+    embed.add_field(
+        name='**Exp Lvl**',
+        value=player.xp_lvl,
+        inline=True
+    )
+    embed.add_field(
+        name='**TH Lvl**',
+        value=player.th_lvl,
+        inline=True
+    )
+    if player.th_weapon_lvl != 0:
+        embed.add_field(
+            name='**TH Weapon Lvl**',
+            value=player.th_weapon_lvl,
+            inline=True
+        )
+    embed.add_field(
+        name='**Trophies**',
+        value=player.trophies,
+        inline=True
+    )
+    embed.add_field(
+        name='**Best Trophies**',
+        value=player.best_trophies,
+        inline=True
+    )
+    if player.league_id == 0:
+        embed.add_field(
+            name='**League**',
+            value=f'{player.name} is not in a league',
+            inline=True
+        )
+    else:
+        embed.set_thumbnail(url=player.league_icons['medium'])
+        embed.add_field(
+            name='**League**',
+            value=player.league_name,
+            inline=True
+        )
+    embed.add_field(
+        name='**War Stars**',
+        value=player.war_stars,
+        inline=True
+    )
+    if player.clan_lvl == 0:
+        embed.add_field(
+            name='**Clan**',
+            value=f"{player.name} is not in a clan",
+            inline=True
+        )
+    else:
+        embed.add_field(
+            name='**Clan**',
+            value=f"[{player.clan_name}](https://link.clashofclans.com/en?action=OpenClanProfile&tag={player.clan_tag[1:]})",
+            inline=True
+        )
+        embed.add_field(
+            name='**Clan Role**',
+            value=player.role,
+            inline=True
+        )
+    embed.add_field(
+        name='**Donations | Received**',
+        value=f"{player.donations} | {player.donations_received}",
+        inline=True
+    )
+    embed.add_field(
+        name='**Attack | Defense**',
+        value=f"{player.attack_wins} | {player.defense_wins}",
+        inline=True
+    )
+    if player.builder_hall_lvl == 0:
+        embed.add_field(
+            name='**BH Lvl**',
+            value=f"{player.name} has not unlocked their Builder Hall",
+            inline=True
+        )
+    else:
+        embed.add_field(
+            name='**BH Lvl**',
+            value=player.builder_hall_lvl,
+            inline=True
+        )
+        embed.add_field(
+            name='**VS Trophies**',
+            value=player.vs_trophies,
+            inline=True
+        )
+        embed.add_field(
+            name='**Best VS Trophies**',
+            value=player.best_vs_trophies,
+            inline=True
+        )
+
+    for troop in player.troops:
+        if troop.name == 'Barbarian King':
+            embed.add_field(
+                name='**Barbarian King**',
+                value=troop.lvl,
+                inline=True
+            )
+        elif troop.name == 'Archer Queen':
+            embed.add_field(
+                name='**Archer Queen**',
+                value=troop.lvl,
+                inline=True
+            )
+        elif troop.name == 'Grand Warden':
+            embed.add_field(
+                name='**Grand Warden**',
+                value=troop.lvl,
+                inline=True
+            )
+        elif troop.name == 'Royal Champion':
+            embed.add_field(
+                name='**Royal Champion**',
+                value=troop.lvl,
+                inline=True
+            )
+        else:
+            break
+
+    embed.add_field(
+        name='**Link**',
+        value=f"[{player.name}](https://link.clashofclans.com/en?action=OpenPlayerProfile&tag={player.tag[1:]})",
+        inline=True
+    )
+
+    # todo set footer to display user called and timestamp
+    embed.set_footer(
+        text=ctx.author.display_name,
+        icon_url=ctx.author.avatar_url.BASE+ctx.author.avatar_url._url
+    )
+
+    await ctx.send(embed=embed)
+
+'''
+    PAT - #8V0L0GJ8
+:exp: Expirence Level
+218
+:classical_building: Townhall Level
+13
+:trophy: Trophies
+2925
+:chart_with_upwards_trend: Highest Trophies
+5144
+:medal: League
+Master League II
+:star: War Stars
+1707
+:european_castle: Clan
+FewGoodMen
+#LL82022R
+:clipboard: Role in Clan
+Elder
+:outbox_tray: Donations | Recieved :inbox_tray:
+1600 | 385
+:crossed_swords: Attack- | Defense Wins :shield:
+60 | 43
+:hammer_pick: Builderhall Level
+7
+:crossed_swords: Versus Battle Wins
+693
+:trophy: Versus Trophies
+2693
+:chart_with_upwards_trend: Highest Versus Trophies
+2723
+:crossed_swords::bow_and_arrow: Total Hero Level
+158
+:link: Open Ingame
+Click me!
+[named links](https://discordapp.com)
+https://clashofclans.com/clans/search/#clanTag=28LRPVP8C
+
+
+Semi RH | 6ers | Leader•09/20/2020
+
+'''
 
 
 @client.command(
