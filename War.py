@@ -148,7 +148,7 @@ class War(object):
     def no_attack(self):
         no_attack_members = []
         for member in self.clan.members:
-            if len(member.attacks) == 0:
+            if len(member.attacks) != member.possible_attack_count:
                 no_attack_members.append(member)
         return no_attack_members
 
@@ -205,13 +205,14 @@ class WarMember(object):
 
     def __init__(
         self, tag, name, th_lvl,
-        map_position, stars, attacks, score
+        map_position, stars, possible_attack_count, attacks, score
     ):
         self.tag = tag
         self.name = name
         self.th_lvl = th_lvl
         self.map_position = map_position
         self.stars = stars
+        self.possible_attack_count = possible_attack_count
         self.attacks = attacks
         self.score = score
 
@@ -276,6 +277,7 @@ def get(clan_tag, header):
         # filling the clan members list
         clan_members = []
         for member in war_json[clan_status]['members']:
+            possible_attack_count = 2
             member_attacks = []
             stars = 0
             member_score = (-200)
@@ -304,7 +306,7 @@ def get(clan_tag, header):
             # adding the current member to the list of clan members
             clan_members.append(WarMember(
                 member['tag'], member['name'], member['townhallLevel'],
-                member['mapPosition'], stars, member_attacks, member_score
+                member['mapPosition'], stars, possible_attack_count, member_attacks, member_score
             ))
         # sorting clan members by map position
         clan_members = sorted(
@@ -324,6 +326,7 @@ def get(clan_tag, header):
         # filling the opp members list
         opp_members = []
         for member in war_json[opp_status]['members']:
+            possible_attack_count = 2
             member_attacks = []
             stars = 0
             member_score = (-200)
@@ -353,7 +356,7 @@ def get(clan_tag, header):
             # adding the current member to the list of opp members
             opp_members.append(WarMember(
                 member['tag'], member['name'], member['townhallLevel'],
-                member['mapPosition'], stars, member_attacks, member_score
+                member['mapPosition'], stars, possible_attack_count, member_attacks, member_score
             ))
 
         # sorting opp members by map position
