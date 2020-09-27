@@ -15,10 +15,10 @@ class ClientClan(object):
         self.emoji_id = emoji_id
 
 
-client = commands.Bot(command_prefix='!')
+client = commands.Bot(command_prefix='/')
+client.remove_command('help')
 
 leader_role = '👑Leaders👑'
-
 time_zone = (-5)
 raz_tag = '#RGQ8RGU9'
 header = {
@@ -30,38 +30,38 @@ client_clans = [
     (ClientClan('#88UUULPU', 'Regis', 753096189213278298))
 ]
 bot_categories = [
+    # {
+    #     'name': 'DISCORD',
+    #     'brief': 'discord',
+    #     'emoji': ':computer:'
+    # },
+    # {
+    #     'name': 'MISC',
+    #     'brief': 'misc',
+    #     'emoji': ':iphone:'
+    # },
     {
-        'name': 'Discord',
-        'brief': 'discord',
-        'emoji': ':computer:'
-    },
-    {
-        'name': 'Misc',
-        'brief': 'misc',
-        'emoji': ':iphone:'
-    },
-    {
-        'name': 'Player',
+        'name': 'PLAYER',
         'brief': 'player',
         'emoji': ':sunglasses:'
     },
     {
-        'name': 'Clan',
+        'name': 'CLAN',
         'brief': 'clan',
         'emoji': ':fire:'
     },
     {
-        'name': 'War',
+        'name': 'WAR',
         'brief': 'war',
         'emoji': ':crossed_swords:'
     },
+    # {
+    #     'name': 'CWL GROUP',
+    #     'brief': 'cwlgroup',
+    #     'emoji': ':shield:'
+    # },
     {
-        'name': 'CWL Group',
-        'brief': 'cwlgroup',
-        'emoji': ':shield:'
-    },
-    {
-        'name': 'CWL War',
+        'name': 'CWL WAR',
         'brief': 'cwlwar',
         'emoji': ':dagger:'
     }
@@ -88,17 +88,19 @@ async def on_ready():
 
 
 @client.command(
+    aliases=['helpme'],
     brief='discord',
     description='Returns the help text you see before you'
 )
-async def helpme(ctx):
+async def help(ctx):
+    is_leader = role_check(leader_role, ctx.author.roles)
+
     embed = discord.Embed(
         colour=discord.Colour.blue()
     )
     embed.set_author(
         name="[!] RazClashBot", icon_url="https://cdn.discordapp.com/avatars/649107156989378571/053f201109188da026d0a980dd4136e0.webp")
-    # embed.set_image(
-    #     url="https://i.imgur.com/rwgo8fJ.jpg")
+
     embed.set_thumbnail(
         url="https://i.imgur.com/JBt2Kwt.gif")
 
@@ -118,8 +120,8 @@ async def helpme(ctx):
             emoji = item['emoji']
 
         embed.add_field(
-            name="__**"+item['name'] + "**__",
-            value=emoji,
+            name=f"{emoji} **{item['name']}**",
+            value=f"Example value",
             inline=False
         )
         for command in ctx.bot.all_commands.items():
@@ -127,7 +129,7 @@ async def helpme(ctx):
                 command[1].brief == brief
                 and command[1].description != ''
                 and command[0] == command[1].name
-                and not command[1].hidden
+                and (not command[1].hidden or is_leader)
             ):
                 embed_name = "**" + command[1].name + "**"
                 if command[1].signature != '':
@@ -176,127 +178,6 @@ async def embedtest(ctx):
         text="This is the embed testing command")
 
     await ctx.send(embed=embed)
-
-'''
-@client.command(brief='discord')
-async def help(ctx):
-    author = ctx.message.author
-
-    embed = discord.Embed(
-        colour=discord.Colour.blue()
-    )
-    embed.set_author(
-        name="[!] RazClashBot", icon_url="https://cdn.discordapp.com/avatars/649107156989378571/053f201109188da026d0a980dd4136e0.webp")
-    # embed.set_image(
-    #     url="https://i.imgur.com/rwgo8fJ.jpg")
-    embed.set_thumbnail(
-        url="https://i.imgur.com/MFZp1Fy.gif")
-
-    embed.add_field(
-        name="Discord Commands", value=":computer:", inline=False)
-    embed.add_field(
-        name="role",
-        value="Grabs your nickname and gives you the role in the "
-        "clan you are in. (CURRENTLY ONLY AN EXAMPLE)",
-        inline=False
-    )
-    embed.add_field(
-        name="Hello There",
-        value="Funsies command (CURRENTLY ONLY FOR EXAMPLE)",
-        inline=False
-    )
-
-    embed.add_field(
-        name="Player Commands", value=":sunglasses:", inline=False)
-    embed.add_field(
-        name=f"{ctx.bot.all_commands['trooplvl'].name} <troop name>",
-        value=ctx.bot.all_commands['trooplvl'].description,
-        inline=False
-    )
-
-    embed.add_field(
-        name="Clan", value="Clan commands", inline=False)
-    embed.add_field(
-        name=f"{ctx.bot.all_commands['donationchecker'].name} <troop name> | [donation, donate]",
-        value=ctx.bot.all_commands['donationchecker'].description,
-        inline=False
-    )
-
-    embed.add_field(
-        name="War",
-        value=":crossed_swords:",
-        inline=False
-    )
-    embed.add_field(
-        name=f"{ctx.bot.all_commands['waroverview'].name} | [war]",
-        value=ctx.bot.all_commands['waroverview'].description,
-        inline=False
-    )
-    embed.add_field(
-        name=ctx.bot.all_commands['wartime'].name,
-        value=ctx.bot.all_commands['wartime'].description,
-        inline=False
-    )
-    embed.add_field(
-        name=f"{ctx.bot.all_commands['warnoattack'].name} | [warnoatk]",
-        value=ctx.bot.all_commands['warnoattack'].description,
-        inline=False
-    )
-    embed.add_field(
-        name=f"{ctx.bot.all_commands['warnoattackalert'].name} | [warnoatkalert]",
-        value=ctx.bot.all_commands['warnoattackalert'].description,
-        inline=False
-    )
-
-    embed.add_field(
-        name="CWL Group",
-        value=":shield:",
-        inline=False
-    )
-    embed.add_field(
-        name="WIP",
-        value="This section is still a work in progress",
-        inline=False
-    )
-
-    embed.add_field(
-        name="CWL War",
-        value=":dagger:",
-        inline=False
-    )
-    embed.add_field(
-        name=f"{ctx.bot.all_commands['cwlwaroverview'].name} | [cwlwar]",
-        value=ctx.bot.all_commands['cwlwaroverview'].description,
-        inline=False
-    )
-    embed.add_field(
-        name=ctx.bot.all_commands['cwlwartime'].name,
-        value=ctx.bot.all_commands['cwlwartime'].description,
-        inline=False
-    )
-    embed.add_field(
-        name=f"{ctx.bot.all_commands['cwlwarnoattack'].name} | [cwlwarnoatk]",
-        value=ctx.bot.all_commands['cwlwarnoattack'].description,
-        inline=False
-    )
-    embed.add_field(
-        name=ctx.bot.all_commands['cwlmemberscore'].name,
-        value=ctx.bot.all_commands['cwlmemberscore'].description,
-        inline=False
-    )
-    embed.add_field(
-        name=ctx.bot.all_commands['cwlclanmatescore'].name,
-        value=ctx.bot.all_commands['cwlclanmatescore'].description,
-        inline=False
-    )
-
-    embed.set_footer(
-        text="If you have a question mention Razgriz. "
-        "Please note this is still a work in progress "
-        "and there will be bugs to work out.")
-
-    await ctx.send(embed=embed)
-'''
 
 
 @client.command(brief='misc', description='Misc Command')
