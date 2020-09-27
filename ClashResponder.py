@@ -15,7 +15,8 @@ def response_troop_lvl(player_name, troop_name, clan_tag, header):
     player = Player.get(player_tag, header)
     troop = player.find_troop(troop_name)
     if troop.name == '':
-        return "Couldn't find that troop, hero, or spell. You either do not have it unlocked or it is misspelled."
+        return ("Couldn't find that unit. "
+                "You either do not have it unlocked or it is misspelled.")
     if troop.lvl == troop.max_lvl:
         return f'{player.name} has lvl {troop.lvl} {troop.name}, which is max.'
     elif troop.lvl == troop.th_max:
@@ -33,7 +34,16 @@ def response_all_troop_level(player_name, clan_tag, header):
     response_list.append(f'{player.name} troops:')
     for troop in player.troops:
         if troop.village == 'home':
-            if troop.name != 'Super Barbarian' and troop.name != 'Super Wall Breaker' and troop.name != 'Super Giant' and troop.name != 'Sneaky Goblin':
+            if (
+                troop.name != 'Super Barbarian'
+                and troop.name != 'Super Wall Breaker'
+                and troop.name != 'Super Giant'
+                and troop.name != 'Sneaky Goblin'
+                and troop.name != 'Inferno Dragon'
+                and troop.name != 'Super Valkyrie'
+                and troop.name != 'Super Witch'
+                and troop.name != 'Super Archer'
+            ):
                 if troop.lvl == troop.max_lvl:
                     response_list.append(
                         f'{troop.name} is lvl {troop.lvl}, which is max.')
@@ -62,6 +72,7 @@ def response_donation(troop_name, clan_tag, header):
     for i in range(0, 25):
         member = Player.get(clan.members[i].tag, header)
 
+        # checking if they have the specified troop
         if member.find_troop(troop_name).name != '':
             members.append(member)
     # list of those that can donate
@@ -115,7 +126,6 @@ def response_donation(troop_name, clan_tag, header):
             return f'{donor_string} are able to donate lvl {donor_max + clan.donation_upgrade} {troops[0].name}, max is lvl {troops[0].max_lvl}.'
 
 
-# returns a string of the member's name
 def response_player(player_name, clan_tag, header):
     "takes in the player name and returns player object"
     clan = Clan.get(clan_tag, header)
@@ -209,8 +219,26 @@ def response_war_no_attack(clan_tag, time_zone, header):
         return 'You are not in war.'
 
 
+def war_no_attack_members(clan_tag, time_zone, header):
+    "returns a list of players that haven't attacked"
+    war = War.get(clan_tag, header)
+
+    if war.state == 'preparation':
+        return []
+
+    elif war.state == 'inWar':
+        return war.no_attack()
+
+    elif war.state == 'warEnded':
+        return []
+
+    else:
+        return []
+
+
 # returns a list of all war members and their stars
 def response_war_members_overview(clan_tag, time_zone, header):
+    "returns a list of all war members and their stars"
     war = War.get(clan_tag, header)
     response_list = []
 
@@ -378,7 +406,7 @@ def response_cwl_war_no_attack(clan_tag, time_zone, header):
         return no_attack_string
 
     else:
-        return 'You are not in war.'
+        return 'You are not in CWL.'
 
 
 # returns a string of the current cwl war overview
@@ -396,7 +424,7 @@ def response_cwl_war_overview(clan_tag, time_zone, header):
         scoreboard_string = war.string_scoreboard()
         return f'War against {war.opponent.name} has ended. You {scoreboard_string}.'
     else:
-        return f'You are not in war.'
+        return f'You are not in CWL.'
 
 
 # returns a string of the time remaining in war response
@@ -413,7 +441,7 @@ def response_cwl_war_time(clan_tag, time_zone, header):
     elif war.state == 'warEnded':
         return f'The war with {war.opponent.name} has ended.'
     else:
-        return 'You are not in war.'
+        return 'You are not in CWL.'
 
 
 # returns a list of cwl war attack string responses for all war members
@@ -473,7 +501,7 @@ def response_cwl_war_all_attacks(clan_tag, time_zone, header):
             response_list.append('__________')
         del response_list[-1]
     else:
-        response_list.append('You are not in war.')
+        response_list.append('You are not in CWL.')
     return response_list
 
 

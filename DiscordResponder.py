@@ -1,6 +1,7 @@
 import Clan
 
 
+# todo reset this for new clan use
 def role_switch(player_role, user_roles):
     """
         takes in player role and list of discord user roles,
@@ -52,11 +53,11 @@ def nickname_available(nickname, user_list):
     return True
 
 
+# todo change ctx to channel_list
 def channel_changer(ctx, send_id):
     for channel in ctx.guild.channels:
         if channel.id == send_id:
             return channel
-            break
     return ctx.channel
 
 
@@ -83,3 +84,11 @@ def player_name_string(display_name):
         if display_name[-1] == ' ':
             display_name = display_name[:-1]
     return display_name
+
+
+def find_channel_member(user_name, channel_members):
+    "takes in a user's name and returns the discord member object"
+    for member in channel_members:
+        if user_name == player_name_string(member.display_name):
+            return member
+    return ''

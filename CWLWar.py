@@ -71,9 +71,9 @@ class CWLWarMember(War.WarMember):
             score (int): Member's war score
     """
 
-    def __init__(self, tag, name, th_lvl, map_position, stars, attacks, score):
+    def __init__(self, tag, name, th_lvl, map_position, stars, possible_attack_count, attacks, score):
         War.WarMember.__init__(
-            self, tag, name, th_lvl, map_position, stars, attacks, score)
+            self, tag, name, th_lvl, map_position, stars, possible_attack_count, attacks, score)
 
 
 class CWLWarMemberAttack(War.WarMemberAttack):
@@ -115,6 +115,7 @@ def get(war_tag, clan_tag, header):
         # filling the clan members list (including the member attacks)
         clan_members = []
         for member in war_json[clan_status]['members']:
+            possible_attack_count = 1
             member_attacks = []
             stars = 0
             member_score = (-100)
@@ -143,7 +144,7 @@ def get(war_tag, clan_tag, header):
             # adding the current member to the list of clan members
             clan_members.append(CWLWarMember(
                 member['tag'], member['name'], member['townhallLevel'],
-                member['mapPosition'], stars, member_attacks, member_score)
+                member['mapPosition'], stars, possible_attack_count, member_attacks, member_score)
             )
         # sorting clan members by map position
         clan_members = sorted(
@@ -163,6 +164,7 @@ def get(war_tag, clan_tag, header):
         # filling the opp members list (including the member attacks)
         opp_members = []
         for member in war_json[opp_status]['members']:
+            possible_attack_count = 1
             member_attacks = []
             stars = 0
             member_score = (-100)
@@ -192,7 +194,7 @@ def get(war_tag, clan_tag, header):
             # adding the current member to the list of opp members
             opp_members.append(CWLWarMember(
                 member['tag'], member['name'], member['townhallLevel'],
-                member['mapPosition'], stars, member_attacks, member_score)
+                member['mapPosition'], stars, possible_attack_count, member_attacks, member_score)
             )
         # sorting opp members by map position
         opp_members = sorted(
