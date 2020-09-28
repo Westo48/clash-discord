@@ -127,8 +127,8 @@ async def help(ctx):
             emoji = item['emoji']
 
         embed.add_field(
-            name=f"{emoji} __**{item['name']}**__",
-            value=item['description'],
+            name=f"__**{item['name']}**__",
+            value=f"{emoji}-----------------",
             inline=False
         )
         for command in ctx.bot.all_commands.items():
