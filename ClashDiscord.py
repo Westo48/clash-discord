@@ -15,7 +15,7 @@ class ClientClan(object):
         self.emoji_id = emoji_id
 
 
-client = commands.Bot(command_prefix='/')
+client = commands.Bot(command_prefix='!')
 client.remove_command('help')
 
 leader_role = '👑Leaders👑'
