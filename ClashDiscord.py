@@ -127,7 +127,7 @@ async def help(ctx):
             emoji = item['emoji']
 
         embed.add_field(
-            name=f"{emoji} **{item['name']}**",
+            name=f"{emoji} __**{item['name']}**__",
             value=item['description'],
             inline=False
         )
