@@ -33,36 +33,43 @@ bot_categories = [
     # {
     #     'name': 'DISCORD',
     #     'brief': 'discord',
+    #     'description': 'Discord based commands',
     #     'emoji': ':computer:'
     # },
     # {
     #     'name': 'MISC',
     #     'brief': 'misc',
+    #     'description': 'Misc commands',
     #     'emoji': ':iphone:'
     # },
     {
         'name': 'PLAYER',
         'brief': 'player',
+        'description': 'Player based commands',
         'emoji': ':sunglasses:'
     },
     {
         'name': 'CLAN',
         'brief': 'clan',
+        'description': 'Clan based commands',
         'emoji': ':fire:'
     },
     {
         'name': 'WAR',
         'brief': 'war',
+        'description': 'War based commands',
         'emoji': ':crossed_swords:'
     },
     # {
     #     'name': 'CWL GROUP',
     #     'brief': 'cwlgroup',
+    #     'description': 'CWL Group based commands',
     #     'emoji': ':shield:'
     # },
     {
         'name': 'CWL WAR',
         'brief': 'cwlwar',
+        'description': 'CWL War based commands',
         'emoji': ':dagger:'
     }
 ]
@@ -121,7 +128,7 @@ async def help(ctx):
 
         embed.add_field(
             name=f"{emoji} **{item['name']}**",
-            value=f"Example value",
+            value=item['description'],
             inline=False
         )
         for command in ctx.bot.all_commands.items():
