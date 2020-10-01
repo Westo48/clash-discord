@@ -77,6 +77,7 @@ class ClanMember(object):
             exp_lvl (int): The clan member's player experience level
             league_id (int): The clan member's player league ID
             league_name (str): The clan member's player league name
+            league_icons (dict): dict of league icons
             trophies (int): The clan member's player trophie count
             vs_trophies (int): The clan member's player versus trophie count
             clan_rank (int): The clan member's rank in the clan
@@ -90,7 +91,7 @@ class ClanMember(object):
     """
 
     def __init__(
-        self, tag, name, role, exp_lvl, league_id, league_name,
+        self, tag, name, role, exp_lvl, league_id, league_name, league_icons,
         trophies, vs_trophies, clan_rank, previous_clan_rank,
         donations, donations_received
     ):
@@ -100,6 +101,7 @@ class ClanMember(object):
         self.exp_lvl = exp_lvl
         self.league_id = league_id
         self.league_name = league_name
+        self.league_icons = league_icons
         self.trophies = trophies
         self.vs_trophies = vs_trophies
         self.clan_rank = clan_rank
@@ -157,13 +159,27 @@ def get(clan_tag, header):
 
     members = []
     for member in clan_json['memberList']:
-        if 'versusTrophies' not in clan_json:
+        if 'versusTrophies' not in member:
             vs_trophies = 0
         else:
             vs_trophies = member['versusTrophies']
+
+        # if member is unranked
+        if member['league']['id'] == 29000000:
+            league_icons = {
+                'tiny': member['league']['iconUrls']['tiny'],
+                'small': member['league']['iconUrls']['small']
+            }
+        else:
+            league_icons = {
+                'tiny': member['league']['iconUrls']['tiny'],
+                'small': member['league']['iconUrls']['small'],
+                'medium': member['league']['iconUrls']['medium']
+            }
+
         members.append(ClanMember(
             member['tag'], member['name'], member['role'], member['expLevel'],
-            member['league']['id'], member['league']['name'],
+            member['league']['id'], member['league']['name'], league_icons,
             member['trophies'], vs_trophies, member['clanRank'],
             member['previousClanRank'], member['donations'],
             member['donationsReceived'])
