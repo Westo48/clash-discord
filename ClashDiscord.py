@@ -218,7 +218,7 @@ async def player(ctx, *, player_tag):
         title=player.name,
     )
     embed.set_author(
-        name="[!] RazClashBot", icon_url="https://cdn.discordapp.com/avatars/649107156989378571/053f201109188da026d0a980dd4136e0.webp")
+        name=f"[{ctx.prefix}] RazClashBot", icon_url="https://cdn.discordapp.com/avatars/649107156989378571/053f201109188da026d0a980dd4136e0.webp")
     embed.add_field(
         name='**Exp Lvl**',
         value=player.xp_lvl,
@@ -246,18 +246,10 @@ async def player(ctx, *, player_tag):
         inline=True
     )
     if player.league_id == 0:
-        embed.add_field(
-            name='**League**',
-            value=f'{player.name} is not in a league',
-            inline=True
-        )
+        embed.set_thumbnail(
+            url='https://api-assets.clashofclans.com/leagues/72/e--YMyIexEQQhE4imLoJcwhYn6Uy8KqlgyY3_kFV6t4.png')
     else:
         embed.set_thumbnail(url=player.league_icons['medium'])
-        embed.add_field(
-            name='**League**',
-            value=player.league_name,
-            inline=True
-        )
     embed.add_field(
         name='**War Stars**',
         value=player.war_stars,
@@ -302,44 +294,30 @@ async def player(ctx, *, player_tag):
             value=player.builder_hall_lvl,
             inline=True
         )
-        embed.add_field(
-            name='**VS Trophies**',
-            value=player.vs_trophies,
-            inline=True
-        )
-        embed.add_field(
-            name='**Best VS Trophies**',
-            value=player.best_vs_trophies,
-            inline=True
-        )
 
+    hero_title = ''
+    hero_value = ''
     for troop in player.troops:
         if troop.name == 'Barbarian King':
-            embed.add_field(
-                name='**Barbarian King**',
-                value=troop.lvl,
-                inline=True
-            )
+            hero_title = 'BK'
+            hero_value = f'{troop.lvl}'
         elif troop.name == 'Archer Queen':
-            embed.add_field(
-                name='**Archer Queen**',
-                value=troop.lvl,
-                inline=True
-            )
+            hero_title += ' | AQ'
+            hero_value += f' | {troop.lvl}'
         elif troop.name == 'Grand Warden':
-            embed.add_field(
-                name='**Grand Warden**',
-                value=troop.lvl,
-                inline=True
-            )
+            hero_title += ' | GW'
+            hero_value += f' | {troop.lvl}'
         elif troop.name == 'Royal Champion':
-            embed.add_field(
-                name='**Royal Champion**',
-                value=troop.lvl,
-                inline=True
-            )
+            hero_title += ' | RC'
+            hero_value += f' | {troop.lvl}'
         else:
             break
+    if hero_title != '':
+        embed.add_field(
+            name=f'**{hero_title}**',
+            value=hero_value,
+            inline=True
+        )
 
     embed.add_field(
         name='**Link**',
@@ -357,44 +335,44 @@ async def player(ctx, *, player_tag):
 
 '''
     PAT - #8V0L0GJ8
-:exp: Expirence Level
-218
-:classical_building: Townhall Level
-13
-:trophy: Trophies
-2925
-:chart_with_upwards_trend: Highest Trophies
-5144
-:medal: League
-Master League II
-:star: War Stars
-1707
-:european_castle: Clan
-FewGoodMen
-#LL82022R
-:clipboard: Role in Clan
-Elder
-:outbox_tray: Donations | Recieved :inbox_tray:
-1600 | 385
-:crossed_swords: Attack- | Defense Wins :shield:
-60 | 43
-:hammer_pick: Builderhall Level
-7
-:crossed_swords: Versus Battle Wins
-693
-:trophy: Versus Trophies
-2693
-:chart_with_upwards_trend: Highest Versus Trophies
-2723
-:crossed_swords::bow_and_arrow: Total Hero Level
-158
-:link: Open Ingame
-Click me!
-[named links](https://discordapp.com)
-https://clashofclans.com/clans/search/#clanTag=28LRPVP8C
+    :exp: Expirence Level
+    218
+    :classical_building: Townhall Level
+    13
+    :trophy: Trophies
+    2925
+    :chart_with_upwards_trend: Highest Trophies
+    5144
+    :medal: League
+    Master League II
+    :star: War Stars
+    1707
+    :european_castle: Clan
+    FewGoodMen
+    #LL82022R
+    :clipboard: Role in Clan
+    Elder
+    :outbox_tray: Donations | Recieved :inbox_tray:
+    1600 | 385
+    :crossed_swords: Attack- | Defense Wins :shield:
+    60 | 43
+    :hammer_pick: Builderhall Level
+    7
+    :crossed_swords: Versus Battle Wins
+    693
+    :trophy: Versus Trophies
+    2693
+    :chart_with_upwards_trend: Highest Versus Trophies
+    2723
+    :crossed_swords::bow_and_arrow: Total Hero Level
+    158
+    :link: Open Ingame
+    Click me!
+    [named links](https://discordapp.com)
+    https://clashofclans.com/clans/search/#clanTag=28LRPVP8C
 
 
-Semi RH | 6ers | Leader•09/20/2020
+    Semi RH | 6ers | Leader•09/20/2020
 
 '''
 
