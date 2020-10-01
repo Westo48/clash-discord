@@ -39,6 +39,7 @@ class CWLWarClan(War.WarClan):
             tag (str): Clan's tag
             name (str): Clan's name
             lvl (int): Clan's clan level
+            icons (dict): dict of clan icons
             attack_count (int): Clan's attack count
             stars (int): Clan's star count
             destruction_percentage (int): Clan's destruction percentage
@@ -48,11 +49,11 @@ class CWLWarClan(War.WarClan):
     """
 
     def __init__(
-        self, status, tag, name, lvl, attack_count,
+        self, status, tag, name, lvl, icons, attack_count,
         stars, destruction_percentage, members, score
     ):
         War.WarClan.__init__(
-            self, status, tag, name, lvl, attack_count,
+            self, status, tag, name, lvl, icons, attack_count,
             stars, destruction_percentage, members, score
         )
 
@@ -153,10 +154,17 @@ def get(war_tag, clan_tag, header):
         clan_score = 0
         for member in clan_members:
             clan_score += member.score
+
+        clan_icons = {
+            'small': war_json[clan_status]['badgeUrls']['small'],
+            'medium': war_json[clan_status]['badgeUrls']['medium'],
+            'large': war_json[clan_status]['badgeUrls']['large']
+        }
         war_clan = CWLWarClan(
             clan_status, war_json[clan_status]['tag'],
             war_json[clan_status]['name'], war_json[clan_status]['clanLevel'],
-            war_json[clan_status]['attacks'], war_json[clan_status]['stars'],
+            clan_icons, war_json[clan_status]['attacks'],
+            war_json[clan_status]['stars'],
             war_json[clan_status]['destructionPercentage'],
             clan_members, clan_score
         )
@@ -203,9 +211,16 @@ def get(war_tag, clan_tag, header):
         opponent_score = 0
         for member in opp_members:
             opponent_score += member.score
+
+        opp_icons = {
+            'small': war_json[opp_status]['badgeUrls']['small'],
+            'medium': war_json[opp_status]['badgeUrls']['medium'],
+            'large': war_json[opp_status]['badgeUrls']['large']
+        }
         war_opp = CWLWarClan(
             opp_status, war_json[opp_status]['tag'],
             war_json[opp_status]['name'], war_json[opp_status]['clanLevel'],
+            opp_icons,
             war_json[opp_status]['attacks'], war_json[opp_status]['stars'],
             war_json[opp_status]['destructionPercentage'],
             opp_members, opponent_score
