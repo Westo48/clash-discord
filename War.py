@@ -166,6 +166,7 @@ class WarClan(object):
             tag (str): Clan's tag
             name (str): Clan's name
             lvl (int): Clan's clan level
+            icons (dict): dict of clan icons
             attack_count (int): Clan's attack count
             stars (int): Clan's star count
             destruction_percentage (int): Clan's destruction percentage
@@ -175,13 +176,14 @@ class WarClan(object):
     """
 
     def __init__(
-        self, status, tag, name, lvl, attack_count,
+        self, status, tag, name, lvl, icons, attack_count,
         stars, destruction_percentage, members, score
     ):
         self.status = status
         self.tag = tag
         self.name = name
         self.lvl = lvl
+        self.icons = icons
         self.attack_count = attack_count
         self.stars = stars
         self.destruction_percentage = destruction_percentage
@@ -262,14 +264,14 @@ class WarMemberAttack(object):
             return 'stars'
 
 
-# returns the War object
+# todo separate this into 3 different methods
 def get(clan_tag, header):
     """
     Takes in a clan tag and returns the war that clan is engaged in if any
     """
     war_json = json_response(clan_tag, header)
     if war_json['state'] == 'notInWar':
-        return War(war_json['state'], 0, 0, 0, 0, [], [])
+        return War(war_json['state'], 0, 0, 0, 0, {}, {})
     else:
         # find whether the clan in clan_tag is clan or opponent in the JSON
         clan_status, opp_status = clan_opp_status(war_json, clan_tag)
@@ -315,10 +317,17 @@ def get(clan_tag, header):
         clan_score = 0
         for member in clan_members:
             clan_score += member.score
+
+        clan_icons = {
+            'small': war_json[clan_status]['badgeUrls']['small'],
+            'medium': war_json[clan_status]['badgeUrls']['medium'],
+            'large': war_json[clan_status]['badgeUrls']['large']
+        }
         war_clan = WarClan(
             clan_status, war_json[clan_status]['tag'],
             war_json[clan_status]['name'], war_json[clan_status]['clanLevel'],
-            war_json[clan_status]['attacks'], war_json[clan_status]['stars'],
+            clan_icons, war_json[clan_status]['attacks'],
+            war_json[clan_status]['stars'],
             war_json[clan_status]['destructionPercentage'],
             clan_members, clan_score
         )
@@ -367,10 +376,17 @@ def get(clan_tag, header):
         for member in opp_members:
             opponent_score += member.score
 
+        opp_icons = {
+            'small': war_json[opp_status]['badgeUrls']['small'],
+            'medium': war_json[opp_status]['badgeUrls']['medium'],
+            'large': war_json[opp_status]['badgeUrls']['large']
+        }
+
         war_opp = WarClan(
             opp_status, war_json[opp_status]['tag'],
             war_json[opp_status]['name'], war_json[opp_status]['clanLevel'],
-            war_json[opp_status]['attacks'], war_json[opp_status]['stars'],
+            opp_icons, war_json[opp_status]['attacks'],
+            war_json[opp_status]['stars'],
             war_json[opp_status]['destructionPercentage'],
             opp_members, opponent_score
         )

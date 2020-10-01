@@ -70,14 +70,16 @@ class CWLClan(object):
             tag (str): clan's tag
             name (str): clan's name
             clan_lvl (int): clan's clan level
+            icons (dict): dict of clan icons
             members (list): list of clan's war league eligable members
                 CWLClanMember
     """
 
-    def __init__(self, tag, name, clan_lvl, members):
+    def __init__(self, tag, name, clan_lvl, icons, members):
         self.tag = tag
         self.name = name
         self.clan_lvl = clan_lvl
+        self.icons = icons
         self.members = members
 
 
@@ -103,14 +105,20 @@ def get(clan_tag, header):
     # grab a list of the clans
     clans = []
     for clan in group_json['clans']:
+        icons = {
+            'small': clan['badgeUrls']['small'],
+            'medium': clan['badgeUrls']['medium'],
+            'large': clan['badgeUrls']['large']
+        }
         # grab a list of the members in the clan
         members = []
         for member in clan['members']:
             members.append(CWLClanMember(
                 member['tag'], member['name'], member['townHallLevel'])
             )
-        clans.append(CWLClan(
-            clan['tag'], clan['name'], clan['clanLevel'], members)
+        clans.append(
+            CWLClan(clan['tag'], clan['name'], clan['clanLevel'],
+                    icons, members)
         )
 
     # grab a list of the rounds

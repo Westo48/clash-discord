@@ -15,53 +15,61 @@ class ClientClan(object):
         self.emoji_id = emoji_id
 
 
-leader_role = '👑Leaders👑'
+client = commands.Bot(command_prefix='!')
+client.remove_command('help')
 
+leader_role = '👑Leaders👑'
 time_zone = (-5)
 raz_tag = '#RGQ8RGU9'
 header = {
     'Accept': 'application/json',
     'authorization': 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiIsImtpZCI6IjI4YTMxOGY3LTAwMDAtYTFlYi03ZmExLTJjNzQzM2M2Y2NhNSJ9.eyJpc3MiOiJzdXBlcmNlbGwiLCJhdWQiOiJzdXBlcmNlbGw6Z2FtZWFwaSIsImp0aSI6IjkyNWJjYzg1LWFhZDktNGM2NC05M2Y2LWM4MWEwZGVhOGUwNiIsImlhdCI6MTU3NDYyMjY3Nywic3ViIjoiZGV2ZWxvcGVyLzdjZmJkOWFjLTFlYzAtNDI3OS1jODM2LTU0YzMxN2FlZmE4NiIsInNjb3BlcyI6WyJjbGFzaCJdLCJsaW1pdHMiOlt7InRpZXIiOiJkZXZlbG9wZXIvc2lsdmVyIiwidHlwZSI6InRocm90dGxpbmcifSx7ImNpZHJzIjpbIjEwOC4yMTEuOTUuMjU0Il0sInR5cGUiOiJjbGllbnQifV19.gdc-4-OEZzsYBLk8HfqZBH-idvlK1vX9nim91XEqLgwNAyarfZquxfkZDKPsswUGyiXRIFV7Am3RB7iWtd9T5w'
 }
-client = commands.Bot(command_prefix='!')
 client_clans = [
     (ClientClan('#28LRPVP8C', '6ers', 753096212969816144)),
     (ClientClan('#88UUULPU', 'Regis', 753096189213278298))
 ]
 bot_categories = [
+    # {
+    #     'name': 'DISCORD',
+    #     'brief': 'discord',
+    #     'description': 'Discord based commands',
+    #     'emoji': ':computer:'
+    # },
+    # {
+    #     'name': 'MISC',
+    #     'brief': 'misc',
+    #     'description': 'Misc commands',
+    #     'emoji': ':iphone:'
+    # },
     {
-        'name': 'Discord',
-        'brief': 'discord',
-        'emoji': ':computer:'
-    },
-    {
-        'name': 'Misc',
-        'brief': 'misc',
-        'emoji': ':iphone:'
-    },
-    {
-        'name': 'Player',
+        'name': 'PLAYER',
         'brief': 'player',
+        'description': 'Player based commands',
         'emoji': ':sunglasses:'
     },
     {
-        'name': 'Clan',
+        'name': 'CLAN',
         'brief': 'clan',
+        'description': 'Clan based commands',
         'emoji': ':fire:'
     },
     {
-        'name': 'War',
+        'name': 'WAR',
         'brief': 'war',
+        'description': 'War based commands',
         'emoji': ':crossed_swords:'
     },
+    # {
+    #     'name': 'CWL GROUP',
+    #     'brief': 'cwlgroup',
+    #     'description': 'CWL Group based commands',
+    #     'emoji': ':shield:'
+    # },
     {
-        'name': 'CWL Group',
-        'brief': 'cwlgroup',
-        'emoji': ':shield:'
-    },
-    {
-        'name': 'CWL War',
+        'name': 'CWL WAR',
         'brief': 'cwlwar',
+        'description': 'CWL War based commands',
         'emoji': ':dagger:'
     }
 ]
@@ -87,17 +95,19 @@ async def on_ready():
 
 
 @client.command(
+    aliases=['helpme'],
     brief='discord',
     description='Returns the help text you see before you'
 )
-async def helpme(ctx):
+async def help(ctx):
+    is_leader = role_check(leader_role, ctx.author.roles)
+
     embed = discord.Embed(
         colour=discord.Colour.blue()
     )
     embed.set_author(
         name="[!] RazClashBot", icon_url="https://cdn.discordapp.com/avatars/649107156989378571/053f201109188da026d0a980dd4136e0.webp")
-    # embed.set_image(
-    #     url="https://i.imgur.com/rwgo8fJ.jpg")
+
     embed.set_thumbnail(
         url="https://i.imgur.com/JBt2Kwt.gif")
 
@@ -117,8 +127,8 @@ async def helpme(ctx):
             emoji = item['emoji']
 
         embed.add_field(
-            name="__**"+item['name'] + "**__",
-            value=emoji,
+            name=f"__**{item['name']}**__",
+            value=f"{emoji}-----------------",
             inline=False
         )
         for command in ctx.bot.all_commands.items():
@@ -126,7 +136,7 @@ async def helpme(ctx):
                 command[1].brief == brief
                 and command[1].description != ''
                 and command[0] == command[1].name
-                and not command[1].hidden
+                and (not command[1].hidden or is_leader)
             ):
                 embed_name = "**" + command[1].name + "**"
                 if command[1].signature != '':
@@ -152,7 +162,8 @@ async def embedtest(ctx):
     author = ctx.message.author
 
     embed = discord.Embed(
-        colour=discord.Colour.teal()
+        colour=discord.Colour.teal(),
+        title='Test title'
     )
     embed.set_author(
         name="[!] RazClashBot", icon_url="https://cdn.discordapp.com/avatars/649107156989378571/053f201109188da026d0a980dd4136e0.webp")
@@ -175,127 +186,6 @@ async def embedtest(ctx):
 
     await ctx.send(embed=embed)
 
-'''
-@client.command(brief='discord')
-async def help(ctx):
-    author = ctx.message.author
-
-    embed = discord.Embed(
-        colour=discord.Colour.blue()
-    )
-    embed.set_author(
-        name="[!] RazClashBot", icon_url="https://cdn.discordapp.com/avatars/649107156989378571/053f201109188da026d0a980dd4136e0.webp")
-    # embed.set_image(
-    #     url="https://i.imgur.com/rwgo8fJ.jpg")
-    embed.set_thumbnail(
-        url="https://i.imgur.com/MFZp1Fy.gif")
-
-    embed.add_field(
-        name="Discord Commands", value=":computer:", inline=False)
-    embed.add_field(
-        name="role",
-        value="Grabs your nickname and gives you the role in the "
-        "clan you are in. (CURRENTLY ONLY AN EXAMPLE)",
-        inline=False
-    )
-    embed.add_field(
-        name="Hello There",
-        value="Funsies command (CURRENTLY ONLY FOR EXAMPLE)",
-        inline=False
-    )
-
-    embed.add_field(
-        name="Player Commands", value=":sunglasses:", inline=False)
-    embed.add_field(
-        name=f"{ctx.bot.all_commands['trooplvl'].name} <troop name>",
-        value=ctx.bot.all_commands['trooplvl'].description,
-        inline=False
-    )
-
-    embed.add_field(
-        name="Clan", value="Clan commands", inline=False)
-    embed.add_field(
-        name=f"{ctx.bot.all_commands['donationchecker'].name} <troop name> | [donation, donate]",
-        value=ctx.bot.all_commands['donationchecker'].description,
-        inline=False
-    )
-
-    embed.add_field(
-        name="War",
-        value=":crossed_swords:",
-        inline=False
-    )
-    embed.add_field(
-        name=f"{ctx.bot.all_commands['waroverview'].name} | [war]",
-        value=ctx.bot.all_commands['waroverview'].description,
-        inline=False
-    )
-    embed.add_field(
-        name=ctx.bot.all_commands['wartime'].name,
-        value=ctx.bot.all_commands['wartime'].description,
-        inline=False
-    )
-    embed.add_field(
-        name=f"{ctx.bot.all_commands['warnoattack'].name} | [warnoatk]",
-        value=ctx.bot.all_commands['warnoattack'].description,
-        inline=False
-    )
-    embed.add_field(
-        name=f"{ctx.bot.all_commands['warnoattackalert'].name} | [warnoatkalert]",
-        value=ctx.bot.all_commands['warnoattackalert'].description,
-        inline=False
-    )
-
-    embed.add_field(
-        name="CWL Group",
-        value=":shield:",
-        inline=False
-    )
-    embed.add_field(
-        name="WIP",
-        value="This section is still a work in progress",
-        inline=False
-    )
-
-    embed.add_field(
-        name="CWL War",
-        value=":dagger:",
-        inline=False
-    )
-    embed.add_field(
-        name=f"{ctx.bot.all_commands['cwlwaroverview'].name} | [cwlwar]",
-        value=ctx.bot.all_commands['cwlwaroverview'].description,
-        inline=False
-    )
-    embed.add_field(
-        name=ctx.bot.all_commands['cwlwartime'].name,
-        value=ctx.bot.all_commands['cwlwartime'].description,
-        inline=False
-    )
-    embed.add_field(
-        name=f"{ctx.bot.all_commands['cwlwarnoattack'].name} | [cwlwarnoatk]",
-        value=ctx.bot.all_commands['cwlwarnoattack'].description,
-        inline=False
-    )
-    embed.add_field(
-        name=ctx.bot.all_commands['cwlmemberscore'].name,
-        value=ctx.bot.all_commands['cwlmemberscore'].description,
-        inline=False
-    )
-    embed.add_field(
-        name=ctx.bot.all_commands['cwlclanmatescore'].name,
-        value=ctx.bot.all_commands['cwlclanmatescore'].description,
-        inline=False
-    )
-
-    embed.set_footer(
-        text="If you have a question mention Razgriz. "
-        "Please note this is still a work in progress "
-        "and there will be bugs to work out.")
-
-    await ctx.send(embed=embed)
-'''
-
 
 @client.command(brief='misc', description='Misc Command')
 async def hellothere(ctx):
@@ -308,6 +198,183 @@ async def ping(ctx):
 
 
 # Player
+
+@client.command(
+    brief='player',
+    description="Enter a player's tag and get a player's information"
+)
+async def player(ctx, *, player_tag):
+    if '#' not in player_tag:
+        player_tag = '#'+player_tag
+
+    player = Player.get(player_tag, header)
+
+    if player.tag == 0:
+        await ctx.send(f"Could not find player with tag {player_tag}")
+        return
+
+    embed = discord.Embed(
+        colour=discord.Colour.blue(),
+        title=player.name,
+    )
+    embed.set_author(
+        name=f"[{ctx.prefix}] RazClashBot", icon_url="https://cdn.discordapp.com/avatars/649107156989378571/053f201109188da026d0a980dd4136e0.webp")
+    embed.add_field(
+        name='**Exp Lvl**',
+        value=player.xp_lvl,
+        inline=True
+    )
+    embed.add_field(
+        name='**TH Lvl**',
+        value=player.th_lvl,
+        inline=True
+    )
+    if player.th_weapon_lvl != 0:
+        embed.add_field(
+            name='**TH Weapon Lvl**',
+            value=player.th_weapon_lvl,
+            inline=True
+        )
+    embed.add_field(
+        name='**Trophies**',
+        value=player.trophies,
+        inline=True
+    )
+    embed.add_field(
+        name='**Best Trophies**',
+        value=player.best_trophies,
+        inline=True
+    )
+    if player.league_id == 0:
+        embed.set_thumbnail(
+            url='https://api-assets.clashofclans.com/leagues/72/e--YMyIexEQQhE4imLoJcwhYn6Uy8KqlgyY3_kFV6t4.png')
+    else:
+        embed.set_thumbnail(url=player.league_icons['medium'])
+    embed.add_field(
+        name='**War Stars**',
+        value=player.war_stars,
+        inline=True
+    )
+    if player.clan_lvl == 0:
+        embed.add_field(
+            name='**Clan**',
+            value=f"{player.name} is not in a clan",
+            inline=True
+        )
+    else:
+        embed.add_field(
+            name='**Clan**',
+            value=f"[{player.clan_name}](https://link.clashofclans.com/en?action=OpenClanProfile&tag={player.clan_tag[1:]})",
+            inline=True
+        )
+        embed.add_field(
+            name='**Clan Role**',
+            value=player.role,
+            inline=True
+        )
+    embed.add_field(
+        name='**Donations | Received**',
+        value=f"{player.donations} | {player.donations_received}",
+        inline=True
+    )
+    embed.add_field(
+        name='**Attack | Defense**',
+        value=f"{player.attack_wins} | {player.defense_wins}",
+        inline=True
+    )
+    if player.builder_hall_lvl == 0:
+        embed.add_field(
+            name='**BH Lvl**',
+            value=f"{player.name} has not unlocked their Builder Hall",
+            inline=True
+        )
+    else:
+        embed.add_field(
+            name='**BH Lvl**',
+            value=player.builder_hall_lvl,
+            inline=True
+        )
+
+    hero_title = ''
+    hero_value = ''
+    for troop in player.troops:
+        if troop.name == 'Barbarian King':
+            hero_title = 'BK'
+            hero_value = f'{troop.lvl}'
+        elif troop.name == 'Archer Queen':
+            hero_title += ' | AQ'
+            hero_value += f' | {troop.lvl}'
+        elif troop.name == 'Grand Warden':
+            hero_title += ' | GW'
+            hero_value += f' | {troop.lvl}'
+        elif troop.name == 'Royal Champion':
+            hero_title += ' | RC'
+            hero_value += f' | {troop.lvl}'
+        else:
+            break
+    if hero_title != '':
+        embed.add_field(
+            name=f'**{hero_title}**',
+            value=hero_value,
+            inline=True
+        )
+
+    embed.add_field(
+        name='**Link**',
+        value=f"[{player.name}](https://link.clashofclans.com/en?action=OpenPlayerProfile&tag={player.tag[1:]})",
+        inline=True
+    )
+
+    # todo set footer to display user called and timestamp
+    embed.set_footer(
+        text=ctx.author.display_name,
+        icon_url=ctx.author.avatar_url.BASE+ctx.author.avatar_url._url
+    )
+
+    await ctx.send(embed=embed)
+
+'''
+    PAT - #8V0L0GJ8
+    :exp: Expirence Level
+    218
+    :classical_building: Townhall Level
+    13
+    :trophy: Trophies
+    2925
+    :chart_with_upwards_trend: Highest Trophies
+    5144
+    :medal: League
+    Master League II
+    :star: War Stars
+    1707
+    :european_castle: Clan
+    FewGoodMen
+    #LL82022R
+    :clipboard: Role in Clan
+    Elder
+    :outbox_tray: Donations | Recieved :inbox_tray:
+    1600 | 385
+    :crossed_swords: Attack- | Defense Wins :shield:
+    60 | 43
+    :hammer_pick: Builderhall Level
+    7
+    :crossed_swords: Versus Battle Wins
+    693
+    :trophy: Versus Trophies
+    2693
+    :chart_with_upwards_trend: Highest Versus Trophies
+    2723
+    :crossed_swords::bow_and_arrow: Total Hero Level
+    158
+    :link: Open Ingame
+    Click me!
+    [named links](https://discordapp.com)
+    https://clashofclans.com/clans/search/#clanTag=28LRPVP8C
+
+
+    Semi RH | 6ers | Leader•09/20/2020
+
+'''
 
 
 @client.command(

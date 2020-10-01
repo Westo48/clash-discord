@@ -75,6 +75,8 @@ def response_donation(troop_name, clan_tag, header):
         # checking if they have the specified troop
         if member.find_troop(troop_name).name != '':
             members.append(member)
+    if len(members) == 0:
+        return f"Couldn't find {troop_name} in any {clan.name} members"
     # list of those that can donate
     donators = []
     # list of troops to iterate through
@@ -84,6 +86,13 @@ def response_donation(troop_name, clan_tag, header):
         troop = member.find_troop(troop_name)
         if troop.name != '':
             troops.append(troop)
+    if (
+        troops[0].name == 'Barbarian King'
+        or troops[0].name == 'Archer Queen'
+        or troops[0].name == 'Grand Warden'
+        or troops[0].name == 'Royal Champion'
+    ):
+        return f"Ask for something less stupid please."
 
     # returns an empty list if there are no troops found (could be misspelled troop_name)
     if len(troops) == 0:

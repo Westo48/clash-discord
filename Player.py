@@ -2,6 +2,8 @@ import requests
 import json
 import re
 
+# todo make hero, troop, and spell lists
+
 
 class Player(object):
     """
@@ -37,10 +39,12 @@ class Player(object):
                 not available if player is not in a clan
             clan_lvl (int): level of the clan the player is in
                 not available if player is not in a clan
+            clan_icons (dict): dict of clan icons
             league_id (int): ID of the league the player is in
                 not available if player is not in a league
             league_name (str): name of the league the player is in
                 not available if player is not in a league
+            league_icons (dict): dict of league icons
             troops (list): list of Troop objects
     """
 
@@ -49,7 +53,7 @@ class Player(object):
         trophies, best_trophies, war_stars, attack_wins, defense_wins,
         builder_hall_lvl, vs_trophies, best_vs_trophies, vs_battle_wins,
         role, donations, donations_received, clan_tag, clan_name, clan_lvl,
-        league_id, league_name, troops
+        clan_icons, league_id, league_name, league_icons, troops
     ):
         self.tag = tag
         self.name = name
@@ -71,11 +75,12 @@ class Player(object):
         self.clan_tag = clan_tag
         self.clan_name = clan_name
         self.clan_lvl = clan_lvl
+        self.clan_icons = clan_icons
         self.league_id = league_id
         self.league_name = league_name
+        self.league_icons = league_icons
         self.troops = troops
 
-    # return a Troop object
     def find_troop(self, troop_name):
         """Take in a troop name and returns a Troop object"""
 
@@ -115,6 +120,13 @@ def get(tag, header):
     """Takes in a player's tag and returns a Player object"""
 
     player_json = json_response(tag, header)
+
+    if 'reason' in player_json:
+        return Player(
+            0, '0', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+            '0', 0, 0, 0, '0', 0, {}, 0, '0', {}, []
+        )
+
     if 'townHallWeaponLevel' not in player_json:
         th_weap_lvl = 0
     else:
@@ -136,18 +148,30 @@ def get(tag, header):
         clan_tag = ''
         clan_name = ''
         clan_lvl = 0
+        clan_icons = {}
     else:
         role = player_json['role']
         clan_tag = player_json['clan']['tag']
         clan_name = player_json['clan']['name']
         clan_lvl = player_json['clan']['clanLevel']
+        clan_icons = {
+            'small': player_json['clan']['badgeUrls']['small'],
+            'medium': player_json['clan']['badgeUrls']['medium'],
+            'large': player_json['clan']['badgeUrls']['large']
+        }
 
     if 'league' not in player_json:
         league_id = 0
         league_name = ''
+        league_icons = {}
     else:
         league_id = player_json['league']['id']
         league_name = player_json['league']['name']
+        league_icons = {
+            'tiny': player_json['league']['iconUrls']['tiny'],
+            'small': player_json['league']['iconUrls']['small'],
+            'medium': player_json['league']['iconUrls']['medium']
+        }
 
     troops = []
     for hero in player_json['heroes']:
@@ -185,7 +209,8 @@ def get(tag, header):
         player_json['attackWins'], player_json['defenseWins'],
         bh_lvl, vs_trophies, best_vs_trophies, vs_battle_wins,
         role, player_json['donations'], player_json['donationsReceived'],
-        clan_tag, clan_name, clan_lvl, league_id, league_name, troops
+        clan_tag, clan_name, clan_lvl, clan_icons,
+        league_id, league_name, league_icons, troops
     )
 
 

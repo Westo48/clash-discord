@@ -12,6 +12,7 @@ class Clan(object):
             name: str
             clan_type: str
             description: str
+            clan_icons (dict): dict of clan icons
             clan_lvl: int
             donation_upgrade: int
             clan_points: int
@@ -30,7 +31,7 @@ class Clan(object):
     """
 
     def __init__(
-        self, tag, name, clan_type, description, clan_lvl, donation_upgrade,
+        self, tag, name, clan_type, description, clan_icons, clan_lvl, donation_upgrade,
         clan_points, clan_vs_points, required_trophies,
         war_frequency, war_win_streak, war_wins, war_ties, war_losses,
         is_war_log_public, war_league_id, war_league_name, members
@@ -39,6 +40,7 @@ class Clan(object):
         self.name = name
         self.clan_type = clan_type
         self.description = description
+        self.clan_icons = clan_icons
         self.clan_lvl = clan_lvl
         self.donation_upgrade = donation_upgrade
         self.clan_points = clan_points
@@ -75,6 +77,7 @@ class ClanMember(object):
             exp_lvl (int): The clan member's player experience level
             league_id (int): The clan member's player league ID
             league_name (str): The clan member's player league name
+            league_icons (dict): dict of league icons
             trophies (int): The clan member's player trophie count
             vs_trophies (int): The clan member's player versus trophie count
             clan_rank (int): The clan member's rank in the clan
@@ -88,7 +91,7 @@ class ClanMember(object):
     """
 
     def __init__(
-        self, tag, name, role, exp_lvl, league_id, league_name,
+        self, tag, name, role, exp_lvl, league_id, league_name, league_icons,
         trophies, vs_trophies, clan_rank, previous_clan_rank,
         donations, donations_received
     ):
@@ -98,6 +101,7 @@ class ClanMember(object):
         self.exp_lvl = exp_lvl
         self.league_id = league_id
         self.league_name = league_name
+        self.league_icons = league_icons
         self.trophies = trophies
         self.vs_trophies = vs_trophies
         self.clan_rank = clan_rank
@@ -105,11 +109,47 @@ class ClanMember(object):
         self.donations = donations
         self.donations_received = donations_received
 
+# todo find better data types for if war log is not public
+
 
 def get(clan_tag, header):
     """Takes in the clan's tag and returns a Clan object"""
 
     clan_json = json_response(clan_tag, header)
+
+    clan_icons = {
+        'small': clan_json['badgeUrls']['small'],
+        'medium': clan_json['badgeUrls']['medium'],
+        'large': clan_json['badgeUrls']['large']
+    }
+
+    if clan_json['isWarLogPublic']:
+        if 'warWinStreak' in clan_json:
+            war_win_streak = clan_json['warWinStreak']
+        else:
+            war_win_streak = 0
+        if 'warWins' in clan_json:
+            war_wins = clan_json['warWins']
+        else:
+            war_wins = 0
+        if 'warTies' in clan_json:
+            war_ties = clan_json['warTies']
+        else:
+            war_ties = 0
+        if 'warLosses' in clan_json:
+            war_losses = clan_json['warLosses']
+        else:
+            war_losses = 0
+    else:
+        if 'warWinStreak' in clan_json:
+            war_win_streak = clan_json['warWinStreak']
+        else:
+            war_win_streak = 0
+        if 'warWins' in clan_json:
+            war_wins = clan_json['warWins']
+        war_ties = None
+        war_losses = None
+
     if clan_json['clanLevel'] < 5:
         donation_upgrade = 0
     elif clan_json['clanLevel'] < 10:
@@ -119,13 +159,27 @@ def get(clan_tag, header):
 
     members = []
     for member in clan_json['memberList']:
-        if 'versusTrophies' not in clan_json:
+        if 'versusTrophies' not in member:
             vs_trophies = 0
         else:
             vs_trophies = member['versusTrophies']
+
+        # if member is unranked
+        if member['league']['id'] == 29000000:
+            league_icons = {
+                'tiny': member['league']['iconUrls']['tiny'],
+                'small': member['league']['iconUrls']['small']
+            }
+        else:
+            league_icons = {
+                'tiny': member['league']['iconUrls']['tiny'],
+                'small': member['league']['iconUrls']['small'],
+                'medium': member['league']['iconUrls']['medium']
+            }
+
         members.append(ClanMember(
             member['tag'], member['name'], member['role'], member['expLevel'],
-            member['league']['id'], member['league']['name'],
+            member['league']['id'], member['league']['name'], league_icons,
             member['trophies'], vs_trophies, member['clanRank'],
             member['previousClanRank'], member['donations'],
             member['donationsReceived'])
@@ -133,11 +187,11 @@ def get(clan_tag, header):
 
     return Clan(
         clan_json['tag'], clan_json['name'], clan_json['type'],
-        clan_json['description'], clan_json['clanLevel'], donation_upgrade,
+        clan_json['description'], clan_icons, clan_json['clanLevel'], donation_upgrade,
         clan_json['clanPoints'], clan_json['clanVersusPoints'],
         clan_json['requiredTrophies'], clan_json['warFrequency'],
-        clan_json['warWinStreak'], clan_json['warWins'], clan_json['warTies'],
-        clan_json['warLosses'], clan_json['isWarLogPublic'],
+        war_win_streak, war_wins, war_ties,
+        war_losses, clan_json['isWarLogPublic'],
         clan_json['warLeague']['id'], clan_json['warLeague']['name'], members
     )
 
