@@ -7,6 +7,22 @@ import CWLGroup
 import CWLWar
 
 
+cwl_th_dict = {
+    13: 0,
+    12: 0,
+    11: 0,
+    10: 0,
+    9: 0,
+    8: 0,
+    7: 0,
+    6: 0,
+    5: 0,
+    4: 0,
+    3: 0,
+    2: 0
+}
+
+
 # Player
 
 # returns player.name and troop.lvl
@@ -372,7 +388,16 @@ def response_war_all_member_standing(clan_tag, time_zone, header):
                 f'{member.name} has a score of {round(member.score, 3)}')
         return return_list
 
+
 # CWL Group
+
+def response_cwl_lineup(cwl_group):
+    clan_lineup = []
+    for clan in cwl_group.clans:
+        th_dict = cwl_th_dict
+        for member in clan.members:
+            th_dict[member.th_lvl] += 1
+        clan_lineup.append(th_dict)
 
 
 # CWL War

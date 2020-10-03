@@ -62,15 +62,17 @@ def channel_changer(ctx, send_id):
 
 
 def find_user_clan(player_name, client_clans, user_roles, header):
-    '''Returns a client clan if one is found'''
+    """
+        Returns a client clan if one is found
+    """
     for client_clan in client_clans:
         for role in user_roles:
             if client_clan.name == role.name:
                 clan = Clan.get(client_clan.tag, header)
                 player_tag = clan.find_member(player_name)
-                if player_tag != '':
+                if player_tag:
                     return client_clan
-    return ''
+    return None
 
 
 def player_name_string(display_name):
@@ -88,7 +90,9 @@ def player_name_string(display_name):
 
 
 def find_channel_member(user_name, channel_members):
-    "takes in a user's name and returns the discord member object"
+    """
+        Takes in a user's name and returns the discord member object.
+    """
     for member in channel_members:
         if user_name == player_name_string(member.display_name):
             return member

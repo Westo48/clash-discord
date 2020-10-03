@@ -60,12 +60,12 @@ bot_categories = [
         'description': 'War based commands',
         'emoji': ':crossed_swords:'
     },
-    # {
-    #     'name': 'CWL GROUP',
-    #     'brief': 'cwlgroup',
-    #     'description': 'CWL Group based commands',
-    #     'emoji': ':shield:'
-    # },
+    {
+        'name': 'CWL GROUP',
+        'brief': 'cwlgroup',
+        'description': 'CWL Group based commands',
+        'emoji': ':shield:'
+    },
     {
         'name': 'CWL WAR',
         'brief': 'cwlwar',
@@ -567,6 +567,24 @@ async def warclanscore(ctx):
 
 # CWL Group
 # todo cwl_group overview, scoreboard, cwl_clan_noatk
+
+@client.command(
+    aliases=['cwlgroup'],
+    brief='cwlgroup',
+    description='Returns the CWL group lineup',
+    hidden=False
+)
+async def cwllineup(ctx):
+    player_name = player_name_string(ctx.author.display_name)
+    user_clan = find_user_clan(
+        player_name, client_clans, ctx.author.roles, header)
+    if user_clan:
+        cwl_group = CWLGroup.get(user_clan.tag, header)
+        response_cwl_lineup(cwl_group)
+
+    else:
+        await ctx.send(f"Couldn't find {ctx.author.display_name}'s clan. "
+                       "Please ensure a clan role has been given to the user.")
 
 
 # CWL War

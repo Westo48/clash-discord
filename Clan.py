@@ -56,8 +56,12 @@ class Clan(object):
         self.war_league_name = war_league_name
         self.members = members
 
-    # returns the player tag of the member
     def find_member(self, member_name):
+        """
+            Takes in a member name string and returns the 
+            tag of the requested member.
+            If no member is found return None.
+        """
         # formatting the name from '-' to ' '
         member_name = re.sub('[-]', ' ', member_name)
         # search through all members in the clan
@@ -113,7 +117,9 @@ class ClanMember(object):
 
 
 def get(clan_tag, header):
-    """Takes in the clan's tag and returns a Clan object"""
+    """
+        Takes in the clan's tag and returns a Clan object
+    """
 
     clan_json = json_response(clan_tag, header)
 
@@ -124,29 +130,13 @@ def get(clan_tag, header):
     }
 
     if clan_json['isWarLogPublic']:
-        if 'warWinStreak' in clan_json:
-            war_win_streak = clan_json['warWinStreak']
-        else:
-            war_win_streak = 0
-        if 'warWins' in clan_json:
-            war_wins = clan_json['warWins']
-        else:
-            war_wins = 0
-        if 'warTies' in clan_json:
-            war_ties = clan_json['warTies']
-        else:
-            war_ties = 0
-        if 'warLosses' in clan_json:
-            war_losses = clan_json['warLosses']
-        else:
-            war_losses = 0
+        war_win_streak = clan_json['warWinStreak']
+        war_wins = clan_json['warWins']
+        war_ties = clan_json['warTies']
+        war_losses = clan_json['warLosses']
     else:
-        if 'warWinStreak' in clan_json:
-            war_win_streak = clan_json['warWinStreak']
-        else:
-            war_win_streak = 0
-        if 'warWins' in clan_json:
-            war_wins = clan_json['warWins']
+        war_win_streak = clan_json['warWinStreak']
+        war_wins = clan_json['warWins']
         war_ties = None
         war_losses = None
 
@@ -159,16 +149,17 @@ def get(clan_tag, header):
 
     members = []
     for member in clan_json['memberList']:
-        if 'versusTrophies' not in member:
-            vs_trophies = 0
-        else:
+        if 'versusTrophies' in member:
             vs_trophies = member['versusTrophies']
+        else:
+            vs_trophies = None
 
         # if member is unranked
         if member['league']['id'] == 29000000:
             league_icons = {
                 'tiny': member['league']['iconUrls']['tiny'],
-                'small': member['league']['iconUrls']['small']
+                'small': member['league']['iconUrls']['small'],
+                'medium': None
             }
         else:
             league_icons = {
