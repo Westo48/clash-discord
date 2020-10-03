@@ -185,7 +185,7 @@ def get(war_tag, clan_tag, header):
                     stars += member_attack['stars']
 
                     star_score = member_attack['stars']/3
-                    desscore = member_attack['destructionPercentage']/100
+                    des_score = member_attack['destructionPercentage']/100
                     # find opp th from attack
                     for opponent in war_json[clan_status]['members']:
                         if opponent['tag'] == member_attack['defenderTag']:
