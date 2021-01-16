@@ -118,6 +118,7 @@ class Troop(object):
 
 
 # todo make comments for inner workings of get method
+# todo separate Troops and Heroes
 def get(tag, header):
     """Takes in a player's tag and returns a Player object"""
 
@@ -188,7 +189,8 @@ def get(tag, header):
 
     # siege machines are part of 'troops' in the player_json
     for troop in player_json['troops']:
-        if troop['village'] == 'home':
+        if (troop['village'] == 'home'
+                and troop['name'] not in super_troop_list):
             troops.append(Troop(
                 troop['name'], troop['level'], troop['maxLevel'],
                 troop_dict[player_json['townHallLevel']
@@ -222,6 +224,12 @@ def json_response(tag, header):
     url = f'https://api.clashofclans.com/v1/players/%23{tag}'
     return requests.get(url, headers=header).json()
 
+
+super_troop_list = [
+    'Super Barbarian', 'Super Archer', 'Super Giant', 'Sneaky Goblin',
+    'Super Wall Breaker', 'Super Wizard', 'Inferno Dragon', 'Super Minion',
+    'Super Valkyrie', 'Super Witch', 'Ice Hound'
+]
 
 troop_dict = {
     1: {
@@ -344,6 +352,9 @@ troop_dict = {
             },
             'Siege Barracks': {
                 'name': 'Siege Barracks', 'thMax': 0, 'type': 'Gold'
+            },
+            'Log Launcher': {
+                'name': 'Log Launcher', 'thMax': 0, 'type': 'Gold'
             }
         },
         'spell': {
@@ -364,6 +375,9 @@ troop_dict = {
             },
             'Clone Spell': {
                 'name': 'Clone Spell', 'thMax': 0, 'type': 'Elixir'
+            },
+            'Invisibility Spell': {
+                'name': 'Invisibility Spell', 'thMax': 0, 'type': 'Elixir'
             },
             'Poison Spell': {
                 'name': 'Poison Spell', 'thMax': 0, 'type': 'Dark Elixir'
@@ -502,6 +516,9 @@ troop_dict = {
             },
             'Siege Barracks': {
                 'name': 'Siege Barracks', 'thMax': 0, 'type': 'Gold'
+            },
+            'Log Launcher': {
+                'name': 'Log Launcher', 'thMax': 0, 'type': 'Gold'
             }
         },
         'spell': {
@@ -522,6 +539,9 @@ troop_dict = {
             },
             'Clone Spell': {
                 'name': 'Clone Spell', 'thMax': 0, 'type': 'Elixir'
+            },
+            'Invisibility Spell': {
+                'name': 'Invisibility Spell', 'thMax': 0, 'type': 'Elixir'
             },
             'Poison Spell': {
                 'name': 'Poison Spell', 'thMax': 0, 'type': 'Dark Elixir'
@@ -660,6 +680,9 @@ troop_dict = {
             },
             'Siege Barracks': {
                 'name': 'Siege Barracks', 'thMax': 0, 'type': 'Gold'
+            },
+            'Log Launcher': {
+                'name': 'Log Launcher', 'thMax': 0, 'type': 'Gold'
             }
         },
         'spell': {
@@ -680,6 +703,9 @@ troop_dict = {
             },
             'Clone Spell': {
                 'name': 'Clone Spell', 'thMax': 0, 'type': 'Elixir'
+            },
+            'Invisibility Spell': {
+                'name': 'Invisibility Spell', 'thMax': 0, 'type': 'Elixir'
             },
             'Poison Spell': {
                 'name': 'Poison Spell', 'thMax': 0, 'type': 'Dark Elixir'
@@ -818,6 +844,9 @@ troop_dict = {
             },
             'Siege Barracks': {
                 'name': 'Siege Barracks', 'thMax': 0, 'type': 'Gold'
+            },
+            'Log Launcher': {
+                'name': 'Log Launcher', 'thMax': 0, 'type': 'Gold'
             }
         },
         'spell': {
@@ -838,6 +867,9 @@ troop_dict = {
             },
             'Clone Spell': {
                 'name': 'Clone Spell', 'thMax': 0, 'type': 'Elixir'
+            },
+            'Invisibility Spell': {
+                'name': 'Invisibility Spell', 'thMax': 0, 'type': 'Elixir'
             },
             'Poison Spell': {
                 'name': 'Poison Spell', 'thMax': 0, 'type': 'Dark Elixir'
@@ -976,6 +1008,9 @@ troop_dict = {
             },
             'Siege Barracks': {
                 'name': 'Siege Barracks', 'thMax': 0, 'type': 'Gold'
+            },
+            'Log Launcher': {
+                'name': 'Log Launcher', 'thMax': 0, 'type': 'Gold'
             }
         },
         'spell': {
@@ -996,6 +1031,9 @@ troop_dict = {
             },
             'Clone Spell': {
                 'name': 'Clone Spell', 'thMax': 0, 'type': 'Elixir'
+            },
+            'Invisibility Spell': {
+                'name': 'Invisibility Spell', 'thMax': 0, 'type': 'Elixir'
             },
             'Poison Spell': {
                 'name': 'Poison Spell', 'thMax': 0, 'type': 'Dark Elixir'
@@ -1134,6 +1172,9 @@ troop_dict = {
             },
             'Siege Barracks': {
                 'name': 'Siege Barracks', 'thMax': 0, 'type': 'Gold'
+            },
+            'Log Launcher': {
+                'name': 'Log Launcher', 'thMax': 0, 'type': 'Gold'
             }
         },
         'spell': {
@@ -1154,6 +1195,9 @@ troop_dict = {
             },
             'Clone Spell': {
                 'name': 'Clone Spell', 'thMax': 0, 'type': 'Elixir'
+            },
+            'Invisibility Spell': {
+                'name': 'Invisibility Spell', 'thMax': 0, 'type': 'Elixir'
             },
             'Poison Spell': {
                 'name': 'Poison Spell', 'thMax': 0, 'type': 'Dark Elixir'
@@ -1292,6 +1336,9 @@ troop_dict = {
             },
             'Siege Barracks': {
                 'name': 'Siege Barracks', 'thMax': 0, 'type': 'Gold'
+            },
+            'Log Launcher': {
+                'name': 'Log Launcher', 'thMax': 0, 'type': 'Gold'
             }
         },
         'spell': {
@@ -1312,6 +1359,9 @@ troop_dict = {
             },
             'Clone Spell': {
                 'name': 'Clone Spell', 'thMax': 0, 'type': 'Elixir'
+            },
+            'Invisibility Spell': {
+                'name': 'Invisibility Spell', 'thMax': 0, 'type': 'Elixir'
             },
             'Poison Spell': {
                 'name': 'Poison Spell', 'thMax': 0, 'type': 'Dark Elixir'
@@ -1450,6 +1500,9 @@ troop_dict = {
             },
             'Siege Barracks': {
                 'name': 'Siege Barracks', 'thMax': 0, 'type': 'Gold'
+            },
+            'Log Launcher': {
+                'name': 'Log Launcher', 'thMax': 0, 'type': 'Gold'
             }
         },
         'spell': {
@@ -1470,6 +1523,9 @@ troop_dict = {
             },
             'Clone Spell': {
                 'name': 'Clone Spell', 'thMax': 0, 'type': 'Elixir'
+            },
+            'Invisibility Spell': {
+                'name': 'Invisibility Spell', 'thMax': 0, 'type': 'Elixir'
             },
             'Poison Spell': {
                 'name': 'Poison Spell', 'thMax': 2, 'type': 'Dark Elixir'
@@ -1608,6 +1664,9 @@ troop_dict = {
             },
             'Siege Barracks': {
                 'name': 'Siege Barracks', 'thMax': 0, 'type': 'Gold'
+            },
+            'Log Launcher': {
+                'name': 'Log Launcher', 'thMax': 0, 'type': 'Gold'
             }
         },
         'spell': {
@@ -1628,6 +1687,9 @@ troop_dict = {
             },
             'Clone Spell': {
                 'name': 'Clone Spell', 'thMax': 0, 'type': 'Elixir'
+            },
+            'Invisibility Spell': {
+                'name': 'Invisibility Spell', 'thMax': 0, 'type': 'Elixir'
             },
             'Poison Spell': {
                 'name': 'Poison Spell', 'thMax': 3, 'type': 'Dark Elixir'
@@ -1766,6 +1828,9 @@ troop_dict = {
             },
             'Siege Barracks': {
                 'name': 'Siege Barracks', 'thMax': 0, 'type': 'Gold'
+            },
+            'Log Launcher': {
+                'name': 'Log Launcher', 'thMax': 0, 'type': 'Gold'
             }
         },
         'spell': {
@@ -1786,6 +1851,9 @@ troop_dict = {
             },
             'Clone Spell': {
                 'name': 'Clone Spell', 'thMax': 3, 'type': 'Elixir'
+            },
+            'Invisibility Spell': {
+                'name': 'Invisibility Spell', 'thMax': 0, 'type': 'Elixir'
             },
             'Poison Spell': {
                 'name': 'Poison Spell', 'thMax': 4, 'type': 'Dark Elixir'
@@ -1924,6 +1992,9 @@ troop_dict = {
             },
             'Siege Barracks': {
                 'name': 'Siege Barracks', 'thMax': 0, 'type': 'Gold'
+            },
+            'Log Launcher': {
+                'name': 'Log Launcher', 'thMax': 0, 'type': 'Gold'
             }
         },
         'spell': {
@@ -1944,6 +2015,9 @@ troop_dict = {
             },
             'Clone Spell': {
                 'name': 'Clone Spell', 'thMax': 5, 'type': 'Elixir'
+            },
+            'Invisibility Spell': {
+                'name': 'Invisibility Spell', 'thMax': 2, 'type': 'Elixir'
             },
             'Poison Spell': {
                 'name': 'Poison Spell', 'thMax': 5, 'type': 'Dark Elixir'
@@ -2082,6 +2156,9 @@ troop_dict = {
             },
             'Siege Barracks': {
                 'name': 'Siege Barracks', 'thMax': 0, 'type': 'Gold'
+            },
+            'Log Launcher': {
+                'name': 'Log Launcher', 'thMax': 0, 'type': 'Gold'
             }
         },
         'spell': {
@@ -2102,6 +2179,9 @@ troop_dict = {
             },
             'Clone Spell': {
                 'name': 'Clone Spell', 'thMax': 5, 'type': 'Elixir'
+            },
+            'Invisibility Spell': {
+                'name': 'Invisibility Spell', 'thMax': 3, 'type': 'Elixir'
             },
             'Poison Spell': {
                 'name': 'Poison Spell', 'thMax': 6, 'type': 'Dark Elixir'
@@ -2132,7 +2212,7 @@ troop_dict = {
                 'name': 'Grand Warden', 'thMax': 50, 'type': 'Elixir'
             },
             'Royal Champion': {
-                'name': 'Royal Champion', 'thMax': 20, 'type': 'Dark Elixir'
+                'name': 'Royal Champion', 'thMax': 25, 'type': 'Dark Elixir'
             }
         },
         'troop': {
@@ -2143,7 +2223,7 @@ troop_dict = {
                 'name': 'Archer', 'thMax': 9, 'type': 'Elixir'
             },
             'Giant': {
-                'name': 'Giant', 'thMax': 9, 'type': 'Elixir'
+                'name': 'Giant', 'thMax': 10, 'type': 'Elixir'
             },
             'Goblin': {
                 'name': 'Goblin', 'thMax': 8, 'type': 'Elixir'
@@ -2155,7 +2235,7 @@ troop_dict = {
                 'name': 'Balloon', 'thMax': 9, 'type': 'Elixir'
             },
             'Wizard': {
-                'name': 'Wizard', 'thMax': 9, 'type': 'Elixir'
+                'name': 'Wizard', 'thMax': 10, 'type': 'Elixir'
             },
             'Healer': {
                 'name': 'Healer', 'thMax': 6, 'type': 'Elixir'
@@ -2164,7 +2244,7 @@ troop_dict = {
                 'name': 'Dragon', 'thMax': 8, 'type': 'Elixir'
             },
             'P.E.K.K.A': {
-                'name': 'P.E.K.K.A', 'thMax': 8, 'type': 'Elixir'
+                'name': 'P.E.K.K.A', 'thMax': 9, 'type': 'Elixir'
             },
             'Baby Dragon': {
                 'name': 'Baby Dragon', 'thMax': 7, 'type': 'Elixir'
@@ -2240,7 +2320,11 @@ troop_dict = {
             },
             'Siege Barracks': {
                 'name': 'Siege Barracks', 'thMax': 4, 'type': 'Gold'
+            },
+            'Log Launcher': {
+                'name': 'Log Launcher', 'thMax': 4, 'type': 'Gold'
             }
+
         },
         'spell': {
             'Lightning Spell': {
@@ -2260,6 +2344,9 @@ troop_dict = {
             },
             'Clone Spell': {
                 'name': 'Clone Spell', 'thMax': 6, 'type': 'Elixir'
+            },
+            'Invisibility Spell': {
+                'name': 'Invisibility Spell', 'thMax': 4, 'type': 'Elixir'
             },
             'Poison Spell': {
                 'name': 'Poison Spell', 'thMax': 7, 'type': 'Dark Elixir'

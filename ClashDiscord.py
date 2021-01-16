@@ -5,37 +5,69 @@ from ClashResponder import *
 from DiscordResponder import *
 
 
+intents = discord.Intents.all()
+
+client = commands.Bot(command_prefix='!', intents=intents)
+client.remove_command('help')
+
 # todo make another .py file for client clan class and methods
+# had emoji id as well
+
+
 class ClientClan(object):
     def __init__(
-        self, tag, name, emoji_id
+        self, name,  tag, emoji_name, emoji_id
     ):
-        self.tag = tag
         self.name = name
+        self.tag = tag
+        self.emoji_name = emoji_name
         self.emoji_id = emoji_id
 
 
-client = commands.Bot(command_prefix='!')
-client.remove_command('help')
+class ClientRole(object):
+    def __init__(
+        self, name, tag, is_clash_role
+    ):
+        self.name = name
+        self.tag = tag
+        self.is_clash_role = is_clash_role
 
-leader_role = '👑Leaders👑'
+
+client_roles = {
+    'TheMightyHeroes': ClientRole('TheMightyHeroes', 799031143633518604, True),
+    'wild side': ClientRole('sild side', 799031364984242216, True),
+    'admin': ClientRole('admin', 798606035539591169, False),
+    'bot': ClientRole('bot', 798610168018632784, False),
+    'dev': ClientRole('dev', 798610076528672808, False),
+    'leader': ClientRole('leader', 798605886300880936, True),
+    'co-leader': ClientRole('co-leader', 798608772783800361, True),
+    'elder': ClientRole('elder', 798608564494139443, True),
+    'member': ClientRole('member', 798608480033964093, True),
+    'community': ClientRole('community', 798616833628438549, False),
+    'underground': ClientRole('underground', 798729981336354836, False),
+    'uninitiated': ClientRole('uninitiated', 798610698337779713, False)
+}
+leader_role = 'leader'
 time_zone = (-5)
 raz_tag = '#RGQ8RGU9'
+heroes_tag = '#JJRJGVR0'
 header = {
     'Accept': 'application/json',
     'authorization': 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiIsImtpZCI6IjI4YTMxOGY3LTAwMDAtYTFlYi03ZmExLTJjNzQzM2M2Y2NhNSJ9.eyJpc3MiOiJzdXBlcmNlbGwiLCJhdWQiOiJzdXBlcmNlbGw6Z2FtZWFwaSIsImp0aSI6IjkyNWJjYzg1LWFhZDktNGM2NC05M2Y2LWM4MWEwZGVhOGUwNiIsImlhdCI6MTU3NDYyMjY3Nywic3ViIjoiZGV2ZWxvcGVyLzdjZmJkOWFjLTFlYzAtNDI3OS1jODM2LTU0YzMxN2FlZmE4NiIsInNjb3BlcyI6WyJjbGFzaCJdLCJsaW1pdHMiOlt7InRpZXIiOiJkZXZlbG9wZXIvc2lsdmVyIiwidHlwZSI6InRocm90dGxpbmcifSx7ImNpZHJzIjpbIjEwOC4yMTEuOTUuMjU0Il0sInR5cGUiOiJjbGllbnQifV19.gdc-4-OEZzsYBLk8HfqZBH-idvlK1vX9nim91XEqLgwNAyarfZquxfkZDKPsswUGyiXRIFV7Am3RB7iWtd9T5w'
 }
 client_clans = [
-    (ClientClan('#28LRPVP8C', '6ers', 753096212969816144)),
-    (ClientClan('#88UUULPU', 'Regis', 753096189213278298))
+    (ClientClan('TheMightyHeroes', '#JJRJGVR0',
+                "the_mighty_heroes", 798999641269207090)),
+    (ClientClan('wild side', '#2QQRLQV',
+                "wild_side", 799045915268743228))
 ]
 bot_categories = [
-    # {
-    #     'name': 'DISCORD',
-    #     'brief': 'discord',
-    #     'description': 'Discord based commands',
-    #     'emoji': ':computer:'
-    # },
+    {
+        'name': 'DISCORD',
+        'brief': 'discord',
+        'description': 'Discord based commands',
+        'emoji': ':computer:'
+    },
     # {
     #     'name': 'MISC',
     #     'brief': 'misc',
@@ -74,19 +106,34 @@ bot_categories = [
     }
 ]
 guild_emoji_dict = {
-    'legacy': 753096212969816144,
-    'regis': 753096189213278298,
-    'legends': 753096689405001728,
-    'titan': 753096677661081649,
-    'master': 753096714977542144,
-    'crystal': 753096731234664548,
-    '9': 753340589600276567,
-    '10': 753340591248638013,
-    '11': 753340591009694288,
-    '12': 753340591462416526,
-    '13': 753340591101706300,
+    'the_mighty_heroes': 798999641269207090,
+    'wild_side': 799045915268743228,
+    'unranked': 798985793313701908,
+    'bronze': 798985819754332161,
+    'silver': 798985849365725234,
+    'gold': 798985865786294303,
+    'crystal': 798985900084297768,
+    'master': 798985913127534635,
+    'champion': 798985927266795611,
+    'titan': 798985986947285002,
+    'legend': 798986001971281960,
+    '1': 798988715170070598,
+    '2': 798988734979637348,
+    '3': 798988750478639114,
+    '4': 798988788923629590,
+    '5': 798988789120761917,
+    '6': 798988853930754069,
+    '7': 798988873257451550,
+    '8': 798988892895313930,
+    '9': 798983538581045328,
+    '10': 798984308265320449,
+    '11': 798984326258753597,
+    '12': 798984348299690034,
+    '13': 798984362606460939,
 }
-testing_channel_id = 756197533818028184
+welcome_channel_id = 798605437662134302
+testing_channel_id = 798642365648732212
+general_channel_id = 798603935022710847
 
 
 @client.event
@@ -99,6 +146,8 @@ async def on_ready():
     brief='discord',
     description='Returns the help text you see before you'
 )
+# todo allow leader or co-leader
+# todo hide clan help if user is not in a clan
 async def help(ctx):
     is_leader = role_check(leader_role, ctx.author.roles)
 
@@ -106,10 +155,10 @@ async def help(ctx):
         colour=discord.Colour.blue()
     )
     embed.set_author(
-        name="[!] RazClashBot", icon_url="https://cdn.discordapp.com/avatars/649107156989378571/053f201109188da026d0a980dd4136e0.webp")
+        name=f"[{ctx.prefix}] RazClashBot", icon_url="https://cdn.discordapp.com/avatars/649107156989378571/053f201109188da026d0a980dd4136e0.webp")
 
     embed.set_thumbnail(
-        url="https://i.imgur.com/JBt2Kwt.gif")
+        url="https://i.imgur.com/nwnXABb.gif")
 
     user_clan = find_user_clan(
         player_name_string(ctx.author.display_name),
@@ -119,7 +168,7 @@ async def help(ctx):
     for item in bot_categories:
         brief = item['brief']
 
-        if (user_clan != ''
+        if (user_clan
                 and brief == 'clan'):
             clan_emoji = ctx.bot.get_emoji(user_clan.emoji_id)
             emoji = f"<:{clan_emoji.name}:{clan_emoji.id}>"
@@ -166,7 +215,7 @@ async def embedtest(ctx):
         title='Test title'
     )
     embed.set_author(
-        name="[!] RazClashBot", icon_url="https://cdn.discordapp.com/avatars/649107156989378571/053f201109188da026d0a980dd4136e0.webp")
+        name="[{ctx.prefix}] RazClashBot", icon_url="https://cdn.discordapp.com/avatars/649107156989378571/053f201109188da026d0a980dd4136e0.webp")
     # embed.set_image(
     #     url="https://i.imgur.com/rwgo8fJ.jpg")
     embed.set_thumbnail(
@@ -229,7 +278,7 @@ async def player(ctx, *, player_tag):
         value=player.th_lvl,
         inline=True
     )
-    if player.th_weapon_lvl != 0:
+    if player.th_weapon_lvl:
         embed.add_field(
             name='**TH Weapon Lvl**',
             value=player.th_weapon_lvl,
@@ -379,8 +428,7 @@ async def player(ctx, *, player_tag):
 
 @client.command(
     brief='player',
-    description='Enter troop/hero/spell to see its '
-                'current, th max, and max level.'
+    description='Enter unit to see its current, th max, and max level.'
 )
 async def trooplvl(ctx, *, troop_name):
     player_name = player_name_string(ctx.author.display_name)
@@ -388,7 +436,7 @@ async def trooplvl(ctx, *, troop_name):
         player_name, client_clans, ctx.author.roles, header)
     if user_clan != '':
         await ctx.send(response_troop_lvl(
-            player_name, troop_name, user_clan.tag, header))
+            ctx.author.display_name, troop_name, heroes_tag, header))
     else:
         await ctx.send(f"Couldn't find {ctx.author.display_name}'s clan. "
                        "Please ensure a clan role has been given to the user.")
@@ -403,7 +451,7 @@ async def alltrooplvl(ctx):
     player_name = player_name_string(ctx.author.display_name)
     user_clan = find_user_clan(
         player_name, client_clans, ctx.author.roles, header)
-    if user_clan != '':
+    if user_clan:
         for line in response_all_troop_level(ctx.author.display_name, user_clan.tag, header):
             await ctx.send(line)
     else:
@@ -423,7 +471,7 @@ async def donationchecker(ctx, *, troop_name):
     player_name = player_name_string(ctx.author.display_name)
     user_clan = find_user_clan(
         player_name, client_clans, ctx.author.roles, header)
-    if user_clan != '':
+    if user_clan:
         await ctx.send(response_donation(troop_name, user_clan.tag, header))
     else:
         await ctx.send(f"Couldn't find {ctx.author.display_name}'s clan. "
@@ -442,7 +490,7 @@ async def waroverview(ctx):
     player_name = player_name_string(ctx.author.display_name)
     user_clan = find_user_clan(
         player_name, client_clans, ctx.author.roles, header)
-    if user_clan != '':
+    if user_clan:
         await ctx.send(response_war_overview(user_clan.tag, time_zone, header))
     else:
         await ctx.send(f"Couldn't find {ctx.author.display_name}'s clan. "
@@ -455,7 +503,7 @@ async def wartime(ctx):
     player_name = player_name_string(ctx.author.display_name)
     user_clan = find_user_clan(
         player_name, client_clans, ctx.author.roles, header)
-    if user_clan != '':
+    if user_clan:
         await ctx.send(response_war_time(user_clan.tag, time_zone, header))
     else:
         await ctx.send(f"Couldn't find {ctx.author.display_name}'s clan. "
@@ -472,7 +520,7 @@ async def warnoattack(ctx):
     player_name = player_name_string(ctx.author.display_name)
     user_clan = find_user_clan(
         player_name, client_clans, ctx.author.roles, header)
-    if user_clan != '':
+    if user_clan:
         await ctx.send(response_war_no_attack(user_clan.tag, time_zone, header))
     else:
         await ctx.send(f"Couldn't find {ctx.author.display_name}'s clan. "
@@ -490,7 +538,7 @@ async def warnoattackalert(ctx):
     player_name = player_name_string(ctx.author.display_name)
     user_clan = find_user_clan(
         player_name, client_clans, ctx.author.roles, header)
-    if user_clan != '':
+    if user_clan:
         no_atk_list = war_no_attack_members(
             user_clan.tag, time_zone, header)
         if len(no_atk_list) == 0:
@@ -521,7 +569,7 @@ async def warclanstars(ctx):
     player_name = player_name_string(ctx.author.display_name)
     user_clan = find_user_clan(
         player_name, client_clans, ctx.author.roles, header)
-    if user_clan != '':
+    if user_clan:
         for line in response_war_members_overview(user_clan.tag, time_zone, header):
             await ctx.send(line)
     else:
@@ -539,7 +587,7 @@ async def warallattacks(ctx):
     player_name = player_name_string(ctx.author.display_name)
     user_clan = find_user_clan(
         player_name, client_clans, ctx.author.roles, header)
-    if user_clan != '':
+    if user_clan:
         for line in response_war_all_attacks(user_clan.tag, time_zone, header):
             await ctx.send(f'{line}')
     else:
@@ -557,7 +605,7 @@ async def warclanscore(ctx):
     player_name = player_name_string(ctx.author.display_name)
     user_clan = find_user_clan(
         player_name, client_clans, ctx.author.roles, header)
-    if user_clan != '':
+    if user_clan:
         for line in response_war_all_member_standing(user_clan.tag, time_zone, header):
             await ctx.send(f'{line}')
     else:
@@ -580,7 +628,30 @@ async def cwllineup(ctx):
         player_name, client_clans, ctx.author.roles, header)
     if user_clan:
         cwl_group = CWLGroup.get(user_clan.tag, header)
-        response_cwl_lineup(cwl_group)
+        cwl_lineup = response_cwl_lineup(cwl_group)
+        message = (
+            "```\n"
+            "CWL Group Lineup\n"
+            "13 | 12 | 11 | 10 | 9  | 8  | 7\n"
+            "-------------------------------\n"
+        )
+        for clan_dict in cwl_lineup:
+            lineup_message = f"{clan_dict['clan'].name}\n"
+            for key in clan_dict:
+                if key != 'clan' and key > 6:
+                    lineup_message += f"{clan_dict[key]}"
+                    # if it is a double digit number
+                    if clan_dict[key] >= 10:
+                        lineup_message += " | "
+                    # if it is a single digit number add an extra space
+                    else:
+                        lineup_message += "  | "
+            # removes the last 4 characters '  | ' of the string
+            lineup_message = lineup_message[:-4]
+            lineup_message += "\n\n"
+            message += lineup_message
+        message += "```"
+        await ctx.send(message)
 
     else:
         await ctx.send(f"Couldn't find {ctx.author.display_name}'s clan. "
@@ -599,7 +670,7 @@ async def cwlwaroverview(ctx):
     player_name = player_name_string(ctx.author.display_name)
     user_clan = find_user_clan(
         player_name, client_clans, ctx.author.roles, header)
-    if user_clan != '':
+    if user_clan:
         await ctx.send(response_cwl_war_overview(user_clan.tag, time_zone, header))
     else:
         await ctx.send(f"Couldn't find {ctx.author.display_name}'s clan. "
@@ -613,7 +684,7 @@ async def cwlwartime(ctx):
     player_name = player_name_string(ctx.author.display_name)
     user_clan = find_user_clan(
         player_name, client_clans, ctx.author.roles, header)
-    if user_clan != '':
+    if user_clan:
         await ctx.send(response_cwl_war_time(user_clan.tag, time_zone, header))
     else:
         await ctx.send(f"Couldn't find {ctx.author.display_name}'s clan. "
@@ -630,7 +701,7 @@ async def cwlwarnoattack(ctx):
     player_name = player_name_string(ctx.author.display_name)
     user_clan = find_user_clan(
         player_name, client_clans, ctx.author.roles, header)
-    if user_clan != '':
+    if user_clan:
         await ctx.send(response_cwl_war_no_attack(user_clan.tag, time_zone, header))
     else:
         await ctx.send(f"Couldn't find {ctx.author.display_name}'s clan. "
@@ -647,7 +718,7 @@ async def cwlwarallattack(ctx):
     player_name = player_name_string(ctx.author.display_name)
     user_clan = find_user_clan(
         player_name, client_clans, ctx.author.roles, header)
-    if user_clan != '':
+    if user_clan:
         for line in response_cwl_war_all_attacks(user_clan.tag, time_zone, header):
             await ctx.send(line)
     else:
@@ -665,7 +736,7 @@ async def cwlclanscore(ctx):
     player_name = player_name_string(ctx.author.display_name)
     user_clan = find_user_clan(
         player_name, client_clans, ctx.author.roles, header)
-    if user_clan != '':
+    if user_clan:
         for line in response_cwl_clan_standing(user_clan.tag, header):
             await ctx.send(line)
     else:
@@ -679,7 +750,7 @@ async def cwlmemberscore(ctx):
     player_name = player_name_string(ctx.author.display_name)
     user_clan = find_user_clan(
         player_name, client_clans, ctx.author.roles, header)
-    if user_clan != '':
+    if user_clan:
         await ctx.send(
             response_cwl_member_standing(player_name, user_clan.tag, header))
     else:
@@ -692,7 +763,7 @@ async def cwlmemberscore(ctx):
 async def cwlclanmatescore(ctx, *, player_name):
     user_clan = find_user_clan(
         player_name, client_clans, ctx.author.roles, header)
-    if user_clan != '':
+    if user_clan:
         await ctx.send(
             response_cwl_member_standing(player_name, user_clan.tag, header))
     else:
@@ -731,41 +802,57 @@ async def emojitesting(ctx):
         player_name_string(ctx.author.display_name),
         client_clans, ctx.author.roles, header
     )
-    if user_clan != '':
+    if user_clan:
         clan_emoji = ctx.bot.get_emoji(user_clan.emoji_id)
         await ctx.send(f"<:{clan_emoji.name}:{clan_emoji.id}>")
 
 
-"""
 @client.command(
     aliases=['roleme'],
     brief='discord',
     description=('This will give you your clan role '
                  'here in Discord.')
 )
+# ! set up multiple responses for added roles
+# ? reset nickname if they are not found in the clan
 async def role(ctx):
     author = ctx.message.author
-    player = response_player(author.display_name, heroes_tag, header)
-
-    # player is found in the clan
-    if player != '':
-        new_role, old_role = role_switch(player.role, author.roles)
-
-        if old_role != '':
-            await author.remove_roles(
-                discord.utils.get(author.guild.roles, name=old_role))
-        if new_role != '':
-            await author.add_roles(
-                discord.utils.get(author.guild.roles, name=new_role))
-
-        await ctx.send(f'{author.display_name} now has the role {new_role}')
+    # if they have the community role
+    if role_check(client_roles['community'].name, author.roles):
+        await ctx.send(f"You do not need new roles, you have the community role.")
+    # if they do not have the community role
     else:
-        await author.edit(nick=None)
-        await ctx.send(f"Couldn't find {author.display_name} in the clan.")
-"""
+        # check all listed clans for the requested player name
+        for clan in client_clans:
+            player = response_player(
+                author.display_name, clan.tag, header)
+            if player:
+                break
+
+        # player is found in the clan
+        if player:
+            # gets the roles to add and remove
+            add_roles, remove_roles = role_switch(
+                player, author.roles, client_clans)
+
+            # getting the user's roles in place
+            for role in remove_roles:
+                await author.remove_roles(
+                    discord.utils.get(author.guild.roles, name=role))
+            for role in add_roles:
+                await author.add_roles(
+                    discord.utils.get(author.guild.roles, name=role))
+
+            if len(add_roles) > 0:
+                await ctx.send(f'{author.display_name} now has the role(s) {add_roles}')
+            else:
+                await ctx.send(f'{author.display_name} did not change roles')
+
+        else:
+            await author.edit(nick=None)
+            await ctx.send(f"Couldn't find {author.display_name} in the clan.")
 
 
-'''
 @client.command(
     aliases=['nick'],
     brief='discord',
@@ -774,61 +861,76 @@ async def role(ctx):
         'and set your nickname to the corresponding name '
         'and reset your role')
 )
+# ! set up multiple responses for added roles
 async def nickname(ctx, *, player_name):
     author = ctx.author
-    player = response_player(
-        player_name, heroes_tag, header)
+    # check all listed clans for the requested player name
+    for clan in client_clans:
+        player = response_player(
+            player_name, clan.tag, header)
+        if player:
+            break
 
-    # player is found in the clan
-    if player != '':
-        # gets the new role and current (old) role
-        new_role, old_role = role_switch(player.role, author.roles)
+    # player is found in a clan
+    if player:
+        # gets the roles to add and remove
+        add_roles, remove_roles = role_switch(
+            player, author.roles, client_clans)
         # if the user already has the correct name
         if player.name == author.display_name:
             # don't change the user's nickname
             # getting the user's roles in place
-            if old_role != '':
+            for role in remove_roles:
                 await author.remove_roles(
-                    discord.utils.get(author.guild.roles, name=old_role))
-            if new_role != '':
+                    discord.utils.get(author.guild.roles, name=role))
+            for role in add_roles:
                 await author.add_roles(
-                    discord.utils.get(author.guild.roles, name=new_role))
-            await ctx.send(f'Your nickname does not need to be changed. '
-                           f'Your role has been set to {new_role}')
+                    discord.utils.get(author.guild.roles, name=role))
+
+            if len(add_roles) > 0:
+                await ctx.send(f'Your nickname does not need to be changed. '
+                               f'Your role has been set to {add_roles[-1]}')
+            else:
+                await ctx.send(f'Your nickname does not need to be changed. '
+                               f'No roles have been added.')
 
         # if the user doesn't have to correct name & player name is available
         elif nickname_available(player.name, ctx.guild.members):
             # getting the user's roles in place
-            if old_role != '':
+            for role in remove_roles:
                 await author.remove_roles(
-                    discord.utils.get(author.guild.roles, name=old_role))
-            if new_role != '':
+                    discord.utils.get(author.guild.roles, name=role))
+            for role in add_roles:
                 await author.add_roles(
-                    discord.utils.get(author.guild.roles, name=new_role))
+                    discord.utils.get(author.guild.roles, name=role))
 
             await author.edit(nick=player.name)
             await ctx.send(f'Your nickname has been changed to {player.name} '
-                           f'and your role has been changed to {new_role}')
+                           f'and your role has been changed to {add_roles[-1]}')
 
         # if the name isn't available and it isn't you that has the name
         else:
             await ctx.send(f'Someone in the channel already has the name '
                            f'{player.name}')
     else:
-        new_role, old_role = role_switch('Uninitiated', author.roles)
+        # set the display_name to the requested name
+        # give them community role
+        add_roles, remove_roles = role_switch(None, author.roles, client_clans)
         # getting the user's roles in place
-        if old_role != '':
+        for role in remove_roles:
             await author.remove_roles(
-                discord.utils.get(author.guild.roles, name=old_role))
-        if new_role != '':
+                discord.utils.get(author.guild.roles, name=role))
+        for role in add_roles:
             await author.add_roles(
-                discord.utils.get(author.guild.roles, name=new_role))
+                discord.utils.get(author.guild.roles, name=role))
 
-        await author.edit(nick=None)
-        channel = channel_changer(ctx, welcome_channel_id)
-        await channel.send(f"Couldn't find {player_name} in the clan."
-                           f"Your role and nickname have been reset.")
-'''
+        await author.edit(nick=player_name)
+        await ctx.send(
+            f"Couldn't find {player_name} in the clans. "
+            f"Your role is set to community "
+            f"and nickname has been changed to {player_name}."
+        )
+
 
 """
 @client.command(
@@ -845,8 +947,8 @@ async def all_member_roles(ctx):
         # for each member in the clan
         message_list = []
         for member in ctx.guild.members:
-            # leave Uninitiated members alone
-            if role_check('Uninitiated', member.roles):
+            # leave uninitiated members alone
+            if role_check('uninitiated', member.roles):
                 pass
             # all initiated members
             else:
@@ -854,7 +956,7 @@ async def all_member_roles(ctx):
                     member.display_name, heroes_tag, header)
 
                 # the player is found in the given clan
-                if player != '':
+                if player:
                     # gets the new role and current (old) role
                     new_role, old_role = role_switch(player.role, member.roles)
 
@@ -885,12 +987,11 @@ async def all_member_roles(ctx):
             await ctx.send(line)
 """
 
-"""
+
 @client.event
 async def on_member_join(member):
-    member_role = discord.utils.get(member.guild.roles, name='Uninitiated')
+    member_role = discord.utils.get(member.guild.roles, name='uninitiated')
     await member.add_roles(member_role)
-"""
 
 
 @client.event

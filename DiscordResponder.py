@@ -1,52 +1,129 @@
 import Clan
 
 
-# todo reset this for new clan use
-def role_switch(player_role, user_roles):
+def role_switch(player, user_roles, client_clans):
     """
         takes in player role and list of discord user roles,
         returns new and old role
     """
-    if player_role == 'leader':
-        new_role = 'Leader'
-    elif player_role == 'coLeader':
-        new_role = 'Co-Leader'
-    elif player_role == 'admin':
-        new_role = 'Elder'
-    elif player_role == 'member':
-        new_role = 'Member'
+
+    add_roles = []
+    remove_roles = []
+
+    if player is None:
+
+        has_community = False
+        # remove all listed roles (clan, member, and uninitiated)
+        # give community role
+        for role in user_roles:
+            # checking for clan roles
+            for clan in client_clans:
+                if role.name == clan.name:
+                    remove_roles.append(role.name)
+
+            # checking for member roles
+            if role.name == 'leader':
+                remove_roles.append('leader')
+            if role.name == 'co-leader':
+                remove_roles.append('co-leader')
+            if role.name == 'elder':
+                remove_roles.append('elder')
+            if role.name == 'member':
+                remove_roles.append('member')
+            if role.name == 'uninitiated':
+                remove_roles.append('uninitiated')
+            if role.name == 'community':
+                has_community = True
+
+        # add community role if community is not False
+        if not has_community:
+            add_roles.append('community')
+
+        return add_roles, remove_roles
+
+    # checking if the user's clan roles need changing
+    old_clan = None
+    for role in user_roles:
+        for clan in client_clans:
+            if role.name == clan.name:
+                old_clan = role.name
+                break
+    new_clan = player.clan_name
+
+    # add the roles to the lists if the clans are not the same
+    if old_clan != new_clan:
+        # if there is an old clan role then add it to the list
+        if old_clan:
+            remove_roles.append(old_clan)
+        add_roles.append(new_clan)
+
+    # checking if the user's member roles need changing
+    new_role = None
+    if player.role == 'leader':
+        new_role = 'leader'
+    elif player.role == 'coLeader':
+        new_role = 'co-leader'
+    elif player.role == 'admin':
+        new_role = 'elder'
+    elif player.role == 'member':
+        new_role = 'member'
     else:
-        new_role = 'Uninitiated'
+        new_role = 'uninitiated'
 
-    old_role = ''
+    old_role = None
     for role in user_roles:
-        if role.name == 'Leader':
-            old_role = 'Leader'
-            break
-        if role.name == 'Co-Leader':
-            old_role = 'Co-Leader'
-            break
-        if role.name == 'Elder':
-            old_role = 'Elder'
-            break
-        if role.name == 'Member':
-            old_role = 'Member'
-            break
-        if role.name == 'Uninitiated':
-            old_role = 'Uninitiated'
-            break
+        if role.name == 'leader':
+            old_role = 'leader'
+        if role.name == 'co-leader':
+            old_role = 'co-leader'
+        if role.name == 'elder':
+            old_role = 'elder'
+        if role.name == 'member':
+            old_role = 'member'
+        if role.name == 'uninitiated':
+            old_role = 'uninitiated'
+        if role.name == 'community':
+            remove_roles.append(role.name)
 
-    return new_role, old_role
+    # add the roles to the lists if the member roles are not the same
+    if old_role != new_role:
+        # if there is an old clan member role then add it to the list
+        if old_role:
+            remove_roles.append(old_role)
+        add_roles.append(new_role)
+
+    return add_roles, remove_roles
 
 
-def role_check(check_role, user_roles):
+# todo needs testing
+# ? may not need
+def client_roles_check(client_roles, user_roles):
+    """
+        Checks if a user has any of the client_roles and returns True or False
+    """
+    for value in client_roles:
+        if value.is_clash_role:
+            for role in user_roles:
+                if role.name == value.name:
+                    return True
+    return False
+
+
+def role_check(client_role, user_roles):
+    """
+        Returns True if user has requested role, False if not
+    """
     for role in user_roles:
-        if role.name == check_role:
+        if role.name == client_role:
             return True
     return False
 
 
 def nickname_available(nickname, user_list):
+    """
+        returns a bool
+        checks if anyone in the guild has the given display_name
+    """
     for user in user_list:
         if nickname == user.display_name:
             return False
@@ -67,8 +144,12 @@ def find_user_clan(player_name, client_clans, user_roles, header):
     """
     for client_clan in client_clans:
         for role in user_roles:
+
+            # if the clan is found
             if client_clan.name == role.name:
                 clan = Clan.get(client_clan.tag, header)
+
+                # search the clan members for the given player
                 player_tag = clan.find_member(player_name)
                 if player_tag:
                     return client_clan
