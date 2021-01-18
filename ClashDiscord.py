@@ -304,13 +304,7 @@ async def player(ctx, *, player_tag):
         value=player.war_stars,
         inline=True
     )
-    if player.clan_lvl == 0:
-        embed.add_field(
-            name='**Clan**',
-            value=f"{player.name} is not in a clan",
-            inline=True
-        )
-    else:
+    if player.clan_lvl:
         embed.add_field(
             name='**Clan**',
             value=f"[{player.clan_name}](https://link.clashofclans.com/en?action=OpenClanProfile&tag={player.clan_tag[1:]})",
@@ -321,11 +315,17 @@ async def player(ctx, *, player_tag):
             value=player.role,
             inline=True
         )
-    embed.add_field(
-        name='**Donations | Received**',
-        value=f"{player.donations} | {player.donations_received}",
-        inline=True
-    )
+        embed.add_field(
+            name='**Donations | Received**',
+            value=f"{player.donations} | {player.donations_received}",
+            inline=True
+        )
+    else:
+        embed.add_field(
+            name='**Clan**',
+            value=f"{player.name} is not in a clan",
+            inline=True
+        )
     embed.add_field(
         name='**Attack | Defense**',
         value=f"{player.attack_wins} | {player.defense_wins}",
