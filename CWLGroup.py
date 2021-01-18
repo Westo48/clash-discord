@@ -23,8 +23,12 @@ class CWLGroup(object):
         self.clans = clans
         self.rounds = rounds
 
-    # return a cwl_war object
+    # todo update validation
     def find_current_war(self, clan_tag, header):
+        """
+            Returns the CWLWar object the specified clan is involved in. 
+            If a war is not found None will be returned.
+        """
         for cwl_round in self.rounds:
             if cwl_round[0] == '#0':
                 return cwl_round[0]
@@ -37,22 +41,32 @@ class CWLGroup(object):
                     cwl_war = get_cwl_war(war_tag, clan_tag, header)
                     if cwl_war.clan.tag == clan_tag:
                         return cwl_war
+        return None
 
     def find_preparation_war(self, clan_tag, header):
+        """
+            Returns the CWLWar object the specified clan is preparing for. 
+            If a war is not found None will be returned.
+        """
         for cwl_round in self.rounds:
             if cwl_round[0] == '#0':
                 return cwl_round[0]
             cwl_war = get_cwl_war(cwl_round[0], clan_tag, header)
             # given the correct round is found
-            # ? add warEnded for catching errors
+            # todo add warEnded for catching errors
             if cwl_war.state == 'preparation':
                 # go through the war tags to find the correct clan tag
                 for war_tag in cwl_round:
                     cwl_war = get_cwl_war(war_tag, clan_tag, header)
                     if cwl_war.clan.tag == clan_tag:
                         return cwl_war
+        return None
 
     def find_specified_war(self, clan_tag, round_int, header):
+        """
+            Returns the CWLWar the given clan is involved 
+            in for the given round.
+        """
         if 0 <= round_int <= 6:
             if self.rounds[round_int][0] == '#0':
                 return self.rounds[round_int][0]
@@ -61,6 +75,7 @@ class CWLGroup(object):
                     cwl_war = get_cwl_war(war_tag, clan_tag, header)
                     if cwl_war.clan.tag == clan_tag:
                         return cwl_war
+        return None
 
 
 class CWLClan(object):
@@ -98,8 +113,11 @@ class CWLClanMember(object):
         self.th_lvl = th_lvl
 
 
+# todo add not in CWL validation
 def get(clan_tag, header):
-    """Takes in a clan tag and returns the associated CWL group"""
+    """
+        Takes in a clan tag and returns the associated CWL group
+    """
     group_json = json_response(clan_tag, header)
 
     # grab a list of the clans

@@ -7,6 +7,23 @@ import CWLGroup
 import CWLWar
 
 
+cwl_clan_lineup_dict = {
+    'clan': {},
+    13: 0,
+    12: 0,
+    11: 0,
+    10: 0,
+    9: 0,
+    8: 0,
+    7: 0,
+    6: 0,
+    5: 0,
+    4: 0,
+    3: 0,
+    2: 0
+}
+
+
 # Player
 
 # returns player.name and troop.lvl
@@ -73,7 +90,7 @@ def response_donation(troop_name, clan_tag, header):
         member = Player.get(clan.members[i].tag, header)
 
         # checking if they have the specified troop
-        if member.find_troop(troop_name).name != '':
+        if member.find_troop(troop_name):
             members.append(member)
     if len(members) == 0:
         return f"Couldn't find {troop_name} in any {clan.name} members"
@@ -140,7 +157,7 @@ def response_player(player_name, clan_tag, header):
     clan = Clan.get(clan_tag, header)
     player_tag = clan.find_member(player_name)
     if player_tag == "":
-        return ''
+        return None
     return Player.get(player_tag, header)
 
 
@@ -372,7 +389,32 @@ def response_war_all_member_standing(clan_tag, time_zone, header):
                 f'{member.name} has a score of {round(member.score, 3)}')
         return return_list
 
+
 # CWL Group
+
+def response_cwl_lineup(cwl_group):
+    clan_lineup = []
+    for clan in cwl_group.clans:
+        clan_lineup_dict = {
+            'clan': {},
+            13: 0,
+            12: 0,
+            11: 0,
+            10: 0,
+            9: 0,
+            8: 0,
+            7: 0,
+            6: 0,
+            5: 0,
+            4: 0,
+            3: 0,
+            2: 0
+        }
+        clan_lineup_dict['clan'] = clan
+        for member in clan.members:
+            clan_lineup_dict[member.th_lvl] += 1
+        clan_lineup.append(clan_lineup_dict)
+    return clan_lineup
 
 
 # CWL War

@@ -30,8 +30,12 @@ class War(object):
         self.clan = clan
         self.opponent = opponent
 
-    # returns days, hours, minutes, seconds
     def war_time(self, time_zone):
+        """
+            Takes in a time zone and returns 
+            days, hours, minutes, seconds. 
+            If warEnded or notInWar, then variables will be None.
+        """
         if self.state == 'preparation':
             days, hours, minutes, seconds = date_time_calculator(
                 self.start_time, time_zone)
@@ -42,22 +46,22 @@ class War(object):
 
         # covers warEnded and notInWar states
         else:
-            days = 0
-            hours = 0
-            minutes = 0
-            seconds = 0
+            days = None
+            hours = None
+            minutes = None
+            seconds = None
 
-        return (
-            days,
-            hours,
-            minutes,
-            seconds
-        )
+        return (days, hours, minutes, seconds)
 
     def string_date_time(self, time_zone):
+        """
+            Takes in a time zone and returns 
+            a string of the remaining time. 
+            If warEnded or notInWar, then variables will be None.
+        """
         if (self.state == 'warEnded'
                 or self.state == 'notInWar'):
-            return ''
+            return None
         days, hours, minutes, seconds = date_time_calculator(
             self.start_time, time_zone)
         return_string = ''
@@ -95,13 +99,15 @@ class War(object):
         return return_string
 
     def string_scoreboard(self):
-        # + diff == winning, - diff == losing
+        """
+            Returns a string of the war score.
+        """
         star_difference = (self.clan.stars
                            - self.opponent.stars)
         destruction_difference = (self.clan.destruction_percentage
                                   - self.opponent.destruction_percentage)
         # if it has a difference of 1 it will just say 'star'
-        if pow(star_difference, 2) == 1:
+        if abs(star_difference) == 1:
             star_string = 'star'
         else:
             star_string = 'stars'
@@ -111,16 +117,16 @@ class War(object):
             loss_string = 'losing'
             # if +, so if winning
             if star_difference > 0:
-                return f'winning by {abs(star_difference)} {star_string}'
+                return f'{win_string} by {abs(star_difference)} {star_string}'
             elif star_difference < 0:
-                return f'losing by {abs(star_difference)} {star_string}'
+                return f'{loss_string} by {abs(star_difference)} {star_string}'
             # if the clan's stars are tied
             else:
                 # if +, so if winning
                 if destruction_difference > 0:
-                    return f'winning by {round(abs(destruction_difference), 2)} destruction percentage.'
+                    return f'{win_string} by {round(abs(destruction_difference), 2)} destruction percentage.'
                 elif destruction_difference < 0:
-                    return f'losing by {round(abs(destruction_difference), 2)} destruction percentage.'
+                    return f'{loss_string} by {round(abs(destruction_difference), 2)} destruction percentage.'
                 else:
                     return 'tied'
 
@@ -129,23 +135,25 @@ class War(object):
             loss_string = 'lost'
             # if +, so if winning
             if star_difference > 0:
-                return f'won by {abs(star_difference)} {star_string}'
+                return f'{win_string} by {abs(star_difference)} {star_string}'
             elif star_difference < 0:
-                return f'lost by {abs(star_difference)} {star_string}'
+                return f'{loss_string} by {abs(star_difference)} {star_string}'
             # if the clan's stars are tied
             else:
                 # if +, so if winning
                 if destruction_difference > 0:
-                    return f'won by {round(abs(destruction_difference), 2)} destruction percentage.'
+                    return f'{win_string} by {round(abs(destruction_difference), 2)} destruction percentage.'
                 elif destruction_difference < 0:
-                    return f'lost by {round(abs(destruction_difference), 2)} destruction percentage.'
+                    return f'{loss_string} by {round(abs(destruction_difference), 2)} destruction percentage.'
                 else:
                     return 'tied'
         else:
             return f' not in war.'
 
-    # returns a list of members that have not attacked
     def no_attack(self):
+        """
+            Returns a list of members that have missed an attack.
+        """
         no_attack_members = []
         for member in self.clan.members:
             if len(member.attacks) != member.possible_attack_count:
@@ -153,9 +161,15 @@ class War(object):
         return no_attack_members
 
     def find_defender(self, defender_tag):
+        """
+            Takes in a defender tag and returns 
+            a WarMember object. 
+            If it is not found then it will return None.
+        """
         for defender_member in self.opponent.members:
             if defender_tag == defender_member.tag:
                 return defender_member
+        return None
 
 
 class WarClan(object):
@@ -218,15 +232,19 @@ class WarMember(object):
         self.attacks = attacks
         self.score = score
 
-    # returns 'time' or 'times'
     def string_member_attack_times(self):
+        """
+            Returns 'time' or 'times' based on the number of attacks.
+        """
         if len(self.attacks) == 1:
             return 'time'
         else:
             return 'times'
 
-    # returns 'star' or 'stars'
     def string_member_stars(self):
+        """
+            Returns 'star' or 'stars' based on the number of attacks.
+        """
         if self.stars == 1:
             return 'star'
         else:
@@ -257,7 +275,9 @@ class WarMemberAttack(object):
         self.score = score
 
     def string_attack_stars(self):
-        "returns string 'star' or 'stars'"
+        """
+            Returns 'star' or 'stars' based on the number of attacks.
+        """
         if self.stars == 1:
             return 'star'
         else:
@@ -265,9 +285,11 @@ class WarMemberAttack(object):
 
 
 # todo separate this into 3 different methods
+# todo set value to None if 'reason' in war_json (double check this)
 def get(clan_tag, header):
     """
-    Takes in a clan tag and returns the war that clan is engaged in if any
+        Takes in a clan tag and returns the war 
+        that clan is engaged in if any.
     """
     war_json = json_response(clan_tag, header)
     if war_json['state'] == 'notInWar':
@@ -405,6 +427,10 @@ def json_response(tag, header):
 
 
 def clan_opp_status(war_json, clan_tag):
+    """
+        Takes in the desired clan_tag to see which clan is 
+        the 'clan' and which is 'opponent' based on the game's API
+    """
     # this clan_tag includes the # at the beginning
     if war_json['clan']['tag'] == clan_tag:
         clan_status = 'clan'
@@ -419,6 +445,10 @@ def clan_opp_status(war_json, clan_tag):
 
 
 def date_time_calculator(date_final, time_zone):
+    """
+        Takes in a time zone and calculates the difference 
+        between now and final time.
+    """
     date_time_format = '%Y%m%d%H%M%S'
     dt_now = datetime.now()
     date_final = time_string_changer(date_final)
@@ -438,24 +468,30 @@ def date_time_calculator(date_final, time_zone):
 
 
 def time_string_changer(time):
+    """
+        Formats the time variable.
+    """
     time = time[:-5:]
     time = time[:8] + time[8 + 1:]
     return time
 
 
 def th_multiplier(th_difference):
+    """
+        TH multiplier matrix.
+    """
     if th_difference < -2:
-        th_mult = 10
-    elif th_difference == -2:
         th_mult = 35
-    elif th_difference == -1:
+    elif th_difference == -2:
         th_mult = 50
+    elif th_difference == -1:
+        th_mult = 80
     elif th_difference == 0:
         th_mult = 100
     elif th_difference == 1:
-        th_mult = 150
+        th_mult = 140
     elif th_difference == 2:
-        th_mult = 165
+        th_mult = 155
     elif th_difference > 2:
         th_mult = 200
     else:

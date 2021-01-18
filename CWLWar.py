@@ -72,9 +72,12 @@ class CWLWarMember(War.WarMember):
             score (int): Member's war score
     """
 
-    def __init__(self, tag, name, th_lvl, map_position, stars, possible_attack_count, attacks, score):
+    def __init__(self, tag, name, th_lvl, map_position, stars,
+                 possible_attack_count, attacks, score):
         War.WarMember.__init__(
-            self, tag, name, th_lvl, map_position, stars, possible_attack_count, attacks, score)
+            self, tag, name, th_lvl, map_position, stars,
+            possible_attack_count, attacks, score
+        )
 
 
 class CWLWarMemberAttack(War.WarMemberAttack):
@@ -102,8 +105,8 @@ class CWLWarMemberAttack(War.WarMemberAttack):
 # getting the requested CWLWar data
 def get(war_tag, clan_tag, header):
     """
-    Takes in a war tag and a clan tag then
-    returns the CWL war that clan is engaged in if any
+        Takes in a war tag and a clan tag then
+        returns the CWL war that clan is engaged in.
     """
     war_json = json_response(war_tag, header)
     if war_json['state'] == 'notInWar':
@@ -182,7 +185,7 @@ def get(war_tag, clan_tag, header):
                     stars += member_attack['stars']
 
                     star_score = member_attack['stars']/3
-                    desscore = member_attack['destructionPercentage']/100
+                    des_score = member_attack['destructionPercentage']/100
                     # find opp th from attack
                     for opponent in war_json[clan_status]['members']:
                         if opponent['tag'] == member_attack['defenderTag']:
