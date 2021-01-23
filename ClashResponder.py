@@ -27,21 +27,28 @@ cwl_clan_lineup_dict = {
 # Player
 
 # returns player.name and troop.lvl
-def response_troop_lvl(player_name, troop_name, clan_tag, header):
+def response_troop_lvl(player_name, unit_name, clan_tag, header):
     player_tag = Clan.get(clan_tag, header).find_member(player_name)
     player = Player.get(player_tag, header)
-    troop = player.find_troop(troop_name)
-    if troop.name == '':
-        return ("Couldn't find that unit. "
-                "You either do not have it unlocked or it is misspelled.")
-    if troop.lvl == troop.max_lvl:
-        return f'{player.name} has lvl {troop.lvl} {troop.name}, which is max.'
-    elif troop.lvl == troop.th_max:
-        return f'{player.name} has lvl {troop.lvl} {troop.name}, which is max for TH {player.th_lvl}, max {troop.name} is {troop.max_lvl}.'
+    if not player:
+        return (f'Could not find {player_name} in the clan.')
+    unit = player.find_unit(unit_name)
+    if not unit:
+        return (f'Could not find {unit_name}. '
+                f'You either do not have it unlocked or it is misspelled.')
+    if unit.lvl == unit.max_lvl:
+        return f'{player.name} has lvl {unit.lvl} {unit.name}, which is max.'
+    elif unit.lvl == unit.th_max:
+        return (f'{player.name} has lvl {unit.lvl} {unit.name}, '
+                f'which is max for TH {player.th_lvl}, '
+                f'max {unit.name} is {unit.max_lvl}.')
     else:
-        return f'{player.name} has lvl {troop.lvl} {troop.name}, max for TH {player.th_lvl} is {troop.th_max}, max {troop.name} is {troop.max_lvl}.'
+        return (f'{player.name} has lvl {unit.lvl} {unit.name}, '
+                f'max for TH {player.th_lvl} is {unit.th_max}, '
+                f'max {unit.name} is {unit.max_lvl}.')
 
 
+# ? discontinue this function
 # returns a list of all troops and their levels
 def response_all_troop_level(player_name, clan_tag, header):
     clan = Clan.get(clan_tag, header)
@@ -51,105 +58,90 @@ def response_all_troop_level(player_name, clan_tag, header):
     response_list.append(f'{player.name} troops:')
     for troop in player.troops:
         if troop.village == 'home':
-            if (
-                troop.name != 'Super Barbarian'
-                and troop.name != 'Super Wall Breaker'
-                and troop.name != 'Super Giant'
-                and troop.name != 'Sneaky Goblin'
-                and troop.name != 'Inferno Dragon'
-                and troop.name != 'Super Valkyrie'
-                and troop.name != 'Super Witch'
-                and troop.name != 'Super Archer'
-            ):
-                if troop.lvl == troop.max_lvl:
-                    response_list.append(
-                        f'{troop.name} is lvl {troop.lvl}, which is max.')
-                    response_list.append('__________')
-                elif troop.lvl == troop.th_max:
-                    response_list.append(
-                        f'{troop.name} is lvl {troop.lvl}, which is max for TH {player.th_lvl}, max {troop.name} is {troop.max_lvl}.')
-                    response_list.append('__________')
-                else:
-                    response_list.append(
-                        f'{troop.name} is lvl {troop.lvl}, max for TH {player.th_lvl} is lvl {troop.th_max}, max {troop.name} is {troop.max_lvl}.')
-                    response_list.append('__________')
+            if troop.lvl == troop.max_lvl:
+                response_list.append(
+                    f'{troop.name} is lvl {troop.lvl}, which is max.')
+                response_list.append('__________')
+            elif troop.lvl == troop.th_max:
+                response_list.append(
+                    f'{troop.name} is lvl {troop.lvl}, which is max for TH {player.th_lvl}, max {troop.name} is {troop.max_lvl}.')
+                response_list.append('__________')
+            else:
+                response_list.append(
+                    f'{troop.name} is lvl {troop.lvl}, max for TH {player.th_lvl} is lvl {troop.th_max}, max {troop.name} is {troop.max_lvl}.')
+                response_list.append('__________')
     del response_list[-1]
     return response_list
 
 
 # Clan
 
-# returns a string response of members that can donate the best of that troop
-def response_donation(troop_name, clan_tag, header):
-    # name formatting done at the class level
-    clan = Clan.get(clan_tag, header)
+# returns a string response of members that can donate the best of that unit
+# todo put this into the clan framework
+def response_donation(unit_name, clan, header):
+    """
+        Takes in the unit name and clan tag, returns a list of players
+        who can donate.
 
-    # get a member_list to make less responses
+        Returns an empty list if nobody can donate requested unit.
+        Returns None if hero has been requested.
+
+        Args:
+            unit_name (str): Name of requested unit.
+            clan_tag (str): Tag of player's.
+            header (dict): Json header
+
+        Returns:
+            list: List of players who can donate.
+    """
+
+    class Donor(object):
+        def __init__(self, player, unit):
+            self.player = player
+            self.unit = unit
+
+    # get a member list to make less overall responses
     members = []
-    for i in range(0, 25):
+    member_range = min([15, len(clan.members)])
+    for i in range(0, member_range):
         member = Player.get(clan.members[i].tag, header)
 
-        # checking if they have the specified troop
-        if member.find_troop(troop_name):
-            members.append(member)
+        # checking if they have the specified unit
+        unit = member.find_unit(unit_name)
+        if unit:
+            members.append(Donor(member, unit))
+
+    # if nobody has the requested unit
     if len(members) == 0:
-        return f"Couldn't find {troop_name} in any {clan.name} members"
+        return members
+
+    # if hero has been requested return None
+    if members[0].player.find_hero(unit_name):
+        return None
+
+    donor_max = max(member.unit.lvl for member in members)
+
     # list of those that can donate
     donators = []
-    # list of troops to iterate through
-    troops = []
-    # get the list of troops from all the members
-    for member in members:
-        troop = member.find_troop(troop_name)
-        if troop.name != '':
-            troops.append(troop)
-    if (
-        troops[0].name == 'Barbarian King'
-        or troops[0].name == 'Archer Queen'
-        or troops[0].name == 'Grand Warden'
-        or troops[0].name == 'Royal Champion'
-    ):
-        return f"Ask for something less stupid please."
 
-    # returns an empty list if there are no troops found (could be misspelled troop_name)
-    if len(troops) == 0:
-        return []
-    donor_max = max(troop.lvl for troop in troops)
-
-    donor_string = ''
     # checking to see if anyone can donate max
-    if (donor_max + clan.donation_upgrade) >= troops[0].max_lvl:
+    if (donor_max + clan.donation_upgrade) >= members[0].unit.max_lvl:
         # go thru each member and return the donors that can donate max
         for member in members:
-            troop = member.find_troop(troop_name)
-            # adding the donor's name to the donor string
-            if (troop.lvl + clan.donation_upgrade) >= troop.max_lvl:
+            # if the member can donate max unit
+            if (member.unit.lvl+clan.donation_upgrade) >= member.unit.max_lvl:
+                # adding the donor's name to the donator list
                 donators.append(member)
-                donor_string += f'{member.name}, '
-        # cuts the last two characters from the string ', '
-        donor_string = donor_string[:-2]
-        # singular
-        if len(donators) == 1:
-            return f'{donor_string} is able to donate max {troops[0].name} which is level {troops[0].max_lvl}.'
-        # plural
-        else:
-            return f'{donor_string} are able to donate max {troops[0].name} which is level {troops[0].max_lvl}.'
+        return donators
 
     # since nobody can donate max
+    # ! this still needs to be tested
     else:
         for member in members:
-            troop = member.find_troop(troop_name)
+            troop = member.find_troop(unit_name)
             if troop.lvl >= donor_max:
                 donators.append(member)
-                donor_string += f'{member.name}, '
-        # cuts the last two characters from the string ', '
-        donor_string = donor_string[:-2]
-        # singular
-        if len(donators) == 1:
-            return f'{donor_string} is able to donate lvl {donor_max + clan.donation_upgrade} {troops[0].name}, max is lvl {troops[0].max_lvl}.'
-        # plural
-        else:
-            return f'{donor_string} are able to donate lvl {donor_max + clan.donation_upgrade} {troops[0].name}, max is lvl {troops[0].max_lvl}.'
+        return donators
 
 
 def response_player(player_name, clan_tag, header):
@@ -390,9 +382,12 @@ def response_war_all_member_standing(clan_tag, time_zone, header):
         return return_list
 
 
+# todo update all for if not in CWL logic
 # CWL Group
 
 def response_cwl_lineup(cwl_group):
+    if not cwl_group:
+        return None
     clan_lineup = []
     for clan in cwl_group.clans:
         clan_lineup_dict = {
@@ -422,6 +417,10 @@ def response_cwl_lineup(cwl_group):
 # returns a string of the cwl war no attack response
 def response_cwl_war_no_attack(clan_tag, time_zone, header):
     group = CWLGroup.get(clan_tag, header)
+
+    if not group:
+        return 'You are not in CWL.'
+
     war = group.find_current_war(clan_tag, header)
 
     if war.state == 'preparation':
@@ -463,6 +462,10 @@ def response_cwl_war_no_attack(clan_tag, time_zone, header):
 # returns a string of the current cwl war overview
 def response_cwl_war_overview(clan_tag, time_zone, header):
     group = CWLGroup.get(clan_tag, header)
+
+    if not group:
+        return 'You are not in CWL.'
+
     war = group.find_current_war(clan_tag, header)
     if war.state == 'preparation':
         time_string = war.string_date_time(time_zone)
@@ -475,12 +478,16 @@ def response_cwl_war_overview(clan_tag, time_zone, header):
         scoreboard_string = war.string_scoreboard()
         return f'War against {war.opponent.name} has ended. You {scoreboard_string}.'
     else:
-        return f'You are not in CWL.'
+        return 'You are not in CWL.'
 
 
 # returns a string of the time remaining in war response
 def response_cwl_war_time(clan_tag, time_zone, header):
     group = CWLGroup.get(clan_tag, header)
+
+    if not group:
+        return 'You are not in CWL.'
+
     war = group.find_current_war(clan_tag, header)
 
     if war.state == 'preparation':
@@ -498,6 +505,10 @@ def response_cwl_war_time(clan_tag, time_zone, header):
 # returns a list of cwl war attack string responses for all war members
 def response_cwl_war_all_attacks(clan_tag, time_zone, header):
     group = CWLGroup.get(clan_tag, header)
+
+    if not group:
+        return ['You are not in CWL.']
+
     war = group.find_current_war(clan_tag, header)
     response_list = []
     if war.state == 'preparation':
@@ -566,6 +577,10 @@ def response_cwl_clan_standing(clan_tag, header):
             self.score = score
     # get the CWLGroup object
     cwl_group = CWLGroup.get(clan_tag, header)
+
+    if not cwl_group:
+        return ['You are not in CWL.']
+
     # get a list of all CWLWar objects
     cwl_wars = []
     for i in range(0, len(cwl_group.rounds)):
@@ -614,6 +629,10 @@ def response_cwl_member_standing(player_name, clan_tag, header):
 
     # get the CWLGroup object
     cwl_group = CWLGroup.get(clan_tag, header)
+
+    if not cwl_group:
+        return 'You are not in CWL.'
+
     # get a list of all CWLWar objects
     cwl_wars = []
     for i in range(0, len(cwl_group.rounds)):

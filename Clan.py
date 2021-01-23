@@ -113,9 +113,8 @@ class ClanMember(object):
         self.donations = donations
         self.donations_received = donations_received
 
+
 # todo find better data types for if war log is not public
-
-
 def get(clan_tag, header):
     """
         Takes in the clan's tag and returns a Clan object
