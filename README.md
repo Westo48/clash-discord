@@ -1,5 +1,5 @@
-# Clash-Frame
+# Clash-Discord
 
-Python Clash of Clans API framework
+Python Clash of Clans Discord
 
-Version 0.3.0
+Clash Frame Version 0.3.0
