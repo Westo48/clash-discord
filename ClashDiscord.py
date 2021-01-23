@@ -7,7 +7,7 @@ from DiscordResponder import *
 
 intents = discord.Intents.all()
 
-client = commands.Bot(command_prefix='!', intents=intents)
+client = commands.Bot(command_prefix='/', intents=intents)
 client.remove_command('help')
 
 # todo make another .py file for client clan class and methods
@@ -434,7 +434,7 @@ async def trooplvl(ctx, *, troop_name):
     player_name = player_name_string(ctx.author.display_name)
     user_clan = find_user_clan(
         player_name, client_clans, ctx.author.roles, header)
-    if user_clan != '':
+    if user_clan:
         await ctx.send(response_troop_lvl(
             ctx.author.display_name, troop_name, heroes_tag, header))
     else:
@@ -467,12 +467,50 @@ async def alltrooplvl(ctx):
     description='Enter a troop name to see who in the clan '
                 'is best suited to donate that troop.'
 )
-async def donationchecker(ctx, *, troop_name):
+async def donationchecker(ctx, *, unit_name):
     player_name = player_name_string(ctx.author.display_name)
+
+    # getting the client clan
     user_clan = find_user_clan(
         player_name, client_clans, ctx.author.roles, header)
+
     if user_clan:
-        await ctx.send(response_donation(troop_name, user_clan.tag, header))
+        clan = Clan.get(user_clan.tag, header)
+        donators = response_donation(unit_name, clan, header)
+
+        # if the requested unit is not a hero
+        if donators:
+            member_string = ''
+
+            # setting the string of members that can donate
+            for donator in donators:
+                member_string += f'{donator.player.name}, '
+
+            # cuts the last two characters from the string ', '
+            member_string = member_string[:-2]
+
+            # if donators can donate max
+            if ((donators[0].unit.lvl + clan.donation_upgrade) >=
+                    donators[0].unit.max_lvl):
+                message = (
+                    f'{member_string} can donate level '
+                    f'{donators[0].unit.max_lvl} {donators[0].unit.name}, '
+                    f'which is max.'
+                )
+            # if donators cannot donate max
+            else:
+                message = (
+                    f'{member_string} can donate level'
+                    f'{donators[0].unit.lvl + clan.donation_upgrade} '
+                    f'{donators[0].unit.name}, max is '
+                    f'{donators[0].unit.max_lvl}'
+                )
+
+        # if the requested unit is a hero
+        else:
+            message = f'{unit_name} is not a valid donatable unit.'
+
+        await ctx.send(message)
     else:
         await ctx.send(f"Couldn't find {ctx.author.display_name}'s clan. "
                        "Please ensure a clan role has been given to the user.")
@@ -628,31 +666,34 @@ async def cwllineup(ctx):
         player_name, client_clans, ctx.author.roles, header)
     if user_clan:
         cwl_group = CWLGroup.get(user_clan.tag, header)
-        cwl_lineup = response_cwl_lineup(cwl_group)
-        message = (
-            "```\n"
-            "CWL Group Lineup\n"
-            "13 | 12 | 11 | 10 | 9  | 8  | 7\n"
-            "-------------------------------\n"
-        )
-        for clan_dict in cwl_lineup:
-            lineup_message = f"{clan_dict['clan'].name}\n"
-            for key in clan_dict:
-                if key != 'clan' and key > 6:
-                    lineup_message += f"{clan_dict[key]}"
-                    # if it is a double digit number
-                    if clan_dict[key] >= 10:
-                        lineup_message += " | "
-                    # if it is a single digit number add an extra space
-                    else:
-                        lineup_message += "  | "
-            # removes the last 4 characters '  | ' of the string
-            lineup_message = lineup_message[:-4]
-            lineup_message += "\n\n"
-            message += lineup_message
-        message += "```"
-        await ctx.send(message)
 
+        if cwl_group:
+            cwl_lineup = response_cwl_lineup(cwl_group)
+            message = (
+                "```\n"
+                "CWL Group Lineup\n"
+                "13 | 12 | 11 | 10 | 9  | 8  | 7\n"
+                "-------------------------------\n"
+            )
+            for clan_dict in cwl_lineup:
+                lineup_message = f"{clan_dict['clan'].name}\n"
+                for key in clan_dict:
+                    if key != 'clan' and key > 6:
+                        lineup_message += f"{clan_dict[key]}"
+                        # if it is a double digit number
+                        if clan_dict[key] >= 10:
+                            lineup_message += " | "
+                        # if it is a single digit number add an extra space
+                        else:
+                            lineup_message += "  | "
+                # removes the last 4 characters '  | ' of the string
+                lineup_message = lineup_message[:-4]
+                lineup_message += "\n\n"
+                message += lineup_message
+            message += "```"
+            await ctx.send(message)
+        else:
+            await ctx.send(f"{user_clan.name} is not in CWL.")
     else:
         await ctx.send(f"Couldn't find {ctx.author.display_name}'s clan. "
                        "Please ensure a clan role has been given to the user.")
