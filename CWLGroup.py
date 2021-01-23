@@ -113,12 +113,15 @@ class CWLClanMember(object):
         self.th_lvl = th_lvl
 
 
-# todo add not in CWL validation
 def get(clan_tag, header):
     """
-        Takes in a clan tag and returns the associated CWL group
+        Takes in a clan tag and returns the associated CWL group.
+        If CWL is not found return None.
     """
     group_json = json_response(clan_tag, header)
+
+    if "reason" in group_json:
+        return None
 
     # grab a list of the clans
     clans = []
