@@ -7,7 +7,7 @@ from DiscordResponder import *
 
 intents = discord.Intents.all()
 
-client = commands.Bot(command_prefix='/', intents=intents)
+client = commands.Bot(command_prefix='!', intents=intents)
 client.remove_command('help')
 
 # todo make another .py file for client clan class and methods
@@ -48,12 +48,12 @@ client_roles = {
     'uninitiated': ClientRole('uninitiated', 798610698337779713, False)
 }
 leader_role = 'leader'
-time_zone = (-5)
+time_zone = (-6)
 raz_tag = '#RGQ8RGU9'
 heroes_tag = '#JJRJGVR0'
 header = {
     'Accept': 'application/json',
-    'authorization': 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiIsImtpZCI6IjI4YTMxOGY3LTAwMDAtYTFlYi03ZmExLTJjNzQzM2M2Y2NhNSJ9.eyJpc3MiOiJzdXBlcmNlbGwiLCJhdWQiOiJzdXBlcmNlbGw6Z2FtZWFwaSIsImp0aSI6IjkyNWJjYzg1LWFhZDktNGM2NC05M2Y2LWM4MWEwZGVhOGUwNiIsImlhdCI6MTU3NDYyMjY3Nywic3ViIjoiZGV2ZWxvcGVyLzdjZmJkOWFjLTFlYzAtNDI3OS1jODM2LTU0YzMxN2FlZmE4NiIsInNjb3BlcyI6WyJjbGFzaCJdLCJsaW1pdHMiOlt7InRpZXIiOiJkZXZlbG9wZXIvc2lsdmVyIiwidHlwZSI6InRocm90dGxpbmcifSx7ImNpZHJzIjpbIjEwOC4yMTEuOTUuMjU0Il0sInR5cGUiOiJjbGllbnQifV19.gdc-4-OEZzsYBLk8HfqZBH-idvlK1vX9nim91XEqLgwNAyarfZquxfkZDKPsswUGyiXRIFV7Am3RB7iWtd9T5w'
+    'authorization': 'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzUxMiIsImtpZCI6IjI4YTMxOGY3LTAwMDAtYTFlYi03ZmExLTJjNzQzM2M2Y2NhNSJ9.eyJpc3MiOiJzdXBlcmNlbGwiLCJhdWQiOiJzdXBlcmNlbGw6Z2FtZWFwaSIsImp0aSI6ImNkNTM4MTgxLTc0MDEtNDA5MC1iNWVmLTM1NWQzZDUzMDYwZSIsImlhdCI6MTYxMjkyODYwNCwic3ViIjoiZGV2ZWxvcGVyLzdjZmJkOWFjLTFlYzAtNDI3OS1jODM2LTU0YzMxN2FlZmE4NiIsInNjb3BlcyI6WyJjbGFzaCJdLCJsaW1pdHMiOlt7InRpZXIiOiJkZXZlbG9wZXIvc2lsdmVyIiwidHlwZSI6InRocm90dGxpbmcifSx7ImNpZHJzIjpbIjk5LjYuNTIuMTEwIl0sInR5cGUiOiJjbGllbnQifV19.r6cRdPgQaxgv-LmN9tzlXwT_J_KXr1Yn-VwWXaB6HhKfcV_Ul8y9xd3GWusdafdVr3Zjrf9Fe0ahuk16i3IrDw'
 }
 client_clans = [
     (ClientClan('TheMightyHeroes', '#JJRJGVR0',
