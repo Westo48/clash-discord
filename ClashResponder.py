@@ -9,6 +9,7 @@ import CWLWar
 
 cwl_clan_lineup_dict = {
     'clan': {},
+    14: 0,
     13: 0,
     12: 0,
     11: 0,
@@ -392,6 +393,7 @@ def response_cwl_lineup(cwl_group):
     for clan in cwl_group.clans:
         clan_lineup_dict = {
             'clan': {},
+            14: 0,
             13: 0,
             12: 0,
             11: 0,

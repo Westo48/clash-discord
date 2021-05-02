@@ -54,6 +54,9 @@ class Player(object):
         builder_hall_lvl, vs_trophies, best_vs_trophies, vs_battle_wins,
         role, donations, donations_received, clan_tag, clan_name, clan_lvl,
         clan_icons, league_id, league_name, league_icons,
+        legend_trophies, previous_legend_rank, previous_legend_trophies,
+        best_legend_rank, best_legend_trophies,
+        current_legend_rank, current_legend_trophies,
         heroes, troops, spells
     ):
         self.tag = tag
@@ -80,6 +83,13 @@ class Player(object):
         self.league_id = league_id
         self.league_name = league_name
         self.league_icons = league_icons
+        self.legend_trophies = legend_trophies
+        self.previous_legend_rank = previous_legend_rank
+        self.previous_legend_trophies = previous_legend_trophies
+        self.best_legend_rank = best_legend_rank
+        self.best_legend_trophies = best_legend_trophies
+        self.current_legend_rank = current_legend_rank
+        self.current_legend_trophies = current_legend_trophies
         self.heroes = heroes
         self.troops = troops
         self.spells = spells
@@ -268,6 +278,40 @@ def get(tag, header):
         league_name = None
         league_icons = None
 
+
+# legend_trophies, previous_legend_rank, previous_legend_trophies,
+#         best_legend_rank, best_legend_trophies,
+#         current_legend_rank, current_legend_trophies
+
+    if 'legendStatistics' in player_json:
+        legend_trophies = player_json['legendStatistics']['legendTrophies']
+
+        if 'previousSeason' in player_json['legendStatistics']:
+            previous_legend_rank = player_json['legendStatistics']['previousSeason']['rank']
+            previous_legend_trophies = player_json['legendStatistics']['previousSeason']['trophies']
+        else:
+            previous_legend_rank = None
+            previous_legend_trophies = None
+
+        best_legend_rank = player_json['legendStatistics']['bestSeason']['rank']
+        best_legend_trophies = player_json['legendStatistics']['bestSeason']['trophies']
+
+        if 'rank' in player_json['legendStatistics']['currentSeason']:
+            current_legend_rank = player_json['legendStatistics']['currentSeason']['rank']
+            current_legend_trophies = player_json['legendStatistics']['currentSeason']['trophies']
+        else:
+            current_legend_rank = None
+            current_legend_trophies = None
+
+    else:
+        legend_trophies = None
+        previous_legend_rank = None
+        previous_legend_trophies = None
+        best_legend_rank = None
+        best_legend_trophies = None
+        current_legend_rank = None
+        current_legend_trophies = None
+
     heroes = []
     for hero in player_json['heroes']:
         if hero['village'] == 'home':
@@ -280,6 +324,7 @@ def get(tag, header):
 
     troops = []
     # siege machines are part of 'troops' in the player_json
+    # pets are part of 'troops' in the player_json
     for troop in player_json['troops']:
         if (troop['village'] == 'home'
                 and troop['name'] not in super_troop_list):
@@ -308,7 +353,11 @@ def get(tag, header):
         bh_lvl, vs_trophies, best_vs_trophies, vs_battle_wins,
         role, player_json['donations'], player_json['donationsReceived'],
         clan_tag, clan_name, clan_lvl, clan_icons,
-        league_id, league_name, league_icons, heroes, troops, spells
+        league_id, league_name, league_icons,
+        legend_trophies, previous_legend_rank, previous_legend_trophies,
+        best_legend_rank, best_legend_trophies,
+        current_legend_rank, current_legend_trophies,
+        heroes, troops, spells
     )
 
 
@@ -448,7 +497,20 @@ troop_dict = {
             },
             'Log Launcher': {
                 'name': 'Log Launcher', 'thMax': 0, 'type': 'Gold'
+            },
+            'L.A.S.S.I': {
+                'name': 'L.A.S.S.I', 'thMax': 0, 'type': 'Dark Elixir'
+            },
+            'Mighty Yak': {
+                'name': 'Mighty Yak', 'thMax': 0, 'type': 'Dark Elixir'
+            },
+            'Electro Owl': {
+                'name': 'Electro Owl', 'thMax': 0, 'type': 'Dark Elixir'
+            },
+            'Unicorn': {
+                'name': 'Unicorn', 'thMax': 0, 'type': 'Dark Elixir'
             }
+
         },
         'spell': {
             'Lightning Spell': {
@@ -612,6 +674,18 @@ troop_dict = {
             },
             'Log Launcher': {
                 'name': 'Log Launcher', 'thMax': 0, 'type': 'Gold'
+            },
+            'L.A.S.S.I': {
+                'name': 'L.A.S.S.I', 'thMax': 0, 'type': 'Dark Elixir'
+            },
+            'Mighty Yak': {
+                'name': 'Mighty Yak', 'thMax': 0, 'type': 'Dark Elixir'
+            },
+            'Electro Owl': {
+                'name': 'Electro Owl', 'thMax': 0, 'type': 'Dark Elixir'
+            },
+            'Unicorn': {
+                'name': 'Unicorn', 'thMax': 0, 'type': 'Dark Elixir'
             }
         },
         'spell': {
@@ -776,6 +850,18 @@ troop_dict = {
             },
             'Log Launcher': {
                 'name': 'Log Launcher', 'thMax': 0, 'type': 'Gold'
+            },
+            'L.A.S.S.I': {
+                'name': 'L.A.S.S.I', 'thMax': 0, 'type': 'Dark Elixir'
+            },
+            'Mighty Yak': {
+                'name': 'Mighty Yak', 'thMax': 0, 'type': 'Dark Elixir'
+            },
+            'Electro Owl': {
+                'name': 'Electro Owl', 'thMax': 0, 'type': 'Dark Elixir'
+            },
+            'Unicorn': {
+                'name': 'Unicorn', 'thMax': 0, 'type': 'Dark Elixir'
             }
         },
         'spell': {
@@ -940,6 +1026,18 @@ troop_dict = {
             },
             'Log Launcher': {
                 'name': 'Log Launcher', 'thMax': 0, 'type': 'Gold'
+            },
+            'L.A.S.S.I': {
+                'name': 'L.A.S.S.I', 'thMax': 0, 'type': 'Dark Elixir'
+            },
+            'Mighty Yak': {
+                'name': 'Mighty Yak', 'thMax': 0, 'type': 'Dark Elixir'
+            },
+            'Electro Owl': {
+                'name': 'Electro Owl', 'thMax': 0, 'type': 'Dark Elixir'
+            },
+            'Unicorn': {
+                'name': 'Unicorn', 'thMax': 0, 'type': 'Dark Elixir'
             }
         },
         'spell': {
@@ -1104,6 +1202,18 @@ troop_dict = {
             },
             'Log Launcher': {
                 'name': 'Log Launcher', 'thMax': 0, 'type': 'Gold'
+            },
+            'L.A.S.S.I': {
+                'name': 'L.A.S.S.I', 'thMax': 0, 'type': 'Dark Elixir'
+            },
+            'Mighty Yak': {
+                'name': 'Mighty Yak', 'thMax': 0, 'type': 'Dark Elixir'
+            },
+            'Electro Owl': {
+                'name': 'Electro Owl', 'thMax': 0, 'type': 'Dark Elixir'
+            },
+            'Unicorn': {
+                'name': 'Unicorn', 'thMax': 0, 'type': 'Dark Elixir'
             }
         },
         'spell': {
@@ -1268,6 +1378,18 @@ troop_dict = {
             },
             'Log Launcher': {
                 'name': 'Log Launcher', 'thMax': 0, 'type': 'Gold'
+            },
+            'L.A.S.S.I': {
+                'name': 'L.A.S.S.I', 'thMax': 0, 'type': 'Dark Elixir'
+            },
+            'Mighty Yak': {
+                'name': 'Mighty Yak', 'thMax': 0, 'type': 'Dark Elixir'
+            },
+            'Electro Owl': {
+                'name': 'Electro Owl', 'thMax': 0, 'type': 'Dark Elixir'
+            },
+            'Unicorn': {
+                'name': 'Unicorn', 'thMax': 0, 'type': 'Dark Elixir'
             }
         },
         'spell': {
@@ -1432,6 +1554,18 @@ troop_dict = {
             },
             'Log Launcher': {
                 'name': 'Log Launcher', 'thMax': 0, 'type': 'Gold'
+            },
+            'L.A.S.S.I': {
+                'name': 'L.A.S.S.I', 'thMax': 0, 'type': 'Dark Elixir'
+            },
+            'Mighty Yak': {
+                'name': 'Mighty Yak', 'thMax': 0, 'type': 'Dark Elixir'
+            },
+            'Electro Owl': {
+                'name': 'Electro Owl', 'thMax': 0, 'type': 'Dark Elixir'
+            },
+            'Unicorn': {
+                'name': 'Unicorn', 'thMax': 0, 'type': 'Dark Elixir'
             }
         },
         'spell': {
@@ -1596,6 +1730,18 @@ troop_dict = {
             },
             'Log Launcher': {
                 'name': 'Log Launcher', 'thMax': 0, 'type': 'Gold'
+            },
+            'L.A.S.S.I': {
+                'name': 'L.A.S.S.I', 'thMax': 0, 'type': 'Dark Elixir'
+            },
+            'Mighty Yak': {
+                'name': 'Mighty Yak', 'thMax': 0, 'type': 'Dark Elixir'
+            },
+            'Electro Owl': {
+                'name': 'Electro Owl', 'thMax': 0, 'type': 'Dark Elixir'
+            },
+            'Unicorn': {
+                'name': 'Unicorn', 'thMax': 0, 'type': 'Dark Elixir'
             }
         },
         'spell': {
@@ -1760,6 +1906,18 @@ troop_dict = {
             },
             'Log Launcher': {
                 'name': 'Log Launcher', 'thMax': 0, 'type': 'Gold'
+            },
+            'L.A.S.S.I': {
+                'name': 'L.A.S.S.I', 'thMax': 0, 'type': 'Dark Elixir'
+            },
+            'Mighty Yak': {
+                'name': 'Mighty Yak', 'thMax': 0, 'type': 'Dark Elixir'
+            },
+            'Electro Owl': {
+                'name': 'Electro Owl', 'thMax': 0, 'type': 'Dark Elixir'
+            },
+            'Unicorn': {
+                'name': 'Unicorn', 'thMax': 0, 'type': 'Dark Elixir'
             }
         },
         'spell': {
@@ -1924,6 +2082,18 @@ troop_dict = {
             },
             'Log Launcher': {
                 'name': 'Log Launcher', 'thMax': 0, 'type': 'Gold'
+            },
+            'L.A.S.S.I': {
+                'name': 'L.A.S.S.I', 'thMax': 0, 'type': 'Dark Elixir'
+            },
+            'Mighty Yak': {
+                'name': 'Mighty Yak', 'thMax': 0, 'type': 'Dark Elixir'
+            },
+            'Electro Owl': {
+                'name': 'Electro Owl', 'thMax': 0, 'type': 'Dark Elixir'
+            },
+            'Unicorn': {
+                'name': 'Unicorn', 'thMax': 0, 'type': 'Dark Elixir'
             }
         },
         'spell': {
@@ -2088,6 +2258,18 @@ troop_dict = {
             },
             'Log Launcher': {
                 'name': 'Log Launcher', 'thMax': 0, 'type': 'Gold'
+            },
+            'L.A.S.S.I': {
+                'name': 'L.A.S.S.I', 'thMax': 0, 'type': 'Dark Elixir'
+            },
+            'Mighty Yak': {
+                'name': 'Mighty Yak', 'thMax': 0, 'type': 'Dark Elixir'
+            },
+            'Electro Owl': {
+                'name': 'Electro Owl', 'thMax': 0, 'type': 'Dark Elixir'
+            },
+            'Unicorn': {
+                'name': 'Unicorn', 'thMax': 0, 'type': 'Dark Elixir'
             }
         },
         'spell': {
@@ -2252,6 +2434,18 @@ troop_dict = {
             },
             'Log Launcher': {
                 'name': 'Log Launcher', 'thMax': 0, 'type': 'Gold'
+            },
+            'L.A.S.S.I': {
+                'name': 'L.A.S.S.I', 'thMax': 0, 'type': 'Dark Elixir'
+            },
+            'Mighty Yak': {
+                'name': 'Mighty Yak', 'thMax': 0, 'type': 'Dark Elixir'
+            },
+            'Electro Owl': {
+                'name': 'Electro Owl', 'thMax': 0, 'type': 'Dark Elixir'
+            },
+            'Unicorn': {
+                'name': 'Unicorn', 'thMax': 0, 'type': 'Dark Elixir'
             }
         },
         'spell': {
@@ -2416,6 +2610,18 @@ troop_dict = {
             },
             'Log Launcher': {
                 'name': 'Log Launcher', 'thMax': 4, 'type': 'Gold'
+            },
+            'L.A.S.S.I': {
+                'name': 'L.A.S.S.I', 'thMax': 0, 'type': 'Dark Elixir'
+            },
+            'Mighty Yak': {
+                'name': 'Mighty Yak', 'thMax': 0, 'type': 'Dark Elixir'
+            },
+            'Electro Owl': {
+                'name': 'Electro Owl', 'thMax': 0, 'type': 'Dark Elixir'
+            },
+            'Unicorn': {
+                'name': 'Unicorn', 'thMax': 0, 'type': 'Dark Elixir'
             }
 
         },
@@ -2443,6 +2649,183 @@ troop_dict = {
             },
             'Poison Spell': {
                 'name': 'Poison Spell', 'thMax': 7, 'type': 'Dark Elixir'
+            },
+            'Earthquake Spell': {
+                'name': 'Earthquake Spell', 'thMax': 5, 'type': 'Dark Elixir'
+            },
+            'Haste Spell': {
+                'name': 'Haste Spell', 'thMax': 5, 'type': 'Dark Elixir'
+            },
+            'Skeleton Spell': {
+                'name': 'Skeleton Spell', 'thMax': 7, 'type': 'Dark Elixir'
+            },
+            'Bat Spell': {
+                'name': 'Bat Spell', 'thMax': 5, 'type': 'Dark Elixir'
+            }
+        }
+    },
+    14: {
+        'hero': {
+            'Barbarian King': {
+                'name': 'Barbarian King', 'thMax': 80, 'type': 'Dark Elixir'
+            },
+            'Archer Queen': {
+                'name': 'Archer Queen', 'thMax': 80, 'type': 'Dark Elixir'
+            },
+            'Grand Warden': {
+                'name': 'Grand Warden', 'thMax': 55, 'type': 'Elixir'
+            },
+            'Royal Champion': {
+                'name': 'Royal Champion', 'thMax': 30, 'type': 'Dark Elixir'
+            }
+        },
+        'troop': {
+            'Barbarian': {
+                'name': 'Barbarian', 'thMax': 10, 'type': 'Elixir'
+            },
+            'Archer': {
+                'name': 'Archer', 'thMax': 10, 'type': 'Elixir'
+            },
+            'Giant': {
+                'name': 'Giant', 'thMax': 10, 'type': 'Elixir'
+            },
+            'Goblin': {
+                'name': 'Goblin', 'thMax': 8, 'type': 'Elixir'
+            },
+            'Wall Breaker': {
+                'name': 'Wall Breaker', 'thMax': 10, 'type': 'Elixir'
+            },
+            'Balloon': {
+                'name': 'Balloon', 'thMax': 9, 'type': 'Elixir'
+            },
+            'Wizard': {
+                'name': 'Wizard', 'thMax': 10, 'type': 'Elixir'
+            },
+            'Healer': {
+                'name': 'Healer', 'thMax': 7, 'type': 'Elixir'
+            },
+            'Dragon': {
+                'name': 'Dragon', 'thMax': 8, 'type': 'Elixir'
+            },
+            'P.E.K.K.A': {
+                'name': 'P.E.K.K.A', 'thMax': 9, 'type': 'Elixir'
+            },
+            'Baby Dragon': {
+                'name': 'Baby Dragon', 'thMax': 8, 'type': 'Elixir'
+            },
+            'Miner': {
+                'name': 'Miner', 'thMax': 7, 'type': 'Elixir'
+            },
+            'Electro Dragon': {
+                'name': 'Electro Dragon', 'thMax': 4, 'type': 'Elixir'
+            },
+            'Yeti': {
+                'name': 'Yeti', 'thMax': 3, 'type': 'Elixir'
+            },
+            'Super Barbarian': {
+                'name': 'Super Barbarian', 'thMax': 0, 'type': 'Elixir'
+            },
+            'Super Archer': {
+                'name': 'Super Archer', 'thMax': 0, 'type': 'Elixir'
+            },
+            'Super Wall Breaker': {
+                'name': 'Super Wall Breaker', 'thMax': 0, 'type': 'Elixir'
+            },
+            'Sneaky Goblin': {
+                'name': 'Sneaky Goblin', 'thMax': 0, 'type': 'Elixir'
+            },
+            'Super Giant': {
+                'name': 'Super Giant', 'thMax': 0, 'type': 'Elixir'
+            },
+            'Inferno Dragon': {
+                'name': 'Inferno Dragon', 'thMax': 0, 'type': 'Elixir'
+            },
+            'Super Valkyrie': {
+                'name': 'Super Valkyrie', 'thMax': 0, 'type': 'Dark Elixir'
+            },
+            'Super Witch': {
+                'name': 'Super Witch', 'thMax': 0, 'type': 'Dark Elixir'
+            },
+            'Minion': {
+                'name': 'Minion', 'thMax': 10, 'type': 'Dark Elixir'
+            },
+            'Hog Rider': {
+                'name': 'Hog Rider', 'thMax': 10, 'type': 'Dark Elixir'
+            },
+            'Valkyrie': {
+                'name': 'Valkyrie', 'thMax': 9, 'type': 'Dark Elixir'
+            },
+            'Golem': {
+                'name': 'Golem', 'thMax': 10, 'type': 'Dark Elixir'
+            },
+            'Witch': {
+                'name': 'Witch', 'thMax': 5, 'type': 'Dark Elixir'
+            },
+            'Lava Hound': {
+                'name': 'Lava Hound', 'thMax': 6, 'type': 'Dark Elixir'
+            },
+            'Bowler': {
+                'name': 'Bowler', 'thMax': 5, 'type': 'Dark Elixir'
+            },
+            'Ice Golem': {
+                'name': 'Ice Golem', 'thMax': 6, 'type': 'Dark Elixir'
+            },
+            'Headhunter': {
+                'name': 'Headhunter', 'thMax': 3, 'type': 'Dark Elixir'
+            },
+            'Wall Wrecker': {
+                'name': 'Wall Wrecker', 'thMax': 4, 'type': 'Gold'
+            },
+            'Battle Blimp': {
+                'name': 'Battle Blimp', 'thMax': 4, 'type': 'Gold'
+            },
+            'Stone Slammer': {
+                'name': 'Stone Slammer', 'thMax': 4, 'type': 'Gold'
+            },
+            'Siege Barracks': {
+                'name': 'Siege Barracks', 'thMax': 4, 'type': 'Gold'
+            },
+            'Log Launcher': {
+                'name': 'Log Launcher', 'thMax': 4, 'type': 'Gold'
+            },
+            'L.A.S.S.I': {
+                'name': 'L.A.S.S.I', 'thMax': 10, 'type': 'Dark Elixir'
+            },
+            'Mighty Yak': {
+                'name': 'Mighty Yak', 'thMax': 10, 'type': 'Dark Elixir'
+            },
+            'Electro Owl': {
+                'name': 'Electro Owl', 'thMax': 10, 'type': 'Dark Elixir'
+            },
+            'Unicorn': {
+                'name': 'Unicorn', 'thMax': 10, 'type': 'Dark Elixir'
+            }
+
+        },
+        'spell': {
+            'Lightning Spell': {
+                'name': 'Lightning Spell', 'thMax': 9, 'type': 'Elixir'
+            },
+            'Healing Spell': {
+                'name': 'Healing Spell', 'thMax': 8, 'type': 'Elixir'
+            },
+            'Rage Spell': {
+                'name': 'Rage Spell', 'thMax': 6, 'type': 'Elixir'
+            },
+            'Jump Spell': {
+                'name': 'Jump Spell', 'thMax': 4, 'type': 'Elixir'
+            },
+            'Freeze Spell': {
+                'name': 'Freeze Spell', 'thMax': 7, 'type': 'Elixir'
+            },
+            'Clone Spell': {
+                'name': 'Clone Spell', 'thMax': 7, 'type': 'Elixir'
+            },
+            'Invisibility Spell': {
+                'name': 'Invisibility Spell', 'thMax': 4, 'type': 'Elixir'
+            },
+            'Poison Spell': {
+                'name': 'Poison Spell', 'thMax': 8, 'type': 'Dark Elixir'
             },
             'Earthquake Spell': {
                 'name': 'Earthquake Spell', 'thMax': 5, 'type': 'Dark Elixir'
