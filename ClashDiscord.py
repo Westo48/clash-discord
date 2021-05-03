@@ -48,7 +48,7 @@ client_roles = {
     'uninitiated': ClientRole('uninitiated', 798610698337779713, False)
 }
 leader_role = 'leader'
-time_zone = (-6)
+time_zone = (-5)
 raz_tag = '#RGQ8RGU9'
 heroes_tag = '#JJRJGVR0'
 header = {
@@ -258,7 +258,7 @@ async def player(ctx, *, player_tag):
 
     player = Player.get(player_tag, header)
 
-    if player.tag == 0:
+    if not player:
         await ctx.send(f"Could not find player with tag {player_tag}")
         return
 
