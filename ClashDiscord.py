@@ -48,7 +48,7 @@ client_roles = {
     'uninitiated': ClientRole('uninitiated', 798610698337779713, False)
 }
 leader_role = 'leader'
-time_zone = (-6)
+time_zone = (-5)
 raz_tag = '#RGQ8RGU9'
 heroes_tag = '#JJRJGVR0'
 header = {
@@ -258,7 +258,7 @@ async def player(ctx, *, player_tag):
 
     player = Player.get(player_tag, header)
 
-    if player.tag == 0:
+    if not player:
         await ctx.send(f"Could not find player with tag {player_tag}")
         return
 
@@ -294,7 +294,31 @@ async def player(ctx, *, player_tag):
         value=player.best_trophies,
         inline=True
     )
-    if player.league_id == 0:
+    if player.legend_trophies:
+        embed.add_field(
+            name='**Legend Trophies**',
+            value=player.legend_trophies,
+            inline=True
+        )
+        embed.add_field(
+            name='**Best Rank | Trophies**',
+            value=f"{player.best_legend_rank} | {player.best_legend_trophies}",
+            inline=True
+        )
+        if player.previous_legend_rank:
+            embed.add_field(
+                name='**Previous Rank | Trophies**',
+                value=f"{player.previous_legend_rank} | {player.previous_legend_trophies}",
+                inline=True
+            )
+        if player.current_legend_rank:
+            embed.add_field(
+                name='**Current Rank | Trophies**',
+                value=f"{player.current_legend_rank} | {player.current_legend_trophies}",
+                inline=True
+            )
+
+    if not player.league_id:
         embed.set_thumbnail(
             url='https://api-assets.clashofclans.com/leagues/72/e--YMyIexEQQhE4imLoJcwhYn6Uy8KqlgyY3_kFV6t4.png')
     else:
@@ -310,14 +334,18 @@ async def player(ctx, *, player_tag):
             value=f"[{player.clan_name}](https://link.clashofclans.com/en?action=OpenClanProfile&tag={player.clan_tag[1:]})",
             inline=True
         )
+
+        if player.role == 'leader':
+            role_name = 'Leader'
+        elif player.role == 'coLeader':
+            role_name = 'Co-Leader'
+        elif player.role == 'admin':
+            role_name = 'Elder'
+        else:
+            role_name = 'Member'
         embed.add_field(
             name='**Clan Role**',
-            value=player.role,
-            inline=True
-        )
-        embed.add_field(
-            name='**Donations | Received**',
-            value=f"{player.donations} | {player.donations_received}",
+            value=role_name,
             inline=True
         )
     else:
@@ -326,45 +354,50 @@ async def player(ctx, *, player_tag):
             value=f"{player.name} is not in a clan",
             inline=True
         )
-    embed.add_field(
-        name='**Attack | Defense**',
-        value=f"{player.attack_wins} | {player.defense_wins}",
-        inline=True
-    )
-    if player.builder_hall_lvl == 0:
-        embed.add_field(
-            name='**BH Lvl**',
-            value=f"{player.name} has not unlocked their Builder Hall",
-            inline=True
-        )
-    else:
-        embed.add_field(
-            name='**BH Lvl**',
-            value=player.builder_hall_lvl,
-            inline=True
-        )
 
     hero_title = ''
     hero_value = ''
-    for troop in player.troops:
-        if troop.name == 'Barbarian King':
+    for hero in player.heroes:
+        if hero.name == 'Barbarian King':
             hero_title = 'BK'
-            hero_value = f'{troop.lvl}'
-        elif troop.name == 'Archer Queen':
+            hero_value = f'{hero.lvl}'
+        elif hero.name == 'Archer Queen':
             hero_title += ' | AQ'
-            hero_value += f' | {troop.lvl}'
-        elif troop.name == 'Grand Warden':
+            hero_value += f' | {hero.lvl}'
+        elif hero.name == 'Grand Warden':
             hero_title += ' | GW'
-            hero_value += f' | {troop.lvl}'
-        elif troop.name == 'Royal Champion':
+            hero_value += f' | {hero.lvl}'
+        elif hero.name == 'Royal Champion':
             hero_title += ' | RC'
-            hero_value += f' | {troop.lvl}'
+            hero_value += f' | {hero.lvl}'
         else:
             break
     if hero_title != '':
         embed.add_field(
             name=f'**{hero_title}**',
             value=hero_value,
+            inline=True
+        )
+
+    pet_title = ''
+    pet_value = ''
+    for troop in player.troops:
+        if troop.name == 'L.A.S.S.I':
+            pet_title = 'LA'
+            pet_value = f'{troop.lvl}'
+        elif troop.name == 'Mighty Yak':
+            pet_title += ' | MY'
+            pet_value += f' | {troop.lvl}'
+        elif troop.name == 'Electro Owl':
+            pet_title += ' | EO'
+            pet_value += f' | {troop.lvl}'
+        elif troop.name == 'Unicorn':
+            pet_title += ' | UC'
+            pet_value += f' | {troop.lvl}'
+    if pet_title != '':
+        embed.add_field(
+            name=f'**{pet_title}**',
+            value=pet_value,
             inline=True
         )
 
@@ -460,6 +493,65 @@ async def alltrooplvl(ctx):
 
 
 # Clan
+
+
+@client.command(
+    brief='clan',
+    description="Enter a clan's tag and get a clan's information"
+)
+async def clan(ctx, *, clan_tag):
+    if '#' not in clan_tag:
+        clan_tag = '#' + clan_tag
+
+    clan = Clan.get(clan_tag, header)
+
+    if not clan:
+        await ctx.send(f"Could not find clan with tag {clan_tag}")
+        return
+
+    embed = discord.Embed(
+        colour=discord.Colour.blue(),
+        title=clan.name,
+    )
+    embed.set_author(
+        name=f"[{ctx.prefix}] RazClashBot", icon_url="https://cdn.discordapp.com/avatars/649107156989378571/053f201109188da026d0a980dd4136e0.webp")
+
+    embed.set_thumbnail(url=clan.clan_icons['small'])
+
+    embed.add_field(
+        name='**Description**',
+        value=clan.description,
+        inline=False
+    )
+    embed.add_field(
+        name='**Clan Lvl**',
+        value=clan.clan_lvl,
+        inline=True
+    )
+    embed.add_field(
+        name='**Clan War League**',
+        value=clan.war_league_name,
+        inline=True
+    )
+    embed.add_field(
+        name='**Total Points**',
+        value=clan.clan_points,
+        inline=True
+    )
+    embed.add_field(
+        name='**Link**',
+        value=f"[{clan.name}](https://link.clashofclans.com/en?action=OpenClanProfile&tag={clan.tag[1:]})",
+        inline=True
+    )
+
+    # todo set footer to display user called and timestamp
+    embed.set_footer(
+        text=ctx.author.display_name,
+        icon_url=ctx.author.avatar_url.BASE+ctx.author.avatar_url._url
+    )
+
+    await ctx.send(embed=embed)
+
 
 @client.command(
     aliases=['donation', 'donate'],
@@ -672,20 +764,21 @@ async def cwllineup(ctx):
             message = (
                 "```\n"
                 "CWL Group Lineup\n"
-                "13 | 12 | 11 | 10 | 9  | 8  | 7\n"
+                "14 | 13 | 12 | 11 | 10 | 9  | 8\n"
                 "-------------------------------\n"
             )
             for clan_dict in cwl_lineup:
                 lineup_message = f"{clan_dict['clan'].name}\n"
                 for key in clan_dict:
                     if key != 'clan' and key > 6:
-                        lineup_message += f"{clan_dict[key]}"
-                        # if it is a double digit number
-                        if clan_dict[key] >= 10:
-                            lineup_message += " | "
-                        # if it is a single digit number add an extra space
-                        else:
-                            lineup_message += "  | "
+                        if key >= 8:
+                            lineup_message += f"{clan_dict[key]}"
+                            # if it is a double digit number
+                            if clan_dict[key] >= 10:
+                                lineup_message += " | "
+                            # if it is a single digit number add an extra space
+                            else:
+                                lineup_message += "  | "
                 # removes the last 4 characters '  | ' of the string
                 lineup_message = lineup_message[:-4]
                 lineup_message += "\n\n"

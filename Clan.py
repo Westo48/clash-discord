@@ -119,8 +119,10 @@ def get(clan_tag, header):
     """
         Takes in the clan's tag and returns a Clan object
     """
-
     clan_json = json_response(clan_tag, header)
+
+    if 'reason' in clan_json:
+        None
 
     clan_icons = {
         'small': clan_json['badgeUrls']['small'],
