@@ -230,7 +230,7 @@ def get(tag, header):
     player_json = json_response(tag, header)
 
     if 'reason' in player_json:
-        None
+        return None
 
     if 'townHallWeaponLevel' in player_json:
         th_weap_lvl = player_json['townHallWeaponLevel']

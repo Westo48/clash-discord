@@ -533,10 +533,10 @@ def response_cwl_war_all_attacks(clan_tag, time_zone, header):
 
                     if attack.stars == 0 or attack.stars == 3:
                         response_list.append(
-                            f' - {attack.stars} {attack.string_attack_stars()} against {defender.name} map pos {defender.map_position} TH {defender.th}')
+                            f' - {attack.stars} {attack.string_attack_stars()} against {defender.name} map pos {defender.map_position} TH {defender.th_lvl}')
                     else:
                         response_list.append(
-                            f' - {attack.stars} {attack.string_attack_stars()}, {round(attack.destruction_percent, 2)}% against {defender.name} map pos {defender.map_position} TH {defender.th}')
+                            f' - {attack.stars} {attack.string_attack_stars()}, {round(attack.destruction_percent, 2)}% against {defender.name} map pos {defender.map_position} TH {defender.th_lvl}')
 
             response_list.append('__________')
         del response_list[-1]
