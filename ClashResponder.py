@@ -75,6 +75,23 @@ def response_all_troop_level(player_name, clan_tag, header):
     return response_list
 
 
+def response_active_super_troops(player_name, clan_tag, header):
+    player_tag = Clan.get(clan_tag, header).find_member(player_name)
+    player = Player.get(player_tag, header)
+    active_super_troops = player.find_active_super_troops()
+    if len(active_super_troops) == 0:
+        return f"{player.name} does not have any active super troops."
+    else:
+        super_troop_string = ''
+        for super_troop in active_super_troops:
+            super_troop_string += f'{super_troop.name} and '
+
+        # cuts the last 5 characters from the string
+        super_troop_string = super_troop_string[:-5]
+
+        return f"{player.name} has {super_troop_string} currently active."
+
+
 # Clan
 
 # returns a string response of members that can donate the best of that unit
