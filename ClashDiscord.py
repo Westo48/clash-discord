@@ -7,7 +7,7 @@ from DiscordResponder import *
 
 intents = discord.Intents.all()
 
-client = commands.Bot(command_prefix='!', intents=intents)
+client = commands.Bot(command_prefix='?', intents=intents)
 client.remove_command('help')
 
 # todo make another .py file for client clan class and methods
