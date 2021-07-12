@@ -456,8 +456,9 @@ async def activesupertroop(ctx):
     user_clan = find_user_clan(
         player_name, client_clans, ctx.author.roles, header)
     if user_clan:
+        clan = Clan.get(user_clan.tag, header)
         await ctx.send(
-            response_active_super_troops(player_name, user_clan.tag, header))
+            response_active_super_troops(player_name, clan, header))
     else:
         await ctx.send(f"Couldn't find {ctx.author.display_name}'s clan. "
                        "Please ensure a clan role has been given to the user.")
@@ -541,7 +542,7 @@ async def donationchecker(ctx, *, unit_name):
         clan = Clan.get(user_clan.tag, header)
         donators = response_donation(unit_name, clan, header)
 
-        # if the requested unit is not a hero
+        # if the requested unit is not a donatable unit
         if donators:
             member_string = ''
 
@@ -569,11 +570,55 @@ async def donationchecker(ctx, *, unit_name):
                     f'{donators[0].unit.max_lvl}'
                 )
 
-        # if the requested unit is a hero
+        # if the requested unit is a donatable unit
         else:
             message = f'{unit_name} is not a valid donatable unit.'
 
         await ctx.send(message)
+    else:
+        await ctx.send(f"Couldn't find {ctx.author.display_name}'s clan. "
+                       "Please ensure a clan role has been given to the user.")
+
+
+@client.command(
+    aliases=['searchsupertroop'],
+    brief='clan',
+    description='Search who in the clan has a requested super troop active.'
+)
+async def supertroopsearch(ctx, *, unit_name):
+    player_name = player_name_string(ctx.author.display_name)
+    user_clan = find_user_clan(
+        player_name, client_clans, ctx.author.roles, header)
+    if user_clan:
+        clan = Clan.get(user_clan.tag, header)
+        
+        # checking to make sure the given unit_name is viable
+        unit_viable = False
+        for super_troop in Player.super_troop_list:
+            if unit_name.lower() == super_troop.lower():
+                unit_viable = True
+                unit_name = super_troop
+        if unit_viable:
+            donor_list = response_active_super_troop_search(
+                unit_name, clan, header)
+            if len(donor_list) == 0:
+                await ctx.send(f"Nobody in {user_clan.name} has {unit_name} activated.")
+            else:
+                message_string = ""
+                for member in donor_list:
+                    message_string += f"{member.name}, "
+
+                # cuts the last two characters from the string ', '
+                message_string = message_string[:-2]
+                if len(donor_list) == 1:
+                    message_string += f" has {unit_name} activated"
+                else:
+                    message_string += f" have {unit_name} activated."
+
+                await ctx.send(message_string)
+                        
+        else:
+            await ctx.send(f"{unit_name} is not a viable request")
     else:
         await ctx.send(f"Couldn't find {ctx.author.display_name}'s clan. "
                        "Please ensure a clan role has been given to the user.")
