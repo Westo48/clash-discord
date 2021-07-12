@@ -369,7 +369,7 @@ def json_response(tag, header):
 
 super_troop_list = [
     'Super Barbarian', 'Super Archer', 'Super Giant', 'Sneaky Goblin',
-    'Super Wall Breaker', 'Super Wizard', 'Inferno Dragon', 'Super Minion',
+    'Super Wall Breaker', 'Rocket Balloon', 'Super Wizard', 'Inferno Dragon', 'Super Minion',
     'Super Valkyrie', 'Super Witch', 'Ice Hound'
 ]
 
@@ -2193,6 +2193,9 @@ troop_dict = {
             'Yeti': {
                 'name': 'Yeti', 'thMax': 0, 'type': 'Elixir'
             },
+            'Dragon Rider': {
+                'name': 'Dragon Rider', 'thMax': 0, 'type': 'Elixir'
+            },
             'Super Barbarian': {
                 'name': 'Super Barbarian', 'thMax': 0, 'type': 'Elixir'
             },
@@ -2368,6 +2371,9 @@ troop_dict = {
             },
             'Yeti': {
                 'name': 'Yeti', 'thMax': 2, 'type': 'Elixir'
+            },
+            'Dragon Rider': {
+                'name': 'Dragon Rider', 'thMax': 0, 'type': 'Elixir'
             },
             'Super Barbarian': {
                 'name': 'Super Barbarian', 'thMax': 0, 'type': 'Elixir'
@@ -2545,6 +2551,9 @@ troop_dict = {
             'Yeti': {
                 'name': 'Yeti', 'thMax': 3, 'type': 'Elixir'
             },
+            'Dragon Rider': {
+                'name': 'Dragon Rider', 'thMax': 0, 'type': 'Elixir'
+            },
             'Super Barbarian': {
                 'name': 'Super Barbarian', 'thMax': 0, 'type': 'Elixir'
             },
@@ -2696,7 +2705,7 @@ troop_dict = {
                 'name': 'Wall Breaker', 'thMax': 10, 'type': 'Elixir'
             },
             'Balloon': {
-                'name': 'Balloon', 'thMax': 9, 'type': 'Elixir'
+                'name': 'Balloon', 'thMax': 10, 'type': 'Elixir'
             },
             'Wizard': {
                 'name': 'Wizard', 'thMax': 10, 'type': 'Elixir'
@@ -2705,7 +2714,7 @@ troop_dict = {
                 'name': 'Healer', 'thMax': 7, 'type': 'Elixir'
             },
             'Dragon': {
-                'name': 'Dragon', 'thMax': 8, 'type': 'Elixir'
+                'name': 'Dragon', 'thMax': 9, 'type': 'Elixir'
             },
             'P.E.K.K.A': {
                 'name': 'P.E.K.K.A', 'thMax': 9, 'type': 'Elixir'
@@ -2717,10 +2726,13 @@ troop_dict = {
                 'name': 'Miner', 'thMax': 7, 'type': 'Elixir'
             },
             'Electro Dragon': {
-                'name': 'Electro Dragon', 'thMax': 4, 'type': 'Elixir'
+                'name': 'Electro Dragon', 'thMax': 5, 'type': 'Elixir'
             },
             'Yeti': {
                 'name': 'Yeti', 'thMax': 3, 'type': 'Elixir'
+            },
+            'Dragon Rider': {
+                'name': 'Dragon Rider', 'thMax': 3, 'type': 'Elixir'
             },
             'Super Barbarian': {
                 'name': 'Super Barbarian', 'thMax': 0, 'type': 'Elixir'
