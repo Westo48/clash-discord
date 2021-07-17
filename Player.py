@@ -46,6 +46,7 @@ class Player(object):
             heroes (list): list of Hero objects
             troops (list): list of Troop objects
             spells (list): list of Spell objects
+            super_troops (list): list of SuperTroop objects
     """
 
     def __init__(
@@ -57,7 +58,7 @@ class Player(object):
         legend_trophies, previous_legend_rank, previous_legend_trophies,
         best_legend_rank, best_legend_trophies,
         current_legend_rank, current_legend_trophies,
-        heroes, troops, spells
+        heroes, troops, spells, super_troops
     ):
         self.tag = tag
         self.name = name
@@ -93,6 +94,7 @@ class Player(object):
         self.heroes = heroes
         self.troops = troops
         self.spells = spells
+        self.super_troops = super_troops
 
     def find_unit(self, unit_name):
         """
@@ -160,6 +162,32 @@ class Player(object):
                 return spell
         return None
 
+    def find_super_troop(self, super_troop_name):
+        """
+            Take in a super troop name and return
+                the corresponding super troop object.
+            If no super troop is found returns None.
+        """
+
+        # formatting the name from '-' to ' '
+        super_troop_name = re.sub('[-]', ' ', super_troop_name)
+        super_troop_name = re.sub('[.]', '', super_troop_name)
+        for super_troop in self.super_troops:
+            if super_troop.name.lower() == super_troop_name.lower():
+                return super_troop
+        return None
+
+    def find_active_super_troops(self):
+        """
+            Returns a list of active super troops,
+            if no active super troops are found it will return an empty list
+        """
+        active_super_troops = []
+        for super_troop in self.super_troops:
+            if super_troop.is_active:
+                active_super_troops.append(super_troop)
+        return active_super_troops
+
 
 class Hero(object):
     """
@@ -219,6 +247,27 @@ class Spell(object):
         self.max_lvl = max_lvl
         self.th_max = th_max
         self.village = village
+
+
+class SuperTroop(object):
+    """
+    SuperTroop
+        Instance Attributes
+            name (str): The name of the troop
+            lvl (int): The level of the Player's troop
+            max_lvl (int): The max level of the troop
+            village (str): Base the troop comes from
+                'home' or 'builderBase'
+            is_active (bool): Whether the super troop is currently active
+
+    """
+
+    def __init__(self, name, lvl, max_lvl, village, is_active):
+        self.name = name
+        self.lvl = lvl
+        self.max_lvl = max_lvl
+        self.village = village
+        self.is_active = is_active
 
 
 # todo make comments for inner workings of get method
@@ -323,17 +372,26 @@ def get(tag, header):
             )
 
     troops = []
+    super_troops = []
     # siege machines are part of 'troops' in the player_json
     # pets are part of 'troops' in the player_json
     for troop in player_json['troops']:
-        if (troop['village'] == 'home'
-                and troop['name'] not in super_troop_list):
-            troops.append(Troop(
-                troop['name'], troop['level'], troop['maxLevel'],
-                troop_dict[player_json['townHallLevel']
-                           ]['troop'][troop['name']]['thMax'],
-                troop['village'])
-            )
+        if troop['village'] == 'home':
+            if troop['name'] not in super_troop_list:
+                troops.append(Troop(
+                    troop['name'], troop['level'], troop['maxLevel'],
+                    troop_dict[player_json['townHallLevel']
+                               ]['troop'][troop['name']]['thMax'],
+                    troop['village'])
+                )
+            else:
+                is_active = False
+                if 'superTroopIsActive' in troop:
+                    is_active = True
+                super_troops.append(SuperTroop(
+                    troop['name'], troop['level'], troop['maxLevel'],
+                    troop['village'], is_active)
+                )
 
     spells = []
     for spell in player_json['spells']:
@@ -357,7 +415,7 @@ def get(tag, header):
         legend_trophies, previous_legend_rank, previous_legend_trophies,
         best_legend_rank, best_legend_trophies,
         current_legend_rank, current_legend_trophies,
-        heroes, troops, spells
+        heroes, troops, spells, super_troops
     )
 
 
@@ -369,7 +427,7 @@ def json_response(tag, header):
 
 super_troop_list = [
     'Super Barbarian', 'Super Archer', 'Super Giant', 'Sneaky Goblin',
-    'Super Wall Breaker', 'Super Wizard', 'Inferno Dragon', 'Super Minion',
+    'Super Wall Breaker', 'Rocket Balloon', 'Super Wizard', 'Inferno Dragon', 'Super Minion',
     'Super Valkyrie', 'Super Witch', 'Ice Hound'
 ]
 
@@ -2193,6 +2251,9 @@ troop_dict = {
             'Yeti': {
                 'name': 'Yeti', 'thMax': 0, 'type': 'Elixir'
             },
+            'Dragon Rider': {
+                'name': 'Dragon Rider', 'thMax': 0, 'type': 'Elixir'
+            },
             'Super Barbarian': {
                 'name': 'Super Barbarian', 'thMax': 0, 'type': 'Elixir'
             },
@@ -2368,6 +2429,9 @@ troop_dict = {
             },
             'Yeti': {
                 'name': 'Yeti', 'thMax': 2, 'type': 'Elixir'
+            },
+            'Dragon Rider': {
+                'name': 'Dragon Rider', 'thMax': 0, 'type': 'Elixir'
             },
             'Super Barbarian': {
                 'name': 'Super Barbarian', 'thMax': 0, 'type': 'Elixir'
@@ -2545,6 +2609,9 @@ troop_dict = {
             'Yeti': {
                 'name': 'Yeti', 'thMax': 3, 'type': 'Elixir'
             },
+            'Dragon Rider': {
+                'name': 'Dragon Rider', 'thMax': 0, 'type': 'Elixir'
+            },
             'Super Barbarian': {
                 'name': 'Super Barbarian', 'thMax': 0, 'type': 'Elixir'
             },
@@ -2696,7 +2763,7 @@ troop_dict = {
                 'name': 'Wall Breaker', 'thMax': 10, 'type': 'Elixir'
             },
             'Balloon': {
-                'name': 'Balloon', 'thMax': 9, 'type': 'Elixir'
+                'name': 'Balloon', 'thMax': 10, 'type': 'Elixir'
             },
             'Wizard': {
                 'name': 'Wizard', 'thMax': 10, 'type': 'Elixir'
@@ -2705,7 +2772,7 @@ troop_dict = {
                 'name': 'Healer', 'thMax': 7, 'type': 'Elixir'
             },
             'Dragon': {
-                'name': 'Dragon', 'thMax': 8, 'type': 'Elixir'
+                'name': 'Dragon', 'thMax': 9, 'type': 'Elixir'
             },
             'P.E.K.K.A': {
                 'name': 'P.E.K.K.A', 'thMax': 9, 'type': 'Elixir'
@@ -2717,10 +2784,13 @@ troop_dict = {
                 'name': 'Miner', 'thMax': 7, 'type': 'Elixir'
             },
             'Electro Dragon': {
-                'name': 'Electro Dragon', 'thMax': 4, 'type': 'Elixir'
+                'name': 'Electro Dragon', 'thMax': 5, 'type': 'Elixir'
             },
             'Yeti': {
                 'name': 'Yeti', 'thMax': 3, 'type': 'Elixir'
+            },
+            'Dragon Rider': {
+                'name': 'Dragon Rider', 'thMax': 3, 'type': 'Elixir'
             },
             'Super Barbarian': {
                 'name': 'Super Barbarian', 'thMax': 0, 'type': 'Elixir'

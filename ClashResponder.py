@@ -75,6 +75,23 @@ def response_all_troop_level(player_name, clan_tag, header):
     return response_list
 
 
+def response_active_super_troops(player_name, clan, header):
+    player_tag = clan.find_member(player_name)
+    player = Player.get(player_tag, header)
+    active_super_troops = player.find_active_super_troops()
+    if len(active_super_troops) == 0:
+        return f"{player.name} does not have any active super troops."
+    else:
+        super_troop_string = ''
+        for super_troop in active_super_troops:
+            super_troop_string += f'{super_troop.name} and '
+
+        # cuts the last 5 characters from the string
+        super_troop_string = super_troop_string[:-5]
+
+        return f"{player.name} has {super_troop_string} currently active."
+
+
 # Clan
 
 # returns a string response of members that can donate the best of that unit
@@ -89,7 +106,7 @@ def response_donation(unit_name, clan, header):
 
         Args:
             unit_name (str): Name of requested unit.
-            clan_tag (str): Tag of player's.
+            clan (obj): Clan object.
             header (dict): Json header
 
         Returns:
@@ -143,6 +160,35 @@ def response_donation(unit_name, clan, header):
             if troop.lvl >= donor_max:
                 donators.append(member)
         return donators
+
+
+def response_active_super_troop_search(unit_name, clan, header):
+    """
+        Takes in the unit name and clan object, returns a list of players
+        who have super troop active.
+
+        Returns an empty list if nobody has the super troop active.
+
+        Args:
+            unit_name (str): Name of requested unit.
+            clan (obj): Clan object.
+            header (dict): Json header
+
+        Returns:
+            list: List of players who can donate.
+    """
+
+    donor_list = []
+    # getting a list of members with the given super_troop activated
+    for member in clan.members:
+        player = Player.get(member.tag, header)
+        active_super_troops = player.find_active_super_troops()
+        for super_troop in active_super_troops:
+            # if the member has the requested active super troop add to list
+            if super_troop.name == unit_name:
+                donor_list.append(member)
+                break
+    return donor_list
 
 
 def response_player(player_name, clan_tag, header):

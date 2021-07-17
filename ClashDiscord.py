@@ -7,7 +7,7 @@ from DiscordResponder import *
 
 intents = discord.Intents.all()
 
-client = commands.Bot(command_prefix='!', intents=intents)
+client = commands.Bot(command_prefix='?', intents=intents)
 client.remove_command('help')
 
 # todo make another .py file for client clan class and methods
@@ -35,7 +35,6 @@ class ClientRole(object):
 
 client_roles = {
     'TheMightyHeroes': ClientRole('TheMightyHeroes', 799031143633518604, True),
-    'wild side': ClientRole('sild side', 799031364984242216, True),
     'admin': ClientRole('admin', 798606035539591169, False),
     'bot': ClientRole('bot', 798610168018632784, False),
     'dev': ClientRole('dev', 798610076528672808, False),
@@ -58,8 +57,6 @@ header = {
 client_clans = [
     (ClientClan('TheMightyHeroes', '#JJRJGVR0',
                 "the_mighty_heroes", 798999641269207090)),
-    (ClientClan('wild side', '#2QQRLQV',
-                "wild_side", 799045915268743228))
 ]
 bot_categories = [
     {
@@ -415,49 +412,6 @@ async def player(ctx, *, player_tag):
 
     await ctx.send(embed=embed)
 
-'''
-    PAT - #8V0L0GJ8
-    :exp: Expirence Level
-    218
-    :classical_building: Townhall Level
-    13
-    :trophy: Trophies
-    2925
-    :chart_with_upwards_trend: Highest Trophies
-    5144
-    :medal: League
-    Master League II
-    :star: War Stars
-    1707
-    :european_castle: Clan
-    FewGoodMen
-    #LL82022R
-    :clipboard: Role in Clan
-    Elder
-    :outbox_tray: Donations | Recieved :inbox_tray:
-    1600 | 385
-    :crossed_swords: Attack- | Defense Wins :shield:
-    60 | 43
-    :hammer_pick: Builderhall Level
-    7
-    :crossed_swords: Versus Battle Wins
-    693
-    :trophy: Versus Trophies
-    2693
-    :chart_with_upwards_trend: Highest Versus Trophies
-    2723
-    :crossed_swords::bow_and_arrow: Total Hero Level
-    158
-    :link: Open Ingame
-    Click me!
-    [named links](https://discordapp.com)
-    https://clashofclans.com/clans/search/#clanTag=28LRPVP8C
-
-
-    Semi RH | 6ers | Leader•09/20/2020
-
-'''
-
 
 @client.command(
     brief='player',
@@ -487,6 +441,24 @@ async def alltrooplvl(ctx):
     if user_clan:
         for line in response_all_troop_level(ctx.author.display_name, user_clan.tag, header):
             await ctx.send(line)
+    else:
+        await ctx.send(f"Couldn't find {ctx.author.display_name}'s clan. "
+                       "Please ensure a clan role has been given to the user.")
+
+
+@client.command(
+    aliases=['supertroop', 'supertroops'],
+    brief='player',
+    description='Check to see what super troops you have active.'
+)
+async def activesupertroop(ctx):
+    player_name = player_name_string(ctx.author.display_name)
+    user_clan = find_user_clan(
+        player_name, client_clans, ctx.author.roles, header)
+    if user_clan:
+        clan = Clan.get(user_clan.tag, header)
+        await ctx.send(
+            response_active_super_troops(player_name, clan, header))
     else:
         await ctx.send(f"Couldn't find {ctx.author.display_name}'s clan. "
                        "Please ensure a clan role has been given to the user.")
@@ -570,7 +542,7 @@ async def donationchecker(ctx, *, unit_name):
         clan = Clan.get(user_clan.tag, header)
         donators = response_donation(unit_name, clan, header)
 
-        # if the requested unit is not a hero
+        # if the requested unit is not a donatable unit
         if donators:
             member_string = ''
 
@@ -598,11 +570,55 @@ async def donationchecker(ctx, *, unit_name):
                     f'{donators[0].unit.max_lvl}'
                 )
 
-        # if the requested unit is a hero
+        # if the requested unit is a donatable unit
         else:
             message = f'{unit_name} is not a valid donatable unit.'
 
         await ctx.send(message)
+    else:
+        await ctx.send(f"Couldn't find {ctx.author.display_name}'s clan. "
+                       "Please ensure a clan role has been given to the user.")
+
+
+@client.command(
+    aliases=['searchsupertroop'],
+    brief='clan',
+    description='Search who in the clan has a requested super troop active.'
+)
+async def supertroopsearch(ctx, *, unit_name):
+    player_name = player_name_string(ctx.author.display_name)
+    user_clan = find_user_clan(
+        player_name, client_clans, ctx.author.roles, header)
+    if user_clan:
+        clan = Clan.get(user_clan.tag, header)
+        
+        # checking to make sure the given unit_name is viable
+        unit_viable = False
+        for super_troop in Player.super_troop_list:
+            if unit_name.lower() == super_troop.lower():
+                unit_viable = True
+                unit_name = super_troop
+        if unit_viable:
+            donor_list = response_active_super_troop_search(
+                unit_name, clan, header)
+            if len(donor_list) == 0:
+                await ctx.send(f"Nobody in {user_clan.name} has {unit_name} activated.")
+            else:
+                message_string = ""
+                for member in donor_list:
+                    message_string += f"{member.name}, "
+
+                # cuts the last two characters from the string ', '
+                message_string = message_string[:-2]
+                if len(donor_list) == 1:
+                    message_string += f" has {unit_name} activated"
+                else:
+                    message_string += f" have {unit_name} activated."
+
+                await ctx.send(message_string)
+                        
+        else:
+            await ctx.send(f"{unit_name} is not a viable request")
     else:
         await ctx.send(f"Couldn't find {ctx.author.display_name}'s clan. "
                        "Please ensure a clan role has been given to the user.")
@@ -966,7 +982,7 @@ async def role(ctx):
         # player is found in the clan
         if player:
             # gets the roles to add and remove
-            add_roles, remove_roles = role_switch(
+            add_roles, remove_roles = clan_role_switch(
                 player, author.roles, client_clans)
 
             # getting the user's roles in place
@@ -985,6 +1001,44 @@ async def role(ctx):
         else:
             await author.edit(nick=None)
             await ctx.send(f"Couldn't find {author.display_name} in the clan.")
+
+
+@client.command(
+    aliases=['supertroopsrole', 'rolesupertroop', 'rolesupertroops'],
+    brief='discord',
+    description=('This will give you roles for your active super troops '
+                 'here in Discord.')
+)
+async def supertrooprole(ctx):
+    player_name = player_name_string(ctx.author.display_name)
+    user_clan = find_user_clan(
+        player_name, client_clans, ctx.author.roles, header)
+    if user_clan:
+        player_tag = Clan.get(user_clan.tag, header).find_member(player_name)
+        player = Player.get(player_tag, header)
+        if player:
+            active_super_troops = player.find_active_super_troops()
+
+            add_roles, remove_roles = active_super_troop_role_switch(
+                player, ctx.author.roles, active_super_troops)
+
+            # getting the user's roles in place
+            for role in remove_roles:
+                await ctx.author.remove_roles(
+                    discord.utils.get(ctx.author.guild.roles, name=role))
+            for role in add_roles:
+                await ctx.author.add_roles(
+                    discord.utils.get(ctx.author.guild.roles, name=role))
+
+            await ctx.send(f"{ctx.author.display_name} has been given "
+                           "roles for their active super troops.")
+
+        else:
+            await ctx.send(f" Couldn't find {ctx.author.display_name} in {user_clan.name}.")
+
+    else:
+        await ctx.send(f"Couldn't find {ctx.author.display_name}'s clan. "
+                       "Please ensure a clan role has been given to the user.")
 
 
 @client.command(
@@ -1008,7 +1062,7 @@ async def nickname(ctx, *, player_name):
     # player is found in a clan
     if player:
         # gets the roles to add and remove
-        add_roles, remove_roles = role_switch(
+        add_roles, remove_roles = clan_role_switch(
             player, author.roles, client_clans)
         # if the user already has the correct name
         if player.name == author.display_name:
@@ -1049,7 +1103,8 @@ async def nickname(ctx, *, player_name):
     else:
         # set the display_name to the requested name
         # give them community role
-        add_roles, remove_roles = role_switch(None, author.roles, client_clans)
+        add_roles, remove_roles = clan_role_switch(
+            None, author.roles, client_clans)
         # getting the user's roles in place
         for role in remove_roles:
             await author.remove_roles(
@@ -1092,7 +1147,7 @@ async def all_member_roles(ctx):
                 # the player is found in the given clan
                 if player:
                     # gets the new role and current (old) role
-                    new_role, old_role = role_switch(player.role, member.roles)
+                    new_role, old_role = clan_role_switch(player.role, member.roles)
 
                     # role hasn't changed
                     if new_role == old_role:
