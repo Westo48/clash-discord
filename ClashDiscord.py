@@ -85,7 +85,8 @@ async def help(ctx):
 
 
 @client.command(
-    brief='discord'
+    brief='discord',
+    hidden=True
 )
 async def embedtest(ctx):
     author = ctx.message.author
@@ -95,7 +96,7 @@ async def embedtest(ctx):
         title='Test title'
     )
     embed.set_author(
-        name="[{ctx.prefix}] RazClashBot", icon_url="https://cdn.discordapp.com/avatars/649107156989378571/053f201109188da026d0a980dd4136e0.webp")
+        name="[{ctx.prefix}] {ctx.bot.user.name}", icon_url="https://cdn.discordapp.com/avatars/649107156989378571/053f201109188da026d0a980dd4136e0.webp")
     # embed.set_image(
     #     url="https://i.imgur.com/rwgo8fJ.jpg")
     embed.set_thumbnail(
