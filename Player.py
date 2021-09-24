@@ -225,7 +225,10 @@ class Spell(object):
 # todo legends league stats
 # ? include all troops whether they are unlocked or not
 def get(tag, header):
-    """Takes in a player's tag and returns a Player object"""
+    """
+        Takes in a player's tag and returns a Player object
+        Returns None if player is not found
+    """
 
     player_json = json_response(tag, header)
 
@@ -277,11 +280,6 @@ def get(tag, header):
         league_id = None
         league_name = None
         league_icons = None
-
-
-# legend_trophies, previous_legend_rank, previous_legend_trophies,
-#         best_legend_rank, best_legend_trophies,
-#         current_legend_rank, current_legend_trophies
 
     if 'legendStatistics' in player_json:
         legend_trophies = player_json['legendStatistics']['legendTrophies']
@@ -346,7 +344,7 @@ def get(tag, header):
             )
 
     return Player(
-        tag, player_json['name'], player_json['townHallLevel'],
+        player_json['tag'], player_json['name'], player_json['townHallLevel'],
         th_weap_lvl, player_json['expLevel'], player_json['trophies'],
         player_json['bestTrophies'], player_json['warStars'],
         player_json['attackWins'], player_json['defenseWins'],
@@ -362,15 +360,37 @@ def get(tag, header):
 
 
 def json_response(tag, header):
-    tag = tag[1:]
+    # format the tag for http use
+    tag = tag.replace("#", "")
+
     url = f'https://api.clashofclans.com/v1/players/%23{tag}'
     return requests.get(url, headers=header).json()
+
+
+def verify_token(api_key, tag, header):
+    """
+        verifies player api key with coc server
+
+        Returns True if correctly verified and False if not verified
+    """
+    # format the tag for http use
+    tag = tag.replace("#", "")
+
+    body = {'token': api_key}
+    url = f'https://api.clashofclans.com/v1/players/%23{tag}/verifytoken'
+    payload = requests.post(url, headers=header, json=body).json()
+    # if verified by coc
+    if payload['status'] == 'ok':
+        return True
+    # if not verified by coc
+    else:
+        return False
 
 
 super_troop_list = [
     'Super Barbarian', 'Super Archer', 'Super Giant', 'Sneaky Goblin',
     'Super Wall Breaker', 'Super Wizard', 'Inferno Dragon', 'Super Minion',
-    'Super Valkyrie', 'Super Witch', 'Ice Hound'
+    'Super Valkyrie', 'Super Witch', 'Ice Hound', 'Rocket Balloon'
 ]
 
 troop_dict = {
@@ -431,6 +451,9 @@ troop_dict = {
             },
             'Yeti': {
                 'name': 'Yeti', 'thMax': 0, 'type': 'Elixir'
+            },
+            'Dragon Rider': {
+                'name': 'Dragon Rider', 'thMax': 0, 'type': 'Elixir'
             },
             'Super Barbarian': {
                 'name': 'Super Barbarian', 'thMax': 0, 'type': 'Elixir'
@@ -609,6 +632,9 @@ troop_dict = {
             'Yeti': {
                 'name': 'Yeti', 'thMax': 0, 'type': 'Elixir'
             },
+            'Dragon Rider': {
+                'name': 'Dragon Rider', 'thMax': 0, 'type': 'Elixir'
+            },
             'Super Barbarian': {
                 'name': 'Super Barbarian', 'thMax': 0, 'type': 'Elixir'
             },
@@ -784,6 +810,9 @@ troop_dict = {
             },
             'Yeti': {
                 'name': 'Yeti', 'thMax': 0, 'type': 'Elixir'
+            },
+            'Dragon Rider': {
+                'name': 'Dragon Rider', 'thMax': 0, 'type': 'Elixir'
             },
             'Super Barbarian': {
                 'name': 'Super Barbarian', 'thMax': 0, 'type': 'Elixir'
@@ -961,6 +990,9 @@ troop_dict = {
             'Yeti': {
                 'name': 'Yeti', 'thMax': 0, 'type': 'Elixir'
             },
+            'Dragon Rider': {
+                'name': 'Dragon Rider', 'thMax': 0, 'type': 'Elixir'
+            },
             'Super Barbarian': {
                 'name': 'Super Barbarian', 'thMax': 0, 'type': 'Elixir'
             },
@@ -1136,6 +1168,9 @@ troop_dict = {
             },
             'Yeti': {
                 'name': 'Yeti', 'thMax': 0, 'type': 'Elixir'
+            },
+            'Dragon Rider': {
+                'name': 'Dragon Rider', 'thMax': 0, 'type': 'Elixir'
             },
             'Super Barbarian': {
                 'name': 'Super Barbarian', 'thMax': 0, 'type': 'Elixir'
@@ -1313,6 +1348,9 @@ troop_dict = {
             'Yeti': {
                 'name': 'Yeti', 'thMax': 0, 'type': 'Elixir'
             },
+            'Dragon Rider': {
+                'name': 'Dragon Rider', 'thMax': 0, 'type': 'Elixir'
+            },
             'Super Barbarian': {
                 'name': 'Super Barbarian', 'thMax': 0, 'type': 'Elixir'
             },
@@ -1488,6 +1526,9 @@ troop_dict = {
             },
             'Yeti': {
                 'name': 'Yeti', 'thMax': 0, 'type': 'Elixir'
+            },
+            'Dragon Rider': {
+                'name': 'Dragon Rider', 'thMax': 0, 'type': 'Elixir'
             },
             'Super Barbarian': {
                 'name': 'Super Barbarian', 'thMax': 0, 'type': 'Elixir'
@@ -1665,6 +1706,9 @@ troop_dict = {
             'Yeti': {
                 'name': 'Yeti', 'thMax': 0, 'type': 'Elixir'
             },
+            'Dragon Rider': {
+                'name': 'Dragon Rider', 'thMax': 0, 'type': 'Elixir'
+            },
             'Super Barbarian': {
                 'name': 'Super Barbarian', 'thMax': 0, 'type': 'Elixir'
             },
@@ -1840,6 +1884,9 @@ troop_dict = {
             },
             'Yeti': {
                 'name': 'Yeti', 'thMax': 0, 'type': 'Elixir'
+            },
+            'Dragon Rider': {
+                'name': 'Dragon Rider', 'thMax': 0, 'type': 'Elixir'
             },
             'Super Barbarian': {
                 'name': 'Super Barbarian', 'thMax': 0, 'type': 'Elixir'
@@ -2017,6 +2064,9 @@ troop_dict = {
             'Yeti': {
                 'name': 'Yeti', 'thMax': 0, 'type': 'Elixir'
             },
+            'Dragon Rider': {
+                'name': 'Dragon Rider', 'thMax': 0, 'type': 'Elixir'
+            },
             'Super Barbarian': {
                 'name': 'Super Barbarian', 'thMax': 0, 'type': 'Elixir'
             },
@@ -2192,6 +2242,9 @@ troop_dict = {
             },
             'Yeti': {
                 'name': 'Yeti', 'thMax': 0, 'type': 'Elixir'
+            },
+            'Dragon Rider': {
+                'name': 'Dragon Rider', 'thMax': 0, 'type': 'Elixir'
             },
             'Super Barbarian': {
                 'name': 'Super Barbarian', 'thMax': 0, 'type': 'Elixir'
@@ -2369,6 +2422,9 @@ troop_dict = {
             'Yeti': {
                 'name': 'Yeti', 'thMax': 2, 'type': 'Elixir'
             },
+            'Dragon Rider': {
+                'name': 'Dragon Rider', 'thMax': 0, 'type': 'Elixir'
+            },
             'Super Barbarian': {
                 'name': 'Super Barbarian', 'thMax': 0, 'type': 'Elixir'
             },
@@ -2545,6 +2601,9 @@ troop_dict = {
             'Yeti': {
                 'name': 'Yeti', 'thMax': 3, 'type': 'Elixir'
             },
+            'Dragon Rider': {
+                'name': 'Dragon Rider', 'thMax': 0, 'type': 'Elixir'
+            },
             'Super Barbarian': {
                 'name': 'Super Barbarian', 'thMax': 0, 'type': 'Elixir'
             },
@@ -2696,7 +2755,7 @@ troop_dict = {
                 'name': 'Wall Breaker', 'thMax': 10, 'type': 'Elixir'
             },
             'Balloon': {
-                'name': 'Balloon', 'thMax': 9, 'type': 'Elixir'
+                'name': 'Balloon', 'thMax': 10, 'type': 'Elixir'
             },
             'Wizard': {
                 'name': 'Wizard', 'thMax': 10, 'type': 'Elixir'
@@ -2705,7 +2764,7 @@ troop_dict = {
                 'name': 'Healer', 'thMax': 7, 'type': 'Elixir'
             },
             'Dragon': {
-                'name': 'Dragon', 'thMax': 8, 'type': 'Elixir'
+                'name': 'Dragon', 'thMax': 9, 'type': 'Elixir'
             },
             'P.E.K.K.A': {
                 'name': 'P.E.K.K.A', 'thMax': 9, 'type': 'Elixir'
@@ -2717,10 +2776,13 @@ troop_dict = {
                 'name': 'Miner', 'thMax': 7, 'type': 'Elixir'
             },
             'Electro Dragon': {
-                'name': 'Electro Dragon', 'thMax': 4, 'type': 'Elixir'
+                'name': 'Electro Dragon', 'thMax': 5, 'type': 'Elixir'
             },
             'Yeti': {
                 'name': 'Yeti', 'thMax': 3, 'type': 'Elixir'
+            },
+            'Dragon Rider': {
+                'name': 'Dragon Rider', 'thMax': 3, 'type': 'Elixir'
             },
             'Super Barbarian': {
                 'name': 'Super Barbarian', 'thMax': 0, 'type': 'Elixir'

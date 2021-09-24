@@ -30,7 +30,7 @@ class War(object):
         self.clan = clan
         self.opponent = opponent
 
-    def war_time(self, time_zone):
+    def war_time(self):
         """
             Takes in a time zone and returns 
             days, hours, minutes, seconds. 
@@ -38,11 +38,11 @@ class War(object):
         """
         if self.state == 'preparation':
             days, hours, minutes, seconds = date_time_calculator(
-                self.start_time, time_zone)
+                self.start_time)
 
         elif self.state == 'inWar':
             days, hours, minutes, seconds = date_time_calculator(
-                self.end_time, time_zone)
+                self.end_time)
 
         # covers warEnded and notInWar states
         else:
@@ -53,7 +53,7 @@ class War(object):
 
         return (days, hours, minutes, seconds)
 
-    def string_date_time(self, time_zone):
+    def string_date_time(self):
         """
             Takes in a time zone and returns 
             a string of the remaining time. 
@@ -63,7 +63,7 @@ class War(object):
                 or self.state == 'notInWar'):
             return None
         days, hours, minutes, seconds = date_time_calculator(
-            self.start_time, time_zone)
+            self.start_time)
         return_string = ''
         if days > 0:
             if days == 1:
@@ -421,7 +421,9 @@ def get(clan_tag, header):
 
 
 def json_response(tag, header):
-    tag = tag[1:]
+    # format the tag for http use
+    tag = tag.replace("#", "")
+
     url = f'https://api.clashofclans.com/v1/clans/%23{tag}/currentwar'
     return requests.get(url, headers=header).json()
 
@@ -444,19 +446,17 @@ def clan_opp_status(war_json, clan_tag):
     return clan_status, opp_status
 
 
-def date_time_calculator(date_final, time_zone):
+def date_time_calculator(date_final):
     """
         Takes in a time zone and calculates the difference 
         between now and final time.
     """
     date_time_format = '%Y%m%d%H%M%S'
-    dt_now = datetime.now()
+    dt_now = datetime.utcnow()
     date_final = time_string_changer(date_final)
     dt_string = dt_now.strftime(date_time_format)
     diff = (datetime.strptime(date_final, date_time_format)
             - datetime.strptime(dt_string, date_time_format))
-    diff = (diff
-            + timedelta(hours=time_zone, minutes=0))
 
     days = diff.days
     seconds = diff.seconds

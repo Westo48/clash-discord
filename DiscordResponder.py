@@ -1,6 +1,41 @@
 import Clan
 
 
+def role_add_remove_list(needed_role_list, current_role_list):
+    """
+        Takes in list of needed and current role id's and
+        returns add and remove lists of discord role id's
+
+        Args:
+            list
+                needed_role_list (int): list of needed discord's role id
+            list
+                needed_role_list (int): list of current discord's role id
+
+        Returns:
+            add_roles_list: list of role id's to add to discord user
+            remove_roles_list: list of role id's to remove from discord user
+    """
+
+    # add_list
+    add_list = []
+    for needed_role in needed_role_list:
+        if needed_role not in current_role_list:
+            # needed and not currently set
+            # add to add list
+            add_list.append(needed_role)
+
+    # remove_list
+    remove_list = []
+    for current_role in current_role_list:
+        if current_role not in needed_role_list:
+            # currently set and not needed
+            # add to remove list
+            remove_list.append(current_role)
+
+    return add_list, remove_list
+
+
 def role_switch(player, user_roles, client_clans):
     """
         takes in player role and list of discord user roles,

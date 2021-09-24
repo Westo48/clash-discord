@@ -237,6 +237,8 @@ def get(war_tag, clan_tag, header):
 
 
 def json_response(tag, header):
-    tag = tag[1:]
+    # format the tag for http use
+    tag = tag.replace("#", "")
+
     url = f'https://api.clashofclans.com/v1/clanwarleagues/wars/%23{tag}'
     return requests.get(url, headers=header).json()
