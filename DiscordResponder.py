@@ -1,4 +1,5 @@
 import Clan
+from Player import super_troop_list
 
 
 def role_add_remove_list(needed_role_list, current_role_list):
@@ -126,6 +127,31 @@ def role_switch(player, user_roles, client_clans):
         if old_role:
             remove_roles.append(old_role)
         add_roles.append(new_role)
+
+    return add_roles, remove_roles
+
+
+def active_super_troop_role_switch(player, user_roles, active_super_troops):
+    """
+        takes in list of discord user roles and active super troops,
+        returns new and old roles for active super troops
+    """
+
+    add_roles = []
+    remove_roles = []
+
+    # checking if the user's active super troop roles need changing
+    old_super_troop_roles = []
+    for role in user_roles:
+        for super_troop in super_troop_list:
+            if role.name == super_troop:
+                old_super_troop_roles.append(role)
+
+    for super_troop in active_super_troops:
+        add_roles.append(super_troop.name)
+
+    for old_role in old_super_troop_roles:
+        remove_roles.append(old_role.name)
 
     return add_roles, remove_roles
 
