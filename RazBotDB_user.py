@@ -1,4 +1,3 @@
-import RazBotDB_Connection as connection
 import RazBotDB_Presets as preset
 import RazBotDB_user as user
 import RazBotDB_player as player
@@ -28,8 +27,8 @@ class User(object):
 def insert_raz_super_user(discord_user_id):
     # set up query
     query = (
-        "INSERT into user (discord_id, admin, super_user) "
-        "VALUES ({discord_user_id}, TRUE, TRUE);"
+        f"INSERT into user (discord_id, admin, super_user) "
+        f"VALUES ({discord_user_id}, TRUE, TRUE);"
     )
 
     # execute insert query

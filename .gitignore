@@ -4,5 +4,6 @@ notes.txt
 __pycache__
 RazBot_Data.json
 RazBot_Data.py
+RazBotDB_Connection_Data.py
 RazBotDB_Connection_Data.json
 RazBotDB_Query.py
