@@ -18,7 +18,7 @@ Discord bot for Clash of Clans discord servers written in Python
   - [CWL War](#command-list-cwl-war)
 - [Contributing](#contributing)
 - [Requirements](#requirements)
-- [Links](#links-and-contact)
+- [Links and Contact](#links-and-contact)
 
 # <a id="introduction"></a>Introduction
 
