@@ -30,7 +30,9 @@ Non-management commands include, but are also not limited to, returning player o
 
 Getting ClashDiscord set up in your discord server can be somewhat confusing, but never fear for I am here.
 
-1. invite [Clash Discord](https://discord.com/api/oauth2/authorize?client_id=649107156989378571&permissions=8&scope=bot) to your discord server
+1. invite ClashDiscord to your discord server
+
+   - invite link can be found in [official discord](https://discord.gg/3jcfaa5NYk) server
 
 2. claim your user in ClashDiscord
 
