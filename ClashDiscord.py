@@ -6,8 +6,6 @@ import RazBot_Data
 import ClashResponder as clash_responder
 from DiscordResponder import *
 import RazBotDB_Responder as db_responder
-# todo remove this when possible
-from Player import super_troop_list
 
 razbot_data = RazBot_Data.RazBot_Data()
 
