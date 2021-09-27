@@ -169,6 +169,8 @@ ClashDiscord is largely **command** focused, meaning it doesn't do anything that
       - `!trooplvl hog rider`
       - `!trooplvl jump spell`
       - `!trooplvl archer queen`
+  - activesupertroop
+    - shows the super troops you have active
 
 - ## <a id="command-list-clan"></a>Clan
 
@@ -183,6 +185,9 @@ ClashDiscord is largely **command** focused, meaning it doesn't do anything that
     - example
       - `!donate hog rider`
       - `!donate freeze spell`
+  - supertroopsearch `supertroopname`
+    - shows players in your clan that have a specified super troop activated
+      - `!supertroopsearch sneaky goblin`
 
 - ## <a id="command-list-war"></a>War
 
