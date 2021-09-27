@@ -6,6 +6,8 @@ import RazBot_Data
 import ClashResponder as clash_responder
 from DiscordResponder import *
 import RazBotDB_Responder as db_responder
+# todo remove this when possible
+from Player import super_troop_list
 
 razbot_data = RazBot_Data.RazBot_Data()
 
@@ -465,6 +467,56 @@ async def donationchecker(ctx, *, unit_name):
                         message = f'{unit_name} is not a valid donatable unit.'
 
                     await ctx.send(message)
+                else:
+                    await ctx.send(f"Couldn't find clan from tag "
+                                   f"{player_obj.clan_tag}")
+            else:
+                await ctx.send(f"{player_obj.name} is not in a clan")
+        else:
+            await ctx.send(f"Couldn't find player from tag "
+                           f"{db_player_obj.player_tag}")
+    else:
+        await ctx.send(f"{ctx.author.mention} does not have an active player")
+
+
+@client.command(
+    aliases=['searchsupertroop'],
+    brief='clan',
+    description='Search who in the clan has a requested super troop active.'
+)
+async def supertroopsearch(ctx, *, unit_name):
+    db_player_obj = db_responder.read_player_active(ctx.author.id)
+    if db_player_obj:
+        player_obj = clash_responder.get_player(
+            db_player_obj.player_tag, razbot_data.header)
+        if player_obj:
+            if player_obj.clan_tag:
+                clan_obj = Clan.get(player_obj.clan_tag, razbot_data.header)
+                if clan_obj:
+                    # checking to make sure the given unit_name is viable
+                    unit_name = clash_responder.super_troop_unit_viable(
+                        unit_name)
+                    if unit_name:
+                        donor_list = clash_responder.active_super_troop_search(
+                            unit_name, clan_obj, razbot_data.header)
+                        if len(donor_list) == 0:
+                            await ctx.send(f"Nobody in {clan_obj.name} "
+                                           f"has {unit_name} activated.")
+                        else:
+                            message_string = ""
+                            for member in donor_list:
+                                message_string += f"{member.name}, "
+
+                            # cuts the last two characters from the string ', '
+                            message_string = message_string[:-2]
+                            if len(donor_list) == 1:
+                                message_string += f" has {unit_name} activated"
+                            else:
+                                message_string += f" have {unit_name} activated."
+
+                            await ctx.send(message_string)
+                    else:
+                        await ctx.send(f"{unit_name} is not a viable request")
                 else:
                     await ctx.send(f"Couldn't find clan from tag "
                                    f"{player_obj.clan_tag}")
@@ -1829,7 +1881,7 @@ async def on_member_join(ctx):
 async def on_member_remove(member):
     print(f'{member} has left the server')
 
-
+"""
 @client.event
 async def on_command_error(ctx, error):
     if isinstance(error, commands.CommandNotFound):
@@ -1840,5 +1892,5 @@ async def on_command_error(ctx, error):
     else:
         await ctx.send(f"there was an error that I have not accounted for, "
                        f"please let Razgriz know")
-
+"""
 client.run(razbot_data.token)

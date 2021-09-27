@@ -102,6 +102,13 @@ def response_active_super_troops(player_obj, header):
         return f"{player_obj.name} has {super_troop_string} currently active."
 
 
+def super_troop_unit_viable(unit_name):
+    for super_troop in Player.super_troop_list:
+        if unit_name.lower() == super_troop.lower():
+            return super_troop
+    return None
+
+
 # Clan
 # todo DOCSTRING
 def get_clan(clan_tag, header):
@@ -175,7 +182,7 @@ def response_donation(unit_name, clan, header):
         return donators
 
 
-def response_active_super_troop_search(unit_name, clan, header):
+def active_super_troop_search(unit_name, clan, header):
     """
         Takes in the unit name and clan object, returns a list of players
         who have super troop active.
