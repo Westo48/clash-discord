@@ -89,8 +89,6 @@ Getting ClashDiscord set up in your discord server can be somewhat confusing, bu
 - claim your clan
 - claim the necessary roles
 
-Usage: The next section is usage, in which you instruct other people on how to use your project after they’ve installed it. This would also be a good place to include screenshots of your project in action.
-
 # <a id="usage"></a>Usage
 
 ClashDiscord is largely **command** focused, meaning it doesn't do anything that it is not told to do. The only exception to this is when a member joins. If a server has claimed an uninitiated role, then they will be given that role, otherwise nothing will happen. Once setup is complete you will be able to interact with ClashDiscord using the prefix `!` and run the commands as desired.
