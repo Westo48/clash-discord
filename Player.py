@@ -448,7 +448,7 @@ def verify_token(api_key, tag, header):
 super_troop_list = [
     'Super Barbarian', 'Super Archer', 'Super Giant', 'Sneaky Goblin',
     'Super Wall Breaker', 'Super Wizard', 'Inferno Dragon', 'Super Minion',
-    'Super Valkyrie', 'Super Witch', 'Ice Hound', 'Rocket Balloon'
+    'Super Valkyrie', 'Super Witch', 'Ice Hound', 'Rocket Balloon', 'Super Bowler'
 ]
 
 troop_dict = {
@@ -591,7 +591,6 @@ troop_dict = {
             'Unicorn': {
                 'name': 'Unicorn', 'thMax': 0, 'type': 'Dark Elixir'
             }
-
         },
         'spell': {
             'Lightning Spell': {
@@ -2740,7 +2739,6 @@ troop_dict = {
             'Unicorn': {
                 'name': 'Unicorn', 'thMax': 0, 'type': 'Dark Elixir'
             }
-
         },
         'spell': {
             'Lightning Spell': {
@@ -2831,13 +2829,13 @@ troop_dict = {
                 'name': 'Baby Dragon', 'thMax': 8, 'type': 'Elixir'
             },
             'Miner': {
-                'name': 'Miner', 'thMax': 7, 'type': 'Elixir'
+                'name': 'Miner', 'thMax': 8, 'type': 'Elixir'
             },
             'Electro Dragon': {
                 'name': 'Electro Dragon', 'thMax': 5, 'type': 'Elixir'
             },
             'Yeti': {
-                'name': 'Yeti', 'thMax': 3, 'type': 'Elixir'
+                'name': 'Yeti', 'thMax': 4, 'type': 'Elixir'
             },
             'Dragon Rider': {
                 'name': 'Dragon Rider', 'thMax': 3, 'type': 'Elixir'
@@ -2870,13 +2868,13 @@ troop_dict = {
                 'name': 'Minion', 'thMax': 10, 'type': 'Dark Elixir'
             },
             'Hog Rider': {
-                'name': 'Hog Rider', 'thMax': 10, 'type': 'Dark Elixir'
+                'name': 'Hog Rider', 'thMax': 11, 'type': 'Dark Elixir'
             },
             'Valkyrie': {
                 'name': 'Valkyrie', 'thMax': 9, 'type': 'Dark Elixir'
             },
             'Golem': {
-                'name': 'Golem', 'thMax': 10, 'type': 'Dark Elixir'
+                'name': 'Golem', 'thMax': 11, 'type': 'Dark Elixir'
             },
             'Witch': {
                 'name': 'Witch', 'thMax': 5, 'type': 'Dark Elixir'
@@ -2885,7 +2883,7 @@ troop_dict = {
                 'name': 'Lava Hound', 'thMax': 6, 'type': 'Dark Elixir'
             },
             'Bowler': {
-                'name': 'Bowler', 'thMax': 5, 'type': 'Dark Elixir'
+                'name': 'Bowler', 'thMax': 6, 'type': 'Dark Elixir'
             },
             'Ice Golem': {
                 'name': 'Ice Golem', 'thMax': 6, 'type': 'Dark Elixir'
@@ -2920,7 +2918,6 @@ troop_dict = {
             'Unicorn': {
                 'name': 'Unicorn', 'thMax': 10, 'type': 'Dark Elixir'
             }
-
         },
         'spell': {
             'Lightning Spell': {
