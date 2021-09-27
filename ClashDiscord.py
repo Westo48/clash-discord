@@ -905,7 +905,7 @@ async def emojitesting(ctx):
 
 
 # ! for all claimed players
-# todo uninitiated setup
+# todo validation if roles (clan or rank) are not found in db
 @client.command(
     aliases=['roleme'],
     brief='discord',
@@ -1590,7 +1590,7 @@ async def claimclanrole(ctx, clan_tag):
         clan_obj = clash_responder.get_clan(clan_tag, razbot_data.header)
         if clan_obj:
             # if clan is found
-            db_clan_obj = db_responder.read_clan(ctx.guild.id, clan_tag)
+            db_clan_obj = db_responder.read_clan(ctx.guild.id, clan_obj.tag)
             if db_clan_obj:
                 # claimed by guild
                 # getting db user object
