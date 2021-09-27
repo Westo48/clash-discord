@@ -87,12 +87,10 @@ def response_all_troop_level(player_obj):
     return response_list
 
 
-def response_active_super_troops(player_name, clan, header):
-    player_tag = clan.find_member(player_name)
-    player = Player.get(player_tag, header)
-    active_super_troops = player.find_active_super_troops()
+def response_active_super_troops(player_obj, header):
+    active_super_troops = player_obj.find_active_super_troops()
     if len(active_super_troops) == 0:
-        return f"{player.name} does not have any active super troops."
+        return f"{player_obj.name} does not have any active super troops."
     else:
         super_troop_string = ''
         for super_troop in active_super_troops:
@@ -101,7 +99,7 @@ def response_active_super_troops(player_name, clan, header):
         # cuts the last 5 characters from the string
         super_troop_string = super_troop_string[:-5]
 
-        return f"{player.name} has {super_troop_string} currently active."
+        return f"{player_obj.name} has {super_troop_string} currently active."
 
 
 # Clan

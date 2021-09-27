@@ -337,6 +337,26 @@ async def alltrooplvl(ctx):
         await ctx.send(f"{ctx.author.mention} does not have an active player")
 
 
+@client.command(
+    aliases=['supertroop', 'supertroops'],
+    brief='player',
+    description='Check to see what super troops you have active.'
+)
+async def activesupertroop(ctx):
+    db_player_obj = db_responder.read_player_active(ctx.author.id)
+    if db_player_obj:
+        player_obj = clash_responder.get_player(
+            db_player_obj.player_tag, razbot_data.header)
+        if player_obj:
+            await ctx.send(
+                clash_responder.response_active_super_troops(player_obj, razbot_data.header))
+        else:
+            await ctx.send(f"Couldn't find player from tag "
+                           f"{db_player_obj.player_tag}")
+    else:
+        await ctx.send(f"{ctx.author.mention} does not have an active player")
+
+
 # Clan
 
 
