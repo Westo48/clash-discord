@@ -158,7 +158,7 @@ ClashDiscord is largely **command** focused, meaning it doesn't do anything that
     - example
       - `!player #RGQ8RGU9`
       - `!player RGQ8RGU9`
-  - showactiveplayer
+  - showplayer
     - shows player information based on your active player
   - trooplvl `unitname`
     - shows the level of your troop, what the max for your town hall is, as well as the overall max
