@@ -47,21 +47,6 @@ def find_unit(player_obj, unit_name):
         return None
 
 
-def response_active_super_troops(player_obj, header):
-    active_super_troops = player_obj.find_active_super_troops()
-    if len(active_super_troops) == 0:
-        return f"{player_obj.name} does not have any active super troops."
-    else:
-        super_troop_string = ''
-        for super_troop in active_super_troops:
-            super_troop_string += f'{super_troop.name} and '
-
-        # cuts the last 5 characters from the string
-        super_troop_string = super_troop_string[:-5]
-
-        return f"{player_obj.name} has {super_troop_string} currently active."
-
-
 def super_troop_unit_viable(unit_name):
     for super_troop in Player.super_troop_list:
         if unit_name.lower() == super_troop.lower():

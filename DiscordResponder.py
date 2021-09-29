@@ -59,6 +59,20 @@ def unit_lvl_all(player_obj):
     return response_list
 
 
+def active_super_troops(player_obj, active_super_troops):
+    if len(active_super_troops) == 0:
+        return f"{player_obj.name} does not have any active super troops."
+    else:
+        super_troop_string = ''
+        for super_troop in active_super_troops:
+            super_troop_string += f'{super_troop.name} and '
+
+        # cuts the last 5 characters ' and ' from the string
+        super_troop_string = super_troop_string[:-5]
+
+        return f"{player_obj.name} has {super_troop_string} currently active."
+
+
 # DISCORD
 
 def role_add_remove_list(needed_role_list, current_role_list):

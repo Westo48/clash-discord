@@ -714,13 +714,15 @@ async def activesupertroop(ctx):
         player_obj = clash_responder.get_player(
             db_player_obj.player_tag, razbot_data.header)
         if player_obj:
-            await ctx.send(
-                clash_responder.response_active_super_troops(player_obj, razbot_data.header))
+            active_super_troops = player_obj.find_active_super_troops()
+            await ctx.send(discord_responder.active_super_troops(
+                player_obj, active_super_troops))
         else:
             await ctx.send(f"Couldn't find player from tag "
                            f"{db_player_obj.player_tag}")
     else:
-        await ctx.send(f"{ctx.author.mention} does not have an active player")
+        await ctx.send(f"{ctx.author.mention} "
+                       f"does not have an active player")
 
 
 # Clan
