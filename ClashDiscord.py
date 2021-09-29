@@ -871,12 +871,12 @@ async def showclan(ctx):
 
 
 @client.command(
-    aliases=['donation', 'donate'],
+    aliases=['donate'],
     brief='clan',
     description='Enter a troop name to see who in the clan '
                 'is best suited to donate that troop.'
 )
-async def donationchecker(ctx, *, unit_name):
+async def donation(ctx, *, unit_name):
     db_player_obj = db_responder.read_player_active(ctx.author.id)
     if db_player_obj:
         player_obj = clash_responder.get_player(
@@ -886,42 +886,11 @@ async def donationchecker(ctx, *, unit_name):
                 clan_obj = clash_responder.get_clan(
                     player_obj.clan_tag, razbot_data.header)
                 if clan_obj:
-                    donators = clash_responder.response_donation(
+                    donator_list = clash_responder.donation(
                         unit_name, clan_obj, razbot_data.header)
 
-                    # if the requested unit is not a hero
-                    if donators:
-                        member_string = ''
-
-                        # setting the string of members that can donate
-                        for donator in donators:
-                            member_string += f'{donator.player.name}, '
-
-                        # cuts the last two characters from the string ', '
-                        member_string = member_string[:-2]
-
-                        # if donators can donate max
-                        if ((donators[0].unit.lvl + clan_obj.donation_upgrade) >=
-                                donators[0].unit.max_lvl):
-                            message = (
-                                f'{member_string} can donate level '
-                                f'{donators[0].unit.max_lvl} {donators[0].unit.name}, '
-                                f'which is max.'
-                            )
-                        # if donators cannot donate max
-                        else:
-                            message = (
-                                f'{member_string} can donate level'
-                                f'{donators[0].unit.lvl + clan_obj.donation_upgrade} '
-                                f'{donators[0].unit.name}, max is '
-                                f'{donators[0].unit.max_lvl}'
-                            )
-
-                    # if the requested unit is a hero
-                    else:
-                        message = f'{unit_name} is not a valid donatable unit.'
-
-                    await ctx.send(message)
+                    await ctx.send(discord_responder.donation(
+                        clan_obj, donator_list, unit_name))
                 else:
                     await ctx.send(f"Couldn't find clan from tag "
                                    f"{player_obj.clan_tag}")

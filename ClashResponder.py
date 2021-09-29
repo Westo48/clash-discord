@@ -62,7 +62,7 @@ def get_clan(clan_tag, header):
 
 # returns a string response of members that can donate the best of that unit
 # todo put this into the clan framework
-def response_donation(unit_name, clan, header):
+def donation(unit_name, clan, header):
     """
         Takes in the unit name and clan tag, returns a list of players
         who can donate.
@@ -154,15 +154,6 @@ def active_super_troop_search(unit_name, clan, header):
                 donor_list.append(member)
                 break
     return donor_list
-
-
-def response_player(player_name, clan_tag, header):
-    "takes in the player name and returns player object"
-    clan = Clan.get(clan_tag, header)
-    player_tag = clan.find_member(player_name)
-    if player_tag == "":
-        return None
-    return Player.get(player_tag, header)
 
 
 # returns a string of the member's role

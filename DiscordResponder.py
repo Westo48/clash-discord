@@ -73,7 +73,44 @@ def active_super_troops(player_obj, active_super_troops):
         return f"{player_obj.name} has {super_troop_string} currently active."
 
 
+# CLAN
+
+def donation(clan_obj, donator_list, unit_name):
+    if not donator_list:
+        # unit is a hero
+        return f"{unit_name} is not a valid donatable unit."
+    if len(donator_list) == 0:
+        # nobody can donate unit
+        return f"nobody in {clan_obj.name} can donate {unit_name}"
+
+    member_string = ""
+    # setting the string of members that can donate
+    for donator in donator_list:
+        member_string += f"{donator.player.name}, "
+
+    # cuts the last two characters from the string ", "
+    member_string = member_string[:-2]
+
+    # if donators can donate max
+    if ((donator_list[0].unit.lvl + clan_obj.donation_upgrade) >=
+            donator_list[0].unit.max_lvl):
+        return (
+            f"{member_string} can donate level "
+            f"{donator_list[0].unit.max_lvl} {donator_list[0].unit.name}, "
+            f"which is max."
+        )
+    # if donators cannot donate max
+    else:
+        return (
+            f"{member_string} can donate level"
+            f"{donator_list[0].unit.lvl + clan_obj.donation_upgrade} "
+            f"{donator_list[0].unit.name}, max is "
+            f"{donator_list[0].unit.max_lvl}"
+        )
+
+
 # DISCORD
+
 
 def role_add_remove_list(needed_role_list, current_role_list):
     """
