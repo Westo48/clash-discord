@@ -35,6 +35,32 @@ def unit_lvl(player_obj, unit_obj, unit_name):
         )
 
 
+# ? discontinue this function
+def unit_lvl_all(player_obj):
+    response_list = []
+    response_list.append(f'{player_obj.name} units:')
+    for hero_obj in player_obj.heroes:
+        if hero_obj.village == 'home':
+            response_list.append(unit_lvl(
+                player_obj, hero_obj, hero_obj.name))
+            response_list.append('__________')
+    for troop_obj in player_obj.troops:
+        if troop_obj.village == 'home':
+            response_list.append(unit_lvl(
+                player_obj, troop_obj, troop_obj.name))
+            response_list.append('__________')
+    for spell_obj in player_obj.spells:
+        if spell_obj.village == 'home':
+            response_list.append(unit_lvl(
+                player_obj, spell_obj, spell_obj.name))
+            response_list.append('__________')
+    # removing trailing '__________'
+    del response_list[-1]
+    return response_list
+
+
+# DISCORD
+
 def role_add_remove_list(needed_role_list, current_role_list):
     """
         Takes in list of needed and current role id's and

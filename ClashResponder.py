@@ -47,33 +47,6 @@ def find_unit(player_obj, unit_name):
         return None
 
 
-# ? discontinue this function
-# returns a list of all troops and their levels
-def response_all_troop_level(player_obj):
-    response_list = []
-    response_list.append(f'{player_obj.name} troops:')
-    for troop in player_obj.troops:
-        if troop.village == 'home':
-            if troop.lvl == troop.max_lvl:
-                response_list.append(
-                    f'{troop.name} is lvl {troop.lvl}, which is max.')
-                response_list.append('__________')
-            elif troop.lvl == troop.th_max:
-                response_list.append(
-                    f'{troop.name} is lvl {troop.lvl}, '
-                    f'which is max for TH {player_obj.th_lvl}, '
-                    f'max {troop.name} is {troop.max_lvl}.')
-                response_list.append('__________')
-            else:
-                response_list.append(
-                    f'{troop.name} is lvl {troop.lvl}, '
-                    f'max for TH {player_obj.th_lvl} is lvl {troop.th_max}, '
-                    f'max {troop.name} is {troop.max_lvl}.')
-                response_list.append('__________')
-    del response_list[-1]
-    return response_list
-
-
 def response_active_super_troops(player_obj, header):
     active_super_troops = player_obj.find_active_super_troops()
     if len(active_super_troops) == 0:

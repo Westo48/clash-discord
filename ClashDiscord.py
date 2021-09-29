@@ -694,7 +694,7 @@ async def alltrooplvl(ctx):
         player_obj = clash_responder.get_player(
             db_player_obj.player_tag, razbot_data.header)
         if player_obj:
-            for line in clash_responder.response_all_troop_level(player_obj):
+            for line in discord_responder.unit_lvl_all(player_obj):
                 await ctx.send(line)
         else:
             await ctx.send(f"Couldn't find player from tag "
