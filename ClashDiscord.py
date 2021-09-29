@@ -996,14 +996,14 @@ async def role(ctx):
         await ctx.send(f"{ctx.author.mention} has not been claimed")
         return
 
-    db_player_obj = db_responder.read_player_list(ctx.author.id)
-    if len(db_player_obj) == 0:
+    db_player_obj_list = db_responder.read_player_list(ctx.author.id)
+    if len(db_player_obj_list) == 0:
         # if player is not claimed
         await ctx.send(f"{ctx.author.mention} has no claimed players")
         return
 
     player_obj_list = []
-    for db_obj in db_player_obj:
+    for db_obj in db_player_obj_list:
         player_obj = clash_responder.get_player(
             db_obj.player_tag, razbot_data.header)
         if player_obj:
@@ -1011,7 +1011,7 @@ async def role(ctx):
         else:
             # player was not found from tag
             await ctx.send(f"Couldn't find player from tag "
-                           f"{db_player_obj.player_tag}")
+                           f"{db_obj.player_tag}")
             return
 
     # get needed roles
@@ -1019,15 +1019,29 @@ async def role(ctx):
     for player_obj in player_obj_list:
         # get discord roles for the clan and role in the clan
         if player_obj.clan_tag:
+            # clan role validation
             db_clan_role_obj = db_responder.read_clan_role_from_tag(
                 ctx.guild.id, player_obj.clan_tag)
-            # adding the role id to the list
-            needed_role_list.append(db_clan_role_obj.discord_role_id)
-            db_rank_role_obj = (
-                db_responder.read_rank_role_from_guild_and_clash(
-                    ctx.guild.id, player_obj.role))
-            # adding the role id to the list
-            needed_role_list.append(db_rank_role_obj.discord_role_id)
+            if db_clan_role_obj:
+                # clan role was found in the db
+                # adding the clash role id to the list
+                needed_role_list.append(db_clan_role_obj.discord_role_id)
+                # rank role validation
+                db_rank_role_obj = (
+                    db_responder.read_rank_role_from_guild_and_clash(
+                        ctx.guild.id, player_obj.role))
+                if db_rank_role_obj:
+                    # rank role was found in the db
+                    # adding the rank role id to the list
+                    needed_role_list.append(db_rank_role_obj.discord_role_id)
+                else:
+                    # rank role was not found in the db
+                    await ctx.send(f"role for rank {player_obj.role} "
+                                   f"has not been claimed")
+            else:
+                # clan role was not found in the db
+                await ctx.send(f"role for clan {player_obj.clan_name} "
+                               f"{player_obj.clan_tag} has not been claimed")
 
     # get rid of duplicates
     needed_role_list = list(dict.fromkeys(needed_role_list))
@@ -1077,7 +1091,7 @@ async def role(ctx):
             remove_role_obj_list.append(remove_role_obj)
         else:
             await ctx.send(
-                f"Could not find role for id {remove_role_id}, "
+                f"could not find role for id {remove_role_id}, "
                 f"please ensure claimed roles and discord roles match"
             )
 
@@ -1085,7 +1099,13 @@ async def role(ctx):
     for remove_role_obj in remove_role_obj_list:
         await ctx.author.remove_roles(remove_role_obj)
 
-    await ctx.send(f"Roles have been updated")
+    if len(add_role_obj_list) == 0 and len(remove_role_obj_list) == 0:
+        # no roles added or removed
+        await ctx.send(f"roles have not been changed")
+    else:
+        # roles have been added or removed
+        await ctx.send(f"roles have been updated")
+
 
 # CLIENT
 
