@@ -1119,42 +1119,42 @@ async def claimuser(ctx):
 async def claimplayer(ctx, player_tag, *, api_key):
 
     # confirm valid player_tag
-    clash_player_obj = clash_responder.get_player(
+    player_obj = clash_responder.get_player(
         player_tag, razbot_data.header)
 
     # verifying player
-    if clash_player_obj:
+    if player_obj:
         player_verified = clash_responder.verify_token(
-            api_key, clash_player_obj.tag, razbot_data.header)
+            api_key, player_obj.tag, razbot_data.header)
 
         if player_verified:
             # check if not claimed
-            claimed_player = db_responder.read_player_from_tag(
-                clash_player_obj.tag)
+            db_player_obj = db_responder.read_player_from_tag(player_obj.tag)
 
-            if claimed_player:
+            if db_player_obj:
                 # already claimed
-                await ctx.send(f"{clash_player_obj.name} has already been claimed")
+                await ctx.send(f"{player_obj.name} {player_obj.tag} "
+                               f"has already been claimed")
             else:
                 # verified and not claimed
                 player_obj = db_responder.claim_player(
-                    ctx.author.id, clash_player_obj.tag)
+                    ctx.author.id, player_obj.tag)
 
                 if player_obj:
                     # if succesfully claimed
-                    await ctx.send(f"{clash_player_obj.name} tag {clash_player_obj.tag} "
+                    await ctx.send(f"{player_obj.name} {player_obj.tag} "
                                    f"is now claimed by {ctx.author.mention}")
                 else:
                     # if failed to claim
                     await ctx.send(
-                        f"Could not claim {clash_player_obj.name} "
-                        f"tag {clash_player_obj.tag} for {ctx.author.mention}"
+                        f"Could not claim {player_obj.name} "
+                        f"{player_obj.tag} for {ctx.author.mention}"
                     )
 
         else:
             # player verification failed
             await ctx.send(f"Verification for "
-                           f"player tag {clash_player_obj.tag} has failed")
+                           f"player tag {player_obj.tag} has failed")
     else:
         # invalid player_tag
         await ctx.send(f"Couldn't find a player with player tag {player_tag}")
@@ -1177,16 +1177,16 @@ async def showplayerclaim(ctx):
         # if the user is found, but has no claimed players
         if len(player_list) == 0:
             await ctx.send(f"{ctx.author.mention} does not have any "
-                           "claimed players")
+                           f"claimed players")
         else:
             message = f"{ctx.author.mention} has claimed "
             for item in player_list:
-                player = clash_responder.get_player(
+                player_obj = clash_responder.get_player(
                     item.player_tag, razbot_data.header)
                 if item.active:
-                    message += f"{player.name} (active), "
+                    message += f"{player_obj.name} {player_obj.tag} (active), "
                 else:
-                    message += f"{player.name}, "
+                    message += f"{player_obj.name} {player_obj.tag}, "
             # cuts the last two characters from the string ', '
             message = message[:-2]
             await ctx.send(message)
@@ -1390,16 +1390,22 @@ async def updateplayeractive(ctx, player_tag):
     user = db_responder.read_user(ctx.author.id)
     # if user is found
     if user:
-        db_player_obj = db_responder.read_player(ctx.author.id, player_obj.tag)
+        db_player_obj = db_responder.read_player(
+            ctx.author.id, player_obj.tag)
         if db_player_obj:
             if db_player_obj.active:
-                await ctx.send(f"{player_obj.name} is already your active player {ctx.author.mention}")
+                await ctx.send(f"{player_obj.name} {player_obj.tag} "
+                               f"is already your active player "
+                               f"{ctx.author.mention}")
             else:
                 db_player_obj = db_responder.update_player_active(
                     ctx.author.id, player_obj.tag)
-                await ctx.send(f"{player_obj.name} is now your active player {ctx.author.mention}")
+                await ctx.send(f"{player_obj.name} {player_obj.tag} is now "
+                               f"your active player {ctx.author.mention}")
         else:
-            await ctx.send(f"{ctx.author.mention} has not claimed {player_obj.name}")
+            await ctx.send(f"{ctx.author.mention} "
+                           f"has not claimed "
+                           f"{player_obj.name} {player_obj.tag}")
     # if user is not found
     else:
         await ctx.send(f"{ctx.author.mention} has not been claimed")
@@ -1426,7 +1432,8 @@ async def deleteplayer(ctx, player_tag):
                     author.id, player_obj.tag)
                 # if player was not deleted
                 if db_player_obj:
-                    await ctx.send(f"{player_obj.name} could not be deleted "
+                    await ctx.send(f"{player_obj.name} {player_obj.tag} "
+                                   f"could not be deleted "
                                    f"from {author.mention} player list")
                 # if player was deleted
                 else:
@@ -1437,7 +1444,8 @@ async def deleteplayer(ctx, player_tag):
                     if active_player_data:
                         # if there is a active player
                         # then no need to change the active
-                        await ctx.send(f"{player_obj.name} has been deleted "
+                        await ctx.send(f"{player_obj.name} {player_obj.tag} "
+                                       f"has been deleted "
                                        f"from {author.mention} player list")
                     else:
                         # if there is no active player
@@ -1447,7 +1455,8 @@ async def deleteplayer(ctx, player_tag):
                         if len(player_list) == 0:
                             # no additional players claimed by user
                             await ctx.send(
-                                f"{player_obj.name} has been deleted "
+                                f"{player_obj.name} {player_obj.tag} "
+                                f"has been deleted "
                                 f"{author.mention} has no more claimed players"
                             )
                         else:
@@ -1460,14 +1469,16 @@ async def deleteplayer(ctx, player_tag):
                                 clash_updated_active_player = clash_responder.get_player(
                                     updated_active_player.player_tag, razbot_data.header)
                                 await ctx.send(
-                                    f"{player_obj.name} has been deleted "
+                                    f"{player_obj.name} {player_obj.tag} "
+                                    f"has been deleted "
                                     f"{author.mention} active is now set to "
-                                    f"{clash_updated_active_player.name}"
+                                    f"{clash_updated_active_player.name} "
+                                    f"{clash_updated_active_player.tag}"
                                 )
             else:
                 # if player is not claimed by user
-                await ctx.send(f"{player_obj.name} is not claimed by"
-                               f" {author.mention}")
+                await ctx.send(f"{player_obj.name} {player_obj.tag} "
+                               f"is not claimed by {author.mention}")
 
         # if user is not found
         else:
