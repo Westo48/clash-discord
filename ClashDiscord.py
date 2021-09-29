@@ -373,7 +373,7 @@ async def clan(ctx, *, clan_tag):
             title=clan_obj.name,
         )
         embed.set_author(
-            name=f"[{ctx.prefix}] RazClashBot", icon_url="https://cdn.discordapp.com/avatars/649107156989378571/053f201109188da026d0a980dd4136e0.webp")
+            name=f"[{ctx.prefix}] {ctx.bot.user.name}", icon_url="https://cdn.discordapp.com/avatars/649107156989378571/053f201109188da026d0a980dd4136e0.webp")
 
         embed.set_thumbnail(url=clan_obj.clan_icons['small'])
 
@@ -381,6 +381,11 @@ async def clan(ctx, *, clan_tag):
             name='**Description**',
             value=clan_obj.description,
             inline=False
+        )
+        embed.add_field(
+            name='**Members**',
+            value=len(clan_obj.members),
+            inline=True
         )
         embed.add_field(
             name='**Clan Lvl**',
@@ -412,6 +417,88 @@ async def clan(ctx, *, clan_tag):
         await ctx.send(embed=embed)
     else:
         await ctx.send(f"Could not find clan with tag {clan_tag}")
+
+
+@client.command(
+    brief='clan',
+    description="Get information about your active player's clan"
+)
+async def showclan(ctx):
+    db_user_obj = db_responder.read_user(ctx.author.id)
+    if not db_user_obj:
+        # if user is not found
+        await ctx.send(f"{ctx.author.mention} has not been claimed")
+        return
+
+    db_player_obj = db_responder.read_player_active(ctx.author.id)
+    if not db_player_obj:
+        # if player is not found
+        await ctx.send(f"{ctx.author.mention} does not "
+                       f"have an active player")
+        return
+
+    player_obj = clash_responder.get_player(
+        db_player_obj.player_tag, razbot_data.header)
+    if not player_obj:
+        # if player is not found
+        await ctx.send(f"could not find player with tag "
+                       f"{db_player_obj.player_tag}")
+        return
+
+    elif not player_obj.clan_tag:
+        await ctx.send(f"{player_obj.name} {player_obj.tag} is not in a clan")
+        return
+
+    clan_obj = Clan.get(player_obj.clan_tag, razbot_data.header)
+
+    if clan_obj:
+        embed = discord.Embed(
+            colour=discord.Colour.blue(),
+            title=clan_obj.name,
+        )
+        embed.set_author(
+            name=f"[{ctx.prefix}] {ctx.bot.user.name}", icon_url="https://cdn.discordapp.com/avatars/649107156989378571/053f201109188da026d0a980dd4136e0.webp")
+
+        embed.set_thumbnail(url=clan_obj.clan_icons['small'])
+
+        embed.add_field(
+            name='**Description**',
+            value=clan_obj.description,
+            inline=False
+        )
+        embed.add_field(
+            name='**Members**',
+            value=len(clan_obj.members),
+            inline=True
+        )
+        embed.add_field(
+            name='**Clan Lvl**',
+            value=clan_obj.clan_lvl,
+            inline=True
+        )
+        embed.add_field(
+            name='**Clan War League**',
+            value=clan_obj.war_league_name,
+            inline=True
+        )
+        embed.add_field(
+            name='**Total Points**',
+            value=clan_obj.clan_points,
+            inline=True
+        )
+        embed.add_field(
+            name='**Link**',
+            value=f"[{clan_obj.name}](https://link.clashofclans.com/en?action=OpenClanProfile&tag={clan_obj.tag[1:]})",
+            inline=True
+        )
+
+        # todo set footer to display user called and timestamp
+        embed.set_footer(
+            text=ctx.author.display_name,
+            icon_url=ctx.author.avatar_url.BASE+ctx.author.avatar_url._url
+        )
+
+        await ctx.send(embed=embed)
 
 
 @client.command(
@@ -1596,7 +1683,7 @@ async def claimclan(ctx, clan_tag):
 
 
 @client.command(
-    aliases=['showclaimclan', 'showclan', 'showclans', 'showclaimedclan',
+    aliases=['showclaimclan', 'showclaimedclan',
              'showclaimedclans', 'showclansclaim', 'showclanlist'],
     brief='discord',
     description=(
