@@ -128,6 +128,37 @@ def super_troop_search(clan_obj, donor_list, unit_name):
     return message_string
 
 
+# WAR
+
+# returns a string of the war overview
+def war_overview(war_obj):
+    if war_obj.state == "preparation":
+        time_string = war_obj.string_date_time()
+
+        return (
+            f"{war_obj.clan.name} is preparing for war with "
+            f"{war_obj.opponent.name} with {time_string} "
+            f"left before war starts"
+        )
+    elif war_obj.state == "inWar":
+        time_string = war_obj.string_date_time()
+        scoreboard_string = war_obj.string_scoreboard()
+
+        return (
+            f"{war_obj.clan.name} is in war with {war_obj.opponent.name} "
+            f"with {time_string} left in war, "
+            f"{war_obj.clan.name} is {scoreboard_string}"
+        )
+    elif war_obj.state == "warEnded":
+        scoreboard_string = war_obj.string_scoreboard()
+        return (
+            f"war against {war_obj.opponent.name} has ended, "
+            f"{war_obj.clan.name} {scoreboard_string}"
+        )
+    else:
+        return f"you are not in war"
+
+
 # DISCORD
 
 

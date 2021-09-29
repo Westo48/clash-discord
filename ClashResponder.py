@@ -170,26 +170,6 @@ def get_war(clan_tag, header):
     return War.get(clan_tag, header)
 
 
-# returns a string of the war overview
-def response_war_overview(clan_tag, header):
-    war = War.get(clan_tag, header)
-    if war.state == 'preparation':
-        time_string = war.string_date_time()
-
-        return f'{war.clan.name} is preparing for war with {war.opponent.name} with {time_string} left before war starts.'
-    elif war.state == 'inWar':
-        time_string = war.string_date_time()
-        scoreboard_string = war.string_scoreboard()
-
-        return f'{war.clan.name} is in war with {war.opponent.name} with {time_string} left in war. {war.clan.name} is {scoreboard_string}.'
-    elif war.state == 'warEnded':
-        scoreboard_string = war.string_scoreboard()
-        return f'War against {war.opponent.name} has ended. {war.clan.name} {scoreboard_string}.'
-    else:
-        return f'You are not in war.'
-
-
-# returns a string of the time remaining in war response
 def response_war_time(clan_tag, header):
     war = War.get(clan_tag, header)
     if war.state == 'preparation':
