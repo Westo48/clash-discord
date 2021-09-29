@@ -919,27 +919,13 @@ async def supertroopsearch(ctx, *, unit_name):
                     player_obj.clan_tag, razbot_data.header)
                 if clan_obj:
                     # checking to make sure the given unit_name is viable
-                    unit_name = clash_responder.super_troop_unit_viable(
+                    super_troop_name = clash_responder.super_troop_unit_name(
                         unit_name)
-                    if unit_name:
+                    if super_troop_name:
                         donor_list = clash_responder.active_super_troop_search(
-                            unit_name, clan_obj, razbot_data.header)
-                        if len(donor_list) == 0:
-                            await ctx.send(f"Nobody in {clan_obj.name} "
-                                           f"has {unit_name} activated.")
-                        else:
-                            message_string = ""
-                            for member in donor_list:
-                                message_string += f"{member.name}, "
-
-                            # cuts the last two characters from the string ', '
-                            message_string = message_string[:-2]
-                            if len(donor_list) == 1:
-                                message_string += f" has {unit_name} activated"
-                            else:
-                                message_string += f" have {unit_name} activated."
-
-                            await ctx.send(message_string)
+                            super_troop_name, clan_obj, razbot_data.header)
+                        await ctx.send(discord_responder.super_troop_search(
+                            clan_obj, donor_list, super_troop_name))
                     else:
                         await ctx.send(f"{unit_name} is not a viable request")
                 else:

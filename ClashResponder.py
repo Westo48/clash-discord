@@ -47,7 +47,7 @@ def find_unit(player_obj, unit_name):
         return None
 
 
-def super_troop_unit_viable(unit_name):
+def super_troop_unit_name(unit_name):
     for super_troop in Player.super_troop_list:
         if unit_name.lower() == super_troop.lower():
             return super_troop

@@ -109,6 +109,25 @@ def donation(clan_obj, donator_list, unit_name):
         )
 
 
+def super_troop_search(clan_obj, donor_list, unit_name):
+    if len(donor_list) == 0:
+        return (f"Nobody in {clan_obj.name} "
+                f"has {unit_name} activated.")
+
+    message_string = ""
+    for member in donor_list:
+        message_string += f"{member.name}, "
+
+    # cuts the last two characters from the string ', '
+    message_string = message_string[:-2]
+    if len(donor_list) == 1:
+        message_string += f" has {unit_name} activated"
+    else:
+        message_string += f" have {unit_name} activated."
+
+    return message_string
+
+
 # DISCORD
 
 
