@@ -1010,7 +1010,7 @@ async def role(ctx):
             player_obj_list.append(player_obj)
         else:
             # player was not found from tag
-            await ctx.send(f"Couldn't find player from tag "
+            await ctx.send(f"couldn't find player from tag "
                            f"{db_obj.player_tag}")
             return
 
@@ -1073,7 +1073,7 @@ async def role(ctx):
             add_role_obj_list.append(add_role_obj)
         else:
             await ctx.send(
-                f"Could not find role for id {add_role_id}, "
+                f"could not find role for id {add_role_id}, "
                 f"please ensure claimed roles and discord roles match"
             )
 
