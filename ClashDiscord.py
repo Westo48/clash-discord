@@ -2180,7 +2180,7 @@ async def on_member_join(ctx):
 async def on_member_remove(member):
     print(f'{member} has left the server')
 
-'''
+
 @client.event
 async def on_command_error(ctx, error):
     if isinstance(error, commands.CommandNotFound):
@@ -2191,5 +2191,5 @@ async def on_command_error(ctx, error):
     else:
         await ctx.send(f"there was an error that I have not accounted for, "
                        f"please let Razgriz know")
-'''
+
 client.run(razbot_data.token)
