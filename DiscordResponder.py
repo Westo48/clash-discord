@@ -2,6 +2,39 @@ import Clan
 from Player import super_troop_list
 
 
+# PLAYER
+
+def unit_lvl(player_obj, unit_obj, unit_name):
+    if not unit_obj:
+        # unit not found response
+        return (
+            f"could not find {unit_name}, "
+            f"you either do not have it unlocked or "
+            f"it is misspelled."
+        )
+
+    if unit_obj.lvl == unit_obj.max_lvl:
+        # unit is max lvl
+        return (
+            f"{player_obj.name} has lvl {unit_obj.lvl} {unit_obj.name}, "
+            f"which is max."
+        )
+    elif unit_obj.lvl == unit_obj.th_max:
+        # unit is max for th, but not total max
+        return (
+            f"{player_obj.name} has lvl {unit_obj.lvl} {unit_obj.name}, "
+            f"which is max for TH {player_obj.th_lvl}, "
+            f"max {unit_obj.name} is {unit_obj.max_lvl}."
+        )
+    else:
+        # unit is not max for th nor is it total max
+        return (
+            f"{player_obj.name} has lvl {unit_obj.lvl} {unit_obj.name}, "
+            f"max for TH {player_obj.th_lvl} is {unit_obj.th_max}, "
+            f"max {unit_obj.name} is {unit_obj.max_lvl}."
+        )
+
+
 def role_add_remove_list(needed_role_list, current_role_list):
     """
         Takes in list of needed and current role id's and

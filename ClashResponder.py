@@ -37,27 +37,14 @@ def verify_token(api_key, player_tag, header):
 # returns player.name and troop.lvl
 
 
-def response_troop_lvl(player_obj, unit_name, header):
-    if player_obj:
-        unit = player_obj.find_unit(unit_name)
-        if unit:
-            if unit.lvl == unit.max_lvl:
-                return (f'{player_obj.name} has lvl {unit.lvl} {unit.name}, '
-                        f'which is max.')
-            elif unit.lvl == unit.th_max:
-                return (f'{player_obj.name} has lvl {unit.lvl} {unit.name}, '
-                        f'which is max for TH {player_obj.th_lvl}, '
-                        f'max {unit.name} is {unit.max_lvl}.')
-            else:
-                return (f'{player_obj.name} has lvl {unit.lvl} {unit.name}, '
-                        f'max for TH {player_obj.th_lvl} is {unit.th_max}, '
-                        f'max {unit.name} is {unit.max_lvl}.')
-        else:
-            return (f'Could not find {unit_name}. '
-                    f'You either do not have it unlocked or '
-                    f'it is misspelled.')
-    else:
-        return (f'Could not find player')
+def find_unit(player_obj, unit_name):
+    unit_obj = player_obj.find_unit(unit_name)
+    if unit_obj:
+        # unit was found
+        return unit_obj
+    if not unit_obj:
+        # unit was not found
+        return None
 
 
 # ? discontinue this function

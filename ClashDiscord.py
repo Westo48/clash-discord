@@ -4,7 +4,7 @@ from discord.ext import commands
 from discord.utils import get
 import RazBot_Data
 import ClashResponder as clash_responder
-from DiscordResponder import *
+import DiscordResponder as discord_responder
 import RazBotDB_Responder as db_responder
 
 razbot_data = RazBot_Data.RazBot_Data()
@@ -33,7 +33,7 @@ async def on_ready():
     description='Returns the help text you see before you'
 )
 async def help(ctx):
-    is_leader = role_check('leader', ctx.author.roles)
+    is_leader = discord_responder.role_check('leader', ctx.author.roles)
 
     embed = discord.Embed(
         colour=discord.Colour.blue()
@@ -667,14 +667,15 @@ async def showmemberplayer(ctx):
     brief='player',
     description='Enter unit to see its current, th max, and max level.'
 )
-async def trooplvl(ctx, *, troop_name):
+async def trooplvl(ctx, *, unit_name):
     db_player_obj = db_responder.read_player_active(ctx.author.id)
     if db_player_obj:
         player_obj = clash_responder.get_player(
             db_player_obj.player_tag, razbot_data.header)
         if player_obj:
-            await ctx.send(clash_responder.response_troop_lvl(
-                player_obj, troop_name, razbot_data.header))
+            unit_obj = clash_responder.find_unit(player_obj, unit_name)
+            await ctx.send(discord_responder.unit_lvl(
+                player_obj, unit_obj, unit_name))
         else:
             await ctx.send(f"Couldn't find player from tag "
                            f"{db_player_obj.player_tag}")
@@ -730,7 +731,7 @@ async def activesupertroop(ctx):
     description="Enter a clan's tag and get a clan's information"
 )
 async def clan(ctx, *, clan_tag):
-    clan_obj = Clan.get(clan_tag, razbot_data.header)
+    clan_obj = clash_responder.get_clan(clan_tag, razbot_data.header)
 
     if clan_obj:
         embed = discord.Embed(
@@ -814,7 +815,8 @@ async def showclan(ctx):
         await ctx.send(f"{player_obj.name} {player_obj.tag} is not in a clan")
         return
 
-    clan_obj = Clan.get(player_obj.clan_tag, razbot_data.header)
+    clan_obj = clash_responder.get_clan(
+        player_obj.clan_tag, razbot_data.header)
 
     if clan_obj:
         embed = discord.Embed(
@@ -879,7 +881,8 @@ async def donationchecker(ctx, *, unit_name):
             db_player_obj.player_tag, razbot_data.header)
         if player_obj:
             if player_obj.clan_tag:
-                clan_obj = Clan.get(player_obj.clan_tag, razbot_data.header)
+                clan_obj = clash_responder.get_clan(
+                    player_obj.clan_tag, razbot_data.header)
                 if clan_obj:
                     donators = clash_responder.response_donation(
                         unit_name, clan_obj, razbot_data.header)
@@ -941,7 +944,8 @@ async def supertroopsearch(ctx, *, unit_name):
             db_player_obj.player_tag, razbot_data.header)
         if player_obj:
             if player_obj.clan_tag:
-                clan_obj = Clan.get(player_obj.clan_tag, razbot_data.header)
+                clan_obj = clash_responder.get_clan(
+                    player_obj.clan_tag, razbot_data.header)
                 if clan_obj:
                     # checking to make sure the given unit_name is viable
                     unit_name = clash_responder.super_troop_unit_viable(
@@ -1073,7 +1077,7 @@ async def warnoattackalert(ctx):
                 else:
                     message = ''
                     for player in no_atk_list:
-                        member = find_channel_member(
+                        member = discord_responder.find_channel_member(
                             player.name, ctx.channel.members)
                         if member != '':
                             message += f'{member.mention}, '
@@ -1407,7 +1411,7 @@ async def cwlclanmatescore(ctx):
 async def mentionrazgriz(ctx):
     found = False
     for member in ctx.channel.members:
-        if player_name_string(member.display_name) == 'Razgriz':
+        if discord_responder.player_name_string(member.display_name) == 'Razgriz':
             mention = member.mention
             await ctx.send(f'Hello {mention}')
             found = True
@@ -1512,7 +1516,7 @@ async def role(ctx):
     for current_role in current_db_role_list:
         current_role_list.append(current_role.discord_role_id)
 
-    add_role_id_list, remove_role_id_list = role_add_remove_list(
+    add_role_id_list, remove_role_id_list = discord_responder.role_add_remove_list(
         needed_role_list, current_role_list)
 
     # get objects of roles to add from id's
