@@ -179,6 +179,10 @@ ClashDiscord is largely **command** focused, meaning it doesn't do anything that
     - example
       - `!clan #JJRJGVR0`
       - `!clan JJRJGVR0`
+  - showclan `mentionclanrole`
+    - displays clan information for clan linked to the clan role mentioned
+  - showplayerclan
+    - displays clan information for clan active player is in
   - donate `unitname`
     - shows who can donate the best of a specified unit
     - uses active player's clan for all clan commands
