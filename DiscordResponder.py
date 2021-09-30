@@ -365,8 +365,8 @@ def cwl_lineup(cwl_lineup):
     return message
 
 
-# returns a string of the current cwl war overview
 def cwl_war_overview(war_obj):
+    '''returns a string of the current cwl war overview'''
     if war_obj.state == 'preparation':
         time_string = war_obj.string_date_time()
         return f'{war_obj.clan.name} is preparing for war with {war_obj.opponent.name} with {time_string} left before war starts'
@@ -377,6 +377,20 @@ def cwl_war_overview(war_obj):
     elif war_obj.state == 'warEnded':
         scoreboard_string = war_obj.string_scoreboard()
         return f'war against {war_obj.opponent.name} has ended, {war_obj.clan.name} {scoreboard_string}'
+    else:
+        return 'you are not in CWL'
+
+
+def cwl_war_time(war_obj):
+    '''returns a string of the time remaining in war response'''
+    if war_obj.state == 'preparation':
+        time_string = war_obj.string_date_time()
+        return f'{war_obj.clan.name} is preparing for war with {time_string} left before war starts'
+    elif war_obj.state == 'inWar':
+        time_string = war_obj.string_date_time()
+        return f'{war_obj.clan.name} is preparing for war with {time_string} left in war'
+    elif war_obj.state == 'warEnded':
+        return f'the war with {war_obj.opponent.name} has ended'
     else:
         return 'you are not in CWL'
 
