@@ -187,51 +187,6 @@ def war_no_attack_members(clan_tag, header):
         return []
 
 
-# returns a list of all war members and their stars
-def response_war_members_overview(clan_tag, header):
-    "returns a list of all war members and their stars"
-    war = War.get(clan_tag, header)
-    response_list = []
-
-    if war.state == 'preparation':
-        response_list.append(
-            f'{war.clan.name} is still preparaing for war, nobody has attacked.')
-    elif war.state == 'inWar':
-        response_list.append(
-            f'{war.clan.name} is in war with {war.opponent.name} with {war.string_date_time()} left in war. {war.clan.name} is {war.string_scoreboard()}.')
-        response_list.append('____________________')
-        for member in war.clan.members:
-            # no atk response
-            if len(member.attacks) == 0:
-                response_list.append(
-                    f'{member.name} map pos {member.map_position} TH {member.th_lvl} has not attacked.')
-            else:
-                response_list.append(
-                    f'{member.name} map pos {member.map_position} TH {member.th_lvl} has attacked {len(member.attacks)} {member.string_member_attack_times()} for a total of {member.stars} {member.string_member_stars()}')
-            response_list.append('__________')
-
-        del response_list[-1]
-    elif war.state == 'warEnded':
-        response_list.append(
-            f'War against {war.opponent.name} has ended. {war.clan.name} {war.string_scoreboard()}.')
-        response_list.append('____________________')
-        for member in war.clan.members:
-            # no atk response
-            if len(member.attacks) == 0:
-                response_list.append(
-                    f'{member.name} map pos {member.map_position} TH {member.th_lvl} did not attack.')
-            else:
-                response_list.append(
-                    f'{member.name} map pos {member.map_position} TH {member.th_lvl} attacked {len(member.attacks)} {member.string_member_attack_times()} for a total of {member.stars} {member.string_member_stars()}.')
-            response_list.append('__________')
-
-        del response_list[-1]
-    else:
-        response_list.append('You are not in war.')
-
-    return response_list
-
-
 # returns a list of war attack string responses for all war members
 def response_war_all_attacks(clan_tag, header):
     war = War.get(clan_tag, header)

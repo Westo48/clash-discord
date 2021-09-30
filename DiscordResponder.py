@@ -211,6 +211,50 @@ def response_war_no_attack(war_obj):
         return "you are not in war"
 
 
+# returns a list of all war members and their stars
+def war_members_overview(war_obj):
+    "returns a list of all war members and their stars"
+    response_list = []
+
+    if war_obj.state == 'preparation':
+        response_list.append(
+            f'{war_obj.clan.name} is still preparaing for war, nobody has attacked')
+    elif war_obj.state == 'inWar':
+        response_list.append(
+            f'{war_obj.clan.name} is in war with {war_obj.opponent.name} with {war_obj.string_date_time()} left in war, {war_obj.clan.name} is {war_obj.string_scoreboard()}.')
+        response_list.append('____________________')
+        for member in war_obj.clan.members:
+            # no atk response
+            if len(member.attacks) == 0:
+                response_list.append(
+                    f'{member.name} map pos {member.map_position} TH {member.th_lvl} has not attacked')
+            else:
+                response_list.append(
+                    f'{member.name} map pos {member.map_position} TH {member.th_lvl} has attacked {len(member.attacks)} {member.string_member_attack_times()} for a total of {member.stars} {member.string_member_stars()}')
+            response_list.append('__________')
+
+        del response_list[-1]
+    elif war_obj.state == 'warEnded':
+        response_list.append(
+            f'War against {war_obj.opponent.name} has ended. {war_obj.clan.name} {war_obj.string_scoreboard()}')
+        response_list.append('____________________')
+        for member in war_obj.clan.members:
+            # no atk response
+            if len(member.attacks) == 0:
+                response_list.append(
+                    f'{member.name} map pos {member.map_position} TH {member.th_lvl} did not attack')
+            else:
+                response_list.append(
+                    f'{member.name} map pos {member.map_position} TH {member.th_lvl} attacked {len(member.attacks)} {member.string_member_attack_times()} for a total of {member.stars} {member.string_member_stars()}')
+            response_list.append('__________')
+
+        del response_list[-1]
+    else:
+        response_list.append('you are not in war')
+
+    return response_list
+
+
 # DISCORD
 
 
