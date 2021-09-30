@@ -959,11 +959,13 @@ async def donation(ctx, *, unit_name):
                 clan_obj = clash_responder.get_clan(
                     player_obj.clan_tag, razbot_data.header)
                 if clan_obj:
-                    donator_list = clash_responder.donation(
-                        unit_name, clan_obj, razbot_data.header)
+                    async with ctx.typing():
+                        donator_list = clash_responder.donation(
+                            unit_name, clan_obj, razbot_data.header)
+                        donator_message = discord_responder.donation(
+                            clan_obj, donator_list, unit_name)
 
-                    await ctx.send(discord_responder.donation(
-                        clan_obj, donator_list, unit_name))
+                    await ctx.send(donator_message)
                 else:
                     await ctx.send(f"Couldn't find clan from tag "
                                    f"{player_obj.clan_tag}")
