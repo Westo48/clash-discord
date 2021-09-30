@@ -1149,9 +1149,12 @@ async def cwlwaroverview(ctx):
             if player_obj.clan_tag:
                 cwl_group = clash_responder.get_cwl_group(
                     player_obj.clan_tag, razbot_data.header)
-                war_obj = cwl_group.find_current_war(player_obj.clan_tag)
-                await ctx.send(discord_responder.cwl_war_overview(
-                    war_obj))
+                if cwl_group:
+                    war_obj = cwl_group.find_current_war(player_obj.clan_tag)
+                    await ctx.send(discord_responder.cwl_war_overview(
+                        war_obj))
+                else:
+                    await ctx.send(f"{player_obj.clan_name} is not in CWL")
             else:
                 await ctx.send(f"{player_obj.name} is not in a clan")
         else:
@@ -1174,8 +1177,11 @@ async def cwlwartime(ctx):
             if player_obj.clan_tag:
                 cwl_group = clash_responder.get_cwl_group(
                     player_obj.clan_tag, razbot_data.header)
-                war_obj = cwl_group.find_current_war(player_obj.clan_tag)
-                await ctx.send(discord_responder.cwl_war_time(war_obj))
+                if cwl_group:
+                    war_obj = cwl_group.find_current_war(player_obj.clan_tag)
+                    await ctx.send(discord_responder.cwl_war_time(war_obj))
+                else:
+                    await ctx.send(f"{player_obj.clan_name} is not in CWL")
             else:
                 await ctx.send(f"{player_obj.name} is not in a clan")
         else:
@@ -1200,9 +1206,12 @@ async def cwlwarnoattack(ctx):
             if player_obj.clan_tag:
                 cwl_group = clash_responder.get_cwl_group(
                     player_obj.clan_tag, razbot_data.header)
-                war_obj = cwl_group.find_current_war(player_obj.clan_tag)
-                await ctx.send(discord_responder.cwl_war_no_attack(
-                    war_obj))
+                if cwl_group:
+                    war_obj = cwl_group.find_current_war(player_obj.clan_tag)
+                    await ctx.send(discord_responder.cwl_war_no_attack(
+                        war_obj))
+                else:
+                    await ctx.send(f"{player_obj.clan_name} is not in CWL")
             else:
                 await ctx.send(f"{player_obj.name} is not in a clan")
         else:
@@ -1227,10 +1236,13 @@ async def cwlwarallattack(ctx):
             if player_obj.clan_tag:
                 cwl_group = clash_responder.get_cwl_group(
                     player_obj.clan_tag, razbot_data.header)
-                war_obj = cwl_group.find_current_war(player_obj.clan_tag)
-                for line in discord_responder.cwl_war_all_attacks(
-                        war_obj):
-                    await ctx.send(line)
+                if cwl_group:
+                    war_obj = cwl_group.find_current_war(player_obj.clan_tag)
+                    for line in discord_responder.cwl_war_all_attacks(
+                            war_obj):
+                        await ctx.send(line)
+                else:
+                    await ctx.send(f"{player_obj.clan_name} is not in CWL")
             else:
                 await ctx.send(f"{player_obj.name} is not in a clan")
         else:
@@ -1255,9 +1267,12 @@ async def cwlclanscore(ctx):
             if player_obj.clan_tag:
                 cwl_group = clash_responder.get_cwl_group(
                     player_obj.clan_tag, razbot_data.header)
-                for line in discord_responder.cwl_clan_standing(
-                        cwl_group, player_obj.clan_tag, razbot_data.header):
-                    await ctx.send(line)
+                if cwl_group:
+                    for line in discord_responder.cwl_clan_standing(
+                            cwl_group, player_obj.clan_tag, razbot_data.header):
+                        await ctx.send(line)
+                else:
+                    await ctx.send(f"{player_obj.clan_name} is not in CWL")
             else:
                 await ctx.send(f"{player_obj.name} is not in a clan")
         else:
@@ -1280,10 +1295,13 @@ async def cwlmemberscore(ctx):
             if player_obj.clan_tag:
                 cwl_group = clash_responder.get_cwl_group(
                     player_obj.clan_tag, razbot_data.header)
-                await ctx.send(discord_responder.cwl_member_standing(
-                    player_obj, cwl_group, player_obj.clan_tag,
-                    razbot_data.header
-                ))
+                if cwl_group:
+                    await ctx.send(discord_responder.cwl_member_standing(
+                        player_obj, cwl_group, player_obj.clan_tag,
+                        razbot_data.header
+                    ))
+                else:
+                    await ctx.send(f"{player_obj.clan_name} is not in CWL")
             else:
                 await ctx.send(f"{player_obj.name} is not in a clan")
         else:
@@ -1309,10 +1327,13 @@ async def cwlclanmatescore(ctx):
                 if player_obj.clan_tag:
                     cwl_group = clash_responder.get_cwl_group(
                         player_obj.clan_tag, razbot_data.header)
-                    await ctx.send(discord_responder.cwl_member_standing(
-                        player_obj, cwl_group, player_obj.clan_tag,
-                        razbot_data.header
-                    ))
+                    if cwl_group:
+                        await ctx.send(discord_responder.cwl_member_standing(
+                            player_obj, cwl_group, player_obj.clan_tag,
+                            razbot_data.header
+                        ))
+                    else:
+                        await ctx.send(f"{player_obj.clan_name} is not in CWL")
                 else:
                     await ctx.send(f"{player_obj.name} is not in a clan")
             else:
@@ -2113,9 +2134,12 @@ async def on_command_error(ctx, error):
     elif isinstance(error, commands.MissingRequiredArgument):
         await ctx.send(f"command '{ctx.invoked_with}' "
                        f"requires more information")
-    else:
+    elif error.original.text:
         await ctx.send(f"there was an error that I have not accounted for, "
                        f"please let Razgriz know, "
                        f"error text: `{error.original.text}`")
+    else:
+        await ctx.send(f"there was an error that I have not accounted for, "
+                       f"please let Razgriz know")
 
 client.run(razbot_data.token)

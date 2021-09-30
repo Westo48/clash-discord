@@ -376,7 +376,7 @@ def cwl_clan_standing(cwl_group, clan_tag, header):
             self.score = score
 
     if not cwl_group:
-        return ['You are not in CWL.']
+        return ['you are not in CWL']
 
     # get a list of all CWLWar objects
     cwl_wars = []
@@ -417,7 +417,7 @@ def cwl_clan_standing(cwl_group, clan_tag, header):
 # returns each specified member's CWL War score
 def cwl_member_standing(player_obj, cwl_group, clan_tag, header):
     if not cwl_group:
-        return 'You are not in CWL'
+        return 'you are not in CWL'
 
     # get a list of all CWLWar objects
     cwl_wars = []
