@@ -997,10 +997,12 @@ async def supertroopsearch(ctx, *, unit_name):
                     super_troop_name = clash_responder.super_troop_unit_name(
                         unit_name)
                     if super_troop_name:
-                        donor_list = clash_responder.active_super_troop_search(
-                            super_troop_name, clan_obj, razbot_data.header)
-                        await ctx.send(discord_responder.super_troop_search(
-                            clan_obj, donor_list, super_troop_name))
+                        async with ctx.typing():
+                            donor_list = clash_responder.active_super_troop_search(
+                                super_troop_name, clan_obj, razbot_data.header)
+                            donor_message = discord_responder.super_troop_search(
+                                clan_obj, donor_list, super_troop_name)
+                        await ctx.send(donor_message)
                     else:
                         await ctx.send(f"{unit_name} is not a viable request")
                 else:
