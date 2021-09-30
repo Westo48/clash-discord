@@ -1017,46 +1017,6 @@ async def warnoattack(ctx):
 
 
 @client.command(
-    aliases=['warnoatkalert'],
-    brief='war',
-    description='Returns a list of players that '
-                'have/did not use all possible attacks '
-                'and mentions them if found',
-    hidden=True
-)
-async def warnoattackalert(ctx):
-    db_player_obj = db_responder.read_player_active(ctx.author.id)
-    if db_player_obj:
-        player_obj = clash_responder.get_player(
-            db_player_obj.player_tag, razbot_data.header)
-        if player_obj:
-            if player_obj.clan_tag:
-                no_atk_list = clash_responder.war_no_attack_members(
-                    player_obj.clan_tag, razbot_data.header)
-                if len(no_atk_list) == 0:
-                    await ctx.send('Nobody needs to attack.')
-                else:
-                    message = ''
-                    for player in no_atk_list:
-                        member = discord_responder.find_channel_member(
-                            player.name, ctx.channel.members)
-                        if member != '':
-                            message += f'{member.mention}, '
-                        else:
-                            message += f'{player.name}, '
-                    message = message[:-2]
-                    message += ' needs to attack.'
-                    await ctx.send(message)
-            else:
-                await ctx.send(f"{player_obj.name} is not in a clan")
-        else:
-            await ctx.send(f"Couldn't find player from tag "
-                           f"{db_player_obj.player_tag}")
-    else:
-        await ctx.send(f"{ctx.author.mention} does not have an active player")
-
-
-@client.command(
     aliases=['warclan', 'warstars'],
     brief='war',
     description='overview of all members in war',
