@@ -160,14 +160,55 @@ def war_overview(war_obj):
 
 
 def response_war_time(war_obj):
-    if war_obj.state == 'preparation':
-        return f'{war_obj.clan.name} is preparing for war with {war_obj.string_date_time()} left before war starts'
-    elif war_obj.state == 'inWar':
-        return f'{war_obj.clan.name} is in war with {war_obj.string_date_time()} left in war'
-    elif war_obj.state == 'warEnded':
-        return f'The war with {war_obj.opponent.name} has ended'
+    if war_obj.state == "preparation":
+        return f"{war_obj.clan.name} is preparing for war with {war_obj.string_date_time()} left before war starts"
+    elif war_obj.state == "inWar":
+        return f"{war_obj.clan.name} is in war with {war_obj.string_date_time()} left in war"
+    elif war_obj.state == "warEnded":
+        return f"The war with {war_obj.opponent.name} has ended"
     else:
-        return 'You are not in war'
+        return "You are not in war"
+
+
+# todo if nobody has attacked logic
+# returns a string of the war no attack response
+def response_war_no_attack(war_obj):
+    if war_obj.state == "preparation":
+        return (f"{war_obj.clan.name} is still preparing for war with "
+                f"{war_obj.string_date_time()} before war starts, nobody has attacked")
+
+    elif war_obj.state == "inWar":
+        no_attack_list = war_obj.no_attack()
+        if len(no_attack_list) == 0:
+            return f"all {war_obj.team_size} {war_obj.clan.name} war members attacked"
+        no_attack_string = ""
+        for member in no_attack_list:
+            no_attack_string += f"{member.name}, "
+        # removes the last 2 characters ", " of the string
+        no_attack_string = no_attack_string[:-2]
+        # singular
+        if len(no_attack_list) == 1:
+            no_attack_string += " has not attacked"
+        # plural
+        else:
+            no_attack_string += " have not attacked"
+        no_attack_string += f" with {war_obj.string_date_time()} left in war"
+        return no_attack_string
+
+    elif war_obj.state == "warEnded":
+        no_attack_list = war_obj.no_attack()
+        if len(no_attack_list) == 0:
+            return f"all {war_obj.team_size} {war_obj.clan.name} war members attacked"
+        no_attack_string = ""
+        for member in no_attack_list:
+            no_attack_string += f"{member.name}, "
+        # removes the last 2 characters ", " of the string
+        no_attack_string = no_attack_string[:-2]
+        no_attack_string += " did not attack"
+        return no_attack_string
+
+    else:
+        return "you are not in war"
 
 
 # DISCORD

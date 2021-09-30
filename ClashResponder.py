@@ -170,48 +170,6 @@ def get_war(clan_tag, header):
     return War.get(clan_tag, header)
 
 
-# todo if nobody has attacked logic
-# returns a string of the war no attack response
-def response_war_no_attack(clan_tag, header):
-    war = War.get(clan_tag, header)
-
-    if war.state == 'preparation':
-        return f'{war.clan.name} is still preparing for war with {war.string_date_time()} before war starts, nobody has attacked.'
-
-    elif war.state == 'inWar':
-        no_attack_list = war.no_attack()
-        if len(no_attack_list) == 0:
-            return f'All {war.team_size} {war.clan.name} war members attacked.'
-        no_attack_string = ''
-        for member in no_attack_list:
-            no_attack_string += f'{member.name}, '
-        # removes the last 2 characters ', ' of the string
-        no_attack_string = no_attack_string[:-2]
-        # singular
-        if len(no_attack_list) == 1:
-            no_attack_string += ' has not attacked'
-        # plural
-        else:
-            no_attack_string += ' have not attacked'
-        no_attack_string += f' with {war.string_date_time()} left in war.'
-        return no_attack_string
-
-    elif war.state == 'warEnded':
-        no_attack_list = war.no_attack()
-        if len(no_attack_list) == 0:
-            return f'All {war.team_size} {war.clan.name} war members attacked.'
-        no_attack_string = ''
-        for member in no_attack_list:
-            no_attack_string += f'{member.name}, '
-        # removes the last 2 characters ', ' of the string
-        no_attack_string = no_attack_string[:-2]
-        no_attack_string += ' did not attack.'
-        return no_attack_string
-
-    else:
-        return 'You are not in war.'
-
-
 def war_no_attack_members(clan_tag, header):
     "returns a list of players that haven't attacked"
     war = War.get(clan_tag, header)
