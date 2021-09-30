@@ -2134,7 +2134,7 @@ async def on_command_error(ctx, error):
     elif isinstance(error, commands.MissingRequiredArgument):
         await ctx.send(f"command '{ctx.invoked_with}' "
                        f"requires more information")
-    elif error.original.text:
+    elif hasattr(error.original, "text"):
         await ctx.send(f"there was an error that I have not accounted for, "
                        f"please let Razgriz know, "
                        f"error text: `{error.original.text}`")
