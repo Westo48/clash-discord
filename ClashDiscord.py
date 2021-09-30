@@ -1118,31 +1118,9 @@ async def cwllineup(ctx):
                     player_obj.clan_tag, razbot_data.header)
 
                 if cwl_group:
-                    cwl_lineup = clash_responder.response_cwl_lineup(cwl_group)
-                    message = (
-                        "```\n"
-                        "CWL Group Lineup\n"
-                        "14 | 13 | 12 | 11 | 10 | 9  | 8\n"
-                        "-------------------------------\n"
-                    )
-                    for clan_dict in cwl_lineup:
-                        lineup_message = f"{clan_dict['clan'].name}\n"
-                        for key in clan_dict:
-                            if key != 'clan' and key > 6:
-                                if key >= 8:
-                                    lineup_message += f"{clan_dict[key]}"
-                                    # if it is a double digit number
-                                    if clan_dict[key] >= 10:
-                                        lineup_message += " | "
-                                    # if it is a single digit number add an extra space
-                                    else:
-                                        lineup_message += "  | "
-                        # removes the last 4 characters '  | ' of the string
-                        lineup_message = lineup_message[:-4]
-                        lineup_message += "\n\n"
-                        message += lineup_message
-                    message += "```"
-                    await ctx.send(message)
+                    cwl_lineup = clash_responder.cwl_lineup(cwl_group)
+
+                    await ctx.send(discord_responder.cwl_lineup(cwl_lineup))
                 else:
                     await ctx.send(f"{player_obj.clan_name} is not in CWL")
             else:

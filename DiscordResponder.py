@@ -336,6 +336,35 @@ def war_all_member_standing(war_obj):
         return return_list
 
 
+# CWL GROUP
+
+def cwl_lineup(cwl_lineup):
+    message = (
+        "```\n"
+        "CWL Group Lineup\n"
+        "14 | 13 | 12 | 11 | 10 | 9  | 8\n"
+        "-------------------------------\n"
+    )
+    for clan_dict in cwl_lineup:
+        lineup_message = f"{clan_dict['clan'].name}\n"
+        for key in clan_dict:
+            if key != 'clan' and key > 6:
+                if key >= 8:
+                    lineup_message += f"{clan_dict[key]}"
+                    # if it is a double digit number
+                    if clan_dict[key] >= 10:
+                        lineup_message += " | "
+                    # if it is a single digit number add an extra space
+                    else:
+                        lineup_message += "  | "
+        # removes the last 4 characters '  | ' of the string
+        lineup_message = lineup_message[:-4]
+        lineup_message += "\n\n"
+        message += lineup_message
+    message += "```"
+    return message
+
+
 # DISCORD
 
 

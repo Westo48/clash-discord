@@ -194,7 +194,7 @@ def get_cwl_group(clan_tag, header):
     return CWLGroup.get(clan_tag, header)
 
 
-def response_cwl_lineup(cwl_group):
+def cwl_lineup(cwl_group):
     if not cwl_group:
         return None
     clan_lineup = []
