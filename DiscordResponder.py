@@ -1,3 +1,4 @@
+import math
 import Clan
 from Player import super_troop_list
 
@@ -363,6 +364,113 @@ def cwl_lineup(cwl_lineup):
         message += lineup_message
     message += "```"
     return message
+
+
+# returns each member's CWL standing
+def cwl_clan_standing(cwl_group, clan_tag, header):
+    class ScoredMember(object):
+        def __init__(self, tag, name, war_count, score):
+            self.tag = tag
+            self.name = name
+            self.war_count = war_count
+            self.score = score
+
+    if not cwl_group:
+        return ['You are not in CWL.']
+
+    # get a list of all CWLWar objects
+    cwl_wars = []
+    for i in range(0, len(cwl_group.rounds)):
+        cwl_war = cwl_group.find_specified_war(clan_tag, i, header)
+        cwl_wars.append(cwl_war)
+    # get a list of all CWLWarMembers their scores
+    cwl_war_members = []
+    # find your clan
+    for clan in cwl_group.clans:
+        if clan.tag == clan_tag:
+            # for each member in the CWLWarClan
+            for member in clan.members:
+                scored_member = ScoredMember(member.tag, member.name, 0, 0)
+                # for each war getting that war score and war count
+                for war in cwl_wars:
+                    for war_member in war.clan.members:
+                        if war_member.tag == member.tag:
+                            scored_member.war_count += 1
+                            scored_member.score += war_member.score
+                            break
+                if scored_member.war_count != 0:
+                    avg_score = scored_member.score / scored_member.war_count
+                    participation_multiplier = math.log(
+                        scored_member.war_count, 7)
+                    scored_member.score = avg_score * participation_multiplier
+                    cwl_war_members.append(scored_member)
+
+    sorted_cwl_war_members = sorted(
+        cwl_war_members, key=lambda member: member.score, reverse=True)
+    return_string_list = []
+    for member in sorted_cwl_war_members:
+        return_string_list.append(
+            f'{member.name} has a score of {round(member.score, 3)}')
+    return return_string_list
+
+
+# returns each specified member's CWL War score
+def cwl_member_standing(player_obj, cwl_group, clan_tag, header):
+    if not cwl_group:
+        return 'You are not in CWL'
+
+    # get a list of all CWLWar objects
+    cwl_wars = []
+    for i in range(0, len(cwl_group.rounds)):
+        cwl_war = cwl_group.find_specified_war(clan_tag, i, header)
+        cwl_wars.append(cwl_war)
+    member_round_scores = []
+    # find your clan
+    found = False
+    for clan in cwl_group.clans:
+        if clan.tag == clan_tag:
+            cwl_group_clan = clan
+            found = True
+            break
+    if not found:
+        return 'Could not find your clan based on the clan tag provided'
+
+    found = False
+    for member in cwl_group_clan.members:
+        if member.tag == player_obj.tag:
+            found = True
+            break
+    if not found:
+        return 'Could not find {player.name} in the CWL group.'
+
+    for war in cwl_wars:
+        for war_member in war.clan.members:
+            if war_member.tag == player_obj.tag:
+                member_round_scores.append(war_member.score)
+                break
+
+    if len(member_round_scores) == 0:
+        return_string = f'{player_obj.name} did not participate in any wars.'
+
+    elif len(member_round_scores) == 1:
+        return_string = f'{player_obj.name} was in 1 war and had a score of {round(member_round_scores[0], 3)} for that war.'
+
+    else:
+        total_score = 0
+        for round_score in member_round_scores:
+            total_score += round_score
+        avg_score = total_score / len(member_round_scores)
+        participation_multiplier = math.log(len(member_round_scores), 7)
+        member_score = avg_score * participation_multiplier
+
+        return_string = f"{player_obj.name} was in {len(member_round_scores)} wars with an overall score of {round(member_score, 3)}. {player_obj.name}'s scores are: "
+        for cwl_round_score in member_round_scores:
+            return_string += f'{round(cwl_round_score, 3)}, '
+        # removes the last 2 characters ', ' of the string
+        return_string = return_string[:-2]
+        return_string += '.'
+
+    return return_string
 
 
 # CWL WAR

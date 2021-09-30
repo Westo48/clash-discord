@@ -1242,7 +1242,7 @@ async def cwlwarallattack(ctx):
 
 @client.command(
     aliases=['cwlscore'],
-    brief='cwlwar',
+    brief='cwlgroup',
     description='Lists each member and their score in CWL',
     hidden=True
 )
@@ -1253,8 +1253,10 @@ async def cwlclanscore(ctx):
             db_player_obj.player_tag, razbot_data.header)
         if player_obj:
             if player_obj.clan_tag:
-                for line in clash_responder.response_cwl_clan_standing(
-                        player_obj.clan_tag, razbot_data.header):
+                cwl_group = clash_responder.get_cwl_group(
+                    player_obj.clan_tag, razbot_data.header)
+                for line in discord_responder.cwl_clan_standing(
+                        cwl_group, player_obj.clan_tag, razbot_data.header):
                     await ctx.send(line)
             else:
                 await ctx.send(f"{player_obj.name} is not in a clan")
@@ -1276,8 +1278,12 @@ async def cwlmemberscore(ctx):
             db_player_obj.player_tag, razbot_data.header)
         if player_obj:
             if player_obj.clan_tag:
-                await ctx.send(clash_responder.response_cwl_member_standing(
-                    player_obj, razbot_data.header))
+                cwl_group = clash_responder.get_cwl_group(
+                    player_obj.clan_tag, razbot_data.header)
+                await ctx.send(discord_responder.cwl_member_standing(
+                    player_obj, cwl_group, player_obj.clan_tag,
+                    razbot_data.header
+                ))
             else:
                 await ctx.send(f"{player_obj.name} is not in a clan")
         else:
@@ -1301,9 +1307,12 @@ async def cwlclanmatescore(ctx):
                 db_player_obj.player_tag, razbot_data.header)
             if player_obj:
                 if player_obj.clan_tag:
-                    await ctx.send(
-                        clash_responder.response_cwl_member_standing(
-                            player_obj, razbot_data.header))
+                    cwl_group = clash_responder.get_cwl_group(
+                        player_obj.clan_tag, razbot_data.header)
+                    await ctx.send(discord_responder.cwl_member_standing(
+                        player_obj, cwl_group, player_obj.clan_tag,
+                        razbot_data.header
+                    ))
                 else:
                     await ctx.send(f"{player_obj.name} is not in a clan")
             else:
