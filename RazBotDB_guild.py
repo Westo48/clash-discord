@@ -87,7 +87,8 @@ def select_guild(guild_id):
     """
     # find the guild based on guild_id
     query = (
-        f"SELECT guild.guild_id, guild.bot_channel, user.discord_id, active, dev "
+        f"SELECT guild.guild_id, user.discord_id as admin_user_id, "
+        f"guild.bot_channel, active, dev "
         f"FROM guild "
         f"INNER JOIN user ON guild.admin_user_id = user.id "
         f"WHERE guild.guild_id = {guild_id};"
