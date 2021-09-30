@@ -187,69 +187,6 @@ def war_no_attack_members(clan_tag, header):
         return []
 
 
-# returns a list of war attack string responses for all war members
-def response_war_all_attacks(clan_tag, header):
-    war = War.get(clan_tag, header)
-    response_list = []
-
-    if war.state == 'preparation':
-        response_list.append(
-            f'{war.clan.name} is still preparaing for war, nobody has attacked.')
-    elif war.state == 'inWar':
-        response_list.append(
-            f'{war.clan.name} is in war with {war.opponent.name} with {war.string_date_time()} left in war. {war.clan.name} is {war.string_scoreboard()}.')
-        response_list.append('____________________')
-        for member in war.clan.members:
-            # no atk response
-            if len(member.attacks) == 0:
-                response_list.append(
-                    f'{member.name} map pos {member.map_position} TH {member.th_lvl} has not attacked.')
-            else:
-                response_list.append(
-                    f'{member.name} map pos {member.map_position} TH {member.th_lvl} has attacked {len(member.attacks)} {member.string_member_attack_times()} for a total of {member.stars} {member.string_member_stars()}')
-                for attack in member.attacks:
-                    defender = war.find_defender(attack.defender_tag)
-
-                    if attack.stars == 0 or attack.stars == 3:
-                        response_list.append(
-                            f' - {attack.stars} {attack.string_attack_stars()} against {defender.name} map pos {defender.map_position} TH {defender.th_lvl}')
-                    else:
-                        response_list.append(
-                            f' - {attack.stars} {attack.string_attack_stars()}, {round(attack.destruction_percent, 2)}% against {defender.name} map pos {defender.map_position} TH {defender.th_lvl}')
-
-            response_list.append('__________')
-
-        del response_list[-1]
-    elif war.state == 'warEnded':
-        response_list.append(
-            f'War against {war.opponent.name} has ended. {war.clan.name} {war.string_scoreboard()}.')
-        response_list.append('____________________')
-        for member in war.clan.members:
-            if len(member.attacks) == 0:
-                response_list.append(
-                    f'{member.name} map pos {member.map_position} TH {member.th_lvl} did not attack.')
-            else:
-
-                response_list.append(
-                    f'{member.name} map pos {member.map_position} TH {member.th_lvl} has attacked {len(member.attacks)} {member.string_member_attack_times()} for a total of {member.stars} {member.string_member_stars()}.')
-                for attack in member.attacks:
-                    defender = war.find_defender(attack.defender_tag)
-
-                    if attack.stars == 0 or attack.stars == 3:
-                        response_list.append(
-                            f' - {attack.stars} {attack.string_attack_stars()} against {defender.name} map pos {defender.map_position} TH {defender.th_lvl}')
-                    else:
-                        response_list.append(
-                            f' - {attack.stars} {attack.string_attack_stars()}, {round(attack.destruction_percent, 2)}% against {defender.name} map pos {defender.map_position} TH {defender.th_lvl}')
-
-            response_list.append('__________')
-        del response_list[-1]
-    else:
-        response_list.append('You are not in war.')
-
-    return response_list
-
-
 def response_war_all_member_standing(clan_tag, header):
     "returns a response list of member scores"
     war = War.get(clan_tag, header)
