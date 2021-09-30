@@ -1714,18 +1714,14 @@ async def claimguild(ctx):
     # getting db user object
     user_obj = db_responder.read_user(ctx.author.id)
     if user_obj:
-        if user_obj.admin or user_obj.super_user:
-            # only for admin or super user use
-            guild_obj = db_responder.claim_guild(ctx.author.id, ctx.guild.id)
-            # if guild wasn't claimed and now is
-            if guild_obj:
-                await ctx.send(f"{ctx.guild.name} is now claimed "
-                               f"by admin user {ctx.author.mention}")
-            # if guild was already claimed
-            else:
-                await ctx.send(f"{ctx.guild.name} has already been claimed")
+        guild_obj = db_responder.claim_guild(ctx.author.id, ctx.guild.id)
+        # if guild wasn't claimed and now is
+        if guild_obj:
+            await ctx.send(f"{ctx.guild.name} is now claimed "
+                           f"by admin user {ctx.author.mention}")
+        # if guild was already claimed
         else:
-            await ctx.send(f"{ctx.author.mention} is not an admin")
+            await ctx.send(f"{ctx.guild.name} has already been claimed")
     else:
         await ctx.send(f"{ctx.author.mention} has not been claimed")
 
