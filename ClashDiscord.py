@@ -1149,8 +1149,9 @@ async def cwlwaroverview(ctx):
             if player_obj.clan_tag:
                 cwl_group = clash_responder.get_cwl_group(
                     player_obj.clan_tag, razbot_data.header)
+                war_obj = cwl_group.find_current_war(player_obj.clan_tag)
                 await ctx.send(discord_responder.cwl_war_overview(
-                    cwl_group, player_obj.clan_tag, razbot_data.header))
+                    war_obj))
             else:
                 await ctx.send(f"{player_obj.name} is not in a clan")
         else:
@@ -1899,7 +1900,7 @@ async def claimclanrole(ctx, clan_tag):
                                     await ctx.send(
                                         f"{role.mention} has been claimed")
                                 else:
-                                    await ctx.send(f"Couldn't claim requested discord role")
+                                    await ctx.send(f"couldn't claim requested discord role")
                         else:
                             await ctx.send(f"{ctx.author.mention} is not guild's admin")
                     else:

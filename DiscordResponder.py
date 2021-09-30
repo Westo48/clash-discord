@@ -366,23 +366,19 @@ def cwl_lineup(cwl_lineup):
 
 
 # returns a string of the current cwl war overview
-def cwl_war_overview(cwl_group, clan_tag, header):
-    if not cwl_group:
-        return 'You are not in CWL'
-
-    war = cwl_group.find_current_war(clan_tag, header)
-    if war.state == 'preparation':
-        time_string = war.string_date_time()
-        return f'{war.clan.name} is preparing for war with {war.opponent.name} with {time_string} left before war starts'
-    elif war.state == 'inWar':
-        time_string = war.string_date_time()
-        scoreboard_string = war.string_scoreboard()
-        return f'{war.clan.name} is in war with {war.opponent.name} with {time_string} left in war. {war.clan.name} is {scoreboard_string}'
-    elif war.state == 'warEnded':
-        scoreboard_string = war.string_scoreboard()
-        return f'War against {war.opponent.name} has ended. You {scoreboard_string}'
+def cwl_war_overview(war_obj):
+    if war_obj.state == 'preparation':
+        time_string = war_obj.string_date_time()
+        return f'{war_obj.clan.name} is preparing for war with {war_obj.opponent.name} with {time_string} left before war starts'
+    elif war_obj.state == 'inWar':
+        time_string = war_obj.string_date_time()
+        scoreboard_string = war_obj.string_scoreboard()
+        return f'{war_obj.clan.name} is in war with {war_obj.opponent.name} with {time_string} left in war, {war_obj.clan.name} is {scoreboard_string}'
+    elif war_obj.state == 'warEnded':
+        scoreboard_string = war_obj.string_scoreboard()
+        return f'war against {war_obj.opponent.name} has ended, {war_obj.clan.name} {scoreboard_string}'
     else:
-        return 'You are not in CWL'
+        return 'you are not in CWL'
 
 
 # DISCORD
