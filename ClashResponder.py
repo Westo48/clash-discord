@@ -269,28 +269,6 @@ def response_cwl_war_no_attack(clan_tag, header):
         return 'You are not in CWL.'
 
 
-# returns a string of the current cwl war overview
-def response_cwl_war_overview(clan_tag, header):
-    group = CWLGroup.get(clan_tag, header)
-
-    if not group:
-        return 'You are not in CWL'
-
-    war = group.find_current_war(clan_tag, header)
-    if war.state == 'preparation':
-        time_string = war.string_date_time()
-        return f'{war.clan.name} is preparing for war with {war.opponent.name} with {time_string} left before war starts'
-    elif war.state == 'inWar':
-        time_string = war.string_date_time()
-        scoreboard_string = war.string_scoreboard()
-        return f'{war.clan.name} is in war with {war.opponent.name} with {time_string} left in war. {war.clan.name} is {scoreboard_string}'
-    elif war.state == 'warEnded':
-        scoreboard_string = war.string_scoreboard()
-        return f'War against {war.opponent.name} has ended. You {scoreboard_string}'
-    else:
-        return 'You are not in CWL'
-
-
 # returns a string of the time remaining in war response
 def response_cwl_war_time(clan_tag, header):
     group = CWLGroup.get(clan_tag, header)

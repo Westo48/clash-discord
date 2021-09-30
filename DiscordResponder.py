@@ -365,6 +365,26 @@ def cwl_lineup(cwl_lineup):
     return message
 
 
+# returns a string of the current cwl war overview
+def cwl_war_overview(cwl_group, clan_tag, header):
+    if not cwl_group:
+        return 'You are not in CWL'
+
+    war = cwl_group.find_current_war(clan_tag, header)
+    if war.state == 'preparation':
+        time_string = war.string_date_time()
+        return f'{war.clan.name} is preparing for war with {war.opponent.name} with {time_string} left before war starts'
+    elif war.state == 'inWar':
+        time_string = war.string_date_time()
+        scoreboard_string = war.string_scoreboard()
+        return f'{war.clan.name} is in war with {war.opponent.name} with {time_string} left in war. {war.clan.name} is {scoreboard_string}'
+    elif war.state == 'warEnded':
+        scoreboard_string = war.string_scoreboard()
+        return f'War against {war.opponent.name} has ended. You {scoreboard_string}'
+    else:
+        return 'You are not in CWL'
+
+
 # DISCORD
 
 
