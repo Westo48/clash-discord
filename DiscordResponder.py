@@ -159,6 +159,17 @@ def war_overview(war_obj):
         return f"you are not in war"
 
 
+def response_war_time(war_obj):
+    if war_obj.state == 'preparation':
+        return f'{war_obj.clan.name} is preparing for war with {war_obj.string_date_time()} left before war starts'
+    elif war_obj.state == 'inWar':
+        return f'{war_obj.clan.name} is in war with {war_obj.string_date_time()} left in war'
+    elif war_obj.state == 'warEnded':
+        return f'The war with {war_obj.opponent.name} has ended'
+    else:
+        return 'You are not in war'
+
+
 # DISCORD
 
 

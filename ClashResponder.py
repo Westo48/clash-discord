@@ -170,18 +170,6 @@ def get_war(clan_tag, header):
     return War.get(clan_tag, header)
 
 
-def response_war_time(clan_tag, header):
-    war = War.get(clan_tag, header)
-    if war.state == 'preparation':
-        return f'{war.clan.name} is preparing for war with {war.string_date_time()} left before war starts.'
-    elif war.state == 'inWar':
-        return f'{war.clan.name} is in war with {war.string_date_time()} left in war.'
-    elif war.state == 'warEnded':
-        return f'The war with {war.opponent.name} has ended.'
-    else:
-        return 'You are not in war.'
-
-
 # todo if nobody has attacked logic
 # returns a string of the war no attack response
 def response_war_no_attack(clan_tag, header):
