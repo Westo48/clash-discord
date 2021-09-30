@@ -1032,9 +1032,11 @@ async def waroverview(ctx):
             db_player_obj.player_tag, razbot_data.header)
         if player_obj:
             if player_obj.clan_tag:
-                war_obj = clash_responder.get_war(
-                    player_obj.clan_tag, razbot_data.header)
-                await ctx.send(discord_responder.war_overview(war_obj))
+                async with ctx.typing():
+                    war_obj = clash_responder.get_war(
+                        player_obj.clan_tag, razbot_data.header)
+                    war_message = discord_responder.war_overview(war_obj)
+                await ctx.send(war_message)
             else:
                 await ctx.send(f"{player_obj.name} is not in a clan")
         else:
