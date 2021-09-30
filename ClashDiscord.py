@@ -1570,10 +1570,10 @@ async def claimplayer(ctx, player_tag, *, api_key):
                                f"has already been claimed")
             else:
                 # verified and not claimed
-                player_obj = db_responder.claim_player(
+                db_player_obj = db_responder.claim_player(
                     ctx.author.id, player_obj.tag)
 
-                if player_obj:
+                if db_player_obj:
                     # if succesfully claimed
                     await ctx.send(f"{player_obj.name} {player_obj.tag} "
                                    f"is now claimed by {ctx.author.mention}")
