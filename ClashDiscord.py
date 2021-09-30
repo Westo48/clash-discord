@@ -791,7 +791,7 @@ async def clan(ctx, *, clan_tag):
     brief='clan',
     description="Get information about your active player's clan"
 )
-async def showclan(ctx):
+async def showplayerclan(ctx):
     db_user_obj = db_responder.read_user(ctx.author.id)
     if not db_user_obj:
         # if user is not found
