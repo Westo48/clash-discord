@@ -1225,8 +1225,11 @@ async def cwlwarallattack(ctx):
             db_player_obj.player_tag, razbot_data.header)
         if player_obj:
             if player_obj.clan_tag:
-                for line in clash_responder.response_cwl_war_all_attacks(
-                        player_obj.clan_tag, razbot_data.header):
+                cwl_group = clash_responder.get_cwl_group(
+                    player_obj.clan_tag, razbot_data.header)
+                war_obj = cwl_group.find_current_war(player_obj.clan_tag)
+                for line in discord_responder.cwl_war_all_attacks(
+                        war_obj):
                     await ctx.send(line)
             else:
                 await ctx.send(f"{player_obj.name} is not in a clan")

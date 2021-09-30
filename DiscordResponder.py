@@ -436,6 +436,65 @@ def cwl_war_no_attack(war_obj):
         return 'you are not in CWL'
 
 
+# returns a list of cwl war attack string responses for all war members
+def cwl_war_all_attacks(war_obj):
+    response_list = []
+    if war_obj.state == 'preparation':
+        response_list.append(
+            f'{war_obj.clan.name} is still preparaing for war, nobody has attacked')
+    elif war_obj.state == 'inWar':
+        response_list.append(
+            f'{war_obj.clan.name} is in war with {war_obj.opponent.name} with {war_obj.string_date_time()} left in war, {war_obj.clan.name} is {war_obj.string_scoreboard()}')
+        response_list.append('____________________')
+        for member in war_obj.clan.members:
+            if len(member.attacks) == 0:
+                response_list.append(
+                    f'{member.name} map pos {member.map_position} TH {member.th_lvl} has not attacked')
+            else:
+
+                response_list.append(
+                    f'{member.name} map pos {member.map_position} TH {member.th_lvl} has attacked {len(member.attacks)} {member.string_member_attack_times()} for a total of {member.stars} {member.string_member_stars()}')
+                for attack in member.attacks:
+                    defender = war_obj.find_defender(attack.defender_tag)
+
+                    if attack.stars == 0 or attack.stars == 3:
+                        response_list.append(
+                            f' - {attack.stars} {attack.string_attack_stars()} against {defender.name} map pos {defender.map_position} TH {defender.th_lvl}')
+                    else:
+                        response_list.append(
+                            f' - {attack.stars} {attack.string_attack_stars()}, {round(attack.destruction_percent, 2)}% against {defender.name} map pos {defender.map_position} TH {defender.th_lvl}')
+
+            response_list.append('__________')
+        del response_list[-1]
+    elif war_obj.stat == 'warEnded':
+        response_list.append(
+            f'war against {war_obj.opponent.name} has ended, {war_obj.clan.name} {war_obj.string_scoreboard()}')
+        response_list.append('____________________')
+        for member in war_obj.clan.members:
+            if len(member.attacks) == 0:
+                response_list.append(
+                    f'{member.name} map pos {member.map_position} TH {member.th_lvl} did not attack')
+            else:
+
+                response_list.append(
+                    f'{member.name} map pos {member.map_position} TH {member.th_lvl} has attacked {len(member.attacks)} {member.string_member_attack_times()} for a total of {member.stars} {member.string_member_stars()}')
+                for attack in member.attacks:
+                    defender = war_obj.find_defender(attack.defender_tag)
+
+                    if attack.stars == 0 or attack.stars == 3:
+                        response_list.append(
+                            f' - {attack.stars} {attack.string_attack_stars()} against {defender.name} map pos {defender.map_position} TH {defender.th}')
+                    else:
+                        response_list.append(
+                            f' - {attack.stars} {attack.string_attack_stars()}, {round(attack.destruction_percent, 2)}% against {defender.name} map pos {defender.map_position} TH {defender.th}')
+
+            response_list.append('__________')
+        del response_list[-1]
+    else:
+        response_list.append('you are not in CWL')
+    return response_list
+
+
 # DISCORD
 
 
