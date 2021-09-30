@@ -317,6 +317,25 @@ def war_all_attacks(war_obj):
     return response_list
 
 
+def war_all_member_standing(war_obj):
+    "returns a response list of member scores"
+    return_list = []
+    if war_obj.state == 'preparation':
+        return_list.append('war has not started, there is no score')
+        return return_list
+    elif war_obj.state == 'notInWar':
+        return_list.append('you are not in war')
+        return return_list
+    else:
+        war_members = sorted(
+            war_obj.clan.members, key=lambda member: member.score, reverse=True)
+        # razgriz has a score of
+        for member in war_members:
+            return_list.append(
+                f'{member.name} has a score of {round(member.score, 3)}')
+        return return_list
+
+
 # DISCORD
 
 

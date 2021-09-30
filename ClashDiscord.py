@@ -1083,8 +1083,10 @@ async def warclanscore(ctx):
             db_player_obj.player_tag, razbot_data.header)
         if player_obj:
             if player_obj.clan_tag:
-                for line in clash_responder.response_war_all_member_standing(
-                        player_obj.clan_tag, razbot_data.header):
+                war_obj = clash_responder.get_war(
+                    player_obj.clan_tag, razbot_data.header)
+                for line in discord_responder.war_all_member_standing(
+                        war_obj):
                     await ctx.send(f'{line}')
             else:
                 await ctx.send(f"{player_obj.name} is not in a clan")

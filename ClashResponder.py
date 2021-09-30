@@ -187,26 +187,6 @@ def war_no_attack_members(clan_tag, header):
         return []
 
 
-def response_war_all_member_standing(clan_tag, header):
-    "returns a response list of member scores"
-    war = War.get(clan_tag, header)
-    return_list = []
-    if war.state == 'preparation':
-        return_list.append('War has not started, there is no score.')
-        return return_list
-    elif war.state == 'notInWar':
-        return_list.append('You are not in war.')
-        return return_list
-    else:
-        war_members = sorted(
-            war.clan.members, key=lambda member: member.score, reverse=True)
-        # razgriz has a score of
-        for member in war_members:
-            return_list.append(
-                f'{member.name} has a score of {round(member.score, 3)}')
-        return return_list
-
-
 # todo update all for if not in CWL logic
 # CWL Group
 
