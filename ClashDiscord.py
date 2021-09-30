@@ -704,7 +704,7 @@ async def alltrooplvl(ctx):
 
 
 @client.command(
-    aliases=['supertroop', 'supertroops'],
+    aliases=['activesupertroops', 'supertroop', 'supertroops'],
     brief='player',
     description='Check to see what super troops you have active.'
 )
