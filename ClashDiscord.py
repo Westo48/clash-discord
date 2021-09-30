@@ -4,7 +4,7 @@ from discord.ext import commands
 from discord.utils import get
 import RazBot_Data
 import ClashResponder as clash_responder
-from DiscordResponder import *
+import DiscordResponder as discord_responder
 import RazBotDB_Responder as db_responder
 
 razbot_data = RazBot_Data.RazBot_Data()
@@ -33,7 +33,7 @@ async def on_ready():
     description='Returns the help text you see before you'
 )
 async def help(ctx):
-    is_leader = role_check('leader', ctx.author.roles)
+    is_leader = discord_responder.role_check('leader', ctx.author.roles)
 
     embed = discord.Embed(
         colour=discord.Colour.blue()
@@ -667,14 +667,15 @@ async def showmemberplayer(ctx):
     brief='player',
     description='Enter unit to see its current, th max, and max level.'
 )
-async def trooplvl(ctx, *, troop_name):
+async def trooplvl(ctx, *, unit_name):
     db_player_obj = db_responder.read_player_active(ctx.author.id)
     if db_player_obj:
         player_obj = clash_responder.get_player(
             db_player_obj.player_tag, razbot_data.header)
         if player_obj:
-            await ctx.send(clash_responder.response_troop_lvl(
-                player_obj, troop_name, razbot_data.header))
+            unit_obj = clash_responder.find_unit(player_obj, unit_name)
+            await ctx.send(discord_responder.unit_lvl(
+                player_obj, unit_obj, unit_name))
         else:
             await ctx.send(f"Couldn't find player from tag "
                            f"{db_player_obj.player_tag}")
@@ -693,7 +694,7 @@ async def alltrooplvl(ctx):
         player_obj = clash_responder.get_player(
             db_player_obj.player_tag, razbot_data.header)
         if player_obj:
-            for line in clash_responder.response_all_troop_level(player_obj):
+            for line in discord_responder.unit_lvl_all(player_obj):
                 await ctx.send(line)
         else:
             await ctx.send(f"Couldn't find player from tag "
@@ -703,7 +704,7 @@ async def alltrooplvl(ctx):
 
 
 @client.command(
-    aliases=['supertroop', 'supertroops'],
+    aliases=['activesupertroops', 'supertroop', 'supertroops'],
     brief='player',
     description='Check to see what super troops you have active.'
 )
@@ -713,13 +714,15 @@ async def activesupertroop(ctx):
         player_obj = clash_responder.get_player(
             db_player_obj.player_tag, razbot_data.header)
         if player_obj:
-            await ctx.send(
-                clash_responder.response_active_super_troops(player_obj, razbot_data.header))
+            active_super_troops = player_obj.find_active_super_troops()
+            await ctx.send(discord_responder.active_super_troops(
+                player_obj, active_super_troops))
         else:
             await ctx.send(f"Couldn't find player from tag "
                            f"{db_player_obj.player_tag}")
     else:
-        await ctx.send(f"{ctx.author.mention} does not have an active player")
+        await ctx.send(f"{ctx.author.mention} "
+                       f"does not have an active player")
 
 
 # Clan
@@ -730,7 +733,7 @@ async def activesupertroop(ctx):
     description="Enter a clan's tag and get a clan's information"
 )
 async def clan(ctx, *, clan_tag):
-    clan_obj = Clan.get(clan_tag, razbot_data.header)
+    clan_obj = clash_responder.get_clan(clan_tag, razbot_data.header)
 
     if clan_obj:
         embed = discord.Embed(
@@ -814,7 +817,8 @@ async def showclan(ctx):
         await ctx.send(f"{player_obj.name} {player_obj.tag} is not in a clan")
         return
 
-    clan_obj = Clan.get(player_obj.clan_tag, razbot_data.header)
+    clan_obj = clash_responder.get_clan(
+        player_obj.clan_tag, razbot_data.header)
 
     if clan_obj:
         embed = discord.Embed(
@@ -867,56 +871,26 @@ async def showclan(ctx):
 
 
 @client.command(
-    aliases=['donation', 'donate'],
+    aliases=['donate'],
     brief='clan',
     description='Enter a troop name to see who in the clan '
                 'is best suited to donate that troop.'
 )
-async def donationchecker(ctx, *, unit_name):
+async def donation(ctx, *, unit_name):
     db_player_obj = db_responder.read_player_active(ctx.author.id)
     if db_player_obj:
         player_obj = clash_responder.get_player(
             db_player_obj.player_tag, razbot_data.header)
         if player_obj:
             if player_obj.clan_tag:
-                clan_obj = Clan.get(player_obj.clan_tag, razbot_data.header)
+                clan_obj = clash_responder.get_clan(
+                    player_obj.clan_tag, razbot_data.header)
                 if clan_obj:
-                    donators = clash_responder.response_donation(
+                    donator_list = clash_responder.donation(
                         unit_name, clan_obj, razbot_data.header)
 
-                    # if the requested unit is not a hero
-                    if donators:
-                        member_string = ''
-
-                        # setting the string of members that can donate
-                        for donator in donators:
-                            member_string += f'{donator.player.name}, '
-
-                        # cuts the last two characters from the string ', '
-                        member_string = member_string[:-2]
-
-                        # if donators can donate max
-                        if ((donators[0].unit.lvl + clan_obj.donation_upgrade) >=
-                                donators[0].unit.max_lvl):
-                            message = (
-                                f'{member_string} can donate level '
-                                f'{donators[0].unit.max_lvl} {donators[0].unit.name}, '
-                                f'which is max.'
-                            )
-                        # if donators cannot donate max
-                        else:
-                            message = (
-                                f'{member_string} can donate level'
-                                f'{donators[0].unit.lvl + clan_obj.donation_upgrade} '
-                                f'{donators[0].unit.name}, max is '
-                                f'{donators[0].unit.max_lvl}'
-                            )
-
-                    # if the requested unit is a hero
-                    else:
-                        message = f'{unit_name} is not a valid donatable unit.'
-
-                    await ctx.send(message)
+                    await ctx.send(discord_responder.donation(
+                        clan_obj, donator_list, unit_name))
                 else:
                     await ctx.send(f"Couldn't find clan from tag "
                                    f"{player_obj.clan_tag}")
@@ -941,30 +915,17 @@ async def supertroopsearch(ctx, *, unit_name):
             db_player_obj.player_tag, razbot_data.header)
         if player_obj:
             if player_obj.clan_tag:
-                clan_obj = Clan.get(player_obj.clan_tag, razbot_data.header)
+                clan_obj = clash_responder.get_clan(
+                    player_obj.clan_tag, razbot_data.header)
                 if clan_obj:
                     # checking to make sure the given unit_name is viable
-                    unit_name = clash_responder.super_troop_unit_viable(
+                    super_troop_name = clash_responder.super_troop_unit_name(
                         unit_name)
-                    if unit_name:
+                    if super_troop_name:
                         donor_list = clash_responder.active_super_troop_search(
-                            unit_name, clan_obj, razbot_data.header)
-                        if len(donor_list) == 0:
-                            await ctx.send(f"Nobody in {clan_obj.name} "
-                                           f"has {unit_name} activated.")
-                        else:
-                            message_string = ""
-                            for member in donor_list:
-                                message_string += f"{member.name}, "
-
-                            # cuts the last two characters from the string ', '
-                            message_string = message_string[:-2]
-                            if len(donor_list) == 1:
-                                message_string += f" has {unit_name} activated"
-                            else:
-                                message_string += f" have {unit_name} activated."
-
-                            await ctx.send(message_string)
+                            super_troop_name, clan_obj, razbot_data.header)
+                        await ctx.send(discord_responder.super_troop_search(
+                            clan_obj, donor_list, super_troop_name))
                     else:
                         await ctx.send(f"{unit_name} is not a viable request")
                 else:
@@ -994,9 +955,9 @@ async def waroverview(ctx):
             db_player_obj.player_tag, razbot_data.header)
         if player_obj:
             if player_obj.clan_tag:
-                await ctx.send(
-                    clash_responder.response_war_overview(
-                        player_obj.clan_tag, razbot_data.header))
+                war_obj = clash_responder.get_war(
+                    player_obj.clan_tag, razbot_data.header)
+                await ctx.send(discord_responder.war_overview(war_obj))
             else:
                 await ctx.send(f"{player_obj.name} is not in a clan")
         else:
@@ -1016,8 +977,10 @@ async def wartime(ctx):
             db_player_obj.player_tag, razbot_data.header)
         if player_obj:
             if player_obj.clan_tag:
-                await ctx.send(clash_responder.response_war_time(
-                    player_obj.clan_tag, razbot_data.header))
+                war_obj = clash_responder.get_war(
+                    player_obj.clan_tag, razbot_data.header)
+                await ctx.send(discord_responder.response_war_time(
+                    war_obj))
             else:
                 await ctx.send(f"{player_obj.name} is not in a clan")
         else:
@@ -1040,48 +1003,10 @@ async def warnoattack(ctx):
             db_player_obj.player_tag, razbot_data.header)
         if player_obj:
             if player_obj.clan_tag:
-                await ctx.send(clash_responder.response_war_no_attack(
-                    player_obj.clan_tag, razbot_data.header))
-            else:
-                await ctx.send(f"{player_obj.name} is not in a clan")
-        else:
-            await ctx.send(f"Couldn't find player from tag "
-                           f"{db_player_obj.player_tag}")
-    else:
-        await ctx.send(f"{ctx.author.mention} does not have an active player")
-
-
-@client.command(
-    aliases=['warnoatkalert'],
-    brief='war',
-    description='Returns a list of players that '
-                'have/did not use all possible attacks '
-                'and mentions them if found',
-    hidden=True
-)
-async def warnoattackalert(ctx):
-    db_player_obj = db_responder.read_player_active(ctx.author.id)
-    if db_player_obj:
-        player_obj = clash_responder.get_player(
-            db_player_obj.player_tag, razbot_data.header)
-        if player_obj:
-            if player_obj.clan_tag:
-                no_atk_list = clash_responder.war_no_attack_members(
+                war_obj = clash_responder.get_war(
                     player_obj.clan_tag, razbot_data.header)
-                if len(no_atk_list) == 0:
-                    await ctx.send('Nobody needs to attack.')
-                else:
-                    message = ''
-                    for player in no_atk_list:
-                        member = find_channel_member(
-                            player.name, ctx.channel.members)
-                        if member != '':
-                            message += f'{member.mention}, '
-                        else:
-                            message += f'{player.name}, '
-                    message = message[:-2]
-                    message += ' needs to attack.'
-                    await ctx.send(message)
+                await ctx.send(discord_responder.response_war_no_attack(
+                    war_obj))
             else:
                 await ctx.send(f"{player_obj.name} is not in a clan")
         else:
@@ -1104,8 +1029,10 @@ async def warclanstars(ctx):
             db_player_obj.player_tag, razbot_data.header)
         if player_obj:
             if player_obj.clan_tag:
-                for line in clash_responder.response_war_members_overview(
-                        player_obj.clan_tag, razbot_data.header):
+                war_obj = clash_responder.get_war(
+                    player_obj.clan_tag, razbot_data.header)
+                for line in discord_responder.war_members_overview(
+                        war_obj):
                     await ctx.send(line)
             else:
                 await ctx.send(f"{player_obj.name} is not in a clan")
@@ -1129,8 +1056,10 @@ async def warallattacks(ctx):
             db_player_obj.player_tag, razbot_data.header)
         if player_obj:
             if player_obj.clan_tag:
-                for line in clash_responder.response_war_all_attacks(
-                        player_obj.clan_tag, razbot_data.header):
+                war_obj = clash_responder.get_war(
+                    player_obj.clan_tag, razbot_data.header)
+                for line in discord_responder.war_all_attacks(
+                        war_obj):
                     await ctx.send(f'{line}')
             else:
                 await ctx.send(f"{player_obj.name} is not in a clan")
@@ -1154,8 +1083,10 @@ async def warclanscore(ctx):
             db_player_obj.player_tag, razbot_data.header)
         if player_obj:
             if player_obj.clan_tag:
-                for line in clash_responder.response_war_all_member_standing(
-                        player_obj.clan_tag, razbot_data.header):
+                war_obj = clash_responder.get_war(
+                    player_obj.clan_tag, razbot_data.header)
+                for line in discord_responder.war_all_member_standing(
+                        war_obj):
                     await ctx.send(f'{line}')
             else:
                 await ctx.send(f"{player_obj.name} is not in a clan")
@@ -1187,31 +1118,9 @@ async def cwllineup(ctx):
                     player_obj.clan_tag, razbot_data.header)
 
                 if cwl_group:
-                    cwl_lineup = clash_responder.response_cwl_lineup(cwl_group)
-                    message = (
-                        "```\n"
-                        "CWL Group Lineup\n"
-                        "14 | 13 | 12 | 11 | 10 | 9  | 8\n"
-                        "-------------------------------\n"
-                    )
-                    for clan_dict in cwl_lineup:
-                        lineup_message = f"{clan_dict['clan'].name}\n"
-                        for key in clan_dict:
-                            if key != 'clan' and key > 6:
-                                if key >= 8:
-                                    lineup_message += f"{clan_dict[key]}"
-                                    # if it is a double digit number
-                                    if clan_dict[key] >= 10:
-                                        lineup_message += " | "
-                                    # if it is a single digit number add an extra space
-                                    else:
-                                        lineup_message += "  | "
-                        # removes the last 4 characters '  | ' of the string
-                        lineup_message = lineup_message[:-4]
-                        lineup_message += "\n\n"
-                        message += lineup_message
-                    message += "```"
-                    await ctx.send(message)
+                    cwl_lineup = clash_responder.cwl_lineup(cwl_group)
+
+                    await ctx.send(discord_responder.cwl_lineup(cwl_lineup))
                 else:
                     await ctx.send(f"{player_obj.clan_name} is not in CWL")
             else:
@@ -1238,8 +1147,14 @@ async def cwlwaroverview(ctx):
             db_player_obj.player_tag, razbot_data.header)
         if player_obj:
             if player_obj.clan_tag:
-                await ctx.send(clash_responder.response_cwl_war_overview(
-                    player_obj.clan_tag, razbot_data.header))
+                cwl_group = clash_responder.get_cwl_group(
+                    player_obj.clan_tag, razbot_data.header)
+                if cwl_group:
+                    war_obj = cwl_group.find_current_war(player_obj.clan_tag)
+                    await ctx.send(discord_responder.cwl_war_overview(
+                        war_obj))
+                else:
+                    await ctx.send(f"{player_obj.clan_name} is not in CWL")
             else:
                 await ctx.send(f"{player_obj.name} is not in a clan")
         else:
@@ -1260,8 +1175,13 @@ async def cwlwartime(ctx):
             db_player_obj.player_tag, razbot_data.header)
         if player_obj:
             if player_obj.clan_tag:
-                await ctx.send(clash_responder.response_cwl_war_time(
-                    player_obj.clan_tag, razbot_data.header))
+                cwl_group = clash_responder.get_cwl_group(
+                    player_obj.clan_tag, razbot_data.header)
+                if cwl_group:
+                    war_obj = cwl_group.find_current_war(player_obj.clan_tag)
+                    await ctx.send(discord_responder.cwl_war_time(war_obj))
+                else:
+                    await ctx.send(f"{player_obj.clan_name} is not in CWL")
             else:
                 await ctx.send(f"{player_obj.name} is not in a clan")
         else:
@@ -1284,8 +1204,14 @@ async def cwlwarnoattack(ctx):
             db_player_obj.player_tag, razbot_data.header)
         if player_obj:
             if player_obj.clan_tag:
-                await ctx.send(clash_responder.response_cwl_war_no_attack(
-                    player_obj.clan_tag, razbot_data.header))
+                cwl_group = clash_responder.get_cwl_group(
+                    player_obj.clan_tag, razbot_data.header)
+                if cwl_group:
+                    war_obj = cwl_group.find_current_war(player_obj.clan_tag)
+                    await ctx.send(discord_responder.cwl_war_no_attack(
+                        war_obj))
+                else:
+                    await ctx.send(f"{player_obj.clan_name} is not in CWL")
             else:
                 await ctx.send(f"{player_obj.name} is not in a clan")
         else:
@@ -1308,9 +1234,15 @@ async def cwlwarallattack(ctx):
             db_player_obj.player_tag, razbot_data.header)
         if player_obj:
             if player_obj.clan_tag:
-                for line in clash_responder.response_cwl_war_all_attacks(
-                        player_obj.clan_tag, razbot_data.header):
-                    await ctx.send(line)
+                cwl_group = clash_responder.get_cwl_group(
+                    player_obj.clan_tag, razbot_data.header)
+                if cwl_group:
+                    war_obj = cwl_group.find_current_war(player_obj.clan_tag)
+                    for line in discord_responder.cwl_war_all_attacks(
+                            war_obj):
+                        await ctx.send(line)
+                else:
+                    await ctx.send(f"{player_obj.clan_name} is not in CWL")
             else:
                 await ctx.send(f"{player_obj.name} is not in a clan")
         else:
@@ -1322,7 +1254,7 @@ async def cwlwarallattack(ctx):
 
 @client.command(
     aliases=['cwlscore'],
-    brief='cwlwar',
+    brief='cwlgroup',
     description='Lists each member and their score in CWL',
     hidden=True
 )
@@ -1333,9 +1265,14 @@ async def cwlclanscore(ctx):
             db_player_obj.player_tag, razbot_data.header)
         if player_obj:
             if player_obj.clan_tag:
-                for line in clash_responder.response_cwl_clan_standing(
-                        player_obj.clan_tag, razbot_data.header):
-                    await ctx.send(line)
+                cwl_group = clash_responder.get_cwl_group(
+                    player_obj.clan_tag, razbot_data.header)
+                if cwl_group:
+                    for line in discord_responder.cwl_clan_standing(
+                            cwl_group, player_obj.clan_tag, razbot_data.header):
+                        await ctx.send(line)
+                else:
+                    await ctx.send(f"{player_obj.clan_name} is not in CWL")
             else:
                 await ctx.send(f"{player_obj.name} is not in a clan")
         else:
@@ -1356,8 +1293,15 @@ async def cwlmemberscore(ctx):
             db_player_obj.player_tag, razbot_data.header)
         if player_obj:
             if player_obj.clan_tag:
-                await ctx.send(clash_responder.response_cwl_member_standing(
-                    player_obj, razbot_data.header))
+                cwl_group = clash_responder.get_cwl_group(
+                    player_obj.clan_tag, razbot_data.header)
+                if cwl_group:
+                    await ctx.send(discord_responder.cwl_member_standing(
+                        player_obj, cwl_group, player_obj.clan_tag,
+                        razbot_data.header
+                    ))
+                else:
+                    await ctx.send(f"{player_obj.clan_name} is not in CWL")
             else:
                 await ctx.send(f"{player_obj.name} is not in a clan")
         else:
@@ -1381,9 +1325,15 @@ async def cwlclanmatescore(ctx):
                 db_player_obj.player_tag, razbot_data.header)
             if player_obj:
                 if player_obj.clan_tag:
-                    await ctx.send(
-                        clash_responder.response_cwl_member_standing(
-                            player_obj, razbot_data.header))
+                    cwl_group = clash_responder.get_cwl_group(
+                        player_obj.clan_tag, razbot_data.header)
+                    if cwl_group:
+                        await ctx.send(discord_responder.cwl_member_standing(
+                            player_obj, cwl_group, player_obj.clan_tag,
+                            razbot_data.header
+                        ))
+                    else:
+                        await ctx.send(f"{player_obj.clan_name} is not in CWL")
                 else:
                     await ctx.send(f"{player_obj.name} is not in a clan")
             else:
@@ -1407,7 +1357,7 @@ async def cwlclanmatescore(ctx):
 async def mentionrazgriz(ctx):
     found = False
     for member in ctx.channel.members:
-        if player_name_string(member.display_name) == 'Razgriz':
+        if discord_responder.player_name_string(member.display_name) == 'Razgriz':
             mention = member.mention
             await ctx.send(f'Hello {mention}')
             found = True
@@ -1512,7 +1462,7 @@ async def role(ctx):
     for current_role in current_db_role_list:
         current_role_list.append(current_role.discord_role_id)
 
-    add_role_id_list, remove_role_id_list = role_add_remove_list(
+    add_role_id_list, remove_role_id_list = discord_responder.role_add_remove_list(
         needed_role_list, current_role_list)
 
     # get objects of roles to add from id's
@@ -1609,10 +1559,10 @@ async def claimplayer(ctx, player_tag, *, api_key):
                                f"has already been claimed")
             else:
                 # verified and not claimed
-                player_obj = db_responder.claim_player(
+                db_player_obj = db_responder.claim_player(
                     ctx.author.id, player_obj.tag)
 
-                if player_obj:
+                if db_player_obj:
                     # if succesfully claimed
                     await ctx.send(f"{player_obj.name} {player_obj.tag} "
                                    f"is now claimed by {ctx.author.mention}")
@@ -1789,18 +1739,14 @@ async def claimguild(ctx):
     # getting db user object
     user_obj = db_responder.read_user(ctx.author.id)
     if user_obj:
-        if user_obj.admin or user_obj.super_user:
-            # only for admin or super user use
-            guild_obj = db_responder.claim_guild(ctx.author.id, ctx.guild.id)
-            # if guild wasn't claimed and now is
-            if guild_obj:
-                await ctx.send(f"{ctx.guild.name} is now claimed "
-                               f"by admin user {ctx.author.mention}")
-            # if guild was already claimed
-            else:
-                await ctx.send(f"{ctx.guild.name} has already been claimed")
+        guild_obj = db_responder.claim_guild(ctx.author.id, ctx.guild.id)
+        # if guild wasn't claimed and now is
+        if guild_obj:
+            await ctx.send(f"{ctx.guild.name} is now claimed "
+                           f"by admin user {ctx.author.mention}")
+        # if guild was already claimed
         else:
-            await ctx.send(f"{ctx.author.mention} is not an admin")
+            await ctx.send(f"{ctx.guild.name} has already been claimed")
     else:
         await ctx.send(f"{ctx.author.mention} has not been claimed")
 
@@ -1992,7 +1938,7 @@ async def claimclanrole(ctx, clan_tag):
                                     await ctx.send(
                                         f"{role.mention} has been claimed")
                                 else:
-                                    await ctx.send(f"Couldn't claim requested discord role")
+                                    await ctx.send(f"couldn't claim requested discord role")
                         else:
                             await ctx.send(f"{ctx.author.mention} is not guild's admin")
                     else:
@@ -2188,6 +2134,10 @@ async def on_command_error(ctx, error):
     elif isinstance(error, commands.MissingRequiredArgument):
         await ctx.send(f"command '{ctx.invoked_with}' "
                        f"requires more information")
+    elif hasattr(error.original, "text"):
+        await ctx.send(f"there was an error that I have not accounted for, "
+                       f"please let Razgriz know, "
+                       f"error text: `{error.original.text}`")
     else:
         await ctx.send(f"there was an error that I have not accounted for, "
                        f"please let Razgriz know")

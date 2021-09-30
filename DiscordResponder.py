@@ -1,5 +1,609 @@
+import math
 import Clan
 from Player import super_troop_list
+
+
+# PLAYER
+
+def unit_lvl(player_obj, unit_obj, unit_name):
+    if not unit_obj:
+        # unit not found response
+        return (
+            f"could not find {unit_name}, "
+            f"you either do not have it unlocked or "
+            f"it is misspelled."
+        )
+
+    if unit_obj.lvl == unit_obj.max_lvl:
+        # unit is max lvl
+        return (
+            f"{player_obj.name} has lvl {unit_obj.lvl} {unit_obj.name}, "
+            f"which is max."
+        )
+    elif unit_obj.lvl == unit_obj.th_max:
+        # unit is max for th, but not total max
+        return (
+            f"{player_obj.name} has lvl {unit_obj.lvl} {unit_obj.name}, "
+            f"which is max for TH {player_obj.th_lvl}, "
+            f"max {unit_obj.name} is {unit_obj.max_lvl}."
+        )
+    else:
+        # unit is not max for th nor is it total max
+        return (
+            f"{player_obj.name} has lvl {unit_obj.lvl} {unit_obj.name}, "
+            f"max for TH {player_obj.th_lvl} is {unit_obj.th_max}, "
+            f"max {unit_obj.name} is {unit_obj.max_lvl}."
+        )
+
+
+# ? discontinue this function
+def unit_lvl_all(player_obj):
+    response_list = []
+    response_list.append(f'{player_obj.name} units:')
+    for hero_obj in player_obj.heroes:
+        if hero_obj.village == 'home':
+            response_list.append(unit_lvl(
+                player_obj, hero_obj, hero_obj.name))
+            response_list.append('__________')
+    for troop_obj in player_obj.troops:
+        if troop_obj.village == 'home':
+            response_list.append(unit_lvl(
+                player_obj, troop_obj, troop_obj.name))
+            response_list.append('__________')
+    for spell_obj in player_obj.spells:
+        if spell_obj.village == 'home':
+            response_list.append(unit_lvl(
+                player_obj, spell_obj, spell_obj.name))
+            response_list.append('__________')
+    # removing trailing '__________'
+    del response_list[-1]
+    return response_list
+
+
+def active_super_troops(player_obj, active_super_troops):
+    if len(active_super_troops) == 0:
+        return f"{player_obj.name} does not have any active super troops."
+    else:
+        super_troop_string = ''
+        for super_troop in active_super_troops:
+            super_troop_string += f'{super_troop.name} and '
+
+        # cuts the last 5 characters ' and ' from the string
+        super_troop_string = super_troop_string[:-5]
+
+        return f"{player_obj.name} has {super_troop_string} currently active."
+
+
+# CLAN
+
+def donation(clan_obj, donator_list, unit_name):
+    if not donator_list:
+        # unit is a hero
+        return f"{unit_name} is not a valid donatable unit."
+    if len(donator_list) == 0:
+        # nobody can donate unit
+        return f"nobody in {clan_obj.name} can donate {unit_name}"
+
+    member_string = ""
+    # setting the string of members that can donate
+    for donator in donator_list:
+        member_string += f"{donator.player.name}, "
+
+    # cuts the last two characters from the string ", "
+    member_string = member_string[:-2]
+
+    # if donators can donate max
+    if ((donator_list[0].unit.lvl + clan_obj.donation_upgrade) >=
+            donator_list[0].unit.max_lvl):
+        return (
+            f"{member_string} can donate level "
+            f"{donator_list[0].unit.max_lvl} {donator_list[0].unit.name}, "
+            f"which is max."
+        )
+    # if donators cannot donate max
+    else:
+        return (
+            f"{member_string} can donate level"
+            f"{donator_list[0].unit.lvl + clan_obj.donation_upgrade} "
+            f"{donator_list[0].unit.name}, max is "
+            f"{donator_list[0].unit.max_lvl}"
+        )
+
+
+def super_troop_search(clan_obj, donor_list, unit_name):
+    if len(donor_list) == 0:
+        return (f"Nobody in {clan_obj.name} "
+                f"has {unit_name} activated.")
+
+    message_string = ""
+    for member in donor_list:
+        message_string += f"{member.name}, "
+
+    # cuts the last two characters from the string ', '
+    message_string = message_string[:-2]
+    if len(donor_list) == 1:
+        message_string += f" has {unit_name} activated"
+    else:
+        message_string += f" have {unit_name} activated."
+
+    return message_string
+
+
+# WAR
+
+# returns a string of the war overview
+def war_overview(war_obj):
+    if war_obj.state == "preparation":
+        time_string = war_obj.string_date_time()
+
+        return (
+            f"{war_obj.clan.name} is preparing for war with "
+            f"{war_obj.opponent.name} with {time_string} "
+            f"left before war starts"
+        )
+    elif war_obj.state == "inWar":
+        time_string = war_obj.string_date_time()
+        scoreboard_string = war_obj.string_scoreboard()
+
+        return (
+            f"{war_obj.clan.name} is in war with {war_obj.opponent.name} "
+            f"with {time_string} left in war, "
+            f"{war_obj.clan.name} is {scoreboard_string}"
+        )
+    elif war_obj.state == "warEnded":
+        scoreboard_string = war_obj.string_scoreboard()
+        return (
+            f"war against {war_obj.opponent.name} has ended, "
+            f"{war_obj.clan.name} {scoreboard_string}"
+        )
+    else:
+        return f"you are not in war"
+
+
+def response_war_time(war_obj):
+    if war_obj.state == "preparation":
+        return f"{war_obj.clan.name} is preparing for war with {war_obj.string_date_time()} left before war starts"
+    elif war_obj.state == "inWar":
+        return f"{war_obj.clan.name} is in war with {war_obj.string_date_time()} left in war"
+    elif war_obj.state == "warEnded":
+        return f"The war with {war_obj.opponent.name} has ended"
+    else:
+        return "You are not in war"
+
+
+# todo if nobody has attacked logic
+# returns a string of the war no attack response
+def response_war_no_attack(war_obj):
+    if war_obj.state == "preparation":
+        return (f"{war_obj.clan.name} is still preparing for war with "
+                f"{war_obj.string_date_time()} before war starts, nobody has attacked")
+
+    elif war_obj.state == "inWar":
+        no_attack_list = war_obj.no_attack()
+        if len(no_attack_list) == 0:
+            return f"all {war_obj.team_size} {war_obj.clan.name} war members attacked"
+        no_attack_string = ""
+        for member in no_attack_list:
+            no_attack_string += f"{member.name}, "
+        # removes the last 2 characters ", " of the string
+        no_attack_string = no_attack_string[:-2]
+        # singular
+        if len(no_attack_list) == 1:
+            no_attack_string += " has not attacked"
+        # plural
+        else:
+            no_attack_string += " have not attacked"
+        no_attack_string += f" with {war_obj.string_date_time()} left in war"
+        return no_attack_string
+
+    elif war_obj.state == "warEnded":
+        no_attack_list = war_obj.no_attack()
+        if len(no_attack_list) == 0:
+            return f"all {war_obj.team_size} {war_obj.clan.name} war members attacked"
+        no_attack_string = ""
+        for member in no_attack_list:
+            no_attack_string += f"{member.name}, "
+        # removes the last 2 characters ", " of the string
+        no_attack_string = no_attack_string[:-2]
+        no_attack_string += " did not attack"
+        return no_attack_string
+
+    else:
+        return "you are not in war"
+
+
+# returns a list of all war members and their stars
+def war_members_overview(war_obj):
+    "returns a list of all war members and their stars"
+    response_list = []
+
+    if war_obj.state == 'preparation':
+        response_list.append(
+            f'{war_obj.clan.name} is still preparaing for war, nobody has attacked')
+    elif war_obj.state == 'inWar':
+        response_list.append(
+            f'{war_obj.clan.name} is in war with {war_obj.opponent.name} with {war_obj.string_date_time()} left in war, {war_obj.clan.name} is {war_obj.string_scoreboard()}.')
+        response_list.append('____________________')
+        for member in war_obj.clan.members:
+            # no atk response
+            if len(member.attacks) == 0:
+                response_list.append(
+                    f'{member.name} map pos {member.map_position} TH {member.th_lvl} has not attacked')
+            else:
+                response_list.append(
+                    f'{member.name} map pos {member.map_position} TH {member.th_lvl} has attacked {len(member.attacks)} {member.string_member_attack_times()} for a total of {member.stars} {member.string_member_stars()}')
+            response_list.append('__________')
+
+        del response_list[-1]
+    elif war_obj.state == 'warEnded':
+        response_list.append(
+            f'War against {war_obj.opponent.name} has ended. {war_obj.clan.name} {war_obj.string_scoreboard()}')
+        response_list.append('____________________')
+        for member in war_obj.clan.members:
+            # no atk response
+            if len(member.attacks) == 0:
+                response_list.append(
+                    f'{member.name} map pos {member.map_position} TH {member.th_lvl} did not attack')
+            else:
+                response_list.append(
+                    f'{member.name} map pos {member.map_position} TH {member.th_lvl} attacked {len(member.attacks)} {member.string_member_attack_times()} for a total of {member.stars} {member.string_member_stars()}')
+            response_list.append('__________')
+
+        del response_list[-1]
+    else:
+        response_list.append('you are not in war')
+
+    return response_list
+
+
+# returns a list of war attack string responses for all war members
+def war_all_attacks(war_obj):
+    response_list = []
+
+    if war_obj.state == 'preparation':
+        response_list.append(
+            f'{war_obj.clan.name} is still preparaing for war, nobody has attacked')
+    elif war_obj.state == 'inWar':
+        response_list.append(
+            f'{war_obj.clan.name} is in war with {war_obj.opponent.name} with {war_obj.string_date_time()} left in war, {war_obj.clan.name} is {war_obj.string_scoreboard()}')
+        response_list.append('____________________')
+        for member in war_obj.clan.members:
+            # no atk response
+            if len(member.attacks) == 0:
+                response_list.append(
+                    f'{member.name} map pos {member.map_position} TH {member.th_lvl} has not attacked')
+            else:
+                response_list.append(
+                    f'{member.name} map pos {member.map_position} TH {member.th_lvl} has attacked {len(member.attacks)} {member.string_member_attack_times()} for a total of {member.stars} {member.string_member_stars()}')
+                for attack in member.attacks:
+                    defender = war_obj.find_defender(attack.defender_tag)
+
+                    if attack.stars == 0 or attack.stars == 3:
+                        response_list.append(
+                            f' - {attack.stars} {attack.string_attack_stars()} against {defender.name} map pos {defender.map_position} TH {defender.th_lvl}')
+                    else:
+                        response_list.append(
+                            f' - {attack.stars} {attack.string_attack_stars()}, {round(attack.destruction_percent, 2)}% against {defender.name} map pos {defender.map_position} TH {defender.th_lvl}')
+
+            response_list.append('__________')
+
+        del response_list[-1]
+    elif war_obj.state == 'warEnded':
+        response_list.append(
+            f'war against {war_obj.opponent.name} has ended, {war_obj.clan.name} {war_obj.string_scoreboard()}')
+        response_list.append('____________________')
+        for member in war_obj.clan.members:
+            if len(member.attacks) == 0:
+                response_list.append(
+                    f'{member.name} map pos {member.map_position} TH {member.th_lvl} did not attack')
+            else:
+
+                response_list.append(
+                    f'{member.name} map pos {member.map_position} TH {member.th_lvl} has attacked {len(member.attacks)} {member.string_member_attack_times()} for a total of {member.stars} {member.string_member_stars()}')
+                for attack in member.attacks:
+                    defender = war_obj.find_defender(attack.defender_tag)
+
+                    if attack.stars == 0 or attack.stars == 3:
+                        response_list.append(
+                            f' - {attack.stars} {attack.string_attack_stars()} against {defender.name} map pos {defender.map_position} TH {defender.th_lvl}')
+                    else:
+                        response_list.append(
+                            f' - {attack.stars} {attack.string_attack_stars()}, {round(attack.destruction_percent, 2)}% against {defender.name} map pos {defender.map_position} TH {defender.th_lvl}')
+
+            response_list.append('__________')
+        del response_list[-1]
+    else:
+        response_list.append('you are not in war')
+
+    return response_list
+
+
+def war_all_member_standing(war_obj):
+    "returns a response list of member scores"
+    return_list = []
+    if war_obj.state == 'preparation':
+        return_list.append('war has not started, there is no score')
+        return return_list
+    elif war_obj.state == 'notInWar':
+        return_list.append('you are not in war')
+        return return_list
+    else:
+        war_members = sorted(
+            war_obj.clan.members, key=lambda member: member.score, reverse=True)
+        # razgriz has a score of
+        for member in war_members:
+            return_list.append(
+                f'{member.name} has a score of {round(member.score, 3)}')
+        return return_list
+
+
+# CWL GROUP
+
+def cwl_lineup(cwl_lineup):
+    message = (
+        "```\n"
+        "CWL Group Lineup\n"
+        "14 | 13 | 12 | 11 | 10 | 9  | 8\n"
+        "-------------------------------\n"
+    )
+    for clan_dict in cwl_lineup:
+        lineup_message = f"{clan_dict['clan'].name}\n"
+        for key in clan_dict:
+            if key != 'clan' and key > 6:
+                if key >= 8:
+                    lineup_message += f"{clan_dict[key]}"
+                    # if it is a double digit number
+                    if clan_dict[key] >= 10:
+                        lineup_message += " | "
+                    # if it is a single digit number add an extra space
+                    else:
+                        lineup_message += "  | "
+        # removes the last 4 characters '  | ' of the string
+        lineup_message = lineup_message[:-4]
+        lineup_message += "\n\n"
+        message += lineup_message
+    message += "```"
+    return message
+
+
+# returns each member's CWL standing
+def cwl_clan_standing(cwl_group, clan_tag, header):
+    class ScoredMember(object):
+        def __init__(self, tag, name, war_count, score):
+            self.tag = tag
+            self.name = name
+            self.war_count = war_count
+            self.score = score
+
+    if not cwl_group:
+        return ['you are not in CWL']
+
+    # get a list of all CWLWar objects
+    cwl_wars = []
+    for i in range(0, len(cwl_group.rounds)):
+        cwl_war = cwl_group.find_specified_war(clan_tag, i, header)
+        cwl_wars.append(cwl_war)
+    # get a list of all CWLWarMembers their scores
+    cwl_war_members = []
+    # find your clan
+    for clan in cwl_group.clans:
+        if clan.tag == clan_tag:
+            # for each member in the CWLWarClan
+            for member in clan.members:
+                scored_member = ScoredMember(member.tag, member.name, 0, 0)
+                # for each war getting that war score and war count
+                for war in cwl_wars:
+                    for war_member in war.clan.members:
+                        if war_member.tag == member.tag:
+                            scored_member.war_count += 1
+                            scored_member.score += war_member.score
+                            break
+                if scored_member.war_count != 0:
+                    avg_score = scored_member.score / scored_member.war_count
+                    participation_multiplier = math.log(
+                        scored_member.war_count, 7)
+                    scored_member.score = avg_score * participation_multiplier
+                    cwl_war_members.append(scored_member)
+
+    sorted_cwl_war_members = sorted(
+        cwl_war_members, key=lambda member: member.score, reverse=True)
+    return_string_list = []
+    for member in sorted_cwl_war_members:
+        return_string_list.append(
+            f'{member.name} has a score of {round(member.score, 3)}')
+    return return_string_list
+
+
+# returns each specified member's CWL War score
+def cwl_member_standing(player_obj, cwl_group, clan_tag, header):
+    if not cwl_group:
+        return 'you are not in CWL'
+
+    # get a list of all CWLWar objects
+    cwl_wars = []
+    for i in range(0, len(cwl_group.rounds)):
+        cwl_war = cwl_group.find_specified_war(clan_tag, i, header)
+        cwl_wars.append(cwl_war)
+    member_round_scores = []
+    # find your clan
+    found = False
+    for clan in cwl_group.clans:
+        if clan.tag == clan_tag:
+            cwl_group_clan = clan
+            found = True
+            break
+    if not found:
+        return 'Could not find your clan based on the clan tag provided'
+
+    found = False
+    for member in cwl_group_clan.members:
+        if member.tag == player_obj.tag:
+            found = True
+            break
+    if not found:
+        return 'Could not find {player.name} in the CWL group.'
+
+    for war in cwl_wars:
+        for war_member in war.clan.members:
+            if war_member.tag == player_obj.tag:
+                member_round_scores.append(war_member.score)
+                break
+
+    if len(member_round_scores) == 0:
+        return_string = f'{player_obj.name} did not participate in any wars.'
+
+    elif len(member_round_scores) == 1:
+        return_string = f'{player_obj.name} was in 1 war and had a score of {round(member_round_scores[0], 3)} for that war.'
+
+    else:
+        total_score = 0
+        for round_score in member_round_scores:
+            total_score += round_score
+        avg_score = total_score / len(member_round_scores)
+        participation_multiplier = math.log(len(member_round_scores), 7)
+        member_score = avg_score * participation_multiplier
+
+        return_string = f"{player_obj.name} was in {len(member_round_scores)} wars with an overall score of {round(member_score, 3)}. {player_obj.name}'s scores are: "
+        for cwl_round_score in member_round_scores:
+            return_string += f'{round(cwl_round_score, 3)}, '
+        # removes the last 2 characters ', ' of the string
+        return_string = return_string[:-2]
+        return_string += '.'
+
+    return return_string
+
+
+# CWL WAR
+
+
+def cwl_war_overview(war_obj):
+    '''returns a string of the current cwl war overview'''
+    if war_obj.state == 'preparation':
+        time_string = war_obj.string_date_time()
+        return f'{war_obj.clan.name} is preparing for war with {war_obj.opponent.name} with {time_string} left before war starts'
+    elif war_obj.state == 'inWar':
+        time_string = war_obj.string_date_time()
+        scoreboard_string = war_obj.string_scoreboard()
+        return f'{war_obj.clan.name} is in war with {war_obj.opponent.name} with {time_string} left in war, {war_obj.clan.name} is {scoreboard_string}'
+    elif war_obj.state == 'warEnded':
+        scoreboard_string = war_obj.string_scoreboard()
+        return f'war against {war_obj.opponent.name} has ended, {war_obj.clan.name} {scoreboard_string}'
+    else:
+        return 'you are not in CWL'
+
+
+def cwl_war_time(war_obj):
+    '''returns a string of the time remaining in war response'''
+    if war_obj.state == 'preparation':
+        time_string = war_obj.string_date_time()
+        return f'{war_obj.clan.name} is preparing for war with {time_string} left before war starts'
+    elif war_obj.state == 'inWar':
+        time_string = war_obj.string_date_time()
+        return f'{war_obj.clan.name} is preparing for war with {time_string} left in war'
+    elif war_obj.state == 'warEnded':
+        return f'the war with {war_obj.opponent.name} has ended'
+    else:
+        return 'you are not in CWL'
+
+
+def cwl_war_no_attack(war_obj):
+    '''returns a string of the cwl war no attack response'''
+    if war_obj.state == 'preparation':
+        return f'{war_obj.clan.name} is still preparing for war with {war_obj.string_date_time()} before war starts, nobody has attacked'
+
+    elif war_obj.state == 'inWar':
+        no_attack_list = war_obj.no_attack()
+        if len(no_attack_list) == 0:
+            return f'All {war_obj.team_size} {war_obj.clan.name} war members attacked'
+        no_attack_string = ''
+        for member in no_attack_list:
+            no_attack_string += f'{member.name}, '
+        # removes the last 2 characters ', ' of the string
+        no_attack_string = no_attack_string[:-2]
+        # singular
+        if len(no_attack_list) == 1:
+            no_attack_string += ' has not attacked.'
+        # plural
+        else:
+            no_attack_string += ' have not attacked.'
+        return no_attack_string
+
+    elif war_obj.state == 'warEnded':
+        no_attack_list = war_obj.no_attack()
+        if len(no_attack_list) == 0:
+            return f'All {war_obj.team_size} {war_obj.clan.name} war members attacked'
+        no_attack_string = ''
+        for member in no_attack_list:
+            no_attack_string += f'{member.name}, '
+        # removes the last 2 characters ', ' of the string
+        no_attack_string = no_attack_string[:-2]
+        no_attack_string += ' did not attack'
+        return no_attack_string
+
+    else:
+        return 'you are not in CWL'
+
+
+# returns a list of cwl war attack string responses for all war members
+def cwl_war_all_attacks(war_obj):
+    response_list = []
+    if war_obj.state == 'preparation':
+        response_list.append(
+            f'{war_obj.clan.name} is still preparaing for war, nobody has attacked')
+    elif war_obj.state == 'inWar':
+        response_list.append(
+            f'{war_obj.clan.name} is in war with {war_obj.opponent.name} with {war_obj.string_date_time()} left in war, {war_obj.clan.name} is {war_obj.string_scoreboard()}')
+        response_list.append('____________________')
+        for member in war_obj.clan.members:
+            if len(member.attacks) == 0:
+                response_list.append(
+                    f'{member.name} map pos {member.map_position} TH {member.th_lvl} has not attacked')
+            else:
+
+                response_list.append(
+                    f'{member.name} map pos {member.map_position} TH {member.th_lvl} has attacked {len(member.attacks)} {member.string_member_attack_times()} for a total of {member.stars} {member.string_member_stars()}')
+                for attack in member.attacks:
+                    defender = war_obj.find_defender(attack.defender_tag)
+
+                    if attack.stars == 0 or attack.stars == 3:
+                        response_list.append(
+                            f' - {attack.stars} {attack.string_attack_stars()} against {defender.name} map pos {defender.map_position} TH {defender.th_lvl}')
+                    else:
+                        response_list.append(
+                            f' - {attack.stars} {attack.string_attack_stars()}, {round(attack.destruction_percent, 2)}% against {defender.name} map pos {defender.map_position} TH {defender.th_lvl}')
+
+            response_list.append('__________')
+        del response_list[-1]
+    elif war_obj.stat == 'warEnded':
+        response_list.append(
+            f'war against {war_obj.opponent.name} has ended, {war_obj.clan.name} {war_obj.string_scoreboard()}')
+        response_list.append('____________________')
+        for member in war_obj.clan.members:
+            if len(member.attacks) == 0:
+                response_list.append(
+                    f'{member.name} map pos {member.map_position} TH {member.th_lvl} did not attack')
+            else:
+
+                response_list.append(
+                    f'{member.name} map pos {member.map_position} TH {member.th_lvl} has attacked {len(member.attacks)} {member.string_member_attack_times()} for a total of {member.stars} {member.string_member_stars()}')
+                for attack in member.attacks:
+                    defender = war_obj.find_defender(attack.defender_tag)
+
+                    if attack.stars == 0 or attack.stars == 3:
+                        response_list.append(
+                            f' - {attack.stars} {attack.string_attack_stars()} against {defender.name} map pos {defender.map_position} TH {defender.th}')
+                    else:
+                        response_list.append(
+                            f' - {attack.stars} {attack.string_attack_stars()}, {round(attack.destruction_percent, 2)}% against {defender.name} map pos {defender.map_position} TH {defender.th}')
+
+            response_list.append('__________')
+        del response_list[-1]
+    else:
+        response_list.append('you are not in CWL')
+    return response_list
+
+
+# DISCORD
 
 
 def role_add_remove_list(needed_role_list, current_role_list):
