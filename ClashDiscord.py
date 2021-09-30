@@ -1198,8 +1198,11 @@ async def cwlwarnoattack(ctx):
             db_player_obj.player_tag, razbot_data.header)
         if player_obj:
             if player_obj.clan_tag:
-                await ctx.send(clash_responder.response_cwl_war_no_attack(
-                    player_obj.clan_tag, razbot_data.header))
+                cwl_group = clash_responder.get_cwl_group(
+                    player_obj.clan_tag, razbot_data.header)
+                war_obj = cwl_group.find_current_war(player_obj.clan_tag)
+                await ctx.send(discord_responder.cwl_war_no_attack(
+                    war_obj))
             else:
                 await ctx.send(f"{player_obj.name} is not in a clan")
         else:
@@ -2090,7 +2093,7 @@ async def on_member_join(ctx):
 async def on_member_remove(member):
     print(f'{member} has left the server')
 
-'''
+
 @client.event
 async def on_command_error(ctx, error):
     if isinstance(error, commands.CommandNotFound):
@@ -2100,6 +2103,7 @@ async def on_command_error(ctx, error):
                        f"requires more information")
     else:
         await ctx.send(f"there was an error that I have not accounted for, "
-                       f"please let Razgriz know")
-'''
+                       f"please let Razgriz know, "
+                       f"error text: `{error.original.text}`")
+
 client.run(razbot_data.token)

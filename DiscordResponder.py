@@ -365,6 +365,9 @@ def cwl_lineup(cwl_lineup):
     return message
 
 
+# CWL WAR
+
+
 def cwl_war_overview(war_obj):
     '''returns a string of the current cwl war overview'''
     if war_obj.state == 'preparation':
@@ -391,6 +394,44 @@ def cwl_war_time(war_obj):
         return f'{war_obj.clan.name} is preparing for war with {time_string} left in war'
     elif war_obj.state == 'warEnded':
         return f'the war with {war_obj.opponent.name} has ended'
+    else:
+        return 'you are not in CWL'
+
+
+def cwl_war_no_attack(war_obj):
+    '''returns a string of the cwl war no attack response'''
+    if war_obj.state == 'preparation':
+        return f'{war_obj.clan.name} is still preparing for war with {war_obj.string_date_time()} before war starts, nobody has attacked'
+
+    elif war_obj.state == 'inWar':
+        no_attack_list = war_obj.no_attack()
+        if len(no_attack_list) == 0:
+            return f'All {war_obj.team_size} {war_obj.clan.name} war members attacked'
+        no_attack_string = ''
+        for member in no_attack_list:
+            no_attack_string += f'{member.name}, '
+        # removes the last 2 characters ', ' of the string
+        no_attack_string = no_attack_string[:-2]
+        # singular
+        if len(no_attack_list) == 1:
+            no_attack_string += ' has not attacked.'
+        # plural
+        else:
+            no_attack_string += ' have not attacked.'
+        return no_attack_string
+
+    elif war_obj.state == 'warEnded':
+        no_attack_list = war_obj.no_attack()
+        if len(no_attack_list) == 0:
+            return f'All {war_obj.team_size} {war_obj.clan.name} war members attacked'
+        no_attack_string = ''
+        for member in no_attack_list:
+            no_attack_string += f'{member.name}, '
+        # removes the last 2 characters ', ' of the string
+        no_attack_string = no_attack_string[:-2]
+        no_attack_string += ' did not attack'
+        return no_attack_string
+
     else:
         return 'you are not in CWL'
 

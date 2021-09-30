@@ -224,51 +224,6 @@ def cwl_lineup(cwl_group):
 
 # CWL War
 
-# returns a string of the cwl war no attack response
-def response_cwl_war_no_attack(clan_tag, header):
-    group = CWLGroup.get(clan_tag, header)
-
-    if not group:
-        return 'You are not in CWL.'
-
-    war = group.find_current_war(clan_tag, header)
-
-    if war.state == 'preparation':
-        return f'{war.clan.name} is still preparing for war with {war.string_date_time()} before war starts, nobody has attacked.'
-
-    elif war.state == 'inWar':
-        no_attack_list = war.no_attack()
-        if len(no_attack_list) == 0:
-            return f'All {war.team_size} {war.clan.name} war members attacked.'
-        no_attack_string = ''
-        for member in no_attack_list:
-            no_attack_string += f'{member.name}, '
-        # removes the last 2 characters ', ' of the string
-        no_attack_string = no_attack_string[:-2]
-        # singular
-        if len(no_attack_list) == 1:
-            no_attack_string += ' has not attacked.'
-        # plural
-        else:
-            no_attack_string += ' have not attacked.'
-        return no_attack_string
-
-    elif war.state == 'warEnded':
-        no_attack_list = war.no_attack()
-        if len(no_attack_list) == 0:
-            return f'All {war.team_size} {war.clan.name} war members attacked.'
-        no_attack_string = ''
-        for member in no_attack_list:
-            no_attack_string += f'{member.name}, '
-        # removes the last 2 characters ', ' of the string
-        no_attack_string = no_attack_string[:-2]
-        no_attack_string += ' did not attack.'
-        return no_attack_string
-
-    else:
-        return 'You are not in CWL.'
-
-
 # returns a list of cwl war attack string responses for all war members
 def response_cwl_war_all_attacks(clan_tag, header):
     group = CWLGroup.get(clan_tag, header)
