@@ -135,6 +135,7 @@ async def ping(ctx):
 # Player
 
 @client.command(
+    aliases=['playersearch'],
     brief='player',
     description="Enter a player's tag and get a player's information"
 )
@@ -694,7 +695,8 @@ async def trooplvl(ctx, *, unit_name):
     hidden=True
 )
 async def alltrooplvl(ctx):
-    db_player_obj = db_responder.read_player_active(ctx.author.id)
+    async with ctx.typing():
+        db_player_obj = db_responder.read_player_active(ctx.author.id)
     if db_player_obj:
         player_obj = clash_responder.get_player(
             db_player_obj.player_tag, razbot_data.header)
@@ -734,10 +736,11 @@ async def activesupertroop(ctx):
 
 
 @client.command(
+    aliases=['clansearch'],
     brief='clan',
     description="Enter a clan's tag and get a clan's information"
 )
-async def clan(ctx, *, clan_tag):
+async def findclan(ctx, *, clan_tag):
     clan_obj = clash_responder.get_clan(clan_tag, razbot_data.header)
 
     if clan_obj:
@@ -793,10 +796,11 @@ async def clan(ctx, *, clan_tag):
 
 
 @client.command(
+    aliases=['showclanmention'],
     brief='clan',
     description="Get information about mentioned clan"
 )
-async def showclan(ctx):
+async def clanmention(ctx):
     if len(ctx.message.role_mentions) == 0:
         # user has not been mentioned
         await ctx.send(f"you have to mention a clan role")
@@ -866,10 +870,11 @@ async def showclan(ctx):
 
 
 @client.command(
+    aliases=['showclan', 'playerclan', 'showplayerclan'],
     brief='clan',
     description="Get information about your active player's clan"
 )
-async def showplayerclan(ctx):
+async def clan(ctx):
     db_user_obj = db_responder.read_user(ctx.author.id)
     if not db_user_obj:
         # if user is not found
