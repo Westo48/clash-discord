@@ -139,7 +139,8 @@ async def ping(ctx):
     description="Enter a player's tag and get a player's information"
 )
 async def player(ctx, *, player_tag):
-    player = clash_responder.get_player(player_tag, razbot_data.header)
+    async with ctx.typing():
+        player = clash_responder.get_player(player_tag, razbot_data.header)
 
     if not player:
         await ctx.send(f"Could not find player with tag {player_tag}")
@@ -305,7 +306,8 @@ async def player(ctx, *, player_tag):
     description="get information about your active player"
 )
 async def showplayer(ctx):
-    user = db_responder.read_user(ctx.author.id)
+    async with ctx.typing():
+        user = db_responder.read_user(ctx.author.id)
     # if user is found
     if user:
         # if the user is found
@@ -494,7 +496,8 @@ async def showmemberplayer(ctx):
 
     # user has been mentioned
     discord_member = ctx.message.mentions[0]
-    db_player_obj = db_responder.read_player_active(discord_member.id)
+    async with ctx.typing():
+        db_player_obj = db_responder.read_player_active(discord_member.id)
     if not db_player_obj:
         # active player not found
         await ctx.send(f"{discord_member.mention} "
@@ -669,7 +672,8 @@ async def showmemberplayer(ctx):
     description='Enter unit to see its current, th max, and max level.'
 )
 async def trooplvl(ctx, *, unit_name):
-    db_player_obj = db_responder.read_player_active(ctx.author.id)
+    async with ctx.typing():
+        db_player_obj = db_responder.read_player_active(ctx.author.id)
     if db_player_obj:
         player_obj = clash_responder.get_player(
             db_player_obj.player_tag, razbot_data.header)
