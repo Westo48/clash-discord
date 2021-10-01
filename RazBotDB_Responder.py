@@ -59,6 +59,30 @@ def read_user(discord_user_id):
         return None
 
 
+def delete_user(discord_user_id):
+    """
+        deletes user and returns None if the user 
+        could not be found after deletion,
+        if user_obj is returned then user couldn't be deleted
+
+        Args:
+            discord_user_id (int): discord id for user
+
+        Returns:
+            obj: user object (discord_id, admin, super_user)
+    """
+    user_found = user.delete_user(discord_user_id)
+    if user_found:
+        # user was found after deletion
+        user_discord_id, user_admin, user_super_user = user_found
+        user_obj = user.User(user_discord_id, bool(
+            user_admin), bool(user_super_user))
+        return user_obj
+    else:
+        # user was not found after deletion
+        return None
+
+
 # player
 
 def claim_player(discord_user_id, player_tag):
