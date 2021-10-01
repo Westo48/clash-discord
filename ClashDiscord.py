@@ -1201,7 +1201,8 @@ async def warclanscore(ctx):
     hidden=False
 )
 async def cwllineup(ctx):
-    db_player_obj = db_responder.read_player_active(ctx.author.id)
+    async with ctx.typing():
+        db_player_obj = db_responder.read_player_active(ctx.author.id)
     if db_player_obj:
         player_obj = clash_responder.get_player(
             db_player_obj.player_tag, razbot_data.header)
@@ -1235,7 +1236,8 @@ async def cwllineup(ctx):
     description='Returns an overview of the current CWL war'
 )
 async def cwlwaroverview(ctx):
-    db_player_obj = db_responder.read_player_active(ctx.author.id)
+    async with ctx.typing():
+        db_player_obj = db_responder.read_player_active(ctx.author.id)
     if db_player_obj:
         player_obj = clash_responder.get_player(
             db_player_obj.player_tag, razbot_data.header)
@@ -1263,7 +1265,8 @@ async def cwlwaroverview(ctx):
     description='Returns the time remaining in the current CWL war'
 )
 async def cwlwartime(ctx):
-    db_player_obj = db_responder.read_player_active(ctx.author.id)
+    async with ctx.typing():
+        db_player_obj = db_responder.read_player_active(ctx.author.id)
     if db_player_obj:
         player_obj = clash_responder.get_player(
             db_player_obj.player_tag, razbot_data.header)
@@ -1292,7 +1295,8 @@ async def cwlwartime(ctx):
                 'all possible attacks in the current CWL war'
 )
 async def cwlwarnoattack(ctx):
-    db_player_obj = db_responder.read_player_active(ctx.author.id)
+    async with ctx.typing():
+        db_player_obj = db_responder.read_player_active(ctx.author.id)
     if db_player_obj:
         player_obj = clash_responder.get_player(
             db_player_obj.player_tag, razbot_data.header)
@@ -1322,7 +1326,8 @@ async def cwlwarnoattack(ctx):
     hidden=True
 )
 async def cwlwarallattack(ctx):
-    db_player_obj = db_responder.read_player_active(ctx.author.id)
+    async with ctx.typing():
+        db_player_obj = db_responder.read_player_active(ctx.author.id)
     if db_player_obj:
         player_obj = clash_responder.get_player(
             db_player_obj.player_tag, razbot_data.header)
@@ -1347,13 +1352,13 @@ async def cwlwarallattack(ctx):
 
 
 @client.command(
-    aliases=['cwlscore'],
     brief='cwlgroup',
     description='Lists each member and their score in CWL',
     hidden=True
 )
 async def cwlclanscore(ctx):
-    db_player_obj = db_responder.read_player_active(ctx.author.id)
+    async with ctx.typing():
+        db_player_obj = db_responder.read_player_active(ctx.author.id)
     if db_player_obj:
         player_obj = clash_responder.get_player(
             db_player_obj.player_tag, razbot_data.header)
@@ -1380,8 +1385,9 @@ async def cwlclanscore(ctx):
     brief='cwlwar',
     description='Lists each score you have in CWL'
 )
-async def cwlmemberscore(ctx):
-    db_player_obj = db_responder.read_player_active(ctx.author.id)
+async def cwlscore(ctx):
+    async with ctx.typing():
+        db_player_obj = db_responder.read_player_active(ctx.author.id)
     if db_player_obj:
         player_obj = clash_responder.get_player(
             db_player_obj.player_tag, razbot_data.header)
@@ -1406,14 +1412,16 @@ async def cwlmemberscore(ctx):
 
 
 @client.command(
+    aliases=['cwlclanmatescore'],
     brief='cwlwar',
     description='Lists each score the specified member has in CWL'
 )
-async def cwlclanmatescore(ctx):
+async def cwlmemberscore(ctx):
     if len(ctx.message.mentions) > 0:
         # if a user has been mentioned
         discord_member = ctx.message.mentions[0]
-        db_player_obj = db_responder.read_player_active(discord_member.id)
+        async with ctx.typing():
+            db_player_obj = db_responder.read_player_active(discord_member.id)
         if db_player_obj:
             player_obj = clash_responder.get_player(
                 db_player_obj.player_tag, razbot_data.header)
