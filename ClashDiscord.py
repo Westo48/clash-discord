@@ -1487,8 +1487,8 @@ async def emojitesting(ctx):
                  'here in Discord.')
 )
 async def role(ctx):
-
-    db_guild_obj = db_responder.read_guild(ctx.guild.id)
+    async with ctx.typing():
+        db_guild_obj = db_responder.read_guild(ctx.guild.id)
     if not db_guild_obj:
         # if guild is not claimed
         await ctx.send(f"{ctx.guild.name} has not been claimed")
@@ -1623,7 +1623,8 @@ async def role(ctx):
         'This will claim a discord user')
 )
 async def claimuser(ctx):
-    user = db_responder.claim_user(ctx.author.id)
+    async with ctx.typing():
+        user = db_responder.claim_user(ctx.author.id)
     # if user wasn't claimed and now is
     if user:
         await ctx.send(f"{ctx.author.mention} is now claimed")
@@ -1641,10 +1642,10 @@ async def claimuser(ctx):
         'This will verify and claim a player')
 )
 async def claimplayer(ctx, player_tag, *, api_key):
-
-    # confirm valid player_tag
-    player_obj = clash_responder.get_player(
-        player_tag, razbot_data.header)
+    async with ctx.typing():
+        # confirm valid player_tag
+        player_obj = clash_responder.get_player(
+            player_tag, razbot_data.header)
 
     # verifying player
     if player_obj:
@@ -1694,7 +1695,8 @@ async def claimplayer(ctx, player_tag, *, api_key):
         'Shows players claimed by a discord user')
 )
 async def showplayerclaim(ctx):
-    user = db_responder.read_user(ctx.author.id)
+    async with ctx.typing():
+        user = db_responder.read_user(ctx.author.id)
     # if user is found
     if user:
         player_list = db_responder.read_player_list(ctx.author.id)
@@ -1726,8 +1728,8 @@ async def showplayerclaim(ctx):
         "updates the user's active player")
 )
 async def updateplayeractive(ctx, player_tag):
-
-    player_obj = clash_responder.get_player(player_tag, razbot_data.header)
+    async with ctx.typing():
+        player_obj = clash_responder.get_player(player_tag, razbot_data.header)
 
     user = db_responder.read_user(ctx.author.id)
     # if user is found
@@ -1760,8 +1762,8 @@ async def updateplayeractive(ctx, player_tag):
         "deletes the requested user's player")
 )
 async def deleteplayer(ctx, player_tag):
-
-    player_obj = clash_responder.get_player(player_tag, razbot_data.header)
+    async with ctx.typing():
+        player_obj = clash_responder.get_player(player_tag, razbot_data.header)
     if player_obj:
         # if player is found in clash
         author = ctx.author
@@ -1838,8 +1840,9 @@ async def deleteplayer(ctx, player_tag):
         'This will claim a discord guild')
 )
 async def claimguild(ctx):
-    # getting db user object
-    user_obj = db_responder.read_user(ctx.author.id)
+    async with ctx.typing():
+        # getting db user object
+        user_obj = db_responder.read_user(ctx.author.id)
     if user_obj:
         guild_obj = db_responder.claim_guild(ctx.author.id, ctx.guild.id)
         # if guild wasn't claimed and now is
@@ -1864,7 +1867,8 @@ async def claimguild(ctx):
         'active player is currently a member of')
 )
 async def claimclan(ctx, clan_tag):
-    clan_obj = clash_responder.get_clan(clan_tag, razbot_data.header)
+    async with ctx.typing():
+        clan_obj = clash_responder.get_clan(clan_tag, razbot_data.header)
     if clan_obj:
         # if clan is found
         claimed_clan_obj = db_responder.read_clan(ctx.guild.id, clan_tag)
@@ -1921,7 +1925,8 @@ async def claimclan(ctx, clan_tag):
         'Shows clans claimed by a discord guild')
 )
 async def showclanclaim(ctx):
-    db_guild_obj = db_responder.read_guild(ctx.guild.id)
+    async with ctx.typing():
+        db_guild_obj = db_responder.read_guild(ctx.guild.id)
 
     if db_guild_obj:
         # if guild is found
@@ -1952,7 +1957,8 @@ async def showclanclaim(ctx):
         "deletes the requested user's clan")
 )
 async def deleteclan(ctx, clan_tag):
-    clan_obj = clash_responder.get_clan(clan_tag, razbot_data.header)
+    async with ctx.typing():
+        clan_obj = clash_responder.get_clan(clan_tag, razbot_data.header)
     if clan_obj:
         # clan has been found in clash
         db_user_obj = db_responder.read_user(ctx.author.id)
@@ -2005,8 +2011,9 @@ async def claimclanrole(ctx, clan_tag):
     if len(ctx.message.role_mentions) > 0:
         # if the role has been mentioned
         role = ctx.message.role_mentions[0]
-        # get the clash of clans clan object
-        clan_obj = clash_responder.get_clan(clan_tag, razbot_data.header)
+        async with ctx.typing():
+            # get the clash of clans clan object
+            clan_obj = clash_responder.get_clan(clan_tag, razbot_data.header)
         if clan_obj:
             # if clan is found
             db_clan_obj = db_responder.read_clan(ctx.guild.id, clan_obj.tag)
@@ -2067,8 +2074,9 @@ async def removeclaimclanrole(ctx):
     if len(ctx.message.role_mentions) > 0:
         # if the role has been mentioned
         role = ctx.message.role_mentions[0]
-        # getting db user object
-        user_obj = db_responder.read_user(ctx.author.id)
+        async with ctx.typing():
+            # getting db user object
+            user_obj = db_responder.read_user(ctx.author.id)
         # getting db guild object
         guild_obj = db_responder.read_guild(ctx.guild.id)
         if user_obj:
@@ -2117,9 +2125,10 @@ async def claimrankrole(ctx, rank_role_name):
     if len(ctx.message.role_mentions) > 0:
         # if the role has been mentioned
         role = ctx.message.role_mentions[0]
-        # validate given role name with model
-        rank_role_model_obj = db_responder.read_rank_role_model(
-            rank_role_name)
+        async with ctx.typing():
+            # validate given role name with model
+            rank_role_model_obj = db_responder.read_rank_role_model(
+                rank_role_name)
         if rank_role_model_obj:
             # getting db user object
             user_obj = db_responder.read_user(ctx.author.id)
@@ -2172,8 +2181,9 @@ async def removeclaimrankrole(ctx):
     if len(ctx.message.role_mentions) > 0:
         # if the role has been mentioned
         role = ctx.message.role_mentions[0]
-        # getting db user object
-        user_obj = db_responder.read_user(ctx.author.id)
+        async with ctx.typing():
+            # getting db user object
+            user_obj = db_responder.read_user(ctx.author.id)
         # getting db guild object
         guild_obj = db_responder.read_guild(ctx.guild.id)
         if user_obj:
