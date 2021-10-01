@@ -138,7 +138,7 @@ async def ping(ctx):
     brief='player',
     description="Enter a player's tag and get a player's information"
 )
-async def player(ctx, *, player_tag):
+async def findplayer(ctx, *, player_tag):
     async with ctx.typing():
         player = clash_responder.get_player(player_tag, razbot_data.header)
 
@@ -301,11 +301,11 @@ async def player(ctx, *, player_tag):
 
 
 @client.command(
-    aliases=['showactiveplayer', 'activeplayer'],
+    aliases=['showplayer', 'showactiveplayer', 'activeplayer'],
     brief='player',
     description="get information about your active player"
 )
-async def showplayer(ctx):
+async def player(ctx):
     async with ctx.typing():
         user = db_responder.read_user(ctx.author.id)
     # if user is found
@@ -484,11 +484,11 @@ async def showplayer(ctx):
 
 
 @client.command(
-    aliases=['showmemberactiveplayer'],
+    aliases=['showmemberplayer', 'showmemberactiveplayer'],
     brief='player',
     description="get information about a member's active player"
 )
-async def showmemberplayer(ctx):
+async def memberplayer(ctx):
     if len(ctx.message.mentions) == 0:
         # user has not been mentioned
         await ctx.send(f"you have to mention a member")
