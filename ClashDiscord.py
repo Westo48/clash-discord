@@ -741,7 +741,8 @@ async def activesupertroop(ctx):
     description="Enter a clan's tag and get a clan's information"
 )
 async def findclan(ctx, *, clan_tag):
-    clan_obj = clash_responder.get_clan(clan_tag, razbot_data.header)
+    async with ctx.typing():
+        clan_obj = clash_responder.get_clan(clan_tag, razbot_data.header)
 
     if clan_obj:
         embed = discord.Embed(
@@ -808,8 +809,9 @@ async def clanmention(ctx):
 
     # role has been mentioned
     # get clan tag from clan role
-    db_clan_role = db_responder.read_clan_role(
-        ctx.message.role_mentions[0].id)
+    async with ctx.typing():
+        db_clan_role = db_responder.read_clan_role(
+            ctx.message.role_mentions[0].id)
 
     if not db_clan_role:
         # role mentioned was not a linked clan role
@@ -875,7 +877,8 @@ async def clanmention(ctx):
     description="Get information about your active player's clan"
 )
 async def clan(ctx):
-    db_user_obj = db_responder.read_user(ctx.author.id)
+    async with ctx.typing():
+        db_user_obj = db_responder.read_user(ctx.author.id)
     if not db_user_obj:
         # if user is not found
         await ctx.send(f"{ctx.author.mention} has not been claimed")
