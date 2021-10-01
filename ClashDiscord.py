@@ -716,7 +716,8 @@ async def alltrooplvl(ctx):
     description='Check to see what super troops you have active.'
 )
 async def activesupertroop(ctx):
-    db_player_obj = db_responder.read_player_active(ctx.author.id)
+    async with ctx.typing():
+        db_player_obj = db_responder.read_player_active(ctx.author.id)
     if db_player_obj:
         player_obj = clash_responder.get_player(
             db_player_obj.player_tag, razbot_data.header)
