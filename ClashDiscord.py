@@ -1604,7 +1604,6 @@ async def claimuser(ctx):
 
 
 # client player
-# todo claim user if user isn't set up
 @client.command(
     aliases=['playerclaim'],
     brief='discord',
@@ -1612,47 +1611,62 @@ async def claimuser(ctx):
         'This will verify and claim a player')
 )
 async def claimplayer(ctx, player_tag, *, api_key):
-
     # confirm valid player_tag
     player_obj = clash_responder.get_player(
         player_tag, razbot_data.header)
+    if not player_obj:
+        # player tag was not valid
+        await ctx.send(f"player with tag {player_tag} was not found")
+        return
 
-    # verifying player
-    if player_obj:
-        player_verified = clash_responder.verify_token(
-            api_key, player_obj.tag, razbot_data.header)
+    # confirm user has been claimed
+    db_user_obj = db_responder.read_user(ctx.author.id)
+    if not db_user_obj:
+        # user has not been claimed
+        db_user_obj = db_responder.claim_user(ctx.author.id)
+        if not db_user_obj:
+            # user could not be claimed
+            await ctx.send(f"{ctx.author.mention} "
+                           f"user couldn't be claimed")
+            return
 
-        if player_verified:
-            # check if not claimed
-            db_player_obj = db_responder.read_player_from_tag(player_obj.tag)
+    # confirm player has not been claimed
+    db_player_obj = db_responder.read_player_from_tag(player_obj.tag)
+    if db_player_obj:
+        # player has already been claimed
+        await ctx.send(f"{player_obj.name} {player_obj.tag} "
+                       f"has already been claimed")
+        return
 
-            if db_player_obj:
-                # already claimed
-                await ctx.send(f"{player_obj.name} {player_obj.tag} "
-                               f"has already been claimed")
-            else:
-                # verified and not claimed
-                db_player_obj = db_responder.claim_player(
-                    ctx.author.id, player_obj.tag)
+    # authenticate player api key
+    player_verified = clash_responder.verify_token(
+        api_key, player_obj.tag, razbot_data.header)
+    if not player_verified:
+        # api key could not be verified
+        await ctx.send(f"verification for "
+                       f"player tag {player_obj.tag} has failed")
+        return
 
-                if db_player_obj:
-                    # if succesfully claimed
-                    await ctx.send(f"{player_obj.name} {player_obj.tag} "
-                                   f"is now claimed by {ctx.author.mention}")
-                else:
-                    # if failed to claim
-                    await ctx.send(
-                        f"Could not claim {player_obj.name} "
-                        f"{player_obj.tag} for {ctx.author.mention}"
-                    )
+        # check if not claimed
+        db_player_obj = db_responder.read_player_from_tag(player_obj.tag)
 
-        else:
-            # player verification failed
-            await ctx.send(f"Verification for "
-                           f"player tag {player_obj.tag} has failed")
+    # user claimed
+    # player is valid
+    # player hasn't been claimed
+    # player is authenticated
+    db_player_obj = db_responder.claim_player(
+        ctx.author.id, player_obj.tag)
+
+    if db_player_obj:
+        # if succesfully claimed
+        await ctx.send(f"{player_obj.name} {player_obj.tag} "
+                       f"is now claimed by {ctx.author.mention}")
     else:
-        # invalid player_tag
-        await ctx.send(f"Couldn't find a player with player tag {player_tag}")
+        # if failed to claim
+        await ctx.send(
+            f"Could not claim {player_obj.name} "
+            f"{player_obj.tag} for {ctx.author.mention}"
+        )
 
 
 # todo remove the user search
@@ -1769,7 +1783,7 @@ async def deleteplayer(ctx, player_tag):
                             # no additional players claimed by user
                             await ctx.send(
                                 f"{player_obj.name} {player_obj.tag} "
-                                f"has been deleted "
+                                f"has been deleted, "
                                 f"{author.mention} has no more claimed players"
                             )
                         else:
@@ -1783,7 +1797,7 @@ async def deleteplayer(ctx, player_tag):
                                     updated_active_player.player_tag, razbot_data.header)
                                 await ctx.send(
                                     f"{player_obj.name} {player_obj.tag} "
-                                    f"has been deleted "
+                                    f"has been deleted, "
                                     f"{author.mention} active is now set to "
                                     f"{clash_updated_active_player.name} "
                                     f"{clash_updated_active_player.tag}"
@@ -1792,7 +1806,6 @@ async def deleteplayer(ctx, player_tag):
                 # if player is not claimed by user
                 await ctx.send(f"{player_obj.name} {player_obj.tag} "
                                f"is not claimed by {author.mention}")
-
         # if user is not found
         else:
             await ctx.send(f"{author.mention} has not been claimed")
@@ -2180,6 +2193,43 @@ async def removeclaimrankrole(ctx):
             await ctx.send(f"{ctx.author.mention} has not been claimed")
     else:
         await ctx.send(f"You have to mention the role")
+
+
+# client super user administration
+@client.command(
+    aliases=['removeuser'],
+    brief='discord',
+    description=('delete a claimed user'),
+    hidden=True
+)
+async def removeuserclaim(ctx, user_id):
+
+    db_author_obj = db_responder.read_user(ctx.author.id)
+    if not db_author_obj:
+        # author is not claimed
+        await ctx.send(f"{ctx.author.mention} is not claimed")
+        return
+
+    if not db_author_obj.super_user:
+        # author is not super user
+        await ctx.send(f"{ctx.author.mention} is not super user")
+        return
+
+    # confirm user is claimed
+    db_user_obj = db_responder.read_user(user_id)
+    if not db_user_obj:
+        # user isn't claimed
+        await ctx.send(f"user with id {user_id} is not claimed")
+        return
+
+    deleted_user_obj = db_responder.delete_user(user_id)
+    if deleted_user_obj:
+        # user could not be deleted
+        await ctx.send(f"user with id {user_id} could not be deleted")
+
+    else:
+        # user was deleted properly
+        await ctx.send(f"user with id {user_id} was deleted")
 
 
 # client events
