@@ -964,7 +964,8 @@ async def clan(ctx):
                 'is best suited to donate that troop.'
 )
 async def donation(ctx, *, unit_name):
-    db_player_obj = db_responder.read_player_active(ctx.author.id)
+    async with ctx.typing():
+        db_player_obj = db_responder.read_player_active(ctx.author.id)
     if db_player_obj:
         player_obj = clash_responder.get_player(
             db_player_obj.player_tag, razbot_data.header)
@@ -973,13 +974,10 @@ async def donation(ctx, *, unit_name):
                 clan_obj = clash_responder.get_clan(
                     player_obj.clan_tag, razbot_data.header)
                 if clan_obj:
-                    async with ctx.typing():
-                        donator_list = clash_responder.donation(
-                            unit_name, clan_obj, razbot_data.header)
-                        message = discord_responder.donation(
-                            clan_obj, donator_list, unit_name)
-
-                    await ctx.send(message)
+                    donator_list = clash_responder.donation(
+                        unit_name, clan_obj, razbot_data.header)
+                    await ctx.send(discord_responder.donation(
+                        clan_obj, donator_list, unit_name))
                 else:
                     await ctx.send(f"Couldn't find clan from tag "
                                    f"{player_obj.clan_tag}")
@@ -998,7 +996,8 @@ async def donation(ctx, *, unit_name):
     description='Search who in the clan has a requested super troop active.'
 )
 async def supertroopsearch(ctx, *, unit_name):
-    db_player_obj = db_responder.read_player_active(ctx.author.id)
+    async with ctx.typing():
+        db_player_obj = db_responder.read_player_active(ctx.author.id)
     if db_player_obj:
         player_obj = clash_responder.get_player(
             db_player_obj.player_tag, razbot_data.header)
@@ -1011,12 +1010,10 @@ async def supertroopsearch(ctx, *, unit_name):
                     super_troop_name = clash_responder.super_troop_unit_name(
                         unit_name)
                     if super_troop_name:
-                        async with ctx.typing():
-                            donor_list = clash_responder.active_super_troop_search(
-                                super_troop_name, clan_obj, razbot_data.header)
-                            message = discord_responder.super_troop_search(
-                                clan_obj, donor_list, super_troop_name)
-                        await ctx.send(message)
+                        donor_list = clash_responder.active_super_troop_search(
+                            super_troop_name, clan_obj, razbot_data.header)
+                        await ctx.send(discord_responder.super_troop_search(
+                            clan_obj, donor_list, super_troop_name))
                     else:
                         await ctx.send(f"{unit_name} is not a viable request")
                 else:
@@ -1040,17 +1037,16 @@ async def supertroopsearch(ctx, *, unit_name):
     description='Returns an overview of the current war'
 )
 async def waroverview(ctx):
-    db_player_obj = db_responder.read_player_active(ctx.author.id)
+    async with ctx.typing():
+        db_player_obj = db_responder.read_player_active(ctx.author.id)
     if db_player_obj:
         player_obj = clash_responder.get_player(
             db_player_obj.player_tag, razbot_data.header)
         if player_obj:
             if player_obj.clan_tag:
-                async with ctx.typing():
-                    war_obj = clash_responder.get_war(
-                        player_obj.clan_tag, razbot_data.header)
-                    message = discord_responder.war_overview(war_obj)
-                await ctx.send(message)
+                war_obj = clash_responder.get_war(
+                    player_obj.clan_tag, razbot_data.header)
+                await ctx.send(discord_responder.war_overview(war_obj))
             else:
                 await ctx.send(f"{player_obj.name} is not in a clan")
         else:
@@ -1064,18 +1060,17 @@ async def waroverview(ctx):
     brief='war',
     description='Returns the time remaining in the current war')
 async def wartime(ctx):
-    db_player_obj = db_responder.read_player_active(ctx.author.id)
+    async with ctx.typing():
+        db_player_obj = db_responder.read_player_active(ctx.author.id)
     if db_player_obj:
         player_obj = clash_responder.get_player(
             db_player_obj.player_tag, razbot_data.header)
         if player_obj:
             if player_obj.clan_tag:
-                async with ctx.typing():
-                    war_obj = clash_responder.get_war(
-                        player_obj.clan_tag, razbot_data.header)
-                    message = discord_responder.response_war_time(
-                        war_obj)
-                await ctx.send(message)
+                war_obj = clash_responder.get_war(
+                    player_obj.clan_tag, razbot_data.header)
+                await ctx.send(discord_responder.response_war_time(
+                    war_obj))
             else:
                 await ctx.send(f"{player_obj.name} is not in a clan")
         else:
