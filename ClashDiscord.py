@@ -1087,7 +1087,8 @@ async def wartime(ctx):
                 'all possible attacks in the current war'
 )
 async def warnoattack(ctx):
-    db_player_obj = db_responder.read_player_active(ctx.author.id)
+    async with ctx.typing():
+        db_player_obj = db_responder.read_player_active(ctx.author.id)
     if db_player_obj:
         player_obj = clash_responder.get_player(
             db_player_obj.player_tag, razbot_data.header)
@@ -1113,7 +1114,8 @@ async def warnoattack(ctx):
     hidden=True
 )
 async def warclanstars(ctx):
-    db_player_obj = db_responder.read_player_active(ctx.author.id)
+    async with ctx.typing():
+        db_player_obj = db_responder.read_player_active(ctx.author.id)
     if db_player_obj:
         player_obj = clash_responder.get_player(
             db_player_obj.player_tag, razbot_data.header)
@@ -1140,7 +1142,8 @@ async def warclanstars(ctx):
     hidden=True
 )
 async def warallattacks(ctx):
-    db_player_obj = db_responder.read_player_active(ctx.author.id)
+    async with ctx.typing():
+        db_player_obj = db_responder.read_player_active(ctx.author.id)
     if db_player_obj:
         player_obj = clash_responder.get_player(
             db_player_obj.player_tag, razbot_data.header)
@@ -1167,7 +1170,8 @@ async def warallattacks(ctx):
     hidden=True
 )
 async def warclanscore(ctx):
-    db_player_obj = db_responder.read_player_active(ctx.author.id)
+    async with ctx.typing():
+        db_player_obj = db_responder.read_player_active(ctx.author.id)
     if db_player_obj:
         player_obj = clash_responder.get_player(
             db_player_obj.player_tag, razbot_data.header)
