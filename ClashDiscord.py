@@ -146,9 +146,9 @@ async def ping(ctx):
 # Player
 
 @client.command(
-    aliases=['playersearch'],
+    aliases=['searchplayer'],
     brief='player',
-    description="Enter a player's tag and get a player's information"
+    description="get information about a specified player"
 )
 async def findplayer(ctx, *, player_tag):
     async with ctx.typing():
@@ -162,7 +162,7 @@ async def findplayer(ctx, *, player_tag):
 
     field_dict_list = discord_responder.player_info(player_obj)
 
-    embed = discord_responder.embed_message(
+    embed_list = discord_responder.embed_message(
         Embed=discord.Embed,
         color=discord.Color(razbot_data.embed_color),
         icon_url=(ctx.bot.user.avatar_url.BASE +
@@ -178,7 +178,8 @@ async def findplayer(ctx, *, player_tag):
                            ctx.author.avatar_url._url)
     )
 
-    await ctx.send(embed=embed)
+    for embed in embed_list:
+        await ctx.send(embed=embed)
 
 
 @client.command(
@@ -205,7 +206,7 @@ async def player(ctx):
 
     field_dict_list = discord_responder.player_info(player_obj)
 
-    embed = discord_responder.embed_message(
+    embed_list = discord_responder.embed_message(
         Embed=discord.Embed,
         color=discord.Color(razbot_data.embed_color),
         icon_url=(ctx.bot.user.avatar_url.BASE +
@@ -221,7 +222,8 @@ async def player(ctx):
                            ctx.author.avatar_url._url)
     )
 
-    await ctx.send(embed=embed)
+    for embed in embed_list:
+        await ctx.send(embed=embed)
 
 
 @client.command(
@@ -255,7 +257,7 @@ async def memberplayer(ctx):
 
     field_dict_list = discord_responder.player_info(player_obj)
 
-    embed = discord_responder.embed_message(
+    embed_list = discord_responder.embed_message(
         Embed=discord.Embed,
         color=discord.Color(razbot_data.embed_color),
         icon_url=(ctx.bot.user.avatar_url.BASE +
@@ -271,14 +273,16 @@ async def memberplayer(ctx):
                            ctx.author.avatar_url._url)
     )
 
-    await ctx.send(embed=embed)
+    for embed in embed_list:
+        await ctx.send(embed=embed)
 
 
 @client.command(
+    aliases=['trooplvl'],
     brief='player',
-    description='Enter unit to see its current, th max, and max level.'
+    description='get level information for a specified unit'
 )
-async def trooplvl(ctx, *, unit_name):
+async def unitlvl(ctx, *, unit_name):
     async with ctx.typing():
         db_player_obj = db_responder.read_player_active(ctx.author.id)
     if not db_player_obj:
@@ -295,9 +299,9 @@ async def trooplvl(ctx, *, unit_name):
         return
 
     unit_obj = clash_responder.find_unit(player_obj, unit_name)
-    field_dict_list = discord_responder.unit_lvl(
-        player_obj, unit_obj, unit_name)
-    embed = discord_responder.embed_message(
+    field_dict_list = [discord_responder.unit_lvl(
+        player_obj, unit_obj, unit_name)]
+    embed_list = discord_responder.embed_message(
         Embed=discord.Embed,
         color=discord.Color(razbot_data.embed_color),
         icon_url=(ctx.bot.user.avatar_url.BASE +
@@ -312,28 +316,172 @@ async def trooplvl(ctx, *, unit_name):
         author_avatar_url=(ctx.author.avatar_url.BASE +
                            ctx.author.avatar_url._url)
     )
-    await ctx.send(embed=embed)
+    for embed in embed_list:
+        await ctx.send(embed=embed)
 
 
 @client.command(
     brief='player',
-    description='Get all your troop levels.',
+    description='get all your unit levels',
+    hidden=True
+)
+async def allunitlvl(ctx):
+    async with ctx.typing():
+        db_player_obj = db_responder.read_player_active(ctx.author.id)
+    if not db_player_obj:
+        # user does not have an active player
+        await ctx.send(f"{ctx.author.mention} "
+                       f"does not have an active player")
+        return
+
+    player_obj = clash_responder.get_player(
+        db_player_obj.player_tag, razbot_data.header)
+    if not player_obj:
+        await ctx.send(f"Couldn't find player from tag "
+                       f"{db_player_obj.player_tag}")
+        return
+
+    field_dict_list = discord_responder.unit_lvl_all(player_obj)
+    embed_list = discord_responder.embed_message(
+        Embed=discord.Embed,
+        color=discord.Color(razbot_data.embed_color),
+        icon_url=(ctx.bot.user.avatar_url.BASE +
+                  ctx.bot.user.avatar_url._url),
+        title=f"{player_obj.name} troops",
+        bot_prefix=ctx.prefix,
+        bot_user_name=ctx.bot.user.name,
+        thumbnail=player_obj.league_icons,
+        field_list=field_dict_list,
+        image_url=None,
+        author_display_name=ctx.author.display_name,
+        author_avatar_url=(ctx.author.avatar_url.BASE +
+                           ctx.author.avatar_url._url)
+    )
+    for embed in embed_list:
+        await ctx.send(embed=embed)
+
+
+@client.command(
+    brief='player',
+    description='get all your hero levels',
+    hidden=True
+)
+async def allherolvl(ctx):
+    async with ctx.typing():
+        db_player_obj = db_responder.read_player_active(ctx.author.id)
+    if not db_player_obj:
+        # user does not have an active player
+        await ctx.send(f"{ctx.author.mention} "
+                       f"does not have an active player")
+        return
+
+    player_obj = clash_responder.get_player(
+        db_player_obj.player_tag, razbot_data.header)
+    if not player_obj:
+        await ctx.send(f"Couldn't find player from tag "
+                       f"{db_player_obj.player_tag}")
+        return
+
+    field_dict_list = discord_responder.hero_lvl_all(player_obj)
+    embed_list = discord_responder.embed_message(
+        Embed=discord.Embed,
+        color=discord.Color(razbot_data.embed_color),
+        icon_url=(ctx.bot.user.avatar_url.BASE +
+                  ctx.bot.user.avatar_url._url),
+        title=f"{player_obj.name} troops",
+        bot_prefix=ctx.prefix,
+        bot_user_name=ctx.bot.user.name,
+        thumbnail=player_obj.league_icons,
+        field_list=field_dict_list,
+        image_url=None,
+        author_display_name=ctx.author.display_name,
+        author_avatar_url=(ctx.author.avatar_url.BASE +
+                           ctx.author.avatar_url._url)
+    )
+    for embed in embed_list:
+        await ctx.send(embed=embed)
+
+
+@client.command(
+    brief='player',
+    description='get all your troop levels',
     hidden=True
 )
 async def alltrooplvl(ctx):
     async with ctx.typing():
         db_player_obj = db_responder.read_player_active(ctx.author.id)
-    if db_player_obj:
-        player_obj = clash_responder.get_player(
-            db_player_obj.player_tag, razbot_data.header)
-        if player_obj:
-            for line in discord_responder.unit_lvl_all(player_obj):
-                await ctx.send(line)
-        else:
-            await ctx.send(f"Couldn't find player from tag "
-                           f"{db_player_obj.player_tag}")
-    else:
-        await ctx.send(f"{ctx.author.mention} does not have an active player")
+    if not db_player_obj:
+        # user does not have an active player
+        await ctx.send(f"{ctx.author.mention} "
+                       f"does not have an active player")
+        return
+
+    player_obj = clash_responder.get_player(
+        db_player_obj.player_tag, razbot_data.header)
+    if not player_obj:
+        await ctx.send(f"Couldn't find player from tag "
+                       f"{db_player_obj.player_tag}")
+        return
+
+    field_dict_list = discord_responder.troop_lvl_all(player_obj)
+    embed_list = discord_responder.embed_message(
+        Embed=discord.Embed,
+        color=discord.Color(razbot_data.embed_color),
+        icon_url=(ctx.bot.user.avatar_url.BASE +
+                  ctx.bot.user.avatar_url._url),
+        title=f"{player_obj.name} troops",
+        bot_prefix=ctx.prefix,
+        bot_user_name=ctx.bot.user.name,
+        thumbnail=player_obj.league_icons,
+        field_list=field_dict_list,
+        image_url=None,
+        author_display_name=ctx.author.display_name,
+        author_avatar_url=(ctx.author.avatar_url.BASE +
+                           ctx.author.avatar_url._url)
+    )
+    for embed in embed_list:
+        await ctx.send(embed=embed)
+
+
+@client.command(
+    brief='player',
+    description='get all your spell levels',
+    hidden=True
+)
+async def allspelllvl(ctx):
+    async with ctx.typing():
+        db_player_obj = db_responder.read_player_active(ctx.author.id)
+    if not db_player_obj:
+        # user does not have an active player
+        await ctx.send(f"{ctx.author.mention} "
+                       f"does not have an active player")
+        return
+
+    player_obj = clash_responder.get_player(
+        db_player_obj.player_tag, razbot_data.header)
+    if not player_obj:
+        await ctx.send(f"Couldn't find player from tag "
+                       f"{db_player_obj.player_tag}")
+        return
+
+    field_dict_list = discord_responder.spell_lvl_all(player_obj)
+    embed_list = discord_responder.embed_message(
+        Embed=discord.Embed,
+        color=discord.Color(razbot_data.embed_color),
+        icon_url=(ctx.bot.user.avatar_url.BASE +
+                  ctx.bot.user.avatar_url._url),
+        title=f"{player_obj.name} troops",
+        bot_prefix=ctx.prefix,
+        bot_user_name=ctx.bot.user.name,
+        thumbnail=player_obj.league_icons,
+        field_list=field_dict_list,
+        image_url=None,
+        author_display_name=ctx.author.display_name,
+        author_avatar_url=(ctx.author.avatar_url.BASE +
+                           ctx.author.avatar_url._url)
+    )
+    for embed in embed_list:
+        await ctx.send(embed=embed)
 
 
 @client.command(
@@ -820,7 +968,7 @@ async def warclanscore(ctx):
         player_obj.clan_tag, razbot_data.header)
     field_dict_list = discord_responder.war_all_member_standing(
         war_obj)
-    embed = discord_responder.embed_message(
+    embed_list = discord_responder.embed_message(
         Embed=discord.Embed,
         color=discord.Color(razbot_data.embed_color),
         icon_url=(ctx.bot.user.avatar_url.BASE +
@@ -835,7 +983,9 @@ async def warclanscore(ctx):
         author_avatar_url=(ctx.author.avatar_url.BASE +
                            ctx.author.avatar_url._url)
     )
-    await ctx.send(embed=embed)
+
+    for embed in embed_list:
+        await ctx.send(embed=embed)
 
 
 # CWL Group
@@ -1885,7 +2035,7 @@ async def on_member_join(ctx):
 async def on_member_remove(member):
     print(f'{member} has left the server')
 
-'''
+
 @client.event
 async def on_command_error(ctx, error):
     if isinstance(error, commands.CommandNotFound):
@@ -1900,5 +2050,5 @@ async def on_command_error(ctx, error):
     else:
         await ctx.send(f"there was an error that I have not accounted for, "
                        f"please let Razgriz know")
-'''
+
 client.run(razbot_data.token)

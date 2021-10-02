@@ -156,59 +156,81 @@ def player_info(player_obj):
 def unit_lvl(player_obj, unit_obj, unit_name):
     if not unit_obj:
         # unit not found response
-        return [{
+        return {
             'name': f"could not find {unit_name}",
             'value': f"you either do not have it unlocked or it is misspelled"
-        }]
+        }
 
     if unit_obj.lvl == unit_obj.max_lvl:
         # unit is max lvl
-        return [{
-            'name': f"{player_obj.name} has lvl {unit_obj.lvl} {unit_obj.name}",
-            'value': f"which is max"
-        }]
+        return {
+            'name': f"{unit_obj.name} lvl {unit_obj.lvl}",
+            'value': f"max lvl"
+        }
     elif unit_obj.lvl == unit_obj.th_max:
         # unit is max for th, but not total max
-        return [{
-            'name': f"{player_obj.name} has lvl {unit_obj.lvl} {unit_obj.name}",
+        return {
+            'name': f"{unit_obj.name} lvl {unit_obj.lvl}",
             'value': (
-                f"which is max for TH {player_obj.th_lvl}, "
+                f"TH {player_obj.th_lvl} max, "
                 f"max {unit_obj.name} is {unit_obj.max_lvl}"
             )
-        }]
+        }
     else:
         # unit is not max for th nor is it total max
-        return [{
-            'name': f"{player_obj.name} has lvl {unit_obj.lvl} {unit_obj.name}",
-            'value': (
-                f"max for TH {player_obj.th_lvl} is {unit_obj.th_max}, "
-                f"max {unit_obj.name} is {unit_obj.max_lvl}"
-            )
-        }]
+        if unit_obj.max_lvl == unit_obj.th_max:
+            # unit max is the same as th max
+            return {
+                'name': f"{unit_obj.name} lvl {unit_obj.lvl}",
+                'value': f"max {unit_obj.name} is {unit_obj.max_lvl}"
+            }
+        else:
+            # unit max is not the same as th max
+            return {
+                'name': f"{unit_obj.name} lvl {unit_obj.lvl}",
+                'value': (
+                    f"TH {player_obj.th_lvl} max is {unit_obj.th_max}, "
+                    f"max {unit_obj.name} is {unit_obj.max_lvl}"
+                )
+            }
 
 
-# ? discontinue this function
 def unit_lvl_all(player_obj):
-    response_list = []
-    response_list.append(f'{player_obj.name} units:')
+    field_dict_list = []
+    for field_dict in hero_lvl_all(player_obj):
+        field_dict_list.append(field_dict)
+    for field_dict in troop_lvl_all(player_obj):
+        field_dict_list.append(field_dict)
+    for field_dict in spell_lvl_all(player_obj):
+        field_dict_list.append(field_dict)
+    return field_dict_list
+
+
+def hero_lvl_all(player_obj):
+    field_dict_list = []
     for hero_obj in player_obj.heroes:
         if hero_obj.village == 'home':
-            response_list.append(unit_lvl(
+            field_dict_list.append(unit_lvl(
                 player_obj, hero_obj, hero_obj.name))
-            response_list.append('__________')
+    return field_dict_list
+
+
+def troop_lvl_all(player_obj):
+    field_dict_list = []
     for troop_obj in player_obj.troops:
         if troop_obj.village == 'home':
-            response_list.append(unit_lvl(
+            field_dict_list.append(unit_lvl(
                 player_obj, troop_obj, troop_obj.name))
-            response_list.append('__________')
+    return field_dict_list
+
+
+def spell_lvl_all(player_obj):
+    field_dict_list = []
     for spell_obj in player_obj.spells:
         if spell_obj.village == 'home':
-            response_list.append(unit_lvl(
+            field_dict_list.append(unit_lvl(
                 player_obj, spell_obj, spell_obj.name))
-            response_list.append('__________')
-    # removing trailing '__________'
-    del response_list[-1]
-    return response_list
+    return field_dict_list
 
 
 def active_super_troops(player_obj, active_super_troops):
@@ -775,6 +797,7 @@ def embed_message(
     author_display_name,
     author_avatar_url
 ):
+    embed_list = []
     embed = Embed(
         colour=color,
         title=title
@@ -797,6 +820,23 @@ def embed_message(
             url=image_url)
 
     for field in field_list:
+        if field_list.index(field) > 25:
+            # discord will not accept more than 25 fields
+            del field_list[:25]
+            embed_list.append(
+                embed_message(
+                    Embed=Embed,
+                    color=color,
+                    icon_url=icon_url,
+                    title=title,
+                    bot_prefix=bot_prefix,
+                    bot_user_name=bot_user_name,
+                    thumbnail=thumbnail,
+                    field_list=field_list,
+                    image_url=image_url,
+                    author_display_name=author_display_name,
+                    author_avatar_url=author_avatar_url
+                )[0])
         if 'inline' in field:
             embed.add_field(
                 name=field['name'],
@@ -814,7 +854,11 @@ def embed_message(
         icon_url=author_avatar_url
     )
 
-    return embed
+    embed_list.append(embed)
+
+    embed_list.reverse()
+
+    return embed_list
 
 
 # DISCORD
