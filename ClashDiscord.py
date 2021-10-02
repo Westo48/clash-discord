@@ -200,7 +200,7 @@ async def player(ctx):
         db_player_obj.player_tag, razbot_data.header)
     if not player_obj:
         # player with tag from db not found
-        await ctx.send(f"Could not find player with tag "
+        await ctx.send(f"could not find player with tag "
                        f"{db_player_obj.player_tag}")
         return
 
@@ -250,7 +250,7 @@ async def memberplayer(ctx):
     player_obj = clash_responder.get_player(
         db_player_obj.player_tag, razbot_data.header)
     if not player_obj:
-        # player not found
+        # player with tag from db not found
         await ctx.send(f"could not find player with tag "
                        f"{db_player_obj.player_tag}")
         return
@@ -294,7 +294,8 @@ async def unitlvl(ctx, *, unit_name):
     player_obj = clash_responder.get_player(
         db_player_obj.player_tag, razbot_data.header)
     if not player_obj:
-        await ctx.send(f"Couldn't find player from tag "
+        # player with tag from db not found
+        await ctx.send(f"could not find player with tag "
                        f"{db_player_obj.player_tag}")
         return
 
@@ -337,7 +338,8 @@ async def allunitlvl(ctx):
     player_obj = clash_responder.get_player(
         db_player_obj.player_tag, razbot_data.header)
     if not player_obj:
-        await ctx.send(f"Couldn't find player from tag "
+        # player with tag from db not found
+        await ctx.send(f"could not find player with tag "
                        f"{db_player_obj.player_tag}")
         return
 
@@ -378,7 +380,8 @@ async def allherolvl(ctx):
     player_obj = clash_responder.get_player(
         db_player_obj.player_tag, razbot_data.header)
     if not player_obj:
-        await ctx.send(f"Couldn't find player from tag "
+        # player with tag from db not found
+        await ctx.send(f"could not find player with tag "
                        f"{db_player_obj.player_tag}")
         return
 
@@ -419,7 +422,8 @@ async def alltrooplvl(ctx):
     player_obj = clash_responder.get_player(
         db_player_obj.player_tag, razbot_data.header)
     if not player_obj:
-        await ctx.send(f"Couldn't find player from tag "
+        # player with tag from db not found
+        await ctx.send(f"could not find player with tag "
                        f"{db_player_obj.player_tag}")
         return
 
@@ -460,7 +464,8 @@ async def allspelllvl(ctx):
     player_obj = clash_responder.get_player(
         db_player_obj.player_tag, razbot_data.header)
     if not player_obj:
-        await ctx.send(f"Couldn't find player from tag "
+        # player with tag from db not found
+        await ctx.send(f"could not find player with tag "
                        f"{db_player_obj.player_tag}")
         return
 
@@ -492,19 +497,41 @@ async def allspelllvl(ctx):
 async def activesupertroop(ctx):
     async with ctx.typing():
         db_player_obj = db_responder.read_player_active(ctx.author.id)
-    if db_player_obj:
-        player_obj = clash_responder.get_player(
-            db_player_obj.player_tag, razbot_data.header)
-        if player_obj:
-            active_super_troops = player_obj.find_active_super_troops()
-            await ctx.send(discord_responder.active_super_troops(
-                player_obj, active_super_troops))
-        else:
-            await ctx.send(f"Couldn't find player from tag "
-                           f"{db_player_obj.player_tag}")
-    else:
+    if not db_player_obj:
+        # user does not have an active player
         await ctx.send(f"{ctx.author.mention} "
                        f"does not have an active player")
+        return
+
+    player_obj = clash_responder.get_player(
+        db_player_obj.player_tag, razbot_data.header)
+    if not player_obj:
+        # player with tag from db not found
+        await ctx.send(f"could not find player with tag "
+                       f"{db_player_obj.player_tag}")
+        return
+
+    active_super_troops = player_obj.find_active_super_troops()
+
+    field_dict_list = discord_responder.active_super_troops(
+        player_obj, active_super_troops)
+    embed_list = discord_responder.embed_message(
+        Embed=discord.Embed,
+        color=discord.Color(razbot_data.embed_color),
+        icon_url=(ctx.bot.user.avatar_url.BASE +
+                  ctx.bot.user.avatar_url._url),
+        title=f"{player_obj.name} super troops",
+        bot_prefix=ctx.prefix,
+        bot_user_name=ctx.bot.user.name,
+        thumbnail=player_obj.league_icons,
+        field_list=field_dict_list,
+        image_url=None,
+        author_display_name=ctx.author.display_name,
+        author_avatar_url=(ctx.author.avatar_url.BASE +
+                           ctx.author.avatar_url._url)
+    )
+    for embed in embed_list:
+        await ctx.send(embed=embed)
 
 
 # Clan
@@ -954,8 +981,8 @@ async def warclanscore(ctx):
     player_obj = clash_responder.get_player(
         db_player_obj.player_tag, razbot_data.header)
     if not player_obj:
-        # player not found from db tag
-        await ctx.send(f"Couldn't find player from tag "
+        # player with tag from db not found
+        await ctx.send(f"could not find player with tag "
                        f"{db_player_obj.player_tag}")
         return
 

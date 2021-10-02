@@ -235,16 +235,18 @@ def spell_lvl_all(player_obj):
 
 def active_super_troops(player_obj, active_super_troops):
     if len(active_super_troops) == 0:
-        return f"{player_obj.name} does not have any active super troops."
+        return [{
+            'name': "none",
+            'value': f"{player_obj.name} does not have any active super troops"
+        }]
     else:
-        super_troop_string = ''
+        field_dict_list = []
         for super_troop in active_super_troops:
-            super_troop_string += f'{super_troop.name} and '
-
-        # cuts the last 5 characters ' and ' from the string
-        super_troop_string = super_troop_string[:-5]
-
-        return f"{player_obj.name} has {super_troop_string} currently active."
+            field_dict_list.append({
+                'name': super_troop.name,
+                'value': f"is active"
+            })
+        return field_dict_list
 
 
 # CLAN
