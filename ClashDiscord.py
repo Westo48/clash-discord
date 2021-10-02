@@ -88,32 +88,43 @@ async def help(ctx):
     brief='discord',
     hidden=True
 )
-async def embedtest(ctx):
-    author = ctx.message.author
+async def embedtesting(ctx):
+    async with ctx.typing():
+        db_player_obj = db_responder.read_player_active(ctx.author.id)
+    if not db_player_obj:
+        # user does not have an active player
+        await ctx.send(f"{ctx.author.mention} "
+                       f"does not have an active player")
+        return
 
-    embed = discord.Embed(
-        colour=discord.Colour.teal(),
-        title='Test title'
+    player_obj = clash_responder.get_player(
+        db_player_obj.player_tag, razbot_data.header)
+    if not player_obj:
+        await ctx.send(f"Couldn't find player from tag "
+                       f"{db_player_obj.player_tag}")
+        return
+
+    if not player_obj.clan_tag:
+        await ctx.send(f"{player_obj.name} is not in a clan")
+
+    war_obj = clash_responder.get_war(
+        player_obj.clan_tag, razbot_data.header)
+    field_dict_list = discord_responder.embed_war_all_member_standing(
+        war_obj)
+    embed = discord_responder.embed_message(
+        icon_url=(ctx.bot.user.avatar_url.BASE +
+                  ctx.bot.user.avatar_url._url),
+        color=razbot_data.embed_color,
+        title=None,
+        bot_prefix=ctx.prefix,
+        bot_user_name=ctx.bot.user.name,
+        thumbnail=player_obj.clan_icons,
+        field_list=field_dict_list,
+        image_url=None,
+        author_display_name=ctx.author.display_name,
+        author_avatar_url=(ctx.author.avatar_url.BASE +
+                           ctx.author.avatar_url._url)
     )
-    embed.set_author(
-        name="[{ctx.prefix}] {ctx.bot.user.name}", icon_url="https://cdn.discordapp.com/avatars/649107156989378571/053f201109188da026d0a980dd4136e0.webp")
-    # embed.set_image(
-    #     url="https://i.imgur.com/rwgo8fJ.jpg")
-    embed.set_thumbnail(
-        url="https://i.imgur.com/MFZp1Fy.gif")
-
-    embed.add_field(
-        name="Testing", value=":computer:", inline=False)
-
-    embed.add_field(
-        name=f"{ctx.bot.all_commands['waroverview'].name} | {ctx.bot.all_commands['waroverview'].aliases}",
-        value=ctx.bot.all_commands['waroverview'].description,
-        inline=False
-    )
-
-    embed.set_footer(
-        text="This is the embed testing command")
-
     await ctx.send(embed=embed)
 
 
@@ -141,161 +152,30 @@ async def ping(ctx):
 )
 async def findplayer(ctx, *, player_tag):
     async with ctx.typing():
-        player = clash_responder.get_player(player_tag, razbot_data.header)
+        player_obj = clash_responder.get_player(
+            player_tag, razbot_data.header)
 
-    if not player:
-        await ctx.send(f"Could not find player with tag {player_tag}")
+    if not player_obj:
+        # player with given tag not found
+        await ctx.send(f"could not find player with tag {player_tag}")
         return
 
-    embed = discord.Embed(
-        colour=discord.Colour.blue(),
-        title=player.name,
-    )
-    embed.set_author(
-        name=f"[{ctx.prefix}] {ctx.bot.user.name}", icon_url="https://cdn.discordapp.com/avatars/649107156989378571/053f201109188da026d0a980dd4136e0.webp")
-    embed.add_field(
-        name='**Exp Lvl**',
-        value=player.xp_lvl,
-        inline=True
-    )
-    embed.add_field(
-        name='**TH Lvl**',
-        value=player.th_lvl,
-        inline=True
-    )
-    if player.th_weapon_lvl:
-        embed.add_field(
-            name='**TH Weapon Lvl**',
-            value=player.th_weapon_lvl,
-            inline=True
-        )
-    embed.add_field(
-        name='**Trophies**',
-        value=player.trophies,
-        inline=True
-    )
-    embed.add_field(
-        name='**Best Trophies**',
-        value=player.best_trophies,
-        inline=True
-    )
-    if player.legend_trophies:
-        embed.add_field(
-            name='**Legend Trophies**',
-            value=player.legend_trophies,
-            inline=True
-        )
-        embed.add_field(
-            name='**Best Rank | Trophies**',
-            value=f"{player.best_legend_rank} | {player.best_legend_trophies}",
-            inline=True
-        )
-        if player.previous_legend_rank:
-            embed.add_field(
-                name='**Previous Rank | Trophies**',
-                value=f"{player.previous_legend_rank} | {player.previous_legend_trophies}",
-                inline=True
-            )
-        if player.current_legend_rank:
-            embed.add_field(
-                name='**Current Rank | Trophies**',
-                value=f"{player.current_legend_rank} | {player.current_legend_trophies}",
-                inline=True
-            )
+    field_dict_list = discord_responder.player_info(player_obj)
 
-    if not player.league_id:
-        embed.set_thumbnail(
-            url='https://api-assets.clashofclans.com/leagues/72/e--YMyIexEQQhE4imLoJcwhYn6Uy8KqlgyY3_kFV6t4.png')
-    else:
-        embed.set_thumbnail(url=player.league_icons['medium'])
-    embed.add_field(
-        name='**War Stars**',
-        value=player.war_stars,
-        inline=True
-    )
-    if player.clan_lvl:
-        embed.add_field(
-            name='**Clan**',
-            value=f"[{player.clan_name}](https://link.clashofclans.com/en?action=OpenClanProfile&tag={player.clan_tag[1:]})",
-            inline=True
-        )
-
-        if player.role == 'leader':
-            role_name = 'Leader'
-        elif player.role == 'coLeader':
-            role_name = 'Co-Leader'
-        elif player.role == 'admin':
-            role_name = 'Elder'
-        else:
-            role_name = 'Member'
-        embed.add_field(
-            name='**Clan Role**',
-            value=role_name,
-            inline=True
-        )
-    else:
-        embed.add_field(
-            name='**Clan**',
-            value=f"{player.name} is not in a clan",
-            inline=True
-        )
-
-    hero_title = ''
-    hero_value = ''
-    for hero in player.heroes:
-        if hero.name == 'Barbarian King':
-            hero_title = 'BK'
-            hero_value = f'{hero.lvl}'
-        elif hero.name == 'Archer Queen':
-            hero_title += ' | AQ'
-            hero_value += f' | {hero.lvl}'
-        elif hero.name == 'Grand Warden':
-            hero_title += ' | GW'
-            hero_value += f' | {hero.lvl}'
-        elif hero.name == 'Royal Champion':
-            hero_title += ' | RC'
-            hero_value += f' | {hero.lvl}'
-        else:
-            break
-    if hero_title != '':
-        embed.add_field(
-            name=f'**{hero_title}**',
-            value=hero_value,
-            inline=True
-        )
-
-    pet_title = ''
-    pet_value = ''
-    for troop in player.troops:
-        if troop.name == 'L.A.S.S.I':
-            pet_title = 'LA'
-            pet_value = f'{troop.lvl}'
-        elif troop.name == 'Mighty Yak':
-            pet_title += ' | MY'
-            pet_value += f' | {troop.lvl}'
-        elif troop.name == 'Electro Owl':
-            pet_title += ' | EO'
-            pet_value += f' | {troop.lvl}'
-        elif troop.name == 'Unicorn':
-            pet_title += ' | UC'
-            pet_value += f' | {troop.lvl}'
-    if pet_title != '':
-        embed.add_field(
-            name=f'**{pet_title}**',
-            value=pet_value,
-            inline=True
-        )
-
-    embed.add_field(
-        name='**Link**',
-        value=f"[{player.name}](https://link.clashofclans.com/en?action=OpenPlayerProfile&tag={player.tag[1:]})",
-        inline=True
-    )
-
-    # todo set footer to display user called and timestamp
-    embed.set_footer(
-        text=ctx.author.display_name,
-        icon_url=ctx.author.avatar_url.BASE+ctx.author.avatar_url._url
+    embed = discord_responder.embed_message(
+        Embed=discord.Embed,
+        color=discord.Color(razbot_data.embed_color),
+        icon_url=(ctx.bot.user.avatar_url.BASE +
+                  ctx.bot.user.avatar_url._url),
+        title=player_obj.name,
+        bot_prefix=ctx.prefix,
+        bot_user_name=ctx.bot.user.name,
+        thumbnail=player_obj.league_icons,
+        field_list=field_dict_list,
+        image_url=None,
+        author_display_name=ctx.author.display_name,
+        author_avatar_url=(ctx.author.avatar_url.BASE +
+                           ctx.author.avatar_url._url)
     )
 
     await ctx.send(embed=embed)
@@ -308,180 +188,40 @@ async def findplayer(ctx, *, player_tag):
 )
 async def player(ctx):
     async with ctx.typing():
-        user = db_responder.read_user(ctx.author.id)
-    # if user is found
-    if user:
-        # if the user is found
         db_player_obj = db_responder.read_player_active(ctx.author.id)
-        if db_player_obj:
-            # active player is found
-            player_obj = clash_responder.get_player(
-                db_player_obj.player_tag, razbot_data.header)
+    if not db_player_obj:
+        # user active player not found
+        await ctx.send(f"{ctx.author.mention} does not "
+                       f"have an active player")
+        return
 
-            if player_obj:
-                # if player is found
-                embed = discord.Embed(
-                    colour=discord.Colour.blue(),
-                    title=player_obj.name,
-                )
-                embed.set_author(
-                    name=f"[{ctx.prefix}] {ctx.bot.user.name}", icon_url="https://cdn.discordapp.com/avatars/649107156989378571/053f201109188da026d0a980dd4136e0.webp")
-                embed.add_field(
-                    name='**Exp Lvl**',
-                    value=player_obj.xp_lvl,
-                    inline=True
-                )
-                embed.add_field(
-                    name='**TH Lvl**',
-                    value=player_obj.th_lvl,
-                    inline=True
-                )
-                if player_obj.th_weapon_lvl:
-                    embed.add_field(
-                        name='**TH Weapon Lvl**',
-                        value=player_obj.th_weapon_lvl,
-                        inline=True
-                    )
-                embed.add_field(
-                    name='**Trophies**',
-                    value=player_obj.trophies,
-                    inline=True
-                )
-                embed.add_field(
-                    name='**Best Trophies**',
-                    value=player_obj.best_trophies,
-                    inline=True
-                )
-                if player_obj.legend_trophies:
-                    embed.add_field(
-                        name='**Legend Trophies**',
-                        value=player_obj.legend_trophies,
-                        inline=True
-                    )
-                    embed.add_field(
-                        name='**Best Rank | Trophies**',
-                        value=f"{player_obj.best_legend_rank} | {player_obj.best_legend_trophies}",
-                        inline=True
-                    )
-                    if player_obj.previous_legend_rank:
-                        embed.add_field(
-                            name='**Previous Rank | Trophies**',
-                            value=f"{player_obj.previous_legend_rank} | {player_obj.previous_legend_trophies}",
-                            inline=True
-                        )
-                    if player_obj.current_legend_rank:
-                        embed.add_field(
-                            name='**Current Rank | Trophies**',
-                            value=f"{player_obj.current_legend_rank} | {player_obj.current_legend_trophies}",
-                            inline=True
-                        )
+    player_obj = clash_responder.get_player(
+        db_player_obj.player_tag, razbot_data.header)
+    if not player_obj:
+        # player with tag from db not found
+        await ctx.send(f"Could not find player with tag "
+                       f"{db_player_obj.player_tag}")
+        return
 
-                if not player_obj.league_id:
-                    embed.set_thumbnail(
-                        url='https://api-assets.clashofclans.com/leagues/72/e--YMyIexEQQhE4imLoJcwhYn6Uy8KqlgyY3_kFV6t4.png')
-                else:
-                    embed.set_thumbnail(url=player_obj.league_icons['medium'])
-                embed.add_field(
-                    name='**War Stars**',
-                    value=player_obj.war_stars,
-                    inline=True
-                )
-                if player_obj.clan_lvl:
-                    embed.add_field(
-                        name='**Clan**',
-                        value=f"[{player_obj.clan_name}](https://link.clashofclans.com/en?action=OpenClanProfile&tag={player_obj.clan_tag[1:]})",
-                        inline=True
-                    )
+    field_dict_list = discord_responder.player_info(player_obj)
 
-                    if player_obj.role == 'leader':
-                        role_name = 'Leader'
-                    elif player_obj.role == 'coLeader':
-                        role_name = 'Co-Leader'
-                    elif player_obj.role == 'admin':
-                        role_name = 'Elder'
-                    else:
-                        role_name = 'Member'
-                    embed.add_field(
-                        name='**Clan Role**',
-                        value=role_name,
-                        inline=True
-                    )
-                else:
-                    embed.add_field(
-                        name='**Clan**',
-                        value=f"{player_obj.name} is not in a clan",
-                        inline=True
-                    )
+    embed = discord_responder.embed_message(
+        Embed=discord.Embed,
+        color=discord.Color(razbot_data.embed_color),
+        icon_url=(ctx.bot.user.avatar_url.BASE +
+                  ctx.bot.user.avatar_url._url),
+        title=player_obj.name,
+        bot_prefix=ctx.prefix,
+        bot_user_name=ctx.bot.user.name,
+        thumbnail=player_obj.league_icons,
+        field_list=field_dict_list,
+        image_url=None,
+        author_display_name=ctx.author.display_name,
+        author_avatar_url=(ctx.author.avatar_url.BASE +
+                           ctx.author.avatar_url._url)
+    )
 
-                hero_title = ''
-                hero_value = ''
-                for hero in player_obj.heroes:
-                    if hero.name == 'Barbarian King':
-                        hero_title = 'BK'
-                        hero_value = f'{hero.lvl}'
-                    elif hero.name == 'Archer Queen':
-                        hero_title += ' | AQ'
-                        hero_value += f' | {hero.lvl}'
-                    elif hero.name == 'Grand Warden':
-                        hero_title += ' | GW'
-                        hero_value += f' | {hero.lvl}'
-                    elif hero.name == 'Royal Champion':
-                        hero_title += ' | RC'
-                        hero_value += f' | {hero.lvl}'
-                    else:
-                        break
-                if hero_title != '':
-                    embed.add_field(
-                        name=f'**{hero_title}**',
-                        value=hero_value,
-                        inline=True
-                    )
-
-                pet_title = ''
-                pet_value = ''
-                for troop in player_obj.troops:
-                    if troop.name == 'L.A.S.S.I':
-                        pet_title = 'LA'
-                        pet_value = f'{troop.lvl}'
-                    elif troop.name == 'Mighty Yak':
-                        pet_title += ' | MY'
-                        pet_value += f' | {troop.lvl}'
-                    elif troop.name == 'Electro Owl':
-                        pet_title += ' | EO'
-                        pet_value += f' | {troop.lvl}'
-                    elif troop.name == 'Unicorn':
-                        pet_title += ' | UC'
-                        pet_value += f' | {troop.lvl}'
-                if pet_title != '':
-                    embed.add_field(
-                        name=f'**{pet_title}**',
-                        value=pet_value,
-                        inline=True
-                    )
-
-                embed.add_field(
-                    name='**Link**',
-                    value=f"[{player_obj.name}](https://link.clashofclans.com/en?action=OpenPlayerProfile&tag={player_obj.tag[1:]})",
-                    inline=True
-                )
-
-                # todo set footer to display user called and timestamp
-                embed.set_footer(
-                    text=ctx.author.display_name,
-                    icon_url=ctx.author.avatar_url.BASE+ctx.author.avatar_url._url
-                )
-
-                await ctx.send(embed=embed)
-            else:
-                # if player is not found
-                await ctx.send(f"Could not find player with tag {db_player_obj.player_tag}")
-
-        else:
-            await ctx.send(f"{ctx.author.mention} does not "
-                           f"have an active player")
-    else:
-        # if user is not found
-        await ctx.send(f"{ctx.author.mention} has not been claimed")
+    await ctx.send(embed=embed)
 
 
 @client.command(
@@ -500,8 +240,8 @@ async def memberplayer(ctx):
     async with ctx.typing():
         db_player_obj = db_responder.read_player_active(discord_member.id)
     if not db_player_obj:
-        # active player not found
-        await ctx.send(f"{discord_member.mention} "
+        # user active player not found
+        await ctx.send(f"{discord_member.display_name} "
                        f"does not have an active player claimed")
         return
 
@@ -513,156 +253,22 @@ async def memberplayer(ctx):
                        f"{db_player_obj.player_tag}")
         return
 
-    # player is found
-    embed = discord.Embed(
-        colour=discord.Colour.blue(),
+    field_dict_list = discord_responder.player_info(player_obj)
+
+    embed = discord_responder.embed_message(
+        Embed=discord.Embed,
+        color=discord.Color(razbot_data.embed_color),
+        icon_url=(ctx.bot.user.avatar_url.BASE +
+                  ctx.bot.user.avatar_url._url),
         title=player_obj.name,
-    )
-    embed.set_author(
-        name=f"[{ctx.prefix}] {ctx.bot.user.name}", icon_url="https://cdn.discordapp.com/avatars/649107156989378571/053f201109188da026d0a980dd4136e0.webp")
-    embed.add_field(
-        name='**Exp Lvl**',
-        value=player_obj.xp_lvl,
-        inline=True
-    )
-    embed.add_field(
-        name='**TH Lvl**',
-        value=player_obj.th_lvl,
-        inline=True
-    )
-    if player_obj.th_weapon_lvl:
-        embed.add_field(
-            name='**TH Weapon Lvl**',
-            value=player_obj.th_weapon_lvl,
-            inline=True
-        )
-    embed.add_field(
-        name='**Trophies**',
-        value=player_obj.trophies,
-        inline=True
-    )
-    embed.add_field(
-        name='**Best Trophies**',
-        value=player_obj.best_trophies,
-        inline=True
-    )
-    if player_obj.legend_trophies:
-        embed.add_field(
-            name='**Legend Trophies**',
-            value=player_obj.legend_trophies,
-            inline=True
-        )
-        embed.add_field(
-            name='**Best Rank | Trophies**',
-            value=f"{player_obj.best_legend_rank} | {player_obj.best_legend_trophies}",
-            inline=True
-        )
-        if player_obj.previous_legend_rank:
-            embed.add_field(
-                name='**Previous Rank | Trophies**',
-                value=f"{player_obj.previous_legend_rank} | {player_obj.previous_legend_trophies}",
-                inline=True
-            )
-        if player_obj.current_legend_rank:
-            embed.add_field(
-                name='**Current Rank | Trophies**',
-                value=f"{player_obj.current_legend_rank} | {player_obj.current_legend_trophies}",
-                inline=True
-            )
-
-    if not player_obj.league_id:
-        embed.set_thumbnail(
-            url='https://api-assets.clashofclans.com/leagues/72/e--YMyIexEQQhE4imLoJcwhYn6Uy8KqlgyY3_kFV6t4.png')
-    else:
-        embed.set_thumbnail(url=player_obj.league_icons['medium'])
-    embed.add_field(
-        name='**War Stars**',
-        value=player_obj.war_stars,
-        inline=True
-    )
-    if player_obj.clan_lvl:
-        embed.add_field(
-            name='**Clan**',
-            value=f"[{player_obj.clan_name}](https://link.clashofclans.com/en?action=OpenClanProfile&tag={player_obj.clan_tag[1:]})",
-            inline=True
-        )
-
-        if player_obj.role == 'leader':
-            role_name = 'Leader'
-        elif player_obj.role == 'coLeader':
-            role_name = 'Co-Leader'
-        elif player_obj.role == 'admin':
-            role_name = 'Elder'
-        else:
-            role_name = 'Member'
-        embed.add_field(
-            name='**Clan Role**',
-            value=role_name,
-            inline=True
-        )
-    else:
-        embed.add_field(
-            name='**Clan**',
-            value=f"{player_obj.name} is not in a clan",
-            inline=True
-        )
-
-    hero_title = ''
-    hero_value = ''
-    for hero in player_obj.heroes:
-        if hero.name == 'Barbarian King':
-            hero_title = 'BK'
-            hero_value = f'{hero.lvl}'
-        elif hero.name == 'Archer Queen':
-            hero_title += ' | AQ'
-            hero_value += f' | {hero.lvl}'
-        elif hero.name == 'Grand Warden':
-            hero_title += ' | GW'
-            hero_value += f' | {hero.lvl}'
-        elif hero.name == 'Royal Champion':
-            hero_title += ' | RC'
-            hero_value += f' | {hero.lvl}'
-        else:
-            break
-    if hero_title != '':
-        embed.add_field(
-            name=f'**{hero_title}**',
-            value=hero_value,
-            inline=True
-        )
-
-    pet_title = ''
-    pet_value = ''
-    for troop in player_obj.troops:
-        if troop.name == 'L.A.S.S.I':
-            pet_title = 'LA'
-            pet_value = f'{troop.lvl}'
-        elif troop.name == 'Mighty Yak':
-            pet_title += ' | MY'
-            pet_value += f' | {troop.lvl}'
-        elif troop.name == 'Electro Owl':
-            pet_title += ' | EO'
-            pet_value += f' | {troop.lvl}'
-        elif troop.name == 'Unicorn':
-            pet_title += ' | UC'
-            pet_value += f' | {troop.lvl}'
-    if pet_title != '':
-        embed.add_field(
-            name=f'**{pet_title}**',
-            value=pet_value,
-            inline=True
-        )
-
-    embed.add_field(
-        name='**Link**',
-        value=f"[{player_obj.name}](https://link.clashofclans.com/en?action=OpenPlayerProfile&tag={player_obj.tag[1:]})",
-        inline=True
-    )
-
-    # todo set footer to display user called and timestamp
-    embed.set_footer(
-        text=ctx.author.display_name,
-        icon_url=ctx.author.avatar_url.BASE+ctx.author.avatar_url._url
+        bot_prefix=ctx.prefix,
+        bot_user_name=ctx.bot.user.name,
+        thumbnail=player_obj.league_icons,
+        field_list=field_dict_list,
+        image_url=None,
+        author_display_name=ctx.author.display_name,
+        author_avatar_url=(ctx.author.avatar_url.BASE +
+                           ctx.author.avatar_url._url)
     )
 
     await ctx.send(embed=embed)
@@ -675,18 +281,38 @@ async def memberplayer(ctx):
 async def trooplvl(ctx, *, unit_name):
     async with ctx.typing():
         db_player_obj = db_responder.read_player_active(ctx.author.id)
-    if db_player_obj:
-        player_obj = clash_responder.get_player(
-            db_player_obj.player_tag, razbot_data.header)
-        if player_obj:
-            unit_obj = clash_responder.find_unit(player_obj, unit_name)
-            await ctx.send(discord_responder.unit_lvl(
-                player_obj, unit_obj, unit_name))
-        else:
-            await ctx.send(f"Couldn't find player from tag "
-                           f"{db_player_obj.player_tag}")
-    else:
-        await ctx.send(f"{ctx.author.mention} does not have an active player")
+    if not db_player_obj:
+        # user does not have an active player
+        await ctx.send(f"{ctx.author.mention} "
+                       f"does not have an active player")
+        return
+
+    player_obj = clash_responder.get_player(
+        db_player_obj.player_tag, razbot_data.header)
+    if not player_obj:
+        await ctx.send(f"Couldn't find player from tag "
+                       f"{db_player_obj.player_tag}")
+        return
+
+    unit_obj = clash_responder.find_unit(player_obj, unit_name)
+    field_dict_list = discord_responder.unit_lvl(
+        player_obj, unit_obj, unit_name)
+    embed = discord_responder.embed_message(
+        Embed=discord.Embed,
+        color=discord.Color(razbot_data.embed_color),
+        icon_url=(ctx.bot.user.avatar_url.BASE +
+                  ctx.bot.user.avatar_url._url),
+        title=None,
+        bot_prefix=ctx.prefix,
+        bot_user_name=ctx.bot.user.name,
+        thumbnail=player_obj.league_icons,
+        field_list=field_dict_list,
+        image_url=None,
+        author_display_name=ctx.author.display_name,
+        author_avatar_url=(ctx.author.avatar_url.BASE +
+                           ctx.author.avatar_url._url)
+    )
+    await ctx.send(embed=embed)
 
 
 @client.command(
@@ -1172,23 +798,44 @@ async def warallattacks(ctx):
 async def warclanscore(ctx):
     async with ctx.typing():
         db_player_obj = db_responder.read_player_active(ctx.author.id)
-    if db_player_obj:
-        player_obj = clash_responder.get_player(
-            db_player_obj.player_tag, razbot_data.header)
-        if player_obj:
-            if player_obj.clan_tag:
-                war_obj = clash_responder.get_war(
-                    player_obj.clan_tag, razbot_data.header)
-                for line in discord_responder.war_all_member_standing(
-                        war_obj):
-                    await ctx.send(f'{line}')
-            else:
-                await ctx.send(f"{player_obj.name} is not in a clan")
-        else:
-            await ctx.send(f"Couldn't find player from tag "
-                           f"{db_player_obj.player_tag}")
-    else:
+    if not db_player_obj:
+        # user does not have an active player
         await ctx.send(f"{ctx.author.mention} does not have an active player")
+        return
+
+    player_obj = clash_responder.get_player(
+        db_player_obj.player_tag, razbot_data.header)
+    if not player_obj:
+        # player not found from db tag
+        await ctx.send(f"Couldn't find player from tag "
+                       f"{db_player_obj.player_tag}")
+        return
+
+    if not player_obj.clan_tag:
+        # player is found but not in a clan
+        await ctx.send(f"{player_obj.name} is not in a clan")
+        return
+
+    war_obj = clash_responder.get_war(
+        player_obj.clan_tag, razbot_data.header)
+    field_dict_list = discord_responder.war_all_member_standing(
+        war_obj)
+    embed = discord_responder.embed_message(
+        Embed=discord.Embed,
+        color=discord.Color(razbot_data.embed_color),
+        icon_url=(ctx.bot.user.avatar_url.BASE +
+                  ctx.bot.user.avatar_url._url),
+        title=None,
+        bot_prefix=ctx.prefix,
+        bot_user_name=ctx.bot.user.name,
+        thumbnail=player_obj.clan_icons,
+        field_list=field_dict_list,
+        image_url=None,
+        author_display_name=ctx.author.display_name,
+        author_avatar_url=(ctx.author.avatar_url.BASE +
+                           ctx.author.avatar_url._url)
+    )
+    await ctx.send(embed=embed)
 
 
 # CWL Group
@@ -2238,7 +1885,7 @@ async def on_member_join(ctx):
 async def on_member_remove(member):
     print(f'{member} has left the server')
 
-
+'''
 @client.event
 async def on_command_error(ctx, error):
     if isinstance(error, commands.CommandNotFound):
@@ -2253,5 +1900,5 @@ async def on_command_error(ctx, error):
     else:
         await ctx.send(f"there was an error that I have not accounted for, "
                        f"please let Razgriz know")
-
+'''
 client.run(razbot_data.token)

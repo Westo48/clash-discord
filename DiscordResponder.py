@@ -5,35 +5,186 @@ from Player import super_troop_list
 
 # PLAYER
 
+def player_info(player_obj):
+    field_dict_list = []
+    field_dict_list.append({
+        'name': '**Exp Lvl**',
+        'value': player_obj.xp_lvl,
+        'inline': True
+    })
+    field_dict_list.append({
+        'name': '**TH Lvl**',
+        'value': player_obj.th_lvl,
+        'inline': True
+    })
+    if player_obj.th_weapon_lvl:
+        field_dict_list.append({
+            'name': '**TH Weapon Lvl**',
+            'value': player_obj.th_weapon_lvl,
+            'inline': True
+        })
+    field_dict_list.append({
+        'name': '**Trophies**',
+        'value': player_obj.trophies,
+        'inline': True
+    })
+    field_dict_list.append({
+        'name': '**Best Trophies**',
+        'value': player_obj.best_trophies,
+        'inline': True
+    })
+    if player_obj.legend_trophies:
+        field_dict_list.append({
+            'name': '**Legend Trophies**',
+            'value': player_obj.legend_trophies,
+            'inline': True
+        })
+    if player_obj.best_legend_rank:
+        field_dict_list.append({
+            'name': '**Best Rank | Trophies**',
+            'value': (f"{player_obj.best_legend_rank} | "
+                      f"{player_obj.best_legend_trophies}"),
+            'inline': True
+        })
+    if player_obj.current_legend_rank:
+        field_dict_list.append({
+            'name': '**Current Rank | Trophies**',
+            'value': (f"{player_obj.current_legend_rank} | "
+                      f"{player_obj.current_legend_trophies}"),
+            'inline': True
+        })
+    if player_obj.previous_legend_rank:
+        field_dict_list.append({
+            'name': '**Previous Rank | Trophies**',
+            'value': (f"{player_obj.previous_legend_rank} | "
+                      f"{player_obj.previous_legend_trophies}"),
+            'inline': True
+        })
+
+    field_dict_list.append({
+        'name': '**War Stars**',
+        'value': player_obj.war_stars,
+        'inline': True
+    })
+    if player_obj.clan_tag:
+        field_dict_list.append({
+            'name': '**Clan**',
+            'value': (f"[{player_obj.clan_name}]"
+                      f"(https://link.clashofclans.com/"
+                      f"en?action=OpenClanProfile&tag="
+                      f"{player_obj.clan_tag[1:]})"),
+            'inline': True
+        })
+
+        if player_obj.role == 'leader':
+            role_name = 'Leader'
+        elif player_obj.role == 'coLeader':
+            role_name = 'Co-Leader'
+        elif player_obj.role == 'admin':
+            role_name = 'Elder'
+        else:
+            role_name = 'Member'
+        field_dict_list.append({
+            'name': '**Clan Role**',
+            'value': role_name,
+            'inline': True
+        })
+    else:
+        field_dict_list.append({
+            'name': '**Clan**',
+            'value': f"{player_obj.name} is not in a clan",
+            'inline': True
+        })
+
+    hero_title = ''
+    hero_value = ''
+    for hero in player_obj.heroes:
+        if hero.name == 'Barbarian King':
+            hero_title = 'BK'
+            hero_value = f'{hero.lvl}'
+        elif hero.name == 'Archer Queen':
+            hero_title += ' | AQ'
+            hero_value += f' | {hero.lvl}'
+        elif hero.name == 'Grand Warden':
+            hero_title += ' | GW'
+            hero_value += f' | {hero.lvl}'
+        elif hero.name == 'Royal Champion':
+            hero_title += ' | RC'
+            hero_value += f' | {hero.lvl}'
+        else:
+            break
+    if hero_title != '':
+        field_dict_list.append({
+            'name': f'**{hero_title}**',
+            'value': hero_value,
+            'inline': True
+        })
+
+    pet_title = ''
+    pet_value = ''
+    for troop in player_obj.troops:
+        if troop.name == 'L.A.S.S.I':
+            pet_title = 'LA'
+            pet_value = f'{troop.lvl}'
+        elif troop.name == 'Mighty Yak':
+            pet_title += ' | MY'
+            pet_value += f' | {troop.lvl}'
+        elif troop.name == 'Electro Owl':
+            pet_title += ' | EO'
+            pet_value += f' | {troop.lvl}'
+        elif troop.name == 'Unicorn':
+            pet_title += ' | UC'
+            pet_value += f' | {troop.lvl}'
+    if pet_title != '':
+        field_dict_list.append({
+            'name': f'**{pet_title}**',
+            'value': pet_value,
+            'inline': True
+        })
+
+    field_dict_list.append({
+        'name': '**Link**',
+        'value': (f"[{player_obj.name}]"
+                  f"(https://link.clashofclans.com/"
+                  f"en?action=OpenPlayerProfile&tag="
+                  f"{player_obj.tag[1:]})"),
+        'inline': True
+    })
+    return field_dict_list
+
+
 def unit_lvl(player_obj, unit_obj, unit_name):
     if not unit_obj:
         # unit not found response
-        return (
-            f"could not find {unit_name}, "
-            f"you either do not have it unlocked or "
-            f"it is misspelled."
-        )
+        return [{
+            'name': f"could not find {unit_name}",
+            'value': f"you either do not have it unlocked or it is misspelled"
+        }]
 
     if unit_obj.lvl == unit_obj.max_lvl:
         # unit is max lvl
-        return (
-            f"{player_obj.name} has lvl {unit_obj.lvl} {unit_obj.name}, "
-            f"which is max."
-        )
+        return [{
+            'name': f"{player_obj.name} has lvl {unit_obj.lvl} {unit_obj.name}",
+            'value': f"which is max"
+        }]
     elif unit_obj.lvl == unit_obj.th_max:
         # unit is max for th, but not total max
-        return (
-            f"{player_obj.name} has lvl {unit_obj.lvl} {unit_obj.name}, "
-            f"which is max for TH {player_obj.th_lvl}, "
-            f"max {unit_obj.name} is {unit_obj.max_lvl}."
-        )
+        return [{
+            'name': f"{player_obj.name} has lvl {unit_obj.lvl} {unit_obj.name}",
+            'value': (
+                f"which is max for TH {player_obj.th_lvl}, "
+                f"max {unit_obj.name} is {unit_obj.max_lvl}"
+            )
+        }]
     else:
         # unit is not max for th nor is it total max
-        return (
-            f"{player_obj.name} has lvl {unit_obj.lvl} {unit_obj.name}, "
-            f"max for TH {player_obj.th_lvl} is {unit_obj.th_max}, "
-            f"max {unit_obj.name} is {unit_obj.max_lvl}."
-        )
+        return [{
+            'name': f"{player_obj.name} has lvl {unit_obj.lvl} {unit_obj.name}",
+            'value': (
+                f"max for TH {player_obj.th_lvl} is {unit_obj.th_max}, "
+                f"max {unit_obj.name} is {unit_obj.max_lvl}"
+            )
+        }]
 
 
 # ? discontinue this function
@@ -322,18 +473,26 @@ def war_all_member_standing(war_obj):
     "returns a response list of member scores"
     return_list = []
     if war_obj.state == 'preparation':
-        return_list.append('war has not started, there is no score')
+        return_list.append({
+            'name': 'war has not started',
+            'value': 'there is no score'
+        })
         return return_list
     elif war_obj.state == 'notInWar':
-        return_list.append('you are not in war')
+        return_list.append({
+            'name': 'you are not in war',
+            'value': 'there is no score'
+        })
         return return_list
     else:
         war_members = sorted(
             war_obj.clan.members, key=lambda member: member.score, reverse=True)
         # razgriz has a score of
         for member in war_members:
-            return_list.append(
-                f'{member.name} has a score of {round(member.score, 3)}')
+            return_list.append({
+                'name': member.name,
+                'value': f'{round(member.score, 3)}'
+            })
         return return_list
 
 
@@ -601,6 +760,61 @@ def cwl_war_all_attacks(war_obj):
     else:
         response_list.append('you are not in CWL')
     return response_list
+
+
+def embed_message(
+    Embed,
+    color,
+    icon_url,
+    title,
+    bot_prefix,
+    bot_user_name,
+    thumbnail,
+    field_list,
+    image_url,
+    author_display_name,
+    author_avatar_url
+):
+    embed = Embed(
+        colour=color,
+        title=title
+    )
+
+    embed.set_author(
+        icon_url=icon_url,
+        name=f"[{bot_prefix}] {bot_user_name}"
+    )
+    if thumbnail:
+        embed.set_thumbnail(
+            url=thumbnail['medium'])
+    else:
+        embed.set_thumbnail(
+            url=("https://api-assets.clashofclans.com/leagues/72/e--"
+                 "YMyIexEQQhE4imLoJcwhYn6Uy8KqlgyY3_kFV6t4.png"))
+
+    if image_url:
+        embed.set_image(
+            url=image_url)
+
+    for field in field_list:
+        if 'inline' in field:
+            embed.add_field(
+                name=field['name'],
+                value=field['value'],
+                inline=field['inline']
+            )
+        else:
+            embed.add_field(
+                name=field['name'],
+                value=field['value']
+            )
+
+    embed.set_footer(
+        text=author_display_name,
+        icon_url=author_avatar_url
+    )
+
+    return embed
 
 
 # DISCORD
