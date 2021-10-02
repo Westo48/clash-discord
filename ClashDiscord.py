@@ -302,7 +302,7 @@ async def trooplvl(ctx, *, unit_name):
         color=discord.Color(razbot_data.embed_color),
         icon_url=(ctx.bot.user.avatar_url.BASE +
                   ctx.bot.user.avatar_url._url),
-        title=None,
+        title=unit_obj.name,
         bot_prefix=ctx.prefix,
         bot_user_name=ctx.bot.user.name,
         thumbnail=player_obj.league_icons,
@@ -825,7 +825,7 @@ async def warclanscore(ctx):
         color=discord.Color(razbot_data.embed_color),
         icon_url=(ctx.bot.user.avatar_url.BASE +
                   ctx.bot.user.avatar_url._url),
-        title=None,
+        title=f"{war_obj.clan.name} vs. {war_obj.opponent.name}",
         bot_prefix=ctx.prefix,
         bot_user_name=ctx.bot.user.name,
         thumbnail=player_obj.clan_icons,
