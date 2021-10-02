@@ -162,9 +162,9 @@ ClashDiscord is largely **command** focused, meaning it doesn't do anything that
     - shows player information based on your active player
   - memberplayer `mentionuser`
     - shows player information based on the mentioned user's active player
-  - trooplvl `unitname`
-    - shows the level of your troop, what the max for your town hall is, as well as the overall max
-    - contrary to what the name suggests you can search troops, spells, and heroes
+  - unitlvl `unitname`
+    - shows the level of the requested unit, what the max for your town hall is, as well as the overall max
+    - you can search troops, spells, and heroes
     - example
       - `!trooplvl hog rider`
       - `!trooplvl jump spell`
