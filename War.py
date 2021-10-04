@@ -293,7 +293,7 @@ def get(clan_tag, header):
     """
     war_json = json_response(clan_tag, header)
     if war_json['state'] == 'notInWar':
-        return War(war_json['state'], 0, 0, 0, 0, {}, {})
+        return None
     else:
         # find whether the clan in clan_tag is clan or opponent in the JSON
         clan_status, opp_status = clan_opp_status(war_json, clan_tag)
