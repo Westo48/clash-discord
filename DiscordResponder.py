@@ -474,12 +474,12 @@ def war_members_overview(war_obj):
             if len(member.attacks) == 0:
                 # no atk response
                 field_dict_list.append({
-                    'name': f"{member.map_position}|{member.name} TH {member.th_lvl}",
+                    'name': f"{member.map_position}. {member.name}",
                     'value': f"has not attacked"
                 })
             else:
                 field_dict_list.append({
-                    'name': f"{member.map_position}|{member.name} TH {member.th_lvl}",
+                    'name': f"{member.map_position}. {member.name}",
                     'value': (
                         f"attacked {len(member.attacks)} "
                         f"{member.string_member_attack_times()} for "
@@ -493,12 +493,12 @@ def war_members_overview(war_obj):
             if len(member.attacks) == 0:
                 # no atk response
                 field_dict_list.append({
-                    'name': f"{member.map_position}|{member.name} TH {member.th_lvl}",
-                    'value': f"did not attacked"
+                    'name': f"{member.map_position}. {member.name}",
+                    'value': f"did not attack"
                 })
             else:
                 field_dict_list.append({
-                    'name': f"{member.map_position}|{member.name} TH {member.th_lvl}",
+                    'name': f"{member.map_position}. {member.name}",
                     'value': (
                         f"attacked {len(member.attacks)} "
                         f"{member.string_member_attack_times()} for "
@@ -515,64 +515,88 @@ def war_members_overview(war_obj):
 
 # returns a list of war attack string responses for all war members
 def war_all_attacks(war_obj):
-    response_list = []
 
     if war_obj.state == 'preparation':
-        response_list.append(
-            f'{war_obj.clan.name} is still preparaing for war, nobody has attacked')
+        time_string = war_obj.string_date_time()
+
+        return [{
+            'name': f"{time_string}",
+            'value': f"left before war starts, nobody has attacked"
+        }]
     elif war_obj.state == 'inWar':
-        response_list.append(
-            f'{war_obj.clan.name} is in war with {war_obj.opponent.name} with {war_obj.string_date_time()} left in war, {war_obj.clan.name} is {war_obj.string_scoreboard()}')
-        response_list.append('____________________')
+        field_dict_list = []
+
         for member in war_obj.clan.members:
-            # no atk response
             if len(member.attacks) == 0:
-                response_list.append(
-                    f'{member.name} map pos {member.map_position} TH {member.th_lvl} has not attacked')
+                # no atk response
+                field_dict_list.append({
+                    'name': f"{member.map_position}. {member.name}",
+                    'value': f"has not attacked"
+                })
             else:
-                response_list.append(
-                    f'{member.name} map pos {member.map_position} TH {member.th_lvl} has attacked {len(member.attacks)} {member.string_member_attack_times()} for a total of {member.stars} {member.string_member_stars()}')
                 for attack in member.attacks:
+
                     defender = war_obj.find_defender(attack.defender_tag)
 
                     if attack.stars == 0 or attack.stars == 3:
-                        response_list.append(
-                            f' - {attack.stars} {attack.string_attack_stars()} against {defender.name} map pos {defender.map_position} TH {defender.th_lvl}')
+                        value_string = (
+                            f"{attack.stars} {attack.string_attack_stars()} "
+                            f"against {defender.map_position}. "
+                            f"{defender.name} TH {defender.th_lvl}"
+                        )
                     else:
-                        response_list.append(
-                            f' - {attack.stars} {attack.string_attack_stars()}, {round(attack.destruction_percent, 2)}% against {defender.name} map pos {defender.map_position} TH {defender.th_lvl}')
+                        value_string = (
+                            f"{attack.stars} {attack.string_attack_stars()}, "
+                            f"{round(attack.destruction_percent, 2)}% "
+                            f"against {defender.map_position}. "
+                            f"{defender.name} TH {defender.th_lvl}"
+                        )
+                    field_dict_list.append({
+                        'name': f"{member.map_position}. {member.name}",
+                        'value': value_string
+                    })
+        return field_dict_list
 
-            response_list.append('__________')
-
-        del response_list[-1]
     elif war_obj.state == 'warEnded':
-        response_list.append(
-            f'war against {war_obj.opponent.name} has ended, {war_obj.clan.name} {war_obj.string_scoreboard()}')
-        response_list.append('____________________')
+        field_dict_list = []
+
         for member in war_obj.clan.members:
             if len(member.attacks) == 0:
-                response_list.append(
-                    f'{member.name} map pos {member.map_position} TH {member.th_lvl} did not attack')
+                # no atk response
+                field_dict_list.append({
+                    'name': (f"{member.map_position}. {member.name} "
+                             f"TH {member.th_lvl}"),
+                    'value': f"did not attack"
+                })
             else:
-
-                response_list.append(
-                    f'{member.name} map pos {member.map_position} TH {member.th_lvl} has attacked {len(member.attacks)} {member.string_member_attack_times()} for a total of {member.stars} {member.string_member_stars()}')
                 for attack in member.attacks:
+
                     defender = war_obj.find_defender(attack.defender_tag)
 
                     if attack.stars == 0 or attack.stars == 3:
-                        response_list.append(
-                            f' - {attack.stars} {attack.string_attack_stars()} against {defender.name} map pos {defender.map_position} TH {defender.th_lvl}')
+                        value_string = (
+                            f"{attack.stars} {attack.string_attack_stars()} "
+                            f"against {defender.map_position}. "
+                            f"{defender.name} TH {defender.th_lvl}"
+                        )
                     else:
-                        response_list.append(
-                            f' - {attack.stars} {attack.string_attack_stars()}, {round(attack.destruction_percent, 2)}% against {defender.name} map pos {defender.map_position} TH {defender.th_lvl}')
+                        value_string = (
+                            f"{attack.stars} {attack.string_attack_stars()}, "
+                            f"{round(attack.destruction_percent, 2)}% "
+                            f"against {defender.map_position}. "
+                            f"{defender.name} TH {defender.th_lvl}"
+                        )
+                    field_dict_list.append({
+                        'name': f"{member.map_position}. {member.name}",
+                        'value': value_string
+                    })
+        return field_dict_list
 
-            response_list.append('__________')
-        del response_list[-1]
     else:
-        response_list.append('you are not in war')
-
-    return response_list
+        return [{
+            'name': f"not in war",
+            'value': f"you are not in war"
+        }]
 
 
 def war_all_member_standing(war_obj):
