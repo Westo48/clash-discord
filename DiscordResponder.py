@@ -251,6 +251,46 @@ def active_super_troops(player_obj, active_super_troops):
 
 # CLAN
 
+def clan_info(clan_obj):
+    field_dict_list = []
+
+    field_dict_list.append({
+        'name': "**Description**",
+        'value': clan_obj.description,
+        'inline': False
+    })
+    field_dict_list.append({
+        'name': "**Members**",
+        'value': len(clan_obj.members),
+        'inline': True
+    })
+    field_dict_list.append({
+        'name': "**Clan Lvl**",
+        'value': clan_obj.clan_lvl,
+        'inline': True
+    })
+    field_dict_list.append({
+        'name': "**Clan War League**",
+        'value': clan_obj.war_league_name,
+        'inline': True
+    })
+    field_dict_list.append({
+        'name': "**Total Points**",
+        'value': clan_obj.clan_points,
+        'inline': True
+    })
+    field_dict_list.append({
+        'name': "**Link**",
+        'value': (f"[{clan_obj.name}]"
+                  f"(https://link.clashofclans.com/"
+                  f"en?action=OpenClanProfile&tag="
+                  f"{clan_obj.tag[1:]})"),
+        'inline': True
+    })
+
+    return field_dict_list
+
+
 def donation(clan_obj, donator_list, unit_name):
     if not donator_list:
         # unit is a hero

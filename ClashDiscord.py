@@ -192,8 +192,8 @@ async def player(ctx):
         db_player_obj = db_responder.read_player_active(ctx.author.id)
     if not db_player_obj:
         # user active player not found
-        await ctx.send(f"{ctx.author.mention} does not "
-                       f"have an active player")
+        await ctx.send(f"{ctx.author.mention} "
+                       f"does not have an active player")
         return
 
     player_obj = clash_responder.get_player(
@@ -286,7 +286,7 @@ async def unitlvl(ctx, *, unit_name):
     async with ctx.typing():
         db_player_obj = db_responder.read_player_active(ctx.author.id)
     if not db_player_obj:
-        # user does not have an active player
+        # user active player not found
         await ctx.send(f"{ctx.author.mention} "
                        f"does not have an active player")
         return
@@ -330,7 +330,7 @@ async def allunitlvl(ctx):
     async with ctx.typing():
         db_player_obj = db_responder.read_player_active(ctx.author.id)
     if not db_player_obj:
-        # user does not have an active player
+        # user active player not found
         await ctx.send(f"{ctx.author.mention} "
                        f"does not have an active player")
         return
@@ -372,7 +372,7 @@ async def allherolvl(ctx):
     async with ctx.typing():
         db_player_obj = db_responder.read_player_active(ctx.author.id)
     if not db_player_obj:
-        # user does not have an active player
+        # user active player not found
         await ctx.send(f"{ctx.author.mention} "
                        f"does not have an active player")
         return
@@ -414,7 +414,7 @@ async def alltrooplvl(ctx):
     async with ctx.typing():
         db_player_obj = db_responder.read_player_active(ctx.author.id)
     if not db_player_obj:
-        # user does not have an active player
+        # user active player not found
         await ctx.send(f"{ctx.author.mention} "
                        f"does not have an active player")
         return
@@ -456,7 +456,7 @@ async def allspelllvl(ctx):
     async with ctx.typing():
         db_player_obj = db_responder.read_player_active(ctx.author.id)
     if not db_player_obj:
-        # user does not have an active player
+        # user active player not found
         await ctx.send(f"{ctx.author.mention} "
                        f"does not have an active player")
         return
@@ -498,7 +498,7 @@ async def activesupertroop(ctx):
     async with ctx.typing():
         db_player_obj = db_responder.read_player_active(ctx.author.id)
     if not db_player_obj:
-        # user does not have an active player
+        # user active player not found
         await ctx.send(f"{ctx.author.mention} "
                        f"does not have an active player")
         return
@@ -546,56 +546,85 @@ async def findclan(ctx, *, clan_tag):
     async with ctx.typing():
         clan_obj = clash_responder.get_clan(clan_tag, razbot_data.header)
 
-    if clan_obj:
-        embed = discord.Embed(
-            colour=discord.Colour.blue(),
-            title=clan_obj.name,
-        )
-        embed.set_author(
-            name=f"[{ctx.prefix}] {ctx.bot.user.name}", icon_url="https://cdn.discordapp.com/avatars/649107156989378571/053f201109188da026d0a980dd4136e0.webp")
+    if not clan_obj:
+        # clan with given tag not found
+        await ctx.send(f"could not find clan with tag {clan_tag}")
+        return
 
-        embed.set_thumbnail(url=clan_obj.clan_icons['small'])
+    field_dict_list = discord_responder.clan_info(clan_obj)
 
-        embed.add_field(
-            name='**Description**',
-            value=clan_obj.description,
-            inline=False
-        )
-        embed.add_field(
-            name='**Members**',
-            value=len(clan_obj.members),
-            inline=True
-        )
-        embed.add_field(
-            name='**Clan Lvl**',
-            value=clan_obj.clan_lvl,
-            inline=True
-        )
-        embed.add_field(
-            name='**Clan War League**',
-            value=clan_obj.war_league_name,
-            inline=True
-        )
-        embed.add_field(
-            name='**Total Points**',
-            value=clan_obj.clan_points,
-            inline=True
-        )
-        embed.add_field(
-            name='**Link**',
-            value=f"[{clan_obj.name}](https://link.clashofclans.com/en?action=OpenClanProfile&tag={clan_obj.tag[1:]})",
-            inline=True
-        )
-
-        # todo set footer to display user called and timestamp
-        embed.set_footer(
-            text=ctx.author.display_name,
-            icon_url=ctx.author.avatar_url.BASE+ctx.author.avatar_url._url
-        )
-
+    embed_list = discord_responder.embed_message(
+        Embed=discord.Embed,
+        color=discord.Color(razbot_data.embed_color),
+        icon_url=(ctx.bot.user.avatar_url.BASE +
+                  ctx.bot.user.avatar_url._url),
+        title=f"{clan_obj.name} {clan_obj.tag}",
+        bot_prefix=ctx.prefix,
+        bot_user_name=ctx.bot.user.name,
+        thumbnail=clan_obj.clan_icons,
+        field_list=field_dict_list,
+        image_url=None,
+        author_display_name=ctx.author.display_name,
+        author_avatar_url=(ctx.author.avatar_url.BASE +
+                           ctx.author.avatar_url._url)
+    )
+    for embed in embed_list:
         await ctx.send(embed=embed)
-    else:
-        await ctx.send(f"Could not find clan with tag {clan_tag}")
+
+
+@client.command(
+    aliases=['showclan', 'playerclan', 'showplayerclan'],
+    brief='clan',
+    description="Get information about your active player's clan"
+)
+async def clan(ctx):
+    async with ctx.typing():
+        db_player_obj = db_responder.read_player_active(ctx.author.id)
+    if not db_player_obj:
+        # user active player not found
+        await ctx.send(f"{ctx.author.mention} "
+                       f"does not have an active player")
+        return
+
+    player_obj = clash_responder.get_player(
+        db_player_obj.player_tag, razbot_data.header)
+    if not player_obj:
+        # player with tag from db not found
+        await ctx.send(f"could not find player with tag "
+                       f"{db_player_obj.player_tag}")
+        return
+
+    elif not player_obj.clan_tag:
+        # active player not in a clan
+        await ctx.send(f"{player_obj.name} {player_obj.tag} is not in a clan")
+        return
+
+    clan_obj = clash_responder.get_clan(
+        player_obj.clan_tag, razbot_data.header)
+    if not clan_obj:
+        # clan with tag from db active player not found
+        await ctx.send(f"could not find clan with tag {player_obj.clan_tag}")
+        return
+
+    field_dict_list = discord_responder.clan_info(clan_obj)
+
+    embed_list = discord_responder.embed_message(
+        Embed=discord.Embed,
+        color=discord.Color(razbot_data.embed_color),
+        icon_url=(ctx.bot.user.avatar_url.BASE +
+                  ctx.bot.user.avatar_url._url),
+        title=f"{clan_obj.name} {clan_obj.tag}",
+        bot_prefix=ctx.prefix,
+        bot_user_name=ctx.bot.user.name,
+        thumbnail=clan_obj.clan_icons,
+        field_list=field_dict_list,
+        image_url=None,
+        author_display_name=ctx.author.display_name,
+        author_avatar_url=(ctx.author.avatar_url.BASE +
+                           ctx.author.avatar_url._url)
+    )
+    for embed in embed_list:
+        await ctx.send(embed=embed)
 
 
 @client.command(
@@ -603,7 +632,7 @@ async def findclan(ctx, *, clan_tag):
     brief='clan',
     description="Get information about mentioned clan"
 )
-async def clanmention(ctx):
+async def mentionclan(ctx):
     if len(ctx.message.role_mentions) == 0:
         # user has not been mentioned
         await ctx.send(f"you have to mention a clan role")
@@ -622,139 +651,29 @@ async def clanmention(ctx):
 
     clan_obj = clash_responder.get_clan(
         db_clan_role.clan_tag, razbot_data.header)
-
-    if clan_obj:
-        embed = discord.Embed(
-            colour=discord.Colour.blue(),
-            title=clan_obj.name,
-        )
-        embed.set_author(
-            name=f"[{ctx.prefix}] {ctx.bot.user.name}", icon_url="https://cdn.discordapp.com/avatars/649107156989378571/053f201109188da026d0a980dd4136e0.webp")
-
-        embed.set_thumbnail(url=clan_obj.clan_icons['small'])
-
-        embed.add_field(
-            name='**Description**',
-            value=clan_obj.description,
-            inline=False
-        )
-        embed.add_field(
-            name='**Members**',
-            value=len(clan_obj.members),
-            inline=True
-        )
-        embed.add_field(
-            name='**Clan Lvl**',
-            value=clan_obj.clan_lvl,
-            inline=True
-        )
-        embed.add_field(
-            name='**Clan War League**',
-            value=clan_obj.war_league_name,
-            inline=True
-        )
-        embed.add_field(
-            name='**Total Points**',
-            value=clan_obj.clan_points,
-            inline=True
-        )
-        embed.add_field(
-            name='**Link**',
-            value=f"[{clan_obj.name}](https://link.clashofclans.com/en?action=OpenClanProfile&tag={clan_obj.tag[1:]})",
-            inline=True
-        )
-
-        # todo set footer to display user called and timestamp
-        embed.set_footer(
-            text=ctx.author.display_name,
-            icon_url=ctx.author.avatar_url.BASE+ctx.author.avatar_url._url
-        )
-
-        await ctx.send(embed=embed)
-
-
-@client.command(
-    aliases=['showclan', 'playerclan', 'showplayerclan'],
-    brief='clan',
-    description="Get information about your active player's clan"
-)
-async def clan(ctx):
-    async with ctx.typing():
-        db_user_obj = db_responder.read_user(ctx.author.id)
-    if not db_user_obj:
-        # if user is not found
-        await ctx.send(f"{ctx.author.mention} has not been claimed")
+    if not clan_obj:
+        # clan with tag from db clan role not found
+        await ctx.send(f"could not find clan with tag {db_clan_role.clan_tag}")
         return
 
-    db_player_obj = db_responder.read_player_active(ctx.author.id)
-    if not db_player_obj:
-        # if player is not found
-        await ctx.send(f"{ctx.author.mention} does not "
-                       f"have an active player")
-        return
+    field_dict_list = discord_responder.clan_info(clan_obj)
 
-    player_obj = clash_responder.get_player(
-        db_player_obj.player_tag, razbot_data.header)
-    if not player_obj:
-        # if player is not found
-        await ctx.send(f"could not find player with tag "
-                       f"{db_player_obj.player_tag}")
-        return
-
-    elif not player_obj.clan_tag:
-        await ctx.send(f"{player_obj.name} {player_obj.tag} is not in a clan")
-        return
-
-    clan_obj = clash_responder.get_clan(
-        player_obj.clan_tag, razbot_data.header)
-
-    if clan_obj:
-        embed = discord.Embed(
-            colour=discord.Colour.blue(),
-            title=clan_obj.name,
-        )
-        embed.set_author(
-            name=f"[{ctx.prefix}] {ctx.bot.user.name}", icon_url="https://cdn.discordapp.com/avatars/649107156989378571/053f201109188da026d0a980dd4136e0.webp")
-
-        embed.set_thumbnail(url=clan_obj.clan_icons['small'])
-
-        embed.add_field(
-            name='**Description**',
-            value=clan_obj.description,
-            inline=False
-        )
-        embed.add_field(
-            name='**Members**',
-            value=len(clan_obj.members),
-            inline=True
-        )
-        embed.add_field(
-            name='**Clan Lvl**',
-            value=clan_obj.clan_lvl,
-            inline=True
-        )
-        embed.add_field(
-            name='**Clan War League**',
-            value=clan_obj.war_league_name,
-            inline=True
-        )
-        embed.add_field(
-            name='**Total Points**',
-            value=clan_obj.clan_points,
-            inline=True
-        )
-        embed.add_field(
-            name='**Link**',
-            value=f"[{clan_obj.name}](https://link.clashofclans.com/en?action=OpenClanProfile&tag={clan_obj.tag[1:]})",
-            inline=True
-        )
-
-        # todo set footer to display user called and timestamp
-        embed.set_footer(
-            text=ctx.author.display_name,
-            icon_url=ctx.author.avatar_url.BASE+ctx.author.avatar_url._url
-        )
-
+    embed_list = discord_responder.embed_message(
+        Embed=discord.Embed,
+        color=discord.Color(razbot_data.embed_color),
+        icon_url=(ctx.bot.user.avatar_url.BASE +
+                  ctx.bot.user.avatar_url._url),
+        title=f"{clan_obj.name} {clan_obj.tag}",
+        bot_prefix=ctx.prefix,
+        bot_user_name=ctx.bot.user.name,
+        thumbnail=clan_obj.clan_icons,
+        field_list=field_dict_list,
+        image_url=None,
+        author_display_name=ctx.author.display_name,
+        author_avatar_url=(ctx.author.avatar_url.BASE +
+                           ctx.author.avatar_url._url)
+    )
+    for embed in embed_list:
         await ctx.send(embed=embed)
 
 
@@ -1070,7 +989,8 @@ async def cwlwaroverview(ctx):
                 cwl_group = clash_responder.get_cwl_group(
                     player_obj.clan_tag, razbot_data.header)
                 if cwl_group:
-                    war_obj = cwl_group.find_current_war(player_obj.clan_tag)
+                    war_obj = cwl_group.find_current_war(
+                        player_obj.clan_tag, razbot_data.header)
                     await ctx.send(discord_responder.cwl_war_overview(
                         war_obj))
                 else:
@@ -1099,7 +1019,8 @@ async def cwlwartime(ctx):
                 cwl_group = clash_responder.get_cwl_group(
                     player_obj.clan_tag, razbot_data.header)
                 if cwl_group:
-                    war_obj = cwl_group.find_current_war(player_obj.clan_tag)
+                    war_obj = cwl_group.find_current_war(
+                        player_obj.clan_tag, razbot_data.header)
                     await ctx.send(discord_responder.cwl_war_time(war_obj))
                 else:
                     await ctx.send(f"{player_obj.clan_name} is not in CWL")
@@ -1129,7 +1050,8 @@ async def cwlwarnoattack(ctx):
                 cwl_group = clash_responder.get_cwl_group(
                     player_obj.clan_tag, razbot_data.header)
                 if cwl_group:
-                    war_obj = cwl_group.find_current_war(player_obj.clan_tag)
+                    war_obj = cwl_group.find_current_war(
+                        player_obj.clan_tag, razbot_data.header)
                     await ctx.send(discord_responder.cwl_war_no_attack(
                         war_obj))
                 else:
@@ -1160,7 +1082,8 @@ async def cwlwarallattack(ctx):
                 cwl_group = clash_responder.get_cwl_group(
                     player_obj.clan_tag, razbot_data.header)
                 if cwl_group:
-                    war_obj = cwl_group.find_current_war(player_obj.clan_tag)
+                    war_obj = cwl_group.find_current_war(
+                        player_obj.clan_tag, razbot_data.header)
                     for line in discord_responder.cwl_war_all_attacks(
                             war_obj):
                         await ctx.send(line)
@@ -2062,7 +1985,7 @@ async def on_member_join(ctx):
 async def on_member_remove(member):
     print(f'{member} has left the server')
 
-
+'''
 @client.event
 async def on_command_error(ctx, error):
     if isinstance(error, commands.CommandNotFound):
@@ -2077,5 +2000,5 @@ async def on_command_error(ctx, error):
     else:
         await ctx.send(f"there was an error that I have not accounted for, "
                        f"please let Razgriz know")
-
+'''
 client.run(razbot_data.token)
