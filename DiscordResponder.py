@@ -294,35 +294,40 @@ def clan_info(clan_obj):
 def donation(clan_obj, donator_list, unit_name):
     if not donator_list:
         # unit is a hero
-        return f"{unit_name} is not a valid donatable unit."
+        return [{
+            'name': f"{unit_name}",
+            'value': "not a valid donatable unit"
+        }]
     if len(donator_list) == 0:
         # nobody can donate unit
-        return f"nobody in {clan_obj.name} can donate {unit_name}"
+        return [{
+            'name': f"{clan_obj.name}",
+            'value': f"unable to donate {unit_name}"
+        }]
 
-    member_string = ""
-    # setting the string of members that can donate
-    for donator in donator_list:
-        member_string += f"{donator.player.name}, "
-
-    # cuts the last two characters from the string ", "
-    member_string = member_string[:-2]
-
-    # if donators can donate max
+    field_dict_list = []
     if ((donator_list[0].unit.lvl + clan_obj.donation_upgrade) >=
             donator_list[0].unit.max_lvl):
-        return (
-            f"{member_string} can donate level "
-            f"{donator_list[0].unit.max_lvl} {donator_list[0].unit.name}, "
-            f"which is max."
+        # if donators can donate max
+        value = (
+            f"{donator_list[0].unit.name} "
+            f"lvl {donator_list[0].unit.max_lvl}, "
+            f"max"
         )
-    # if donators cannot donate max
     else:
-        return (
-            f"{member_string} can donate level"
-            f"{donator_list[0].unit.lvl + clan_obj.donation_upgrade} "
-            f"{donator_list[0].unit.name}, max is "
-            f"{donator_list[0].unit.max_lvl}"
+        value = (
+            f"{donator_list[0].unit.name} "
+            f"lvl {donator_list[0].unit.lvl + clan_obj.donation_upgrade} "
+            f"max is {donator_list[0].unit.max_lvl}"
         )
+
+    for donator in donator_list:
+        field_dict_list.append({
+            'name': f"{donator.player.name}",
+            'value': value
+        })
+
+    return field_dict_list
 
 
 def super_troop_search(clan_obj, donor_list, unit_name):
