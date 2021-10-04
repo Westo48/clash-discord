@@ -711,10 +711,10 @@ async def donation(ctx, *, unit_name):
         # clan with tag from db active player not found
         await ctx.send(f"could not find clan with tag {player_obj.clan_tag}")
         return
-        
+
     donator_list = clash_responder.donation(
         unit_name, clan_obj, razbot_data.header)
-    
+
     field_dict_list = discord_responder.donation(
         clan_obj, donator_list, unit_name)
 
@@ -745,34 +745,62 @@ async def donation(ctx, *, unit_name):
 async def supertroopsearch(ctx, *, unit_name):
     async with ctx.typing():
         db_player_obj = db_responder.read_player_active(ctx.author.id)
-    if db_player_obj:
-        player_obj = clash_responder.get_player(
-            db_player_obj.player_tag, razbot_data.header)
-        if player_obj:
-            if player_obj.clan_tag:
-                clan_obj = clash_responder.get_clan(
-                    player_obj.clan_tag, razbot_data.header)
-                if clan_obj:
-                    # checking to make sure the given unit_name is viable
-                    super_troop_name = clash_responder.super_troop_unit_name(
-                        unit_name)
-                    if super_troop_name:
-                        donor_list = clash_responder.active_super_troop_search(
-                            super_troop_name, clan_obj, razbot_data.header)
-                        await ctx.send(discord_responder.super_troop_search(
-                            clan_obj, donor_list, super_troop_name))
-                    else:
-                        await ctx.send(f"{unit_name} is not a viable request")
-                else:
-                    await ctx.send(f"Couldn't find clan from tag "
-                                   f"{player_obj.clan_tag}")
-            else:
-                await ctx.send(f"{player_obj.name} is not in a clan")
-        else:
-            await ctx.send(f"Couldn't find player from tag "
-                           f"{db_player_obj.player_tag}")
-    else:
-        await ctx.send(f"{ctx.author.mention} does not have an active player")
+    if not db_player_obj:
+        # user active player not found
+        await ctx.send(f"{ctx.author.mention} "
+                       f"does not have an active player")
+        return
+
+    player_obj = clash_responder.get_player(
+        db_player_obj.player_tag, razbot_data.header)
+    if not player_obj:
+        # player with tag from db not found
+        await ctx.send(f"could not find player with tag "
+                       f"{db_player_obj.player_tag}")
+        return
+
+    if not player_obj.clan_tag:
+        # active player not in a clan
+        await ctx.send(f"{player_obj.name} {player_obj.tag} is not in a clan")
+        return
+
+    clan_obj = clash_responder.get_clan(
+        player_obj.clan_tag, razbot_data.header)
+    if not clan_obj:
+        # clan with tag from db active player not found
+        await ctx.send(f"could not find clan with tag {player_obj.clan_tag}")
+        return
+
+    super_troop_name = clash_responder.super_troop_unit_name(
+        unit_name)
+    if not super_troop_name:
+        # super troop was not found
+        await ctx.send(f"{unit_name} is not a viable request")
+        return
+
+    donor_list = clash_responder.active_super_troop_search(
+        super_troop_name, clan_obj, razbot_data.header)
+
+    field_dict_list = discord_responder.super_troop_search(
+        clan_obj, donor_list, super_troop_name)
+
+    embed_list = discord_responder.embed_message(
+        Embed=discord.Embed,
+        color=discord.Color(razbot_data.embed_color),
+        icon_url=(ctx.bot.user.avatar_url.BASE +
+                  ctx.bot.user.avatar_url._url),
+        title=f"{clan_obj.name} {clan_obj.tag}",
+        bot_prefix=ctx.prefix,
+        bot_user_name=ctx.bot.user.name,
+        thumbnail=clan_obj.clan_icons,
+        field_list=field_dict_list,
+        image_url=None,
+        author_display_name=ctx.author.display_name,
+        author_avatar_url=(ctx.author.avatar_url.BASE +
+                           ctx.author.avatar_url._url)
+    )
+    for embed in embed_list:
+        await ctx.send(embed=embed)
 
 
 # War

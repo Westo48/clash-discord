@@ -236,8 +236,8 @@ def spell_lvl_all(player_obj):
 def active_super_troops(player_obj, active_super_troops):
     if len(active_super_troops) == 0:
         return [{
-            'name': "none",
-            'value': f"{player_obj.name} does not have any active super troops"
+            'name': player_obj.name,
+            'value': f"has no active super troops"
         }]
     else:
         field_dict_list = []
@@ -301,7 +301,7 @@ def donation(clan_obj, donator_list, unit_name):
     if len(donator_list) == 0:
         # nobody can donate unit
         return [{
-            'name': f"{clan_obj.name}",
+            'name': clan_obj.name,
             'value': f"unable to donate {unit_name}"
         }]
 
@@ -323,7 +323,7 @@ def donation(clan_obj, donator_list, unit_name):
 
     for donator in donator_list:
         field_dict_list.append({
-            'name': f"{donator.player.name}",
+            'name': donator.player.name,
             'value': value
         })
 
@@ -332,21 +332,19 @@ def donation(clan_obj, donator_list, unit_name):
 
 def super_troop_search(clan_obj, donor_list, unit_name):
     if len(donor_list) == 0:
-        return (f"Nobody in {clan_obj.name} "
-                f"has {unit_name} activated.")
+        return [{
+            'name': clan_obj.name,
+            'value': f"does not have {unit_name} activated"
+        }]
 
-    message_string = ""
-    for member in donor_list:
-        message_string += f"{member.name}, "
+    field_dict_list = []
+    for donator in donor_list:
+        field_dict_list.append({
+            'name': donator.name,
+            'value': f"has {unit_name} active"
+        })
 
-    # cuts the last two characters from the string ', '
-    message_string = message_string[:-2]
-    if len(donor_list) == 1:
-        message_string += f" has {unit_name} activated"
-    else:
-        message_string += f" have {unit_name} activated."
-
-    return message_string
+    return field_dict_list
 
 
 # WAR
