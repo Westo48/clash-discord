@@ -380,7 +380,7 @@ def war_overview(war_obj):
         }]
 
 
-def response_war_time(war_obj):
+def war_time(war_obj):
     if war_obj.state == "preparation":
         time_string = war_obj.string_date_time()
 
@@ -409,43 +409,52 @@ def response_war_time(war_obj):
 
 # todo if nobody has attacked logic
 # returns a string of the war no attack response
-def response_war_no_attack(war_obj):
+def war_no_attack(war_obj):
     if war_obj.state == "preparation":
-        return (f"{war_obj.clan.name} is still preparing for war with "
-                f"{war_obj.string_date_time()} before war starts, nobody has attacked")
+        time_string = war_obj.string_date_time()
+
+        return [{
+            'name': f"{time_string}",
+            'value': f"left before war starts, nobody has attacked"
+        }]
 
     elif war_obj.state == "inWar":
         no_attack_list = war_obj.no_attack()
         if len(no_attack_list) == 0:
-            return f"all {war_obj.team_size} {war_obj.clan.name} war members attacked"
-        no_attack_string = ""
+            return [{
+                'name': f"no missed attacks",
+                'value': (f"all {war_obj.team_size} {war_obj.clan.name} "
+                          f"war members attacked")
+            }]
+        field_dict_list = []
         for member in no_attack_list:
-            no_attack_string += f"{member.name}, "
-        # removes the last 2 characters ", " of the string
-        no_attack_string = no_attack_string[:-2]
-        # singular
-        if len(no_attack_list) == 1:
-            no_attack_string += " has not attacked"
-        # plural
-        else:
-            no_attack_string += " have not attacked"
-        no_attack_string += f" with {war_obj.string_date_time()} left in war"
-        return no_attack_string
+            field_dict_list.append({
+                'name': f"{member.name}",
+                'value': f"is missing attacks"
+            })
+        return field_dict_list
 
     elif war_obj.state == "warEnded":
         no_attack_list = war_obj.no_attack()
         if len(no_attack_list) == 0:
-            return f"all {war_obj.team_size} {war_obj.clan.name} war members attacked"
-        no_attack_string = ""
+            return [{
+                'name': f"no missed attacks",
+                'value': (f"all {war_obj.team_size} {war_obj.clan.name} "
+                          f"war members attacked")
+            }]
+        field_dict_list = []
         for member in no_attack_list:
-            no_attack_string += f"{member.name}, "
-        # removes the last 2 characters ", " of the string
-        no_attack_string = no_attack_string[:-2]
-        no_attack_string += " did not attack"
-        return no_attack_string
+            field_dict_list.append({
+                'name': f"{member.name}",
+                'value': f"missed attacks"
+            })
+        return field_dict_list
 
     else:
-        return "you are not in war"
+        return [{
+            'name': f"{war_obj.clan.name}",
+            'value': f"is not in war"
+        }]
 
 
 # returns a list of all war members and their stars

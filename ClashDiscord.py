@@ -940,7 +940,7 @@ async def wartime(ctx):
             await ctx.send(embed=embed)
             return
 
-    field_dict_list = discord_responder.response_war_time(war_obj)
+    field_dict_list = discord_responder.war_time(war_obj)
 
     embed_list = discord_responder.embed_message(
         Embed=discord.Embed,
@@ -970,22 +970,72 @@ async def wartime(ctx):
 async def warnoattack(ctx):
     async with ctx.typing():
         db_player_obj = db_responder.read_player_active(ctx.author.id)
-    if db_player_obj:
-        player_obj = clash_responder.get_player(
-            db_player_obj.player_tag, razbot_data.header)
-        if player_obj:
-            if player_obj.clan_tag:
-                war_obj = clash_responder.get_war(
-                    player_obj.clan_tag, razbot_data.header)
-                await ctx.send(discord_responder.response_war_no_attack(
-                    war_obj))
-            else:
-                await ctx.send(f"{player_obj.name} is not in a clan")
-        else:
-            await ctx.send(f"Couldn't find player from tag "
-                           f"{db_player_obj.player_tag}")
-    else:
-        await ctx.send(f"{ctx.author.mention} does not have an active player")
+    if not db_player_obj:
+        # user active player not found
+        await ctx.send(f"{ctx.author.mention} "
+                       f"does not have an active player")
+        return
+
+    player_obj = clash_responder.get_player(
+        db_player_obj.player_tag, razbot_data.header)
+    if not player_obj:
+        # player with tag from db not found
+        await ctx.send(f"could not find player with tag "
+                       f"{db_player_obj.player_tag}")
+        return
+
+    if not player_obj.clan_tag:
+        # active player not in a clan
+        await ctx.send(f"{player_obj.name} {player_obj.tag} is not in a clan")
+        return
+
+    war_obj = clash_responder.get_war(
+        player_obj.clan_tag, razbot_data.header)
+    if not war_obj:
+        # clan is not in war
+        field_dict_list = [{
+            'name': f"{player_obj.clan_name} {player_obj.clan_tag}",
+            'value': f"is not in war"
+        }]
+        embed_list = discord_responder.embed_message(
+            Embed=discord.Embed,
+            color=discord.Color(razbot_data.embed_color),
+            icon_url=(ctx.bot.user.avatar_url.BASE +
+                      ctx.bot.user.avatar_url._url),
+            title=f"{player_obj.clan_name} {player_obj.clan_tag}",
+            bot_prefix=ctx.prefix,
+            bot_user_name=ctx.bot.user.name,
+            thumbnail=player_obj.clan_icons,
+            field_list=field_dict_list,
+            image_url=None,
+            author_display_name=ctx.author.display_name,
+            author_avatar_url=(ctx.author.avatar_url.BASE +
+                               ctx.author.avatar_url._url)
+        )
+
+        for embed in embed_list:
+            await ctx.send(embed=embed)
+            return
+
+    field_dict_list = discord_responder.war_no_attack(war_obj)
+
+    embed_list = discord_responder.embed_message(
+        Embed=discord.Embed,
+        color=discord.Color(razbot_data.embed_color),
+        icon_url=(ctx.bot.user.avatar_url.BASE +
+                  ctx.bot.user.avatar_url._url),
+        title=f"{war_obj.clan.name} vs. {war_obj.opponent.name}",
+        bot_prefix=ctx.prefix,
+        bot_user_name=ctx.bot.user.name,
+        thumbnail=player_obj.clan_icons,
+        field_list=field_dict_list,
+        image_url=None,
+        author_display_name=ctx.author.display_name,
+        author_avatar_url=(ctx.author.avatar_url.BASE +
+                           ctx.author.avatar_url._url)
+    )
+    for embed in embed_list:
+        await ctx.send(embed=embed)
 
 
 @client.command(
