@@ -363,15 +363,15 @@ def war_overview(war_obj):
         scoreboard_string = war_obj.string_scoreboard()
 
         return [{
-            'name': f"{time_string} left in war",
-            'value': f"{war_obj.clan.name} is {scoreboard_string}"
+            'name': f"{war_obj.clan.name} is {scoreboard_string}",
+            'value': f"{time_string} left in war"
         }]
     elif war_obj.state == "warEnded":
         scoreboard_string = war_obj.string_scoreboard()
 
         return [{
-            'name': f"war has ended",
-            'value': f"{war_obj.clan.name} {scoreboard_string}"
+            'name': f"{war_obj.clan.name} {scoreboard_string}",
+            'value': f"war has ended"
         }]
     else:
         return [{
@@ -382,13 +382,29 @@ def war_overview(war_obj):
 
 def response_war_time(war_obj):
     if war_obj.state == "preparation":
-        return f"{war_obj.clan.name} is preparing for war with {war_obj.string_date_time()} left before war starts"
+        time_string = war_obj.string_date_time()
+
+        return [{
+            'name': f"{time_string}",
+            'value': f"left before war starts"
+        }]
     elif war_obj.state == "inWar":
-        return f"{war_obj.clan.name} is in war with {war_obj.string_date_time()} left in war"
+        time_string = war_obj.string_date_time()
+
+        return [{
+            'name': f"{time_string}",
+            'value': f"left in war"
+        }]
     elif war_obj.state == "warEnded":
-        return f"The war with {war_obj.opponent.name} has ended"
+        return [{
+            'name': f"war ended",
+            'value': f"war with {war_obj.opponent.name} has ended"
+        }]
     else:
-        return "You are not in war"
+        return [{
+            'name': f"{war_obj.clan.name}",
+            'value': f"is not in war"
+        }]
 
 
 # todo if nobody has attacked logic
