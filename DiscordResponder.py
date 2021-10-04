@@ -480,7 +480,11 @@ def war_members_overview(war_obj):
             else:
                 field_dict_list.append({
                     'name': f"{member.map_position}|{member.name} TH {member.th_lvl}",
-                    'value': f"attacked {len(member.attacks)} {member.string_member_attack_times()} for {member.stars} {member.string_member_stars()}"
+                    'value': (
+                        f"attacked {len(member.attacks)} "
+                        f"{member.string_member_attack_times()} for "
+                        f"{member.stars} {member.string_member_stars()}"
+                    )
                 })
         return field_dict_list
     elif war_obj.state == "warEnded":
@@ -495,7 +499,11 @@ def war_members_overview(war_obj):
             else:
                 field_dict_list.append({
                     'name': f"{member.map_position}|{member.name} TH {member.th_lvl}",
-                    'value': f"attacked {len(member.attacks)} {member.string_member_attack_times()} for {member.stars} {member.string_member_stars()}"
+                    'value': (
+                        f"attacked {len(member.attacks)} "
+                        f"{member.string_member_attack_times()} for "
+                        f"{member.stars} {member.string_member_stars()}"
+                    )
                 })
         return field_dict_list
     else:
