@@ -1305,6 +1305,230 @@ async def cwllineup(ctx):
         await ctx.send(f"{ctx.author.mention} does not have an active player")
 
 
+@client.command(
+    brief='cwlgroupscore',
+    description='Lists each member and their score in CWL',
+    hidden=True
+)
+async def cwlclanscore(ctx):
+    async with ctx.typing():
+        db_player_obj = db_responder.read_player_active(ctx.author.id)
+    if not db_player_obj:
+        # user does not have an active player
+        await ctx.send(f"{ctx.author.mention} does not have an active player")
+        return
+
+    player_obj = clash_responder.get_player(
+        db_player_obj.player_tag, razbot_data.header)
+    if not player_obj:
+        # player with tag from db not found
+        await ctx.send(f"could not find player with tag "
+                       f"{db_player_obj.player_tag}")
+        return
+
+    if not player_obj.clan_tag:
+        # player is found but not in a clan
+        await ctx.send(f"{player_obj.name} is not in a clan")
+        return
+
+    cwl_group = clash_responder.get_cwl_group(
+        player_obj.clan_tag, razbot_data.header)
+    if not cwl_group:
+        # clan is not in CWL
+        field_dict_list = [{
+            'name': f"{player_obj.clan_name} {player_obj.clan_tag}",
+            'value': f"is not in CWL"
+        }]
+        embed_list = discord_responder.embed_message(
+            Embed=discord.Embed,
+            color=discord.Color(razbot_data.embed_color),
+            icon_url=(ctx.bot.user.avatar_url.BASE +
+                      ctx.bot.user.avatar_url._url),
+            title=f"{player_obj.clan_name} {player_obj.clan_tag}",
+            bot_prefix=ctx.prefix,
+            bot_user_name=ctx.bot.user.name,
+            thumbnail=player_obj.clan_icons,
+            field_list=field_dict_list,
+            image_url=None,
+            author_display_name=ctx.author.display_name,
+            author_avatar_url=(ctx.author.avatar_url.BASE +
+                               ctx.author.avatar_url._url)
+        )
+        return
+
+    field_dict_list = discord_responder.cwl_clan_standing(
+        cwl_group, player_obj.clan_tag, razbot_data.header)
+    embed_list = discord_responder.embed_message(
+        Embed=discord.Embed,
+        color=discord.Color(razbot_data.embed_color),
+        icon_url=(ctx.bot.user.avatar_url.BASE +
+                  ctx.bot.user.avatar_url._url),
+        title=f"{player_obj.clan_name} CWL scores",
+        bot_prefix=ctx.prefix,
+        bot_user_name=ctx.bot.user.name,
+        thumbnail=player_obj.clan_icons,
+        field_list=field_dict_list,
+        image_url=None,
+        author_display_name=ctx.author.display_name,
+        author_avatar_url=(ctx.author.avatar_url.BASE +
+                           ctx.author.avatar_url._url)
+    )
+
+    for embed in embed_list:
+        await ctx.send(embed=embed)
+
+
+@client.command(
+    brief='cwlwar',
+    description='Lists each score you have in CWL'
+)
+async def cwlscore(ctx):
+    async with ctx.typing():
+        db_player_obj = db_responder.read_player_active(ctx.author.id)
+    if not db_player_obj:
+        # user does not have an active player
+        await ctx.send(f"{ctx.author.mention} does not have an active player")
+        return
+
+    player_obj = clash_responder.get_player(
+        db_player_obj.player_tag, razbot_data.header)
+    if not player_obj:
+        # player with tag from db not found
+        await ctx.send(f"could not find player with tag "
+                       f"{db_player_obj.player_tag}")
+        return
+
+    if not player_obj.clan_tag:
+        # player is found but not in a clan
+        await ctx.send(f"{player_obj.name} is not in a clan")
+        return
+
+    cwl_group = clash_responder.get_cwl_group(
+        player_obj.clan_tag, razbot_data.header)
+    if not cwl_group:
+        # clan is not in CWL
+        field_dict_list = [{
+            'name': f"{player_obj.clan_name} {player_obj.clan_tag}",
+            'value': f"is not in CWL"
+        }]
+        embed_list = discord_responder.embed_message(
+            Embed=discord.Embed,
+            color=discord.Color(razbot_data.embed_color),
+            icon_url=(ctx.bot.user.avatar_url.BASE +
+                      ctx.bot.user.avatar_url._url),
+            title=f"{player_obj.clan_name} {player_obj.clan_tag}",
+            bot_prefix=ctx.prefix,
+            bot_user_name=ctx.bot.user.name,
+            thumbnail=player_obj.clan_icons,
+            field_list=field_dict_list,
+            image_url=None,
+            author_display_name=ctx.author.display_name,
+            author_avatar_url=(ctx.author.avatar_url.BASE +
+                               ctx.author.avatar_url._url)
+        )
+        return
+
+    field_dict_list = discord_responder.cwl_member_standing(
+        player_obj, cwl_group, player_obj.clan_tag, razbot_data.header)
+    embed_list = discord_responder.embed_message(
+        Embed=discord.Embed,
+        color=discord.Color(razbot_data.embed_color),
+        icon_url=(ctx.bot.user.avatar_url.BASE +
+                  ctx.bot.user.avatar_url._url),
+        title=f"{player_obj.name} CWL score",
+        bot_prefix=ctx.prefix,
+        bot_user_name=ctx.bot.user.name,
+        thumbnail=player_obj.clan_icons,
+        field_list=field_dict_list,
+        image_url=None,
+        author_display_name=ctx.author.display_name,
+        author_avatar_url=(ctx.author.avatar_url.BASE +
+                           ctx.author.avatar_url._url)
+    )
+
+    for embed in embed_list:
+        await ctx.send(embed=embed)
+
+
+@client.command(
+    aliases=['cwlclanmatescore'],
+    brief='cwlwar',
+    description='Lists each score the specified member has in CWL'
+)
+async def cwlmemberscore(ctx):
+    if len(ctx.message.mentions) == 0:
+        # user has not been mentioned
+        await ctx.send(f"you have to mention a member")
+        return
+
+    discord_member = ctx.message.mentions[0]
+    async with ctx.typing():
+        db_player_obj = db_responder.read_player_active(discord_member.id)
+    if not db_player_obj:
+        # user does not have an active player
+        await ctx.send(f"{ctx.author.mention} does not have an active player")
+        return
+
+    player_obj = clash_responder.get_player(
+        db_player_obj.player_tag, razbot_data.header)
+    if not player_obj:
+        # player with tag from db not found
+        await ctx.send(f"could not find player with tag "
+                       f"{db_player_obj.player_tag}")
+        return
+
+    if not player_obj.clan_tag:
+        # player is found but not in a clan
+        await ctx.send(f"{player_obj.name} is not in a clan")
+        return
+
+    cwl_group = clash_responder.get_cwl_group(
+        player_obj.clan_tag, razbot_data.header)
+    if not cwl_group:
+        # clan is not in CWL
+        field_dict_list = [{
+            'name': f"{player_obj.clan_name} {player_obj.clan_tag}",
+            'value': f"is not in CWL"
+        }]
+        embed_list = discord_responder.embed_message(
+            Embed=discord.Embed,
+            color=discord.Color(razbot_data.embed_color),
+            icon_url=(ctx.bot.user.avatar_url.BASE +
+                      ctx.bot.user.avatar_url._url),
+            title=f"{player_obj.clan_name} {player_obj.clan_tag}",
+            bot_prefix=ctx.prefix,
+            bot_user_name=ctx.bot.user.name,
+            thumbnail=player_obj.clan_icons,
+            field_list=field_dict_list,
+            image_url=None,
+            author_display_name=ctx.author.display_name,
+            author_avatar_url=(ctx.author.avatar_url.BASE +
+                               ctx.author.avatar_url._url)
+        )
+        return
+
+    field_dict_list = discord_responder.cwl_member_standing(
+        player_obj, cwl_group, player_obj.clan_tag, razbot_data.header)
+    embed_list = discord_responder.embed_message(
+        Embed=discord.Embed,
+        color=discord.Color(razbot_data.embed_color),
+        icon_url=(ctx.bot.user.avatar_url.BASE +
+                  ctx.bot.user.avatar_url._url),
+        title=f"{player_obj.name} CWL score",
+        bot_prefix=ctx.prefix,
+        bot_user_name=ctx.bot.user.name,
+        thumbnail=player_obj.clan_icons,
+        field_list=field_dict_list,
+        image_url=None,
+        author_display_name=ctx.author.display_name,
+        author_avatar_url=(ctx.author.avatar_url.BASE +
+                           ctx.author.avatar_url._url)
+    )
+
+    for embed in embed_list:
+        await ctx.send(embed=embed)
+
+
 # CWL War
 # todo cwlwar war_time_prep, war_overview_prep, war_overview_round,
 
@@ -1607,103 +1831,6 @@ async def cwlwarallattack(ctx):
 
     for embed in embed_list:
         await ctx.send(embed=embed)
-
-
-@client.command(
-    brief='cwlgroup',
-    description='Lists each member and their score in CWL',
-    hidden=True
-)
-async def cwlclanscore(ctx):
-    async with ctx.typing():
-        db_player_obj = db_responder.read_player_active(ctx.author.id)
-    if db_player_obj:
-        player_obj = clash_responder.get_player(
-            db_player_obj.player_tag, razbot_data.header)
-        if player_obj:
-            if player_obj.clan_tag:
-                cwl_group = clash_responder.get_cwl_group(
-                    player_obj.clan_tag, razbot_data.header)
-                if cwl_group:
-                    for line in discord_responder.cwl_clan_standing(
-                            cwl_group, player_obj.clan_tag, razbot_data.header):
-                        await ctx.send(line)
-                else:
-                    await ctx.send(f"{player_obj.clan_name} is not in CWL")
-            else:
-                await ctx.send(f"{player_obj.name} is not in a clan")
-        else:
-            await ctx.send(f"Couldn't find player from tag "
-                           f"{db_player_obj.player_tag}")
-    else:
-        await ctx.send(f"{ctx.author.mention} does not have an active player")
-
-
-@client.command(
-    brief='cwlwar',
-    description='Lists each score you have in CWL'
-)
-async def cwlscore(ctx):
-    async with ctx.typing():
-        db_player_obj = db_responder.read_player_active(ctx.author.id)
-    if db_player_obj:
-        player_obj = clash_responder.get_player(
-            db_player_obj.player_tag, razbot_data.header)
-        if player_obj:
-            if player_obj.clan_tag:
-                cwl_group = clash_responder.get_cwl_group(
-                    player_obj.clan_tag, razbot_data.header)
-                if cwl_group:
-                    await ctx.send(discord_responder.cwl_member_standing(
-                        player_obj, cwl_group, player_obj.clan_tag,
-                        razbot_data.header
-                    ))
-                else:
-                    await ctx.send(f"{player_obj.clan_name} is not in CWL")
-            else:
-                await ctx.send(f"{player_obj.name} is not in a clan")
-        else:
-            await ctx.send(f"Couldn't find player from tag "
-                           f"{db_player_obj.player_tag}")
-    else:
-        await ctx.send(f"{ctx.author.mention} does not have an active player")
-
-
-@client.command(
-    aliases=['cwlclanmatescore'],
-    brief='cwlwar',
-    description='Lists each score the specified member has in CWL'
-)
-async def cwlmemberscore(ctx):
-    if len(ctx.message.mentions) > 0:
-        # if a user has been mentioned
-        discord_member = ctx.message.mentions[0]
-        async with ctx.typing():
-            db_player_obj = db_responder.read_player_active(discord_member.id)
-        if db_player_obj:
-            player_obj = clash_responder.get_player(
-                db_player_obj.player_tag, razbot_data.header)
-            if player_obj:
-                if player_obj.clan_tag:
-                    cwl_group = clash_responder.get_cwl_group(
-                        player_obj.clan_tag, razbot_data.header)
-                    if cwl_group:
-                        await ctx.send(discord_responder.cwl_member_standing(
-                            player_obj, cwl_group, player_obj.clan_tag,
-                            razbot_data.header
-                        ))
-                    else:
-                        await ctx.send(f"{player_obj.clan_name} is not in CWL")
-                else:
-                    await ctx.send(f"{player_obj.name} is not in a clan")
-            else:
-                await ctx.send(f"Couldn't find player from tag "
-                               f"{db_player_obj.player_tag}")
-        else:
-            await ctx.send(f"{discord_member.mention} does not have "
-                           f"an active player")
-    else:
-        await ctx.send(f"You have to mention a member")
 
 
 # Discord

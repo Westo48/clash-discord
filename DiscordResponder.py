@@ -665,13 +665,26 @@ def cwl_clan_standing(cwl_group, clan_tag, header):
             self.score = score
 
     if not cwl_group:
-        return ['you are not in CWL']
+        return [{
+            'name': 'you are not in CWL',
+            'value': 'there is no score'
+        }]
 
     # get a list of all CWLWar objects
     cwl_wars = []
-    for i in range(0, len(cwl_group.rounds)):
-        cwl_war = cwl_group.find_specified_war(clan_tag, i, header)
-        cwl_wars.append(cwl_war)
+    for cwl_round in cwl_group.rounds:
+        cwl_war = cwl_group.find_specified_war(
+            clan_tag, cwl_group.rounds.index(cwl_round), header)
+        if not cwl_war == '#0':
+            if cwl_war.state == 'warEnded':
+                cwl_wars.append(cwl_war)
+
+    if len(cwl_wars) < 2:
+        return [{
+            'name': "not enough wars",
+            'value': "please wait till round two has ended to score members"
+        }]
+
     # get a list of all CWLWarMembers their scores
     cwl_war_members = []
     # find your clan
@@ -690,29 +703,44 @@ def cwl_clan_standing(cwl_group, clan_tag, header):
                 if scored_member.war_count != 0:
                     avg_score = scored_member.score / scored_member.war_count
                     participation_multiplier = math.log(
-                        scored_member.war_count, 7)
+                        scored_member.war_count, len(cwl_wars))
                     scored_member.score = avg_score * participation_multiplier
                     cwl_war_members.append(scored_member)
 
     sorted_cwl_war_members = sorted(
         cwl_war_members, key=lambda member: member.score, reverse=True)
-    return_string_list = []
+    field_dict_list = []
     for member in sorted_cwl_war_members:
-        return_string_list.append(
-            f'{member.name} has a score of {round(member.score, 3)}')
-    return return_string_list
+        field_dict_list.append({
+            'name': member.name,
+            'value': f"{round(member.score, 3)}"
+        })
+    return field_dict_list
 
 
 # returns each specified member's CWL War score
 def cwl_member_standing(player_obj, cwl_group, clan_tag, header):
     if not cwl_group:
-        return 'you are not in CWL'
+        return [{
+            'name': '{player_obj.name} is not in CWL',
+            'value': 'there is no score'
+        }]
 
     # get a list of all CWLWar objects
     cwl_wars = []
-    for i in range(0, len(cwl_group.rounds)):
-        cwl_war = cwl_group.find_specified_war(clan_tag, i, header)
-        cwl_wars.append(cwl_war)
+    for cwl_round in cwl_group.rounds:
+        cwl_war = cwl_group.find_specified_war(
+            clan_tag, cwl_group.rounds.index(cwl_round), header)
+        if not cwl_war == '#0':
+            if cwl_war.state == 'warEnded':
+                cwl_wars.append(cwl_war)
+
+    if len(cwl_wars) < 2:
+        return [{
+            'name': "not enough wars",
+            'value': "please wait till round two has ended to score members"
+        }]
+
     member_round_scores = []
     # find your clan
     found = False
@@ -722,7 +750,10 @@ def cwl_member_standing(player_obj, cwl_group, clan_tag, header):
             found = True
             break
     if not found:
-        return 'Could not find your clan based on the clan tag provided'
+        return [{
+            'name': clan_tag,
+            'value': f"not found in cwl group"
+        }]
 
     found = False
     for member in cwl_group_clan.members:
@@ -730,7 +761,10 @@ def cwl_member_standing(player_obj, cwl_group, clan_tag, header):
             found = True
             break
     if not found:
-        return 'Could not find {player.name} in the CWL group.'
+        return [{
+            'name': f"{player_obj.name}",
+            'value': f"not found in cwl group"
+        }]
 
     for war in cwl_wars:
         for war_member in war.clan.members:
@@ -739,10 +773,16 @@ def cwl_member_standing(player_obj, cwl_group, clan_tag, header):
                 break
 
     if len(member_round_scores) == 0:
-        return_string = f'{player_obj.name} did not participate in any wars.'
+        return [{
+            'name': f"{player_obj.name}",
+            'value': f"did not participate in any wars"
+        }]
 
     elif len(member_round_scores) == 1:
-        return_string = f'{player_obj.name} was in 1 war and had a score of {round(member_round_scores[0], 3)} for that war.'
+        return [{
+            'name': f"{round(member_round_scores[0], 3)}",
+            'value': f"for 1 war"
+        }]
 
     else:
         total_score = 0
@@ -752,145 +792,23 @@ def cwl_member_standing(player_obj, cwl_group, clan_tag, header):
         participation_multiplier = math.log(len(member_round_scores), 7)
         member_score = avg_score * participation_multiplier
 
-        return_string = f"{player_obj.name} was in {len(member_round_scores)} wars with an overall score of {round(member_score, 3)}. {player_obj.name}'s scores are: "
+        field_dict_list = [{
+            'name': f"{round(member_score, 3)}",
+            'value': "overall score for {len(member_round_scores)} wars"
+        }]
         for cwl_round_score in member_round_scores:
-            return_string += f'{round(cwl_round_score, 3)}, '
-        # removes the last 2 characters ', ' of the string
-        return_string = return_string[:-2]
-        return_string += '.'
+            field_dict_list.append({
+                'name': f"{round(cwl_round_score, 3)}",
+                'value': f"score"
+            })
 
-    return return_string
+        return field_dict_list
 
 
 # CWL WAR
 
 
-def cwl_war_overview(war_obj):
-    '''returns a string of the current cwl war overview'''
-    if war_obj.state == 'preparation':
-        time_string = war_obj.string_date_time()
-        return f'{war_obj.clan.name} is preparing for war with {war_obj.opponent.name} with {time_string} left before war starts'
-    elif war_obj.state == 'inWar':
-        time_string = war_obj.string_date_time()
-        scoreboard_string = war_obj.string_scoreboard()
-        return f'{war_obj.clan.name} is in war with {war_obj.opponent.name} with {time_string} left in war, {war_obj.clan.name} is {scoreboard_string}'
-    elif war_obj.state == 'warEnded':
-        scoreboard_string = war_obj.string_scoreboard()
-        return f'war against {war_obj.opponent.name} has ended, {war_obj.clan.name} {scoreboard_string}'
-    else:
-        return 'you are not in CWL'
-
-
-def cwl_war_time(war_obj):
-    '''returns a string of the time remaining in war response'''
-    if war_obj.state == 'preparation':
-        time_string = war_obj.string_date_time()
-        return f'{war_obj.clan.name} is preparing for war with {time_string} left before war starts'
-    elif war_obj.state == 'inWar':
-        time_string = war_obj.string_date_time()
-        return f'{war_obj.clan.name} is preparing for war with {time_string} left in war'
-    elif war_obj.state == 'warEnded':
-        return f'the war with {war_obj.opponent.name} has ended'
-    else:
-        return 'you are not in CWL'
-
-
-def cwl_war_no_attack(war_obj):
-    '''returns a string of the cwl war no attack response'''
-    if war_obj.state == 'preparation':
-        return f'{war_obj.clan.name} is still preparing for war with {war_obj.string_date_time()} before war starts, nobody has attacked'
-
-    elif war_obj.state == 'inWar':
-        no_attack_list = war_obj.no_attack()
-        if len(no_attack_list) == 0:
-            return f'All {war_obj.team_size} {war_obj.clan.name} war members attacked'
-        no_attack_string = ''
-        for member in no_attack_list:
-            no_attack_string += f'{member.name}, '
-        # removes the last 2 characters ', ' of the string
-        no_attack_string = no_attack_string[:-2]
-        # singular
-        if len(no_attack_list) == 1:
-            no_attack_string += ' has not attacked.'
-        # plural
-        else:
-            no_attack_string += ' have not attacked.'
-        return no_attack_string
-
-    elif war_obj.state == 'warEnded':
-        no_attack_list = war_obj.no_attack()
-        if len(no_attack_list) == 0:
-            return f'All {war_obj.team_size} {war_obj.clan.name} war members attacked'
-        no_attack_string = ''
-        for member in no_attack_list:
-            no_attack_string += f'{member.name}, '
-        # removes the last 2 characters ', ' of the string
-        no_attack_string = no_attack_string[:-2]
-        no_attack_string += ' did not attack'
-        return no_attack_string
-
-    else:
-        return 'you are not in CWL'
-
-
-# returns a list of cwl war attack string responses for all war members
-def cwl_war_all_attacks(war_obj):
-    response_list = []
-    if war_obj.state == 'preparation':
-        response_list.append(
-            f'{war_obj.clan.name} is still preparaing for war, nobody has attacked')
-    elif war_obj.state == 'inWar':
-        response_list.append(
-            f'{war_obj.clan.name} is in war with {war_obj.opponent.name} with {war_obj.string_date_time()} left in war, {war_obj.clan.name} is {war_obj.string_scoreboard()}')
-        response_list.append('____________________')
-        for member in war_obj.clan.members:
-            if len(member.attacks) == 0:
-                response_list.append(
-                    f'{member.name} map pos {member.map_position} TH {member.th_lvl} has not attacked')
-            else:
-
-                response_list.append(
-                    f'{member.name} map pos {member.map_position} TH {member.th_lvl} has attacked {len(member.attacks)} {member.string_member_attack_times()} for a total of {member.stars} {member.string_member_stars()}')
-                for attack in member.attacks:
-                    defender = war_obj.find_defender(attack.defender_tag)
-
-                    if attack.stars == 0 or attack.stars == 3:
-                        response_list.append(
-                            f' - {attack.stars} {attack.string_attack_stars()} against {defender.name} map pos {defender.map_position} TH {defender.th_lvl}')
-                    else:
-                        response_list.append(
-                            f' - {attack.stars} {attack.string_attack_stars()}, {round(attack.destruction_percent, 2)}% against {defender.name} map pos {defender.map_position} TH {defender.th_lvl}')
-
-            response_list.append('__________')
-        del response_list[-1]
-    elif war_obj.stat == 'warEnded':
-        response_list.append(
-            f'war against {war_obj.opponent.name} has ended, {war_obj.clan.name} {war_obj.string_scoreboard()}')
-        response_list.append('____________________')
-        for member in war_obj.clan.members:
-            if len(member.attacks) == 0:
-                response_list.append(
-                    f'{member.name} map pos {member.map_position} TH {member.th_lvl} did not attack')
-            else:
-
-                response_list.append(
-                    f'{member.name} map pos {member.map_position} TH {member.th_lvl} has attacked {len(member.attacks)} {member.string_member_attack_times()} for a total of {member.stars} {member.string_member_stars()}')
-                for attack in member.attacks:
-                    defender = war_obj.find_defender(attack.defender_tag)
-
-                    if attack.stars == 0 or attack.stars == 3:
-                        response_list.append(
-                            f' - {attack.stars} {attack.string_attack_stars()} against {defender.name} map pos {defender.map_position} TH {defender.th}')
-                    else:
-                        response_list.append(
-                            f' - {attack.stars} {attack.string_attack_stars()}, {round(attack.destruction_percent, 2)}% against {defender.name} map pos {defender.map_position} TH {defender.th}')
-
-            response_list.append('__________')
-        del response_list[-1]
-    else:
-        response_list.append('you are not in CWL')
-    return response_list
-
+# DISCORD
 
 def embed_message(
     Embed,
@@ -967,9 +885,6 @@ def embed_message(
     embed_list.reverse()
 
     return embed_list
-
-
-# DISCORD
 
 
 def role_add_remove_list(needed_role_list, current_role_list):
