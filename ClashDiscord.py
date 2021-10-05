@@ -1438,7 +1438,7 @@ async def cwlscore(ctx):
         title=f"{player_obj.name} CWL score",
         bot_prefix=ctx.prefix,
         bot_user_name=ctx.bot.user.name,
-        thumbnail=player_obj.clan_icons,
+        thumbnail=player_obj.league_icons,
         field_list=field_dict_list,
         image_url=None,
         author_display_name=ctx.author.display_name,
@@ -1517,7 +1517,7 @@ async def cwlmemberscore(ctx):
         title=f"{player_obj.name} CWL score",
         bot_prefix=ctx.prefix,
         bot_user_name=ctx.bot.user.name,
-        thumbnail=player_obj.clan_icons,
+        thumbnail=player_obj.league_icons,
         field_list=field_dict_list,
         image_url=None,
         author_display_name=ctx.author.display_name,
@@ -1842,15 +1842,28 @@ async def cwlwarallattack(ctx):
     hidden=True
 )
 async def mentionrazgriz(ctx):
-    found = False
-    for member in ctx.channel.members:
-        if discord_responder.player_name_string(member.display_name) == 'Razgriz':
-            mention = member.mention
-            await ctx.send(f'Hello {mention}')
-            found = True
-            break
-    if not found:
-        await ctx.send("Couldn't find 'Razgriz' in the channel.")
+    field_dict_list = [{
+        'name': f"mention",
+        'value': ctx.author.mention
+    }]
+    embed_list = discord_responder.embed_message(
+        Embed=discord.Embed,
+        color=discord.Color(razbot_data.embed_color),
+        icon_url=(ctx.bot.user.avatar_url.BASE +
+                  ctx.bot.user.avatar_url._url),
+        title=f"mention testing",
+        bot_prefix=ctx.prefix,
+        bot_user_name=ctx.bot.user.name,
+        thumbnail={'medium': "https://i.imgur.com/JBt2Kwt.gif"},
+        field_list=field_dict_list,
+        image_url=None,
+        author_display_name=ctx.author.display_name,
+        author_avatar_url=(ctx.author.avatar_url.BASE +
+                           ctx.author.avatar_url._url)
+    )
+
+    for embed in embed_list:
+        await ctx.send(embed=embed)
 
 
 @client.command(
