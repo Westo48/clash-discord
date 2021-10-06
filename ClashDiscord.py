@@ -1281,28 +1281,52 @@ async def warclanscore(ctx):
 async def cwllineup(ctx):
     async with ctx.typing():
         db_player_obj = db_responder.read_player_active(ctx.author.id)
-    if db_player_obj:
-        player_obj = clash_responder.get_player(
-            db_player_obj.player_tag, razbot_data.header)
-        if player_obj:
-            if player_obj.clan_tag:
-
-                cwl_group = clash_responder.get_cwl_group(
-                    player_obj.clan_tag, razbot_data.header)
-
-                if cwl_group:
-                    cwl_lineup = clash_responder.cwl_lineup(cwl_group)
-
-                    await ctx.send(discord_responder.cwl_lineup(cwl_lineup))
-                else:
-                    await ctx.send(f"{player_obj.clan_name} is not in CWL")
-            else:
-                await ctx.send(f"{player_obj.name} is not in a clan")
-        else:
-            await ctx.send(f"Couldn't find player from tag "
-                           f"{db_player_obj.player_tag}")
-    else:
+    if not db_player_obj:
+        # user does not have an active player
         await ctx.send(f"{ctx.author.mention} does not have an active player")
+        return
+
+    player_obj = clash_responder.get_player(
+        db_player_obj.player_tag, razbot_data.header)
+    if not player_obj:
+        # player with tag from db not found
+        await ctx.send(f"could not find player with tag "
+                       f"{db_player_obj.player_tag}")
+        return
+
+    if not player_obj.clan_tag:
+        # player is found but not in a clan
+        await ctx.send(f"{player_obj.name} is not in a clan")
+        return
+
+    cwl_group = clash_responder.get_cwl_group(
+        player_obj.clan_tag, razbot_data.header)
+    if not cwl_group:
+        # clan is not in CWL
+        field_dict_list = [{
+            'name': f"{player_obj.clan_name} {player_obj.clan_tag}",
+            'value': f"is not in CWL"
+        }]
+        embed_list = discord_responder.embed_message(
+            Embed=discord.Embed,
+            color=discord.Color(razbot_data.embed_color),
+            icon_url=(ctx.bot.user.avatar_url.BASE +
+                      ctx.bot.user.avatar_url._url),
+            title=f"{player_obj.clan_name} {player_obj.clan_tag}",
+            bot_prefix=ctx.prefix,
+            bot_user_name=ctx.bot.user.name,
+            thumbnail=player_obj.clan_icons,
+            field_list=field_dict_list,
+            image_url=None,
+            author_display_name=ctx.author.display_name,
+            author_avatar_url=(ctx.author.avatar_url.BASE +
+                               ctx.author.avatar_url._url)
+        )
+        return
+
+    cwl_lineup = clash_responder.cwl_lineup(cwl_group)
+
+    await ctx.send(discord_responder.cwl_lineup(cwl_lineup))
 
 
 @client.command(
@@ -1876,7 +1900,6 @@ async def emojitesting(ctx):
     await ctx.send(f"this is currently not in use, only for emoji testing")
 
 
-# ! for all claimed players
 # todo validation if roles (clan or rank) are not found in db
 @client.command(
     aliases=['roleme'],

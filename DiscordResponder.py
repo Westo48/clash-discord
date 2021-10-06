@@ -666,8 +666,8 @@ def cwl_clan_standing(cwl_group, clan_tag, header):
 
     if not cwl_group:
         return [{
-            'name': 'you are not in CWL',
-            'value': 'there is no score'
+            'name': "you are not in CWL",
+            'value': "there is no score"
         }]
 
     # get a list of all CWLWar objects
@@ -722,8 +722,8 @@ def cwl_clan_standing(cwl_group, clan_tag, header):
 def cwl_member_standing(player_obj, cwl_group, clan_tag, header):
     if not cwl_group:
         return [{
-            'name': '{player_obj.name} is not in CWL',
-            'value': 'there is no score'
+            'name': "{player_obj.name} is not in CWL",
+            'value': "there is no score"
         }]
 
     # get a list of all CWLWar objects
@@ -794,7 +794,7 @@ def cwl_member_standing(player_obj, cwl_group, clan_tag, header):
 
         field_dict_list = [{
             'name': f"{round(member_score, 3)}",
-            'value': "overall score for {len(member_round_scores)} wars"
+            'value': f"overall score for {len(member_round_scores)} wars"
         }]
         for cwl_round_score in member_round_scores:
             field_dict_list.append({
