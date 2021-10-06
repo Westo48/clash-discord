@@ -1,9 +1,55 @@
 import math
 import Clan
 from Player import super_troop_list
+import ClashResponder as clash_responder
 
 
 # PLAYER
+
+def player_verification(db_player_obj, user_obj, header):
+    """
+        verifying a player
+        and returning verification payload
+
+        Args:
+            db_player_obj (obj): player object from db
+
+        Returns:
+            dict: verification_payload
+                (verified, field_dict_list, player_obj)
+    """
+
+    if not db_player_obj:
+        # user active player not found
+        return {
+            'verified': False,
+            'field_dict_list': [{
+                'name': "no active player claimed",
+                'value': user_obj.mention
+            }],
+            'player_obj': None
+        }
+
+    player_obj = clash_responder.get_player(
+        db_player_obj.player_tag, header)
+    if not player_obj:
+        # player with tag from db not found
+        return {
+            'verified': False,
+            'field_dict_list': [{
+                'name': "could not find player",
+                'value': db_player_obj.player_tag
+            }],
+            'player_obj': None
+        }
+
+    verification_payload = {
+        'verified': True,
+        'field_dict_list': None,
+        'player_obj': player_obj
+    }
+    return verification_payload
+
 
 def player_info(player_obj):
     field_dict_list = []
@@ -835,11 +881,7 @@ def embed_message(
     )
     if thumbnail:
         embed.set_thumbnail(
-            url=thumbnail['medium'])
-    else:
-        embed.set_thumbnail(
-            url=("https://api-assets.clashofclans.com/leagues/72/e--"
-                 "YMyIexEQQhE4imLoJcwhYn6Uy8KqlgyY3_kFV6t4.png"))
+            url=thumbnail['small'])
 
     if image_url:
         embed.set_image(

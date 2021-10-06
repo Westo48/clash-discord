@@ -326,9 +326,18 @@ def get(tag, header):
             'medium': player_json['league']['iconUrls']['medium']
         }
     else:
-        league_id = None
-        league_name = None
-        league_icons = None
+        league_id = 29000000
+        league_name = "Unranked"
+        league_icons = {
+            "tiny": (
+                "https://api-assets.clashofclans.com/leagues/"
+                "36/e--YMyIexEQQhE4imLoJcwhYn6Uy8KqlgyY3_kFV6t4.png"
+            ),
+            'small': (
+                "https://api-assets.clashofclans.com/leagues/"
+                "72/e--YMyIexEQQhE4imLoJcwhYn6Uy8KqlgyY3_kFV6t4.png"
+            )
+        }
 
     if 'legendStatistics' in player_json:
         legend_trophies = player_json['legendStatistics']['legendTrophies']
