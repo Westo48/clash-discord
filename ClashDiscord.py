@@ -673,31 +673,31 @@ async def findclan(ctx, *, clan_tag):
 async def clan(ctx):
     async with ctx.typing():
         db_player_obj = db_responder.read_player_active(ctx.author.id)
-    if not db_player_obj:
-        # user active player not found
-        await ctx.send(f"{ctx.author.mention} "
-                       f"does not have an active player")
+
+    verification_payload = discord_responder.clan_verification(
+        db_player_obj, ctx.author, razbot_data.header)
+    if not verification_payload['verified']:
+        embed_list = discord_responder.embed_message(
+            Embed=discord.Embed,
+            color=discord.Color(razbot_data.embed_color),
+            icon_url=(ctx.bot.user.avatar_url.BASE +
+                      ctx.bot.user.avatar_url._url),
+            title=None,
+            bot_prefix=ctx.prefix,
+            bot_user_name=ctx.bot.user.name,
+            thumbnail=None,
+            field_list=verification_payload['field_dict_list'],
+            image_url=None,
+            author_display_name=ctx.author.display_name,
+            author_avatar_url=(ctx.author.avatar_url.BASE +
+                               ctx.author.avatar_url._url)
+        )
+        for embed in embed_list:
+            await ctx.send(embed=embed)
         return
 
-    player_obj = clash_responder.get_player(
-        db_player_obj.player_tag, razbot_data.header)
-    if not player_obj:
-        # player with tag from db not found
-        await ctx.send(f"could not find player with tag "
-                       f"{db_player_obj.player_tag}")
-        return
-
-    if not player_obj.clan_tag:
-        # active player not in a clan
-        await ctx.send(f"{player_obj.name} {player_obj.tag} is not in a clan")
-        return
-
-    clan_obj = clash_responder.get_clan(
-        player_obj.clan_tag, razbot_data.header)
-    if not clan_obj:
-        # clan with tag from db active player not found
-        await ctx.send(f"could not find clan with tag {player_obj.clan_tag}")
-        return
+    player_obj = verification_payload['player_obj']
+    clan_obj = verification_payload['clan_obj']
 
     field_dict_list = discord_responder.clan_info(clan_obj)
 
@@ -779,31 +779,31 @@ async def mentionclan(ctx):
 async def donation(ctx, *, unit_name):
     async with ctx.typing():
         db_player_obj = db_responder.read_player_active(ctx.author.id)
-    if not db_player_obj:
-        # user active player not found
-        await ctx.send(f"{ctx.author.mention} "
-                       f"does not have an active player")
+
+    verification_payload = discord_responder.clan_verification(
+        db_player_obj, ctx.author, razbot_data.header)
+    if not verification_payload['verified']:
+        embed_list = discord_responder.embed_message(
+            Embed=discord.Embed,
+            color=discord.Color(razbot_data.embed_color),
+            icon_url=(ctx.bot.user.avatar_url.BASE +
+                      ctx.bot.user.avatar_url._url),
+            title=None,
+            bot_prefix=ctx.prefix,
+            bot_user_name=ctx.bot.user.name,
+            thumbnail=None,
+            field_list=verification_payload['field_dict_list'],
+            image_url=None,
+            author_display_name=ctx.author.display_name,
+            author_avatar_url=(ctx.author.avatar_url.BASE +
+                               ctx.author.avatar_url._url)
+        )
+        for embed in embed_list:
+            await ctx.send(embed=embed)
         return
 
-    player_obj = clash_responder.get_player(
-        db_player_obj.player_tag, razbot_data.header)
-    if not player_obj:
-        # player with tag from db not found
-        await ctx.send(f"could not find player with tag "
-                       f"{db_player_obj.player_tag}")
-        return
-
-    if not player_obj.clan_tag:
-        # active player not in a clan
-        await ctx.send(f"{player_obj.name} {player_obj.tag} is not in a clan")
-        return
-
-    clan_obj = clash_responder.get_clan(
-        player_obj.clan_tag, razbot_data.header)
-    if not clan_obj:
-        # clan with tag from db active player not found
-        await ctx.send(f"could not find clan with tag {player_obj.clan_tag}")
-        return
+    player_obj = verification_payload['player_obj']
+    clan_obj = verification_payload['clan_obj']
 
     donator_list = clash_responder.donation(
         unit_name, clan_obj, razbot_data.header)
@@ -838,31 +838,31 @@ async def donation(ctx, *, unit_name):
 async def supertroopsearch(ctx, *, unit_name):
     async with ctx.typing():
         db_player_obj = db_responder.read_player_active(ctx.author.id)
-    if not db_player_obj:
-        # user active player not found
-        await ctx.send(f"{ctx.author.mention} "
-                       f"does not have an active player")
+
+    verification_payload = discord_responder.clan_verification(
+        db_player_obj, ctx.author, razbot_data.header)
+    if not verification_payload['verified']:
+        embed_list = discord_responder.embed_message(
+            Embed=discord.Embed,
+            color=discord.Color(razbot_data.embed_color),
+            icon_url=(ctx.bot.user.avatar_url.BASE +
+                      ctx.bot.user.avatar_url._url),
+            title=None,
+            bot_prefix=ctx.prefix,
+            bot_user_name=ctx.bot.user.name,
+            thumbnail=None,
+            field_list=verification_payload['field_dict_list'],
+            image_url=None,
+            author_display_name=ctx.author.display_name,
+            author_avatar_url=(ctx.author.avatar_url.BASE +
+                               ctx.author.avatar_url._url)
+        )
+        for embed in embed_list:
+            await ctx.send(embed=embed)
         return
 
-    player_obj = clash_responder.get_player(
-        db_player_obj.player_tag, razbot_data.header)
-    if not player_obj:
-        # player with tag from db not found
-        await ctx.send(f"could not find player with tag "
-                       f"{db_player_obj.player_tag}")
-        return
-
-    if not player_obj.clan_tag:
-        # active player not in a clan
-        await ctx.send(f"{player_obj.name} {player_obj.tag} is not in a clan")
-        return
-
-    clan_obj = clash_responder.get_clan(
-        player_obj.clan_tag, razbot_data.header)
-    if not clan_obj:
-        # clan with tag from db active player not found
-        await ctx.send(f"could not find clan with tag {player_obj.clan_tag}")
-        return
+    player_obj = verification_payload['player_obj']
+    clan_obj = verification_payload['clan_obj']
 
     super_troop_name = clash_responder.super_troop_unit_name(
         unit_name)
@@ -907,43 +907,20 @@ async def supertroopsearch(ctx, *, unit_name):
 async def waroverview(ctx):
     async with ctx.typing():
         db_player_obj = db_responder.read_player_active(ctx.author.id)
-    if not db_player_obj:
-        # user active player not found
-        await ctx.send(f"{ctx.author.mention} "
-                       f"does not have an active player")
-        return
 
-    player_obj = clash_responder.get_player(
-        db_player_obj.player_tag, razbot_data.header)
-    if not player_obj:
-        # player with tag from db not found
-        await ctx.send(f"could not find player with tag "
-                       f"{db_player_obj.player_tag}")
-        return
-
-    if not player_obj.clan_tag:
-        # active player not in a clan
-        await ctx.send(f"{player_obj.name} {player_obj.tag} is not in a clan")
-        return
-
-    war_obj = clash_responder.get_war(
-        player_obj.clan_tag, razbot_data.header)
-    if not war_obj:
-        # clan is not in war
-        field_dict_list = [{
-            'name': f"{player_obj.clan_name} {player_obj.clan_tag}",
-            'value': f"is not in war"
-        }]
+    verification_payload = discord_responder.war_verification(
+        db_player_obj, ctx.author, razbot_data.header)
+    if not verification_payload['verified']:
         embed_list = discord_responder.embed_message(
             Embed=discord.Embed,
             color=discord.Color(razbot_data.embed_color),
             icon_url=(ctx.bot.user.avatar_url.BASE +
                       ctx.bot.user.avatar_url._url),
-            title=f"{player_obj.clan_name} {player_obj.clan_tag}",
+            title=None,
             bot_prefix=ctx.prefix,
             bot_user_name=ctx.bot.user.name,
-            thumbnail=player_obj.clan_icons,
-            field_list=field_dict_list,
+            thumbnail=None,
+            field_list=verification_payload['field_dict_list'],
             image_url=None,
             author_display_name=ctx.author.display_name,
             author_avatar_url=(ctx.author.avatar_url.BASE +
@@ -952,6 +929,10 @@ async def waroverview(ctx):
         for embed in embed_list:
             await ctx.send(embed=embed)
         return
+
+    player_obj = verification_payload['player_obj']
+    clan_obj = verification_payload['clan_obj']
+    war_obj = verification_payload['war_obj']
 
     field_dict_list = discord_responder.war_overview(war_obj)
 
@@ -980,43 +961,20 @@ async def waroverview(ctx):
 async def wartime(ctx):
     async with ctx.typing():
         db_player_obj = db_responder.read_player_active(ctx.author.id)
-    if not db_player_obj:
-        # user active player not found
-        await ctx.send(f"{ctx.author.mention} "
-                       f"does not have an active player")
-        return
 
-    player_obj = clash_responder.get_player(
-        db_player_obj.player_tag, razbot_data.header)
-    if not player_obj:
-        # player with tag from db not found
-        await ctx.send(f"could not find player with tag "
-                       f"{db_player_obj.player_tag}")
-        return
-
-    if not player_obj.clan_tag:
-        # active player not in a clan
-        await ctx.send(f"{player_obj.name} {player_obj.tag} is not in a clan")
-        return
-
-    war_obj = clash_responder.get_war(
-        player_obj.clan_tag, razbot_data.header)
-    if not war_obj:
-        # clan is not in war
-        field_dict_list = [{
-            'name': f"{player_obj.clan_name} {player_obj.clan_tag}",
-            'value': f"is not in war"
-        }]
+    verification_payload = discord_responder.war_verification(
+        db_player_obj, ctx.author, razbot_data.header)
+    if not verification_payload['verified']:
         embed_list = discord_responder.embed_message(
             Embed=discord.Embed,
             color=discord.Color(razbot_data.embed_color),
             icon_url=(ctx.bot.user.avatar_url.BASE +
                       ctx.bot.user.avatar_url._url),
-            title=f"{player_obj.clan_name} {player_obj.clan_tag}",
+            title=None,
             bot_prefix=ctx.prefix,
             bot_user_name=ctx.bot.user.name,
-            thumbnail=player_obj.clan_icons,
-            field_list=field_dict_list,
+            thumbnail=None,
+            field_list=verification_payload['field_dict_list'],
             image_url=None,
             author_display_name=ctx.author.display_name,
             author_avatar_url=(ctx.author.avatar_url.BASE +
@@ -1025,6 +983,10 @@ async def wartime(ctx):
         for embed in embed_list:
             await ctx.send(embed=embed)
         return
+
+    player_obj = verification_payload['player_obj']
+    clan_obj = verification_payload['clan_obj']
+    war_obj = verification_payload['war_obj']
 
     field_dict_list = discord_responder.war_time(war_obj)
 
@@ -1056,43 +1018,20 @@ async def wartime(ctx):
 async def warnoattack(ctx):
     async with ctx.typing():
         db_player_obj = db_responder.read_player_active(ctx.author.id)
-    if not db_player_obj:
-        # user active player not found
-        await ctx.send(f"{ctx.author.mention} "
-                       f"does not have an active player")
-        return
 
-    player_obj = clash_responder.get_player(
-        db_player_obj.player_tag, razbot_data.header)
-    if not player_obj:
-        # player with tag from db not found
-        await ctx.send(f"could not find player with tag "
-                       f"{db_player_obj.player_tag}")
-        return
-
-    if not player_obj.clan_tag:
-        # active player not in a clan
-        await ctx.send(f"{player_obj.name} {player_obj.tag} is not in a clan")
-        return
-
-    war_obj = clash_responder.get_war(
-        player_obj.clan_tag, razbot_data.header)
-    if not war_obj:
-        # clan is not in war
-        field_dict_list = [{
-            'name': f"{player_obj.clan_name} {player_obj.clan_tag}",
-            'value': f"is not in war"
-        }]
+    verification_payload = discord_responder.war_verification(
+        db_player_obj, ctx.author, razbot_data.header)
+    if not verification_payload['verified']:
         embed_list = discord_responder.embed_message(
             Embed=discord.Embed,
             color=discord.Color(razbot_data.embed_color),
             icon_url=(ctx.bot.user.avatar_url.BASE +
                       ctx.bot.user.avatar_url._url),
-            title=f"{player_obj.clan_name} {player_obj.clan_tag}",
+            title=None,
             bot_prefix=ctx.prefix,
             bot_user_name=ctx.bot.user.name,
-            thumbnail=player_obj.clan_icons,
-            field_list=field_dict_list,
+            thumbnail=None,
+            field_list=verification_payload['field_dict_list'],
             image_url=None,
             author_display_name=ctx.author.display_name,
             author_avatar_url=(ctx.author.avatar_url.BASE +
@@ -1101,6 +1040,10 @@ async def warnoattack(ctx):
         for embed in embed_list:
             await ctx.send(embed=embed)
         return
+
+    player_obj = verification_payload['player_obj']
+    clan_obj = verification_payload['clan_obj']
+    war_obj = verification_payload['war_obj']
 
     field_dict_list = discord_responder.war_no_attack(war_obj)
 
@@ -1132,43 +1075,20 @@ async def warnoattack(ctx):
 async def warclanstars(ctx):
     async with ctx.typing():
         db_player_obj = db_responder.read_player_active(ctx.author.id)
-    if not db_player_obj:
-        # user active player not found
-        await ctx.send(f"{ctx.author.mention} "
-                       f"does not have an active player")
-        return
 
-    player_obj = clash_responder.get_player(
-        db_player_obj.player_tag, razbot_data.header)
-    if not player_obj:
-        # player with tag from db not found
-        await ctx.send(f"could not find player with tag "
-                       f"{db_player_obj.player_tag}")
-        return
-
-    if not player_obj.clan_tag:
-        # active player not in a clan
-        await ctx.send(f"{player_obj.name} {player_obj.tag} is not in a clan")
-        return
-
-    war_obj = clash_responder.get_war(
-        player_obj.clan_tag, razbot_data.header)
-    if not war_obj:
-        # clan is not in war
-        field_dict_list = [{
-            'name': f"{player_obj.clan_name} {player_obj.clan_tag}",
-            'value': f"is not in war"
-        }]
+    verification_payload = discord_responder.war_verification(
+        db_player_obj, ctx.author, razbot_data.header)
+    if not verification_payload['verified']:
         embed_list = discord_responder.embed_message(
             Embed=discord.Embed,
             color=discord.Color(razbot_data.embed_color),
             icon_url=(ctx.bot.user.avatar_url.BASE +
                       ctx.bot.user.avatar_url._url),
-            title=f"{player_obj.clan_name} {player_obj.clan_tag}",
+            title=None,
             bot_prefix=ctx.prefix,
             bot_user_name=ctx.bot.user.name,
-            thumbnail=player_obj.clan_icons,
-            field_list=field_dict_list,
+            thumbnail=None,
+            field_list=verification_payload['field_dict_list'],
             image_url=None,
             author_display_name=ctx.author.display_name,
             author_avatar_url=(ctx.author.avatar_url.BASE +
@@ -1177,6 +1097,10 @@ async def warclanstars(ctx):
         for embed in embed_list:
             await ctx.send(embed=embed)
         return
+
+    player_obj = verification_payload['player_obj']
+    clan_obj = verification_payload['clan_obj']
+    war_obj = verification_payload['war_obj']
 
     field_dict_list = discord_responder.war_members_overview(war_obj)
 
@@ -1208,43 +1132,20 @@ async def warclanstars(ctx):
 async def warallattacks(ctx):
     async with ctx.typing():
         db_player_obj = db_responder.read_player_active(ctx.author.id)
-    if not db_player_obj:
-        # user active player not found
-        await ctx.send(f"{ctx.author.mention} "
-                       f"does not have an active player")
-        return
 
-    player_obj = clash_responder.get_player(
-        db_player_obj.player_tag, razbot_data.header)
-    if not player_obj:
-        # player with tag from db not found
-        await ctx.send(f"could not find player with tag "
-                       f"{db_player_obj.player_tag}")
-        return
-
-    if not player_obj.clan_tag:
-        # active player not in a clan
-        await ctx.send(f"{player_obj.name} {player_obj.tag} is not in a clan")
-        return
-
-    war_obj = clash_responder.get_war(
-        player_obj.clan_tag, razbot_data.header)
-    if not war_obj:
-        # clan is not in war
-        field_dict_list = [{
-            'name': f"{player_obj.clan_name} {player_obj.clan_tag}",
-            'value': f"is not in war"
-        }]
+    verification_payload = discord_responder.war_verification(
+        db_player_obj, ctx.author, razbot_data.header)
+    if not verification_payload['verified']:
         embed_list = discord_responder.embed_message(
             Embed=discord.Embed,
             color=discord.Color(razbot_data.embed_color),
             icon_url=(ctx.bot.user.avatar_url.BASE +
                       ctx.bot.user.avatar_url._url),
-            title=f"{player_obj.clan_name} {player_obj.clan_tag}",
+            title=None,
             bot_prefix=ctx.prefix,
             bot_user_name=ctx.bot.user.name,
-            thumbnail=player_obj.clan_icons,
-            field_list=field_dict_list,
+            thumbnail=None,
+            field_list=verification_payload['field_dict_list'],
             image_url=None,
             author_display_name=ctx.author.display_name,
             author_avatar_url=(ctx.author.avatar_url.BASE +
@@ -1253,6 +1154,10 @@ async def warallattacks(ctx):
         for embed in embed_list:
             await ctx.send(embed=embed)
         return
+
+    player_obj = verification_payload['player_obj']
+    clan_obj = verification_payload['clan_obj']
+    war_obj = verification_payload['war_obj']
 
     field_dict_list = discord_responder.war_all_attacks(war_obj)
 
@@ -1284,42 +1189,20 @@ async def warallattacks(ctx):
 async def warclanscore(ctx):
     async with ctx.typing():
         db_player_obj = db_responder.read_player_active(ctx.author.id)
-    if not db_player_obj:
-        # user does not have an active player
-        await ctx.send(f"{ctx.author.mention} does not have an active player")
-        return
 
-    player_obj = clash_responder.get_player(
-        db_player_obj.player_tag, razbot_data.header)
-    if not player_obj:
-        # player with tag from db not found
-        await ctx.send(f"could not find player with tag "
-                       f"{db_player_obj.player_tag}")
-        return
-
-    if not player_obj.clan_tag:
-        # player is found but not in a clan
-        await ctx.send(f"{player_obj.name} is not in a clan")
-        return
-
-    war_obj = clash_responder.get_war(
-        player_obj.clan_tag, razbot_data.header)
-    if not war_obj:
-        # clan is not in war
-        field_dict_list = [{
-            'name': f"{player_obj.clan_name} {player_obj.clan_tag}",
-            'value': f"is not in war"
-        }]
+    verification_payload = discord_responder.war_verification(
+        db_player_obj, ctx.author, razbot_data.header)
+    if not verification_payload['verified']:
         embed_list = discord_responder.embed_message(
             Embed=discord.Embed,
             color=discord.Color(razbot_data.embed_color),
             icon_url=(ctx.bot.user.avatar_url.BASE +
                       ctx.bot.user.avatar_url._url),
-            title=f"{player_obj.clan_name} {player_obj.clan_tag}",
+            title=None,
             bot_prefix=ctx.prefix,
             bot_user_name=ctx.bot.user.name,
-            thumbnail=player_obj.clan_icons,
-            field_list=field_dict_list,
+            thumbnail=None,
+            field_list=verification_payload['field_dict_list'],
             image_url=None,
             author_display_name=ctx.author.display_name,
             author_avatar_url=(ctx.author.avatar_url.BASE +
@@ -1328,6 +1211,10 @@ async def warclanscore(ctx):
         for embed in embed_list:
             await ctx.send(embed=embed)
         return
+
+    player_obj = verification_payload['player_obj']
+    clan_obj = verification_payload['clan_obj']
+    war_obj = verification_payload['war_obj']
 
     field_dict_list = discord_responder.war_all_member_standing(
         war_obj)

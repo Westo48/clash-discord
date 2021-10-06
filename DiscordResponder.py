@@ -13,6 +13,8 @@ def player_verification(db_player_obj, user_obj, header):
 
         Args:
             db_player_obj (obj): player object from db
+            user_obj (obj): discord user obj
+            header (dict): clash api key header
 
         Returns:
             dict: verification_payload
@@ -41,6 +43,47 @@ def player_verification(db_player_obj, user_obj, header):
                 'value': db_player_obj.player_tag
             }],
             'player_obj': None
+        }
+
+    verification_payload = {
+        'verified': True,
+        'field_dict_list': None,
+        'player_obj': player_obj
+    }
+    return verification_payload
+
+
+def player_clan_verification(db_player_obj, user_obj, header):
+    """
+        verifying a player is in a clan
+        and returning verification payload
+
+        Args:
+            db_player_obj (obj): player object from db
+            user_obj (obj): discord user obj
+            header (dict): clash api key header
+
+        Returns:
+            dict: verification_payload
+                (verified, field_dict_list, player_obj)
+    """
+
+    player_verification_payload = (player_verification(
+        db_player_obj, user_obj, header))
+    if not player_verification_payload['verified']:
+        return player_verification_payload
+
+    player_obj = player_verification_payload['player_obj']
+    if not player_obj.clan_tag:
+        # player not in a clan
+        return {
+            'verified': False,
+            'field_dict_list': [{
+                'name': "player not in a clan",
+                'value': (f"{player_obj.name} "
+                          f"{player_obj.tag}")
+            }],
+            'player_obj': player_obj
         }
 
     verification_payload = {
@@ -297,6 +340,51 @@ def active_super_troops(player_obj, active_super_troops):
 
 # CLAN
 
+def clan_verification(db_player_obj, user_obj, header):
+    """
+        verifying a clan
+        and returning verification payload
+
+        Args:
+            db_player_obj (obj): player object from db
+            user_obj (obj): discord user obj
+            header (dict): clash api key header
+
+        Returns:
+            dict: verification_payload
+                (verified, field_dict_list, player_obj, clan_obj)
+    """
+
+    player_clan_verification_payload = (player_clan_verification(
+        db_player_obj, user_obj, header))
+    if not player_clan_verification_payload['verified']:
+        return player_clan_verification_payload
+
+    player_obj = player_clan_verification_payload['player_obj']
+
+    clan_obj = clash_responder.get_clan(
+        player_obj.clan_tag, header)
+    if not clan_obj:
+        # clan with tag from player not found
+        return {
+            'verified': False,
+            'field_dict_list': [{
+                'name': "could not find clan",
+                'value': player_obj.clan_tag
+            }],
+            'player_obj': player_obj,
+            'clan_obj': clan_obj
+        }
+
+    verification_payload = {
+        'verified': True,
+        'field_dict_list': None,
+        'player_obj': player_obj,
+        'clan_obj': clan_obj
+    }
+    return verification_payload
+
+
 def clan_info(clan_obj):
     field_dict_list = []
 
@@ -395,7 +483,56 @@ def super_troop_search(clan_obj, donor_list, unit_name):
 
 # WAR
 
+def war_verification(
+        db_player_obj, user_obj, header):
+    """
+        verifying a war
+        and returning verification payload
+
+        Args:
+            db_player_obj (obj): player object from db
+            user_obj (obj): discord user obj
+            header (dict): clash api key header
+
+        Returns:
+            dict: verification_payload
+                (verified, field_dict_list, player_obj, clan_obj, war_obj)
+    """
+
+    player_clan_verification_payload = (player_clan_verification(
+        db_player_obj, user_obj, header))
+
+    if not player_clan_verification_payload['verified']:
+        return player_clan_verification_payload
+
+    player_obj = player_clan_verification_payload['player_obj']
+
+    war_obj = clash_responder.get_war(
+        player_obj.clan_tag, header)
+    if not war_obj:
+        # clan is not in war
+        return {
+            'verified': False,
+            'field_dict_list': [{
+                'name': "not in war",
+                'value': (f"{player_obj.clan_name} "
+                          f"{player_obj.clan_tag}")
+            }],
+            'player_obj': player_obj,
+            'war_obj': None
+        }
+
+    verification_payload = {
+        'verified': True,
+        'field_dict_list': None,
+        'player_obj': player_obj,
+        'war_obj': war_obj
+    }
+    return verification_payload
+
 # returns a string of the war overview
+
+
 def war_overview(war_obj):
     if war_obj.state == "preparation":
         time_string = war_obj.string_date_time()
