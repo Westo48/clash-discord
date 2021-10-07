@@ -153,18 +153,18 @@ ClashDiscord is largely **command** focused, meaning it doesn't do anything that
 
 - ## <a id="command-list-player"></a>Player
 
-  - player `playertag`
+  - findplayer `playertag`
     - displays player information for requested player tag
     - example
       - `!player #RGQ8RGU9`
       - `!player RGQ8RGU9`
-  - showplayer
+  - player
     - shows player information based on your active player
-  - showmemberplayer `mentionuser`
+  - memberplayer `mentionuser`
     - shows player information based on the mentioned user's active player
-  - trooplvl `unitname`
-    - shows the level of your troop, what the max for your town hall is, as well as the overall max
-    - contrary to what the name suggests you can search troops, spells, and heroes
+  - unitlvl `unitname`
+    - shows the level of the requested unit, what the max for your town hall is, as well as the overall max
+    - you can search troops, spells, and heroes
     - example
       - `!trooplvl hog rider`
       - `!trooplvl jump spell`
@@ -174,15 +174,15 @@ ClashDiscord is largely **command** focused, meaning it doesn't do anything that
 
 - ## <a id="command-list-clan"></a>Clan
 
-  - clan `clantag`
+  - findclan `clantag`
     - displays clan information for requested clan tag
     - example
       - `!clan #JJRJGVR0`
       - `!clan JJRJGVR0`
-  - showclan `mentionclanrole`
-    - displays clan information for clan linked to the clan role mentioned
-  - showplayerclan
+  - clan
     - displays clan information for clan active player is in
+  - clanmention `mentionclanrole`
+    - displays clan information for clan linked to the clan role mentioned
   - donate `unitname`
     - shows who can donate the best of a specified unit
     - uses active player's clan for all clan commands
@@ -203,7 +203,6 @@ ClashDiscord is largely **command** focused, meaning it doesn't do anything that
   - warnoattack
     - displays players that are missing attacks in war
   - warclanscore
-
     - displays every war member's score
     - will send a message for _every_ war member, not currently suggested
 
@@ -215,10 +214,9 @@ ClashDiscord is largely **command** focused, meaning it doesn't do anything that
   - cwlclanscore
     - displays every cwl member's score
     - will send a message for _every_ cwl member, not currently suggested
-  - cwlmemberscore
+  - cwlscore
     - lists your player's score for each war in cwl
-  - cwlclanmatescore `mentionuser`
-
+  - cwlmemberscore `mentionuser`
     - lists user's active player's score for each war in cwl
 
 - ## <a id="command-list-cwl-war"></a>CWL War
