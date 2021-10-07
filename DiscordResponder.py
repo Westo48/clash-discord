@@ -483,8 +483,7 @@ def super_troop_search(clan_obj, donor_list, unit_name):
 
 # WAR
 
-def war_verification(
-        db_player_obj, user_obj, header):
+def war_verification(db_player_obj, user_obj, header):
     """
         verifying a war
         and returning verification payload
@@ -496,7 +495,7 @@ def war_verification(
 
         Returns:
             dict: verification_payload
-                (verified, field_dict_list, player_obj, clan_obj, war_obj)
+                (verified, field_dict_list, player_obj, war_obj)
     """
 
     player_clan_verification_payload = (player_clan_verification(
@@ -530,9 +529,8 @@ def war_verification(
     }
     return verification_payload
 
+
 # returns a string of the war overview
-
-
 def war_overview(war_obj):
     if war_obj.state == "preparation":
         time_string = war_obj.string_date_time()
@@ -810,6 +808,51 @@ def war_all_member_standing(war_obj):
 
 
 # CWL GROUP
+
+def cwl_group_verification(db_player_obj, user_obj, header):
+    """
+        verifying a cwl group
+        and returning verification payload
+        Args:
+            db_player_obj (obj): player object from db
+            user_obj (obj): discord user obj
+            header (dict): clash api key header
+        Returns:
+            dict: verification_payload
+                (verified, field_dict_list, player_obj, cwl_group_obj)
+    """
+
+    player_clan_verification_payload = (player_clan_verification(
+        db_player_obj, user_obj, header))
+
+    if not player_clan_verification_payload['verified']:
+        return player_clan_verification_payload
+
+    player_obj = player_clan_verification_payload['player_obj']
+
+    cwl_group_obj = clash_responder.get_cwl_group(
+        player_obj.clan_tag, header)
+    if not cwl_group_obj:
+        # clan is not in cwl
+        return {
+            'verified': False,
+            'field_dict_list': [{
+                'name': "not in cwl",
+                'value': (f"{player_obj.clan_name} "
+                          f"{player_obj.clan_tag}")
+            }],
+            'player_obj': player_obj,
+            'cwl_group_obj': None
+        }
+
+    verification_payload = {
+        'verified': True,
+        'field_dict_list': None,
+        'player_obj': player_obj,
+        'cwl_group_obj': cwl_group_obj
+    }
+    return verification_payload
+
 
 def cwl_lineup(cwl_lineup):
     message = (
