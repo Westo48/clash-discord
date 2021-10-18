@@ -1810,6 +1810,13 @@ async def role(ctx):
                 # clan role was not found in the db
                 await ctx.send(f"role for clan {player_obj.clan_name} "
                                f"{player_obj.clan_tag} has not been claimed")
+    
+    if len(needed_role_list)==0:
+        uninitiated_role=db_responder.read_rank_role_from_guild_and_clash(
+            ctx.guild.id, "uninitiated"
+        )
+        if uninitiated_role:
+            needed_role_list.append(uninitiated_role.discord_role_id)
 
     # get rid of duplicates
     needed_role_list = list(dict.fromkeys(needed_role_list))
@@ -1820,13 +1827,20 @@ async def role(ctx):
         current_discord_role_list.append(current_role.id)
 
     # get current roles that match db roles
-    current_db_role_list = db_responder.read_rank_role_list(
+    current_db_rank_role_list = db_responder.read_rank_role_list(
         current_discord_role_list)
+    
+    current_db_clan_role_list=db_responder.read_clan_role_list(
+        current_discord_role_list
+    )
 
     # getting the list of role id's
     current_role_list = []
-    for current_role in current_db_role_list:
-        current_role_list.append(current_role.discord_role_id)
+    for rank_role in current_db_rank_role_list:
+        current_role_list.append(rank_role.discord_role_id)
+    for clan_role in current_db_clan_role_list:
+        current_role_list.append(clan_role.discord_role_id)
+
 
     add_role_id_list, remove_role_id_list = discord_responder.role_add_remove_list(
         needed_role_list, current_role_list)
