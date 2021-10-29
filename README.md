@@ -191,8 +191,10 @@ ClashDiscord is largely **command** focused, meaning it doesn't do anything that
     - displays clan information for clan linked to the clan role mentioned
   - clanlineup
     - displays clan's town hall lineup
+    - restricted to leaders and co-leaders
   - clanwarpreference
     - displays rundown of clan member's war preference
+    - restricted to leaders and co-leaders
   - donate `unitname`
     - shows who can donate the best of a specified unit
     - uses active player's clan for all clan commands
