@@ -150,6 +150,12 @@ ClashDiscord is largely **command** focused, meaning it doesn't do anything that
     - displays relevant help-text regarding what commands can be run
   - role
     - adds and removes necessary roles in discord based on claimed players clan and role in that clan
+  - rolemember `membermention`
+    - adds and removes necessary roles in discord based on claimed players clan and role in that clan for mentioned discord user
+    - restricted to leaders and co-leaders
+  - roleall
+    - adds and removes necessary roles in discord based on claimed players clan and role in that clan for all users in guild
+    - restricted to leaders and co-leaders
 
 - ## <a id="command-list-player"></a>Player
 
@@ -183,6 +189,8 @@ ClashDiscord is largely **command** focused, meaning it doesn't do anything that
     - displays clan information for clan active player is in
   - clanmention `mentionclanrole`
     - displays clan information for clan linked to the clan role mentioned
+  - clanwarpreference
+    - displays rundown of clan member's war preference
   - donate `unitname`
     - shows who can donate the best of a specified unit
     - uses active player's clan for all clan commands

@@ -725,7 +725,7 @@ async def clan(ctx):
     brief='clan',
     description="Get information about mentioned clan"
 )
-async def mentionclan(ctx):
+async def clanmention(ctx):
     if len(ctx.message.role_mentions) == 0:
         # user has not been mentioned
         await ctx.send(f"you have to mention a clan role")
@@ -804,7 +804,8 @@ async def clanwarpreference(ctx):
     player_obj = verification_payload['player_obj']
     clan_obj = verification_payload['clan_obj']
 
-    field_dict_list = discord_responder.clan_war_preference(clan_obj, razbot_data.header)
+    field_dict_list = discord_responder.clan_war_preference(
+        clan_obj, razbot_data.header)
 
     embed_list = discord_responder.embed_message(
         Embed=discord.Embed,
@@ -1864,9 +1865,9 @@ async def role(ctx):
                 # clan role was not found in the db
                 await ctx.send(f"role for clan {player_obj.clan_name} "
                                f"{player_obj.clan_tag} has not been claimed")
-    
-    if len(needed_role_list)==0:
-        uninitiated_role=db_responder.read_rank_role_from_guild_and_clash(
+
+    if len(needed_role_list) == 0:
+        uninitiated_role = db_responder.read_rank_role_from_guild_and_clash(
             ctx.guild.id, "uninitiated"
         )
         if uninitiated_role:
@@ -1883,8 +1884,8 @@ async def role(ctx):
     # get current roles that match db roles
     current_db_rank_role_list = db_responder.read_rank_role_list(
         current_discord_role_list)
-    
-    current_db_clan_role_list=db_responder.read_clan_role_list(
+
+    current_db_clan_role_list = db_responder.read_clan_role_list(
         current_discord_role_list
     )
 
@@ -1894,7 +1895,6 @@ async def role(ctx):
         current_role_list.append(rank_role.discord_role_id)
     for clan_role in current_db_clan_role_list:
         current_role_list.append(clan_role.discord_role_id)
-
 
     add_role_id_list, remove_role_id_list = discord_responder.role_add_remove_list(
         needed_role_list, current_role_list)
@@ -1991,7 +1991,7 @@ async def rolemember(ctx):
 
     player_obj = verification_payload['player_obj']
 
-    if not (player_obj.role =='coLeader' or
+    if not (player_obj.role == 'coLeader' or
             player_obj.role == 'leader'):
         # command can only be run by leadership
         await ctx.send(f"command can only be run by leader or co-leader")
@@ -2049,9 +2049,9 @@ async def rolemember(ctx):
                 # clan role was not found in the db
                 await ctx.send(f"role for clan {player_obj.clan_name} "
                                f"{player_obj.clan_tag} has not been claimed")
-    
-    if len(needed_role_list)==0:
-        uninitiated_role=db_responder.read_rank_role_from_guild_and_clash(
+
+    if len(needed_role_list) == 0:
+        uninitiated_role = db_responder.read_rank_role_from_guild_and_clash(
             ctx.guild.id, "uninitiated"
         )
         if uninitiated_role:
@@ -2068,8 +2068,8 @@ async def rolemember(ctx):
     # get current roles that match db roles
     current_db_rank_role_list = db_responder.read_rank_role_list(
         current_discord_role_list)
-    
-    current_db_clan_role_list=db_responder.read_clan_role_list(
+
+    current_db_clan_role_list = db_responder.read_clan_role_list(
         current_discord_role_list
     )
 
@@ -2079,7 +2079,6 @@ async def rolemember(ctx):
         current_role_list.append(rank_role.discord_role_id)
     for clan_role in current_db_clan_role_list:
         current_role_list.append(clan_role.discord_role_id)
-
 
     add_role_id_list, remove_role_id_list = discord_responder.role_add_remove_list(
         needed_role_list, current_role_list)
@@ -2169,7 +2168,7 @@ async def roleall(ctx):
 
     player_obj = verification_payload['player_obj']
 
-    if not (player_obj.role =='coLeader' or
+    if not (player_obj.role == 'coLeader' or
             player_obj.role == 'leader'):
         # command can only be run by leadership
         await ctx.send(f"command can only be run by leader or co-leader")
@@ -2198,7 +2197,7 @@ async def roleall(ctx):
             else:
                 # player was not found from tag
                 await ctx.send(f"couldn't find player from tag "
-                            f"{db_obj.player_tag}")
+                               f"{db_obj.player_tag}")
                 continue
 
         # get needed roles
@@ -2220,18 +2219,19 @@ async def roleall(ctx):
                     if db_rank_role_obj:
                         # rank role was found in the db
                         # adding the rank role id to the list
-                        needed_role_list.append(db_rank_role_obj.discord_role_id)
+                        needed_role_list.append(
+                            db_rank_role_obj.discord_role_id)
                     else:
                         # rank role was not found in the db
                         await ctx.send(f"role for rank {player_obj.role} "
-                                    f"has not been claimed")
+                                       f"has not been claimed")
                 else:
                     # clan role was not found in the db
                     await ctx.send(f"role for clan {player_obj.clan_name} "
-                                f"{player_obj.clan_tag} has not been claimed")
-        
-        if len(needed_role_list)==0:
-            uninitiated_role=db_responder.read_rank_role_from_guild_and_clash(
+                                   f"{player_obj.clan_tag} has not been claimed")
+
+        if len(needed_role_list) == 0:
+            uninitiated_role = db_responder.read_rank_role_from_guild_and_clash(
                 ctx.guild.id, "uninitiated"
             )
             if uninitiated_role:
@@ -2248,8 +2248,8 @@ async def roleall(ctx):
         # get current roles that match db roles
         current_db_rank_role_list = db_responder.read_rank_role_list(
             current_discord_role_list)
-        
-        current_db_clan_role_list=db_responder.read_clan_role_list(
+
+        current_db_clan_role_list = db_responder.read_clan_role_list(
             current_discord_role_list
         )
 
@@ -2259,7 +2259,6 @@ async def roleall(ctx):
             current_role_list.append(rank_role.discord_role_id)
         for clan_role in current_db_clan_role_list:
             current_role_list.append(clan_role.discord_role_id)
-
 
         add_role_id_list, remove_role_id_list = discord_responder.role_add_remove_list(
             needed_role_list, current_role_list)
@@ -2286,7 +2285,8 @@ async def roleall(ctx):
         remove_role_obj_list = []
         for remove_role_id in remove_role_id_list:
             # returns None if role is not found
-            remove_role_obj = discord.utils.get(ctx.guild.roles, id=remove_role_id)
+            remove_role_obj = discord.utils.get(
+                ctx.guild.roles, id=remove_role_id)
             if remove_role_obj:
                 # role was found in guild.roles
                 remove_role_obj_list.append(remove_role_obj)
@@ -2303,11 +2303,11 @@ async def roleall(ctx):
         if len(add_role_obj_list) == 0 and len(remove_role_obj_list) == 0:
             # no roles added or removed
             await ctx.send(f"roles for {discord_member.display_name} "
-                        f"have not been changed")
+                           f"have not been changed")
         else:
             # roles have been added or removed
             await ctx.send(f"roles for {discord_member.display_name} "
-                        f"have been updated")
+                           f"have been updated")
 
 
 # CLIENT

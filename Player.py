@@ -27,6 +27,7 @@ class Player(object):
             vs_battle_wins (int): 
             role (str): The player's role in their clan
                 not available if player is not in a clan
+            war_preference (bool): in (true) or out (false) for war
             donations (int): donations given
                 current season
             donations_received (int): donations received
