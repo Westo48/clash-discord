@@ -5,8 +5,7 @@ import CWLGroup
 import CWLWar
 
 
-cwl_clan_lineup_dict = {
-    'clan': {},
+th_lineup_dict = {
     14: 0,
     13: 0,
     12: 0,
@@ -19,7 +18,8 @@ cwl_clan_lineup_dict = {
     5: 0,
     4: 0,
     3: 0,
-    2: 0
+    2: 0,
+    1: 0
 }
 
 
@@ -56,6 +56,16 @@ def super_troop_unit_name(unit_name):
 # todo DOCSTRING
 def get_clan(clan_tag, header):
     return Clan.get(clan_tag, header)
+
+
+def clan_lineup(clan_obj, header):
+    clan_lineup_dict = th_lineup_dict
+
+    for member in clan_obj.members:
+        player_obj = get_player(member.tag, header)
+        clan_lineup_dict[player_obj.th_lvl] += 1
+
+    return clan_lineup_dict
 
 
 # returns a string response of members that can donate the best of that unit
@@ -168,6 +178,15 @@ def get_war(clan_tag, header):
     return War.get(clan_tag, header)
 
 
+def war_clan_lineup(war_clan_obj, header):
+    clan_lineup_dict = th_lineup_dict
+
+    for member in war_clan_obj.members:
+        clan_lineup_dict[member.th_lvl] += 1
+
+    return clan_lineup_dict
+
+
 def war_no_attack_members(clan_tag, header):
     "returns a list of players that haven't attacked"
     war = War.get(clan_tag, header)
@@ -192,31 +211,10 @@ def get_cwl_group(clan_tag, header):
     return CWLGroup.get(clan_tag, header)
 
 
-def cwl_lineup(cwl_group):
-    if not cwl_group:
-        return None
-    clan_lineup = []
-    for clan in cwl_group.clans:
-        clan_lineup_dict = {
-            'clan': {},
-            14: 0,
-            13: 0,
-            12: 0,
-            11: 0,
-            10: 0,
-            9: 0,
-            8: 0,
-            7: 0,
-            6: 0,
-            5: 0,
-            4: 0,
-            3: 0,
-            2: 0
-        }
-        clan_lineup_dict['clan'] = clan
-        for member in clan.members:
-            clan_lineup_dict[member.th_lvl] += 1
-        clan_lineup.append(clan_lineup_dict)
+def cwl_clan_lineup(cwl_group_clan):
+    clan_lineup_dict = th_lineup_dict
+    for member in cwl_group_clan.members:
+        clan_lineup_dict[member.th_lvl] += 1
     return clan_lineup
 
 

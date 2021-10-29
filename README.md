@@ -189,6 +189,8 @@ ClashDiscord is largely **command** focused, meaning it doesn't do anything that
     - displays clan information for clan active player is in
   - clanmention `mentionclanrole`
     - displays clan information for clan linked to the clan role mentioned
+  - clanlineup
+    - displays clan's town hall lineup
   - clanwarpreference
     - displays rundown of clan member's war preference
   - donate `unitname`

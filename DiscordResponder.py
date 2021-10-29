@@ -398,6 +398,22 @@ def clan_verification(db_player_obj, user_obj, header):
     return verification_payload
 
 
+def clan_lineup(clan_obj, header):
+    clan_lineup_dict = clash_responder.clan_lineup(clan_obj, header)
+
+    field_dict_list = []
+
+    for th in clan_lineup_dict:
+        if clan_lineup_dict[th] > 0:
+            field_dict_list.append({
+                'name': f"Town Hall {th}",
+                'value': f"{clan_lineup_dict[th]}",
+                'inline': False
+            })
+
+    return field_dict_list
+
+
 def clan_info(clan_obj):
     field_dict_list = []
 
@@ -890,25 +906,25 @@ def cwl_group_verification(db_player_obj, user_obj, header):
     return verification_payload
 
 
-def cwl_lineup(cwl_lineup):
+def cwl_lineup(cwl_group):
     message = (
         "```\n"
         "CWL Group Lineup\n"
         "14 | 13 | 12 | 11 | 10 | 9  | 8\n"
         "-------------------------------\n"
     )
-    for clan_dict in cwl_lineup:
-        lineup_message = f"{clan_dict['clan'].name}\n"
-        for key in clan_dict:
-            if key != 'clan' and key > 6:
-                if key >= 8:
-                    lineup_message += f"{clan_dict[key]}"
+    for clan in cwl_group.clan:
+        lineup_message = f"{clan.name}\n"
+        clan_lineup_dict = clash_responder.cwl_clan_lineup
+        for th in clan_lineup_dict:
+            if th >= 8:
+                lineup_message += f"{clan_lineup_dict[th]}"
+                if clan_lineup_dict[th] >= 10:
                     # if it is a double digit number
-                    if clan_dict[key] >= 10:
-                        lineup_message += " | "
+                    lineup_message += " | "
+                else:
                     # if it is a single digit number add an extra space
-                    else:
-                        lineup_message += "  | "
+                    lineup_message += "  | "
         # removes the last 4 characters '  | ' of the string
         lineup_message = lineup_message[:-4]
         lineup_message += "\n\n"
