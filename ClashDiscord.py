@@ -243,11 +243,11 @@ async def player(ctx):
 
 
 @client.command(
-    aliases=['showmemberplayer', 'showmemberactiveplayer'],
+    aliases=['showmemberplayer', 'showmemberactiveplayer', 'memberplayer'],
     brief='player',
     description="get information about a member's active player"
 )
-async def memberplayer(ctx):
+async def playermember(ctx):
     if len(ctx.message.mentions) == 0:
         # user has not been mentioned
         await ctx.send(f"you have to mention a member")
@@ -1743,7 +1743,6 @@ async def emojitesting(ctx):
     await ctx.send(f"this is currently not in use, only for emoji testing")
 
 
-# todo validation if roles (clan or rank) are not found in db
 @client.command(
     aliases=['roleme'],
     brief='discord',
@@ -1880,6 +1879,192 @@ async def role(ctx):
     # remove roles
     for remove_role_obj in remove_role_obj_list:
         await ctx.author.remove_roles(remove_role_obj)
+
+    if len(add_role_obj_list) == 0 and len(remove_role_obj_list) == 0:
+        # no roles added or removed
+        await ctx.send(f"roles have not been changed")
+    else:
+        # roles have been added or removed
+        await ctx.send(f"roles have been updated")
+
+
+@client.command(
+    aliases=['roleplayer'],
+    brief='discord',
+    description=('this will role the mentioned user')
+)
+async def rolemember(ctx):
+    if len(ctx.message.mentions) == 0:
+        # user has not been mentioned
+        await ctx.send(f"you have to mention a member")
+        return
+
+    # user has been mentioned
+    discord_member = ctx.message.mentions[0]
+
+    async with ctx.typing():
+        db_guild_obj = db_responder.read_guild(ctx.guild.id)
+
+    if not db_guild_obj:
+        # if guild is not claimed
+        await ctx.send(f"{ctx.guild.name} has not been claimed")
+        return
+
+    async with ctx.typing():
+        db_player_obj = db_responder.read_player_active(ctx.author.id)
+
+    verification_payload = discord_responder.player_verification(
+        db_player_obj, ctx.author, razbot_data.header)
+    if not verification_payload['verified']:
+        embed_list = discord_responder.embed_message(
+            Embed=discord.Embed,
+            color=discord.Color(razbot_data.embed_color),
+            icon_url=(ctx.bot.user.avatar_url.BASE +
+                      ctx.bot.user.avatar_url._url),
+            title=None,
+            bot_prefix=ctx.prefix,
+            bot_user_name=ctx.bot.user.name,
+            thumbnail=None,
+            field_list=verification_payload['field_dict_list'],
+            image_url=None,
+            author_display_name=ctx.author.display_name,
+            author_avatar_url=(ctx.author.avatar_url.BASE +
+                               ctx.author.avatar_url._url)
+        )
+        for embed in embed_list:
+            await ctx.send(embed=embed)
+        return
+
+    player_obj = verification_payload['player_obj']
+
+    if not (player_obj.role =='coLeader' or
+            player_obj.role == 'leader'):
+        # command can only be run by leadership
+        await ctx.send(f"command can only be run by leader or co-leader")
+        return
+
+    db_user_obj = db_responder.read_user(discord_member.id)
+    if not db_user_obj:
+        # if user is not claimed
+        await ctx.send(f"{discord_member.mention} has not been claimed")
+        return
+
+    db_player_obj_list = db_responder.read_player_list(discord_member.id)
+    if len(db_player_obj_list) == 0:
+        # if player is not claimed
+        await ctx.send(f"{discord_member.mention} has no claimed players")
+        return
+
+    player_obj_list = []
+    for db_obj in db_player_obj_list:
+        player_obj = clash_responder.get_player(
+            db_obj.player_tag, razbot_data.header)
+        if player_obj:
+            player_obj_list.append(player_obj)
+        else:
+            # player was not found from tag
+            await ctx.send(f"couldn't find player from tag "
+                           f"{db_obj.player_tag}")
+            return
+
+    # get needed roles
+    needed_role_list = []
+    for player_obj in player_obj_list:
+        # get discord roles for the clan and role in the clan
+        if player_obj.clan_tag:
+            # clan role validation
+            db_clan_role_obj = db_responder.read_clan_role_from_tag(
+                ctx.guild.id, player_obj.clan_tag)
+            if db_clan_role_obj:
+                # clan role was found in the db
+                # adding the clash role id to the list
+                needed_role_list.append(db_clan_role_obj.discord_role_id)
+                # rank role validation
+                db_rank_role_obj = (
+                    db_responder.read_rank_role_from_guild_and_clash(
+                        ctx.guild.id, player_obj.role))
+                if db_rank_role_obj:
+                    # rank role was found in the db
+                    # adding the rank role id to the list
+                    needed_role_list.append(db_rank_role_obj.discord_role_id)
+                else:
+                    # rank role was not found in the db
+                    await ctx.send(f"role for rank {player_obj.role} "
+                                   f"has not been claimed")
+            else:
+                # clan role was not found in the db
+                await ctx.send(f"role for clan {player_obj.clan_name} "
+                               f"{player_obj.clan_tag} has not been claimed")
+    
+    if len(needed_role_list)==0:
+        uninitiated_role=db_responder.read_rank_role_from_guild_and_clash(
+            ctx.guild.id, "uninitiated"
+        )
+        if uninitiated_role:
+            needed_role_list.append(uninitiated_role.discord_role_id)
+
+    # get rid of duplicates
+    needed_role_list = list(dict.fromkeys(needed_role_list))
+
+    # get current roles
+    current_discord_role_list = []
+    for current_role in discord_member.roles:
+        current_discord_role_list.append(current_role.id)
+
+    # get current roles that match db roles
+    current_db_rank_role_list = db_responder.read_rank_role_list(
+        current_discord_role_list)
+    
+    current_db_clan_role_list=db_responder.read_clan_role_list(
+        current_discord_role_list
+    )
+
+    # getting the list of role id's
+    current_role_list = []
+    for rank_role in current_db_rank_role_list:
+        current_role_list.append(rank_role.discord_role_id)
+    for clan_role in current_db_clan_role_list:
+        current_role_list.append(clan_role.discord_role_id)
+
+
+    add_role_id_list, remove_role_id_list = discord_responder.role_add_remove_list(
+        needed_role_list, current_role_list)
+
+    # get objects of roles to add from id's
+    add_role_obj_list = []
+    for add_role_id in add_role_id_list:
+        # returns None if role is not found
+        add_role_obj = discord.utils.get(ctx.guild.roles, id=add_role_id)
+        if add_role_obj:
+            # role was found in guild.roles
+            add_role_obj_list.append(add_role_obj)
+        else:
+            await ctx.send(
+                f"could not find role for id {add_role_id}, "
+                f"please ensure claimed roles and discord roles match"
+            )
+
+    # add roles
+    for add_role_obj in add_role_obj_list:
+        await discord_member.add_roles(add_role_obj)
+
+    # get objects of roles to remove from id's
+    remove_role_obj_list = []
+    for remove_role_id in remove_role_id_list:
+        # returns None if role is not found
+        remove_role_obj = discord.utils.get(ctx.guild.roles, id=remove_role_id)
+        if remove_role_obj:
+            # role was found in guild.roles
+            remove_role_obj_list.append(remove_role_obj)
+        else:
+            await ctx.send(
+                f"could not find role for id {remove_role_id}, "
+                f"please ensure claimed roles and discord roles match"
+            )
+
+    # remove roles
+    for remove_role_obj in remove_role_obj_list:
+        await discord_member.remove_roles(remove_role_obj)
 
     if len(add_role_obj_list) == 0 and len(remove_role_obj_list) == 0:
         # no roles added or removed
