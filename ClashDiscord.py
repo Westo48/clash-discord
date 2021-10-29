@@ -803,6 +803,12 @@ async def clanlineup(ctx):
     player_obj = verification_payload['player_obj']
     clan_obj = verification_payload['clan_obj']
 
+    if not (player_obj.role == 'coLeader' or
+            player_obj.role == 'leader'):
+        # command can only be run by leadership
+        await ctx.send(f"command can only be run by leader or co-leader")
+        return
+
     field_dict_list = discord_responder.clan_lineup(
         clan_obj, razbot_data.header)
 
@@ -858,6 +864,12 @@ async def clanwarpreference(ctx):
 
     player_obj = verification_payload['player_obj']
     clan_obj = verification_payload['clan_obj']
+
+    if not (player_obj.role == 'coLeader' or
+            player_obj.role == 'leader'):
+        # command can only be run by leadership
+        await ctx.send(f"command can only be run by leader or co-leader")
+        return
 
     field_dict_list = discord_responder.clan_war_preference(
         clan_obj, razbot_data.header)
