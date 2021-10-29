@@ -184,6 +184,19 @@ def player_info(player_obj):
             'value': f"{player_obj.name} is not in a clan",
             'inline': True
         })
+    
+    if player_obj.war_preference:
+        field_dict_list.append({
+            'name': '**War Preference**',
+            'value': "in",
+            'inline': True
+        })
+    else:
+        field_dict_list.append({
+            'name': '**War Preference**',
+            'value': "out",
+            'inline': True
+        })
 
     hero_title = ''
     hero_value = ''
@@ -422,6 +435,29 @@ def clan_info(clan_obj):
         'inline': True
     })
 
+    return field_dict_list
+
+
+def clan_war_preference(clan_obj, header):
+    in_count=0
+    for member in clan_obj.members:
+        player_obj=clash_responder.get_player(member.tag, header)
+        if player_obj.war_preference:
+            in_count+=1
+
+    field_dict_list = []
+
+    field_dict_list.append({
+        'name': "in",
+        'value': f"{in_count}",
+        'inline': False
+    })
+    field_dict_list.append({
+        'name': "out",
+        'value': f"{len(clan_obj.members) - in_count}",
+        'inline': False
+    })
+    
     return field_dict_list
 
 
