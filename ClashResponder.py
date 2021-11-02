@@ -59,7 +59,7 @@ def get_clan(clan_tag, header):
 
 
 def clan_lineup(clan_obj, header):
-    clan_lineup_dict = th_lineup_dict
+    clan_lineup_dict = th_lineup_dict.copy()
 
     for member in clan_obj.members:
         player_obj = get_player(member.tag, header)
@@ -179,7 +179,7 @@ def get_war(clan_tag, header):
 
 
 def war_clan_lineup(war_clan_obj, header):
-    clan_lineup_dict = th_lineup_dict
+    clan_lineup_dict = th_lineup_dict.copy()
 
     for member in war_clan_obj.members:
         clan_lineup_dict[member.th_lvl] += 1
@@ -212,7 +212,7 @@ def get_cwl_group(clan_tag, header):
 
 
 def cwl_clan_lineup(cwl_group_clan):
-    clan_lineup_dict = th_lineup_dict
+    clan_lineup_dict = th_lineup_dict.copy()
     for member in cwl_group_clan.members:
         clan_lineup_dict[member.th_lvl] += 1
     return clan_lineup
