@@ -215,7 +215,7 @@ def cwl_clan_lineup(cwl_group_clan):
     clan_lineup_dict = th_lineup_dict.copy()
     for member in cwl_group_clan.members:
         clan_lineup_dict[member.th_lvl] += 1
-    return clan_lineup
+    return clan_lineup_dict
 
 
 # CWL War
