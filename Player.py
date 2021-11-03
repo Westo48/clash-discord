@@ -54,7 +54,7 @@ class Player(object):
         self, tag, name, th_lvl, th_weapon_lvl, xp_lvl,
         trophies, best_trophies, war_stars, attack_wins, defense_wins,
         builder_hall_lvl, vs_trophies, best_vs_trophies, vs_battle_wins,
-        role, war_preference, donations, donations_received, 
+        role, war_preference, donations, donations_received,
         clan_tag, clan_name, clan_lvl,
         clan_icons, league_id, league_name, league_icons,
         legend_trophies, previous_legend_rank, previous_legend_trophies,
@@ -313,17 +313,17 @@ def get(tag, header):
             'medium': player_json['clan']['badgeUrls']['medium'],
             'large': player_json['clan']['badgeUrls']['large']
         }
+        if player_json['warPreference'] == 'in':
+            war_preference = True
+        else:
+            war_preference = False
     else:
         role = None
         clan_tag = None
         clan_name = None
         clan_lvl = None
         clan_icons = None
-
-    if player_json['warPreference']=='in':
-        war_preference=True
-    else:
-        war_preference=False
+        war_preference = False
 
     if 'league' in player_json:
         league_id = player_json['league']['id']
@@ -424,7 +424,7 @@ def get(tag, header):
         player_json['bestTrophies'], player_json['warStars'],
         player_json['attackWins'], player_json['defenseWins'],
         bh_lvl, vs_trophies, best_vs_trophies, vs_battle_wins,
-        role, war_preference, 
+        role, war_preference,
         player_json['donations'], player_json['donationsReceived'],
         clan_tag, clan_name, clan_lvl, clan_icons,
         league_id, league_name, league_icons,
