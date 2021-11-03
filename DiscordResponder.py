@@ -913,9 +913,9 @@ def cwl_lineup(cwl_group):
         "14 | 13 | 12 | 11 | 10 | 9  | 8\n"
         "-------------------------------\n"
     )
-    for clan in cwl_group.clan:
+    for clan in cwl_group.clans:
         lineup_message = f"{clan.name}\n"
-        clan_lineup_dict = clash_responder.cwl_clan_lineup
+        clan_lineup_dict = clash_responder.cwl_clan_lineup(clan)
         for th in clan_lineup_dict:
             if th >= 8:
                 lineup_message += f"{clan_lineup_dict[th]}"
