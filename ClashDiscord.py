@@ -1359,7 +1359,7 @@ async def cwllineup(ctx):
 
 
 @client.command(
-    brief='cwlgroupscore',
+    brief='cwlgroup',
     description='Lists each member and their score in CWL',
     hidden=True
 )
@@ -1415,7 +1415,7 @@ async def cwlclanscore(ctx):
 
 
 @client.command(
-    brief='cwlwar',
+    brief='cwlgroup',
     description='Lists each score you have in CWL'
 )
 async def cwlscore(ctx):
@@ -1471,7 +1471,7 @@ async def cwlscore(ctx):
 
 @client.command(
     aliases=['cwlclanmatescore'],
-    brief='cwlwar',
+    brief='cwlgroup',
     description='Lists each score the specified member has in CWL'
 )
 async def cwlmemberscore(ctx):
