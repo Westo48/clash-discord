@@ -33,99 +33,42 @@ async def on_ready():
     description='Returns the help text you see before you'
 )
 async def help(ctx):
-    is_leader = discord_responder.role_check('leader', ctx.author.roles)
-
-    embed = discord.Embed(
-        colour=discord.Colour.blue()
-    )
-    embed.set_author(
-        name=f"[{ctx.prefix}] {ctx.bot.user.name}", icon_url="https://cdn.discordapp.com/avatars/649107156989378571/053f201109188da026d0a980dd4136e0.webp")
-
-    embed.set_thumbnail(
-        url=(
-            "https://media0.giphy.com/media/dYzd7l6IdYY6I/giphy.gif?cid="
-            "790b7611d2ac327de00b11cbd7fae83d4c62107b53baa86f&"
-            "rid=giphy.gif&ct=g"
-        )
-    )
-
-    for category in razbot_data.bot_categories:
-        brief = category.brief
-
-        embed.add_field(
-            name=f"__**{category.name.upper()}**__",
-            value=f"{category.emoji}-----------------",
-            inline=False
-        )
-
-        for command in ctx.bot.all_commands.items():
-            if (
-                command[1].brief == brief
-                and command[1].description != ''
-                and command[0] == command[1].name
-                and (not command[1].hidden or is_leader)
-            ):
-                embed_name = "**" + command[1].name + "**"
-                if command[1].signature != '':
-                    embed_name += f" {command[1].signature}"
-                if len(command[1].aliases) != 0:
-                    embed_name += f" | {command[1].aliases}"
-                embed.add_field(
-                    name=embed_name,
-                    value=command[1].description,
-                    inline=False
-                )
-
-    embed.set_footer(
-        text="If you have a question mention Razgriz. "
-        "Please note this is still a work in progress "
-        "and there will be bugs to work out.")
-
-    await ctx.send(embed=embed)
-
-
-@client.command(
-    brief='discord',
-    hidden=True
-)
-async def embedtesting(ctx):
     async with ctx.typing():
+        db_guild_obj = db_responder.read_guild(ctx.guild.id)
         db_player_obj = db_responder.read_player_active(ctx.author.id)
-    if not db_player_obj:
-        # user does not have an active player
-        await ctx.send(f"{ctx.author.mention} "
-                       f"does not have an active player")
-        return
 
-    player_obj = clash_responder.get_player(
-        db_player_obj.player_tag, razbot_data.header)
-    if not player_obj:
-        await ctx.send(f"Couldn't find player from tag "
-                       f"{db_player_obj.player_tag}")
-        return
+    if db_player_obj:
+        player_obj = clash_responder.get_player(
+            db_player_obj.player_tag, razbot_data.header)
+    else:
+        player_obj = None
 
-    if not player_obj.clan_tag:
-        await ctx.send(f"{player_obj.name} is not in a clan")
+    help_dict = discord_responder.help_main(
+        db_guild_obj, db_player_obj, player_obj, razbot_data.bot_categories)
+    field_dict_list = help_dict['field_dict_list']
+    emoji_list = help_dict['emoji_list']
 
-    war_obj = clash_responder.get_war(
-        player_obj.clan_tag, razbot_data.header)
-    field_dict_list = discord_responder.embed_war_all_member_standing(
-        war_obj)
-    embed = discord_responder.embed_message(
+    embed_list = discord_responder.embed_message(
+        Embed=discord.Embed,
+        color=discord.Color(razbot_data.embed_color),
         icon_url=(ctx.bot.user.avatar_url.BASE +
                   ctx.bot.user.avatar_url._url),
-        color=razbot_data.embed_color,
-        title=None,
+        title=f"{ctx.bot.user.name} help menu",
         bot_prefix=ctx.prefix,
         bot_user_name=ctx.bot.user.name,
-        thumbnail=player_obj.clan_icons,
+        thumbnail=None,
         field_list=field_dict_list,
         image_url=None,
         author_display_name=ctx.author.display_name,
         author_avatar_url=(ctx.author.avatar_url.BASE +
                            ctx.author.avatar_url._url)
     )
-    await ctx.send(embed=embed)
+
+    for embed in embed_list:
+        message = await ctx.send(embed=embed)
+
+    for emoji in emoji_list:
+        await message.add_reaction(emoji)
 
 
 @client.command(
@@ -2008,10 +1951,12 @@ async def role(ctx):
         await ctx.send(f"roles have been updated")
 
 
+# usable by leader and co leader
 @client.command(
     aliases=['roleplayer'],
     brief='discord',
-    description=('this will role the mentioned user')
+    description=('this will role the mentioned user'),
+    hidden=True
 )
 async def rolemember(ctx):
     if len(ctx.message.mentions) == 0:
@@ -2195,7 +2140,8 @@ async def rolemember(ctx):
 @client.command(
     aliases=['roleguild'],
     brief='discord',
-    description=('this will role all members in the guild')
+    description=('this will role all members in the guild'),
+    hidden=True
 )
 async def roleall(ctx):
     async with ctx.typing():
@@ -2382,7 +2328,7 @@ async def roleall(ctx):
 
 @client.command(
     aliases=['claim_user', 'userclaim'],
-    brief='discord',
+    brief='client',
     description=(
         'This will claim a discord user')
 )
@@ -2400,7 +2346,7 @@ async def claimuser(ctx):
 # client player
 @client.command(
     aliases=['playerclaim'],
-    brief='discord',
+    brief='client',
     description=(
         'This will verify and claim a player')
 )
@@ -2469,7 +2415,7 @@ async def claimplayer(ctx, player_tag, *, api_key):
 @client.command(
     aliases=['showplayers', 'showclaimedplayers',
              'showplayersclaim', 'showplayerlist'],
-    brief='discord',
+    brief='client',
     description=(
         'Shows players claimed by a discord user')
 )
@@ -2502,7 +2448,7 @@ async def showplayerclaim(ctx):
 
 @client.command(
     aliases=['updateactiveplayer', 'updateplayer'],
-    brief='discord',
+    brief='client',
     description=(
         "updates the user's active player")
 )
@@ -2536,9 +2482,9 @@ async def updateplayeractive(ctx, player_tag):
 
 @client.command(
     aliases=['removeplayer'],
-    brief='discord',
+    brief='client',
     description=(
-        "deletes the requested user's player")
+        "deletes the user's requested player claim")
 )
 async def deleteplayer(ctx, player_tag):
     async with ctx.typing():
@@ -2613,9 +2559,10 @@ async def deleteplayer(ctx, player_tag):
 # client guild
 @client.command(
     aliases=['claim_guild', 'guildclaim'],
-    brief='discord',
+    brief='client',
     description=(
-        'This will claim a discord guild')
+        'This will claim a discord guild'),
+    hidden=True
 )
 async def claimguild(ctx):
     async with ctx.typing():
@@ -2639,10 +2586,11 @@ async def claimguild(ctx):
 # ? simplify this...
 @client.command(
     aliases=['clanclaim'],
-    brief='discord',
+    brief='client',
     description=(
         'This will claim the clan your '
-        'active player is currently a member of')
+        'active player is currently a member of'),
+    hidden=True
 )
 async def claimclan(ctx, clan_tag):
     async with ctx.typing():
@@ -2698,9 +2646,10 @@ async def claimclan(ctx, clan_tag):
 @client.command(
     aliases=['showclaimclan', 'showclaimedclan',
              'showclaimedclans', 'showclansclaim', 'showclanlist'],
-    brief='discord',
+    brief='client',
     description=(
-        'Shows clans claimed by a discord guild')
+        'Shows clans claimed by a discord guild'),
+    hidden=True
 )
 async def showclanclaim(ctx):
     async with ctx.typing():
@@ -2730,9 +2679,10 @@ async def showclanclaim(ctx):
 @client.command(
     aliases=['removeclan', 'deleteclanclaim',
              'deleteclaimclan', 'deleteclaimedclan'],
-    brief='discord',
+    brief='client',
     description=(
-        "deletes the requested user's clan")
+        "deletes the requested clan claim"),
+    hidden=True
 )
 async def deleteclan(ctx, clan_tag):
     async with ctx.typing():
@@ -2780,9 +2730,10 @@ async def deleteclan(ctx, clan_tag):
 # client clan role
 @client.command(
     aliases=['clanroleclaim'],
-    brief='discord',
+    brief='client',
     description=(
-        "This will claim a clan's discord role")
+        "This will claim a clan's discord role"),
+    hidden=True
 )
 async def claimclanrole(ctx, clan_tag):
 
@@ -2843,10 +2794,11 @@ async def claimclanrole(ctx, clan_tag):
 
 @client.command(
     aliases=['removeclanroleclaim'],
-    brief='discord',
+    brief='client',
     description=(
         "This will remove the claimed clan's discord role, "
-        "the role will not be deleted from discord.")
+        "the role will not be deleted from discord."),
+    hidden=True
 )
 async def removeclaimclanrole(ctx):
     if len(ctx.message.role_mentions) > 0:
@@ -2895,9 +2847,10 @@ async def removeclaimclanrole(ctx):
 # client rank role
 @client.command(
     aliases=['rankroleclaim'],
-    brief='discord',
+    brief='client',
     description=(
-        "This will claim a rank's discord role")
+        "This will claim a rank's discord role"),
+    hidden=True
 )
 async def claimrankrole(ctx, rank_role_name):
     if len(ctx.message.role_mentions) > 0:
@@ -2950,10 +2903,11 @@ async def claimrankrole(ctx, rank_role_name):
 
 @client.command(
     aliases=['removerankroleclaim'],
-    brief='discord',
+    brief='client',
     description=(
         "This will remove the claimed rank's discord role, "
-        "the role will not be deleted from discord.")
+        "the role will not be deleted from discord."),
+    hidden=True
 )
 async def removeclaimrankrole(ctx):
     if len(ctx.message.role_mentions) > 0:
@@ -3002,7 +2956,7 @@ async def removeclaimrankrole(ctx):
 # client super user administration
 @client.command(
     aliases=['removeuser'],
-    brief='discord',
+    brief='client',
     description=('delete a claimed user'),
     hidden=True
 )
@@ -3052,6 +3006,76 @@ async def on_member_join(ctx):
 @client.event
 async def on_member_remove(member):
     print(f'{member} has left the server')
+
+
+@client.event
+async def on_reaction_add(reaction, user):
+    # if the reactor is clash discord
+    if user.id == razbot_data.discord_id:
+        return
+
+    # if the author of the reacted message is not clash discord
+    if reaction.message.author.id != razbot_data.discord_id:
+        return
+
+    # if there are no embedded messages
+    if len(reaction.message.embeds) == 0:
+        return
+
+    # if clash discord embedded message is not a help message
+    if 'help' not in reaction.message.embeds[0].title:
+        return
+
+    ctx = await client.get_context(reaction.message)
+
+    db_guild_obj = db_responder.read_guild(ctx.guild.id)
+    db_player_obj = db_responder.read_player_active(user.id)
+
+    if db_player_obj:
+        player_obj = clash_responder.get_player(
+            db_player_obj.player_tag, razbot_data.header)
+    else:
+        player_obj = None
+
+    bot_category = discord_responder.help_emoji_to_category(
+        reaction.emoji, razbot_data.bot_categories)
+
+    help_dict = discord_responder.help_switch(
+        db_guild_obj, db_player_obj, player_obj, user.id, reaction.emoji,
+        bot_category, razbot_data.bot_categories, ctx.bot.all_commands)
+    field_dict_list = help_dict['field_dict_list']
+    emoji_list = help_dict['emoji_list']
+
+    if bot_category:
+        embed_title = f"{ctx.bot.user.name} {bot_category.name} help"
+    else:
+        embed_title = f"{ctx.bot.user.name} help menu"
+
+    embed_list = discord_responder.embed_message(
+        Embed=discord.Embed,
+        color=discord.Color(razbot_data.embed_color),
+        icon_url=(ctx.bot.user.avatar_url.BASE +
+                  ctx.bot.user.avatar_url._url),
+        title=embed_title,
+        bot_prefix=ctx.bot.command_prefix,
+        bot_user_name=ctx.bot.user.name,
+        thumbnail=None,
+        field_list=field_dict_list,
+        image_url=None,
+        author_display_name=user.display_name,
+        author_avatar_url=(user.avatar_url.BASE +
+                           user.avatar_url._url)
+    )
+
+    for embed in embed_list:
+        await reaction.message.edit(embed=embed)
+
+    await reaction.message.clear_reactions()
+    if bot_category:
+        await reaction.message.add_reaction(razbot_data.back_emoji)
+    else:
+        for emoji in emoji_list:
+            await reaction.message.add_reaction(emoji)
 
 
 @client.event
