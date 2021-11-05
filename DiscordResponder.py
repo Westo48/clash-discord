@@ -1161,6 +1161,273 @@ def embed_message(
     return embed_list
 
 
+def help_main(db_guild_obj, db_player_obj, player_obj, bot_categories):
+    help_dict = {
+        'field_dict_list': [],
+        'emoji_list': []
+    }
+    if not db_guild_obj:
+        for category in bot_categories:
+            if category.brief == "client":
+                help_dict['field_dict_list'].append({
+                    'name': category.name,
+                    'value': category.description
+                })
+                help_dict['emoji_list'].append(category.emoji)
+                return help_dict
+
+    for category in bot_categories:
+        if (
+            category.brief == "discord" and
+            not player_obj or
+            category.brief == "player" and
+            not player_obj or
+            category.brief == "clan" and
+            not player_obj or
+            category.brief == "war" and
+            not player_obj or
+            category.brief == "cwlgroup" and
+            not player_obj or
+            category.brief == "cwlwar" and
+            not player_obj
+        ):
+            continue
+        help_dict['field_dict_list'].append({
+            'name': f"{category.emoji} {category.name}",
+            'value': category.description
+        })
+        help_dict['emoji_list'].append(category.emoji)
+    return help_dict
+
+
+def help_emoji_to_category(emoji, bot_categories):
+    for category in bot_categories:
+        if category.emoji == emoji:
+            return category
+    return None
+
+
+def help_switch(db_guild_obj, db_player_obj, player_obj, user_id, emoji,
+                bot_category, bot_categories, all_commands):
+    if not bot_category:
+        return help_main(db_guild_obj, db_player_obj, player_obj, bot_categories)
+    if bot_category.brief == "client":
+        return help_client(db_guild_obj, user_id, bot_category, all_commands)
+    if bot_category.brief == "discord":
+        return help_discord(player_obj, bot_category, all_commands)
+    if bot_category.brief == "player":
+        return help_player(player_obj, bot_category, all_commands)
+    if bot_category.brief == "clan":
+        return help_clan(player_obj, bot_category, all_commands)
+    if bot_category.brief == "war":
+        return help_war(player_obj, bot_category, all_commands)
+    if bot_category.brief == "cwlgroup":
+        return help_cwlgroup(player_obj, bot_category, all_commands)
+    if bot_category.brief == "cwlwar":
+        return help_cwlwar(player_obj, bot_category, all_commands)
+    return help_main(db_guild_obj, db_player_obj, player_obj, bot_categories)
+
+
+def help_client(db_guild_obj, user_id, bot_category, all_commands):
+    help_dict = {
+        'field_dict_list': [],
+        'emoji_list': []
+    }
+    for command_name in all_commands:
+        # if the command is in the correct category
+        if not bot_category.brief == all_commands[command_name].brief:
+            continue
+        # if the command is the main command and not an alias
+        if command_name != all_commands[command_name].name:
+            continue
+        # if the command should be shown
+        if (all_commands[command_name].hidden and
+                db_guild_obj.admin_user_id != user_id):
+            continue
+        field_name = f"{all_commands[command_name].name}"
+        for param in all_commands[command_name].clean_params:
+            field_name += f" <{param}>"
+        help_dict['field_dict_list'].append({
+            'name': field_name,
+            'value': all_commands[command_name].description
+        })
+    return help_dict
+
+
+def help_discord(player_obj, bot_category, all_commands):
+    help_dict = {
+        'field_dict_list': [],
+        'emoji_list': []
+    }
+    for command_name in all_commands:
+        # if the command is in the correct category
+        if not bot_category.brief == all_commands[command_name].brief:
+            continue
+        # if the command is the main command and not an alias
+        if command_name != all_commands[command_name].name:
+            continue
+        # if there is a player
+        if not player_obj:
+            continue
+        # if the command should be shown
+        if (all_commands[command_name].hidden and
+                (player_obj.role != "leader" and player_obj.role != "coLeader")):
+            continue
+        field_name = f"{all_commands[command_name].name}"
+        for param in all_commands[command_name].clean_params:
+            field_name += f" <{param}>"
+        help_dict['field_dict_list'].append({
+            'name': field_name,
+            'value': all_commands[command_name].description
+        })
+    return help_dict
+
+
+def help_player(player_obj, bot_category, all_commands):
+    help_dict = {
+        'field_dict_list': [],
+        'emoji_list': []
+    }
+    for command_name in all_commands:
+        # if the command is in the correct category
+        if not bot_category.brief == all_commands[command_name].brief:
+            continue
+        # if the command is the main command and not an alias
+        if command_name != all_commands[command_name].name:
+            continue
+        # if there is a player
+        if not player_obj:
+            continue
+        # if the command should be shown
+        if (all_commands[command_name].hidden and
+                (player_obj.role != "leader" and player_obj.role != "coLeader")):
+            continue
+        field_name = f"{all_commands[command_name].name}"
+        for param in all_commands[command_name].clean_params:
+            field_name += f" <{param}>"
+        help_dict['field_dict_list'].append({
+            'name': field_name,
+            'value': all_commands[command_name].description
+        })
+    return help_dict
+
+
+def help_clan(player_obj, bot_category, all_commands):
+    help_dict = {
+        'field_dict_list': [],
+        'emoji_list': []
+    }
+    for command_name in all_commands:
+        # if the command is in the correct category
+        if not bot_category.brief == all_commands[command_name].brief:
+            continue
+        # if the command is the main command and not an alias
+        if command_name != all_commands[command_name].name:
+            continue
+        # if there is a player
+        if not player_obj:
+            continue
+        # if the command should be shown
+        if (all_commands[command_name].hidden and
+                (player_obj.role != "leader" and player_obj.role != "coLeader")):
+            continue
+        field_name = f"{all_commands[command_name].name}"
+        for param in all_commands[command_name].clean_params:
+            field_name += f" <{param}>"
+        help_dict['field_dict_list'].append({
+            'name': field_name,
+            'value': all_commands[command_name].description
+        })
+    return help_dict
+
+
+def help_war(player_obj, bot_category, all_commands):
+    help_dict = {
+        'field_dict_list': [],
+        'emoji_list': []
+    }
+    for command_name in all_commands:
+        # if the command is in the correct category
+        if not bot_category.brief == all_commands[command_name].brief:
+            continue
+        # if the command is the main command and not an alias
+        if command_name != all_commands[command_name].name:
+            continue
+        # if there is a player
+        if not player_obj:
+            continue
+        # if the command should be shown
+        if (all_commands[command_name].hidden and
+                (player_obj.role != "leader" and player_obj.role != "coLeader")):
+            continue
+        field_name = f"{all_commands[command_name].name}"
+        for param in all_commands[command_name].clean_params:
+            field_name += f" <{param}>"
+        help_dict['field_dict_list'].append({
+            'name': field_name,
+            'value': all_commands[command_name].description
+        })
+    return help_dict
+
+
+def help_cwlgroup(player_obj, bot_category, all_commands):
+    help_dict = {
+        'field_dict_list': [],
+        'emoji_list': []
+    }
+    for command_name in all_commands:
+        # if the command is in the correct category
+        if not bot_category.brief == all_commands[command_name].brief:
+            continue
+        # if the command is the main command and not an alias
+        if command_name != all_commands[command_name].name:
+            continue
+        # if there is a player
+        if not player_obj:
+            continue
+        # if the command should be shown
+        if (all_commands[command_name].hidden and
+                (player_obj.role != "leader" and player_obj.role != "coLeader")):
+            continue
+        field_name = f"{all_commands[command_name].name}"
+        for param in all_commands[command_name].clean_params:
+            field_name += f" <{param}>"
+        help_dict['field_dict_list'].append({
+            'name': field_name,
+            'value': all_commands[command_name].description
+        })
+    return help_dict
+
+
+def help_cwlwar(player_obj, bot_category, all_commands):
+    help_dict = {
+        'field_dict_list': [],
+        'emoji_list': []
+    }
+    for command_name in all_commands:
+        # if the command is in the correct category
+        if not bot_category.brief == all_commands[command_name].brief:
+            continue
+        # if the command is the main command and not an alias
+        if command_name != all_commands[command_name].name:
+            continue
+        # if there is a player
+        if not player_obj:
+            continue
+        # if the command should be shown
+        if (all_commands[command_name].hidden and
+                (player_obj.role != "leader" and player_obj.role != "coLeader")):
+            continue
+        field_name = f"{all_commands[command_name].name}"
+        for param in all_commands[command_name].clean_params:
+            field_name += f" <{param}>"
+        help_dict['field_dict_list'].append({
+            'name': field_name,
+            'value': all_commands[command_name].description
+        })
+    return help_dict
+
+
 def role_add_remove_list(needed_role_list, current_role_list):
     """
         Takes in list of needed and current role id's and
