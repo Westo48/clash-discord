@@ -1067,7 +1067,8 @@ def cwl_member_standing(player_obj, cwl_group, clan_tag, header):
         for round_score in member_round_scores:
             total_score += round_score
         avg_score = total_score / len(member_round_scores)
-        participation_multiplier = math.log(len(member_round_scores), 7)
+        participation_multiplier = math.log(
+            len(member_round_scores), len(cwl_wars))
         member_score = avg_score * participation_multiplier
 
         field_dict_list = [{
