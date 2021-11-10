@@ -1141,7 +1141,7 @@ async def warclanstars(ctx):
     async with ctx.typing():
         db_player_obj = db_responder.read_player_active(ctx.author.id)
 
-    verification_payload = discord_responder.war_verification(
+    verification_payload = discord_responder.war_leadership_verification(
         db_player_obj, ctx.author, razbot_data.header)
     if not verification_payload['verified']:
         embed_list = discord_responder.embed_message(
@@ -1197,7 +1197,7 @@ async def warallattacks(ctx):
     async with ctx.typing():
         db_player_obj = db_responder.read_player_active(ctx.author.id)
 
-    verification_payload = discord_responder.war_verification(
+    verification_payload = discord_responder.war_leadership_verification(
         db_player_obj, ctx.author, razbot_data.header)
     if not verification_payload['verified']:
         embed_list = discord_responder.embed_message(
@@ -1253,7 +1253,7 @@ async def warclanscore(ctx):
     async with ctx.typing():
         db_player_obj = db_responder.read_player_active(ctx.author.id)
 
-    verification_payload = discord_responder.war_verification(
+    verification_payload = discord_responder.war_leadership_verification(
         db_player_obj, ctx.author, razbot_data.header)
     if not verification_payload['verified']:
         embed_list = discord_responder.embed_message(

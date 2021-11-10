@@ -623,6 +623,53 @@ def war_verification(db_player_obj, user_obj, header):
     return verification_payload
 
 
+def war_leadership_verification(db_player_obj, user_obj, header):
+    """
+        verifying a war through player_leadership_verification
+        and returning verification payload
+
+        Args:
+            db_player_obj (obj): player object from db
+            user_obj (obj): discord user obj
+            header (dict): clash api key header
+
+        Returns:
+            dict: verification_payload
+                (verified, field_dict_list, player_obj, war_obj)
+    """
+
+    player_leadership_verification_payload = (player_leadership_verification(
+        db_player_obj, user_obj, header))
+
+    if not player_leadership_verification_payload['verified']:
+        return player_leadership_verification_payload
+
+    player_obj = player_leadership_verification_payload['player_obj']
+
+    war_obj = clash_responder.get_war(
+        player_obj.clan_tag, header)
+    if not war_obj:
+        # clan is not in war
+        return {
+            'verified': False,
+            'field_dict_list': [{
+                'name': "not in war",
+                'value': (f"{player_obj.clan_name} "
+                          f"{player_obj.clan_tag}")
+            }],
+            'player_obj': player_obj,
+            'war_obj': None
+        }
+
+    verification_payload = {
+        'verified': True,
+        'field_dict_list': None,
+        'player_obj': player_obj,
+        'war_obj': war_obj
+    }
+    return verification_payload
+
+
 # returns a string of the war overview
 def war_overview(war_obj):
     if not war_obj:
