@@ -94,6 +94,47 @@ def player_clan_verification(db_player_obj, user_obj, header):
     return verification_payload
 
 
+def player_leadership_verification(db_player_obj, user_obj, header):
+    """
+        verifying a player is in leadership
+        and returning verification payload
+
+        Args:
+            db_player_obj (obj): player object from db
+            user_obj (obj): discord user obj
+            header (dict): clash api key header
+
+        Returns:
+            dict: verification_payload
+                (verified, field_dict_list, player_obj)
+    """
+
+    player_clan_verification_payload = (player_clan_verification(
+        db_player_obj, user_obj, header))
+    if not player_clan_verification_payload['verified']:
+        return player_clan_verification_payload
+
+    player_obj = player_clan_verification_payload['player_obj']
+    if player_obj.role != "leader" and player_obj.role != "coLeader":
+        # player not leader or coleader
+        return {
+            'verified': False,
+            'field_dict_list': [{
+                'name': (f"{player_obj.name} "
+                         f"{player_obj.tag}"),
+                'value': "is not in leadership"
+            }],
+            'player_obj': player_obj
+        }
+
+    verification_payload = {
+        'verified': True,
+        'field_dict_list': None,
+        'player_obj': player_obj
+    }
+    return verification_payload
+
+
 def player_info(player_obj):
     field_dict_list = []
     field_dict_list.append({

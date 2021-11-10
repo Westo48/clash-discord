@@ -1971,7 +1971,7 @@ async def rolemember(ctx):
 
     db_player_obj = db_responder.read_player_active(ctx.author.id)
 
-    verification_payload = discord_responder.player_verification(
+    verification_payload = discord_responder.player_leadership_verification(
         db_player_obj, ctx.author, razbot_data.header)
     if not verification_payload['verified']:
         embed_list = discord_responder.embed_message(
@@ -1994,12 +1994,6 @@ async def rolemember(ctx):
         return
 
     player_obj = verification_payload['player_obj']
-
-    if not (player_obj.role == 'coLeader' or
-            player_obj.role == 'leader'):
-        # command can only be run by leadership
-        await ctx.send(f"command can only be run by leader or co-leader")
-        return
 
     db_user_obj = db_responder.read_user(discord_member.id)
     if not db_user_obj:
