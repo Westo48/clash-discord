@@ -1485,7 +1485,7 @@ async def cwlmemberscore(ctx):
         db_player_obj = db_responder.read_player_active(discord_member.id)
 
     verification_payload = discord_responder.cwl_group_verification(
-        db_player_obj, ctx.author, razbot_data.header)
+        db_player_obj, discord_member, razbot_data.header)
     if not verification_payload['verified']:
         embed_list = discord_responder.embed_message(
             Embed=discord.Embed,
