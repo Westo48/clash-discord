@@ -296,6 +296,30 @@ def read_guild(discord_guild_id):
         return None
 
 
+def delete_guild(discord_guild_id):
+    """
+        deletes the requested guild 
+        and returns None if the guild could not be found after deletion
+        if guild_obj is returned then guild couldn't be deleted
+
+        Args:
+            discord_guild_id (int): discord id for guild
+
+        Returns:
+            obj: guild object (guild_id, admin_user_id,
+                bot_channel, active, dev)
+    """
+    # delete the guild
+    guild_data = guild.delete_guild(discord_guild_id)
+    if guild_data:
+        guild_id, admin_user_id, bot_channel, active, dev = guild_data
+        guild_obj = guild.Guild(
+            guild_id, admin_user_id, bot_channel, bool(active), bool(dev))
+        return guild_obj
+    else:
+        return None
+
+
 # clan
 def claim_clan(discord_guild_id, clan_tag):
     """
