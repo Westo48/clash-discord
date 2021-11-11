@@ -80,7 +80,7 @@ def player_clan_verification(db_player_obj, user_obj, header):
             'verified': False,
             'field_dict_list': [{
                 'name': (f"{player_obj.name} "
-                          f"{player_obj.tag}"),
+                         f"{player_obj.tag}"),
                 'value': "not in a clan"
             }],
             'player_obj': player_obj
@@ -607,7 +607,7 @@ def war_verification(db_player_obj, user_obj, header):
             'verified': False,
             'field_dict_list': [{
                 'name': (f"{player_obj.clan_name} "
-                          f"{player_obj.clan_tag}"),
+                         f"{player_obj.clan_tag}"),
                 'value': "not in war"
             }],
             'player_obj': player_obj,
@@ -654,7 +654,7 @@ def war_leadership_verification(db_player_obj, user_obj, header):
             'verified': False,
             'field_dict_list': [{
                 'name': (f"{player_obj.clan_name} "
-                          f"{player_obj.clan_tag}"),
+                         f"{player_obj.clan_tag}"),
                 'value': "not in war"
             }],
             'player_obj': player_obj,
@@ -984,7 +984,7 @@ def cwl_group_verification(db_player_obj, user_obj, header):
             'verified': False,
             'field_dict_list': [{
                 'name': (f"{player_obj.clan_name} "
-                          f"{player_obj.clan_tag}"),
+                         f"{player_obj.clan_tag}"),
                 'value': "not in cwl"
             }],
             'player_obj': player_obj,
@@ -1029,7 +1029,7 @@ def cwl_group_leadership_verification(db_player_obj, user_obj, header):
             'verified': False,
             'field_dict_list': [{
                 'name': (f"{player_obj.clan_name} "
-                          f"{player_obj.clan_tag}"),
+                         f"{player_obj.clan_tag}"),
                 'value': "not in cwl"
             }],
             'player_obj': player_obj,
@@ -1246,6 +1246,54 @@ def cwl_war_verification(db_player_obj, user_obj, header):
 
     player_obj = cwl_group_verification_payload['player_obj']
     cwl_group_obj = cwl_group_verification_payload['cwl_group_obj']
+
+    cwl_war_obj = cwl_group_obj.find_current_war(
+        player_obj.clan_tag, header)
+
+    if not cwl_war_obj:
+        # clan is not in cwl war
+        return {
+            'verified': False,
+            'field_dict_list': [{
+                'name': (f"{player_obj.clan_name} "
+                         f"{player_obj.clan_tag}"),
+                'value': "not in cwl"
+            }],
+            'player_obj': player_obj,
+            'cwl_war_obj': None
+        }
+
+    verification_payload = {
+        'verified': True,
+        'field_dict_list': None,
+        'player_obj': player_obj,
+        'cwl_war_obj': cwl_war_obj
+    }
+    return verification_payload
+
+
+def cwl_war_leadership_verification(db_player_obj, user_obj, header):
+    """
+        verifying a cwl war through cwl_group_leadership_verification
+        and returning verification payload
+        Args:
+            db_player_obj (obj): player object from db
+            user_obj (obj): discord user obj
+            header (dict): clash api key header
+        Returns:
+            dict: verification_payload
+                (verified, field_dict_list, player_obj, cwl_war_obj)
+    """
+
+    cwl_group_leadership_verification_payload = (
+        cwl_group_leadership_verification(
+            db_player_obj, user_obj, header))
+
+    if not cwl_group_leadership_verification_payload['verified']:
+        return cwl_group_leadership_verification_payload
+
+    player_obj = cwl_group_leadership_verification_payload['player_obj']
+    cwl_group_obj = cwl_group_leadership_verification_payload['cwl_group_obj']
 
     cwl_war_obj = cwl_group_obj.find_current_war(
         player_obj.clan_tag, header)
