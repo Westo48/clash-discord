@@ -1491,7 +1491,7 @@ def help_client(db_guild_obj, user_id, bot_category, all_commands):
                 'name': "guild not claimed",
                 'value': "please claim guild using `!claimguild`"
             })
-        return help_dict
+    return help_dict
 
 
 def help_discord(player_obj, bot_category, all_commands):
