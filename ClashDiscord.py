@@ -2334,7 +2334,10 @@ async def claimuser(ctx):
     aliases=['playerclaim'],
     brief='client',
     description=(
-        'This will verify and claim a player')
+        "This will verify and claim a player, "
+        "a player must be claimed to view and run "
+        "many of ClashDiscord commands"
+    )
 )
 async def claimplayer(ctx, player_tag, *, api_key):
     async with ctx.typing():
