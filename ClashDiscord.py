@@ -1545,7 +1545,7 @@ async def cwlwaroverview(ctx):
     async with ctx.typing():
         db_player_obj = db_responder.read_player_active(ctx.author.id)
 
-    verification_payload = discord_responder.cwl_group_verification(
+    verification_payload = discord_responder.cwl_war_verification(
         db_player_obj, ctx.author, razbot_data.header)
     if not verification_payload['verified']:
         embed_list = discord_responder.embed_message(
@@ -1568,18 +1568,16 @@ async def cwlwaroverview(ctx):
         return
 
     player_obj = verification_payload['player_obj']
-    cwl_group_obj = verification_payload['cwl_group_obj']
+    cwl_war_obj = verification_payload['cwl_war_obj']
 
-    war_obj = cwl_group_obj.find_current_war(
-        player_obj.clan_tag, razbot_data.header)
     field_dict_list = discord_responder.war_overview(
-        war_obj)
+        cwl_war_obj)
     embed_list = discord_responder.embed_message(
         Embed=discord.Embed,
         color=discord.Color(client_data.embed_color),
         icon_url=(ctx.bot.user.avatar_url.BASE +
                   ctx.bot.user.avatar_url._url),
-        title=f"{war_obj.clan.name} vs. {war_obj.opponent.name}",
+        title=f"{cwl_war_obj.clan.name} vs. {cwl_war_obj.opponent.name}",
         bot_prefix=ctx.prefix,
         bot_user_name=ctx.bot.user.name,
         thumbnail=player_obj.clan_icons,
@@ -1602,7 +1600,7 @@ async def cwlwartime(ctx):
     async with ctx.typing():
         db_player_obj = db_responder.read_player_active(ctx.author.id)
 
-    verification_payload = discord_responder.cwl_group_verification(
+    verification_payload = discord_responder.cwl_war_verification(
         db_player_obj, ctx.author, razbot_data.header)
     if not verification_payload['verified']:
         embed_list = discord_responder.embed_message(
@@ -1625,18 +1623,16 @@ async def cwlwartime(ctx):
         return
 
     player_obj = verification_payload['player_obj']
-    cwl_group_obj = verification_payload['cwl_group_obj']
+    cwl_war_obj = verification_payload['cwl_war_obj']
 
-    war_obj = cwl_group_obj.find_current_war(
-        player_obj.clan_tag, razbot_data.header)
     field_dict_list = discord_responder.war_time(
-        war_obj)
+        cwl_war_obj)
     embed_list = discord_responder.embed_message(
         Embed=discord.Embed,
         color=discord.Color(client_data.embed_color),
         icon_url=(ctx.bot.user.avatar_url.BASE +
                   ctx.bot.user.avatar_url._url),
-        title=f"{war_obj.clan.name} vs. {war_obj.opponent.name}",
+        title=f"{cwl_war_obj.clan.name} vs. {cwl_war_obj.opponent.name}",
         bot_prefix=ctx.prefix,
         bot_user_name=ctx.bot.user.name,
         thumbnail=player_obj.clan_icons,
@@ -1661,7 +1657,7 @@ async def cwlwarnoattack(ctx):
     async with ctx.typing():
         db_player_obj = db_responder.read_player_active(ctx.author.id)
 
-    verification_payload = discord_responder.cwl_group_verification(
+    verification_payload = discord_responder.cwl_war_verification(
         db_player_obj, ctx.author, razbot_data.header)
     if not verification_payload['verified']:
         embed_list = discord_responder.embed_message(
@@ -1684,18 +1680,16 @@ async def cwlwarnoattack(ctx):
         return
 
     player_obj = verification_payload['player_obj']
-    cwl_group_obj = verification_payload['cwl_group_obj']
+    cwl_war_obj = verification_payload['cwl_war_obj']
 
-    war_obj = cwl_group_obj.find_current_war(
-        player_obj.clan_tag, razbot_data.header)
     field_dict_list = discord_responder.war_no_attack(
-        war_obj)
+        cwl_war_obj)
     embed_list = discord_responder.embed_message(
         Embed=discord.Embed,
         color=discord.Color(client_data.embed_color),
         icon_url=(ctx.bot.user.avatar_url.BASE +
                   ctx.bot.user.avatar_url._url),
-        title=f"{war_obj.clan.name} vs. {war_obj.opponent.name}",
+        title=f"{cwl_war_obj.clan.name} vs. {cwl_war_obj.opponent.name}",
         bot_prefix=ctx.prefix,
         bot_user_name=ctx.bot.user.name,
         thumbnail=player_obj.clan_icons,
@@ -1720,7 +1714,7 @@ async def cwlwarallattack(ctx):
     async with ctx.typing():
         db_player_obj = db_responder.read_player_active(ctx.author.id)
 
-    verification_payload = discord_responder.cwl_group_verification(
+    verification_payload = discord_responder.cwl_war_verification(
         db_player_obj, ctx.author, razbot_data.header)
     if not verification_payload['verified']:
         embed_list = discord_responder.embed_message(
@@ -1743,18 +1737,16 @@ async def cwlwarallattack(ctx):
         return
 
     player_obj = verification_payload['player_obj']
-    cwl_group_obj = verification_payload['cwl_group_obj']
+    cwl_war_obj = verification_payload['cwl_war_obj']
 
-    war_obj = cwl_group_obj.find_current_war(
-        player_obj.clan_tag, razbot_data.header)
     field_dict_list = discord_responder.war_all_attacks(
-        war_obj)
+        cwl_war_obj)
     embed_list = discord_responder.embed_message(
         Embed=discord.Embed,
         color=discord.Color(client_data.embed_color),
         icon_url=(ctx.bot.user.avatar_url.BASE +
                   ctx.bot.user.avatar_url._url),
-        title=f"{war_obj.clan.name} vs. {war_obj.opponent.name}",
+        title=f"{cwl_war_obj.clan.name} vs. {cwl_war_obj.opponent.name}",
         bot_prefix=ctx.prefix,
         bot_user_name=ctx.bot.user.name,
         thumbnail=player_obj.clan_icons,
