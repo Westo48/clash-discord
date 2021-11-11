@@ -2944,7 +2944,7 @@ async def removeclaimrankrole(ctx):
 # super user client guild
 @client.command(
     aliases=['removeguild'],
-    brief='client',
+    brief='clientsuperuser',
     description=("delete a claimed guild from id"),
     hidden=True
 )
@@ -2981,7 +2981,7 @@ async def removeguildclaim(ctx, guild_id):
 # super user client user
 @client.command(
     aliases=['removeuser'],
-    brief='client',
+    brief='clientsuperuser',
     description=('delete a claimed user'),
     hidden=True
 )

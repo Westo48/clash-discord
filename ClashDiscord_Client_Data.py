@@ -32,6 +32,9 @@ class ClashDiscord_Data(object):
     back_emoji = '◀️'
     bot_categories = [
         ClashDiscord_Category(
+            'Client Super User', 'clientsuperuser',
+            'ClashDiscord client based commands for super user', '🧠'),
+        ClashDiscord_Category(
             'Client', 'client', 'ClashDiscord client based commands', '🤖'),
         ClashDiscord_Category(
             'Discord', 'discord', 'Discord based commands', '💻'),
