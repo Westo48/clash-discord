@@ -1369,7 +1369,7 @@ async def cwlclanscore(ctx):
     async with ctx.typing():
         db_player_obj = db_responder.read_player_active(ctx.author.id)
 
-    verification_payload = discord_responder.cwl_group_verification(
+    verification_payload = discord_responder.cwl_group_leadership_verification(
         db_player_obj, ctx.author, razbot_data.header)
     if not verification_payload['verified']:
         embed_list = discord_responder.embed_message(
@@ -2143,7 +2143,7 @@ async def roleall(ctx):
     async with ctx.typing():
         db_player_obj = db_responder.read_player_active(ctx.author.id)
 
-    verification_payload = discord_responder.player_verification(
+    verification_payload = discord_responder.player_leadership_verification(
         db_player_obj, ctx.author, razbot_data.header)
     if not verification_payload['verified']:
         embed_list = discord_responder.embed_message(
