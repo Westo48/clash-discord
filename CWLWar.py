@@ -110,7 +110,7 @@ def get(war_tag, clan_tag, header):
     """
     war_json = json_response(war_tag, header)
     if war_json['state'] == 'notInWar':
-        return CWLWar(war_tag, war_json['state'], 0, 0, 0, 0, 0, 0)
+        return None
     else:
         # find whether the clan in clan_tag is clan
         # or opponent in the war_json

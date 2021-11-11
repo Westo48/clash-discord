@@ -584,6 +584,12 @@ def war_verification(db_player_obj, user_obj, header):
 
 # returns a string of the war overview
 def war_overview(war_obj):
+    if not war_obj:
+        return [{
+            'name': f"not in war",
+            'value': f"you are not in war"
+        }]
+
     if war_obj.state == "preparation":
         time_string = war_obj.string_date_time()
 
@@ -1085,6 +1091,52 @@ def cwl_member_standing(player_obj, cwl_group, clan_tag, header):
 
 
 # CWL WAR
+
+def cwl_war_verification(db_player_obj, user_obj, header):
+    """
+        verifying a cwl war
+        and returning verification payload
+        Args:
+            db_player_obj (obj): player object from db
+            user_obj (obj): discord user obj
+            header (dict): clash api key header
+        Returns:
+            dict: verification_payload
+                (verified, field_dict_list, player_obj, cwl_war_obj)
+    """
+
+    cwl_group_verification_payload = (cwl_group_verification(
+        db_player_obj, user_obj, header))
+
+    if not cwl_group_verification_payload['verified']:
+        return cwl_group_verification_payload
+
+    player_obj = cwl_group_verification_payload['player_obj']
+    cwl_group_obj = cwl_group_verification_payload['cwl_group_obj']
+
+    cwl_war_obj = cwl_group_obj.find_current_war(
+        player_obj.clan_tag, header)
+
+    if not cwl_war_obj:
+        # clan is not in cwl war
+        return {
+            'verified': False,
+            'field_dict_list': [{
+                'name': (f"{player_obj.clan_name} "
+                         f"{player_obj.clan_tag}"),
+                'value': "not in cwl"
+            }],
+            'player_obj': player_obj,
+            'cwl_war_obj': None
+        }
+
+    verification_payload = {
+        'verified': True,
+        'field_dict_list': None,
+        'player_obj': player_obj,
+        'cwl_war_obj': cwl_war_obj
+    }
+    return verification_payload
 
 
 # DISCORD
