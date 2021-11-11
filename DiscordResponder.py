@@ -1475,17 +1475,23 @@ def help_client(db_guild_obj, user_id, bot_category, all_commands):
         if command_name != all_commands[command_name].name:
             continue
         # if the command should be shown
-        if (all_commands[command_name].hidden and
-                db_guild_obj.admin_user_id != user_id):
-            continue
-        field_name = f"{all_commands[command_name].name}"
-        for param in all_commands[command_name].clean_params:
-            field_name += f" <{param}>"
-        help_dict['field_dict_list'].append({
-            'name': field_name,
-            'value': all_commands[command_name].description
-        })
-    return help_dict
+        if db_guild_obj:
+            if (all_commands[command_name].hidden and
+                    db_guild_obj.admin_user_id != user_id):
+                continue
+            field_name = f"{all_commands[command_name].name}"
+            for param in all_commands[command_name].clean_params:
+                field_name += f" <{param}>"
+            help_dict['field_dict_list'].append({
+                'name': field_name,
+                'value': all_commands[command_name].description
+            })
+        if len(help_dict['field_dict_list']) == 0:
+            help_dict['field_dict_list'].append({
+                'name': "guild not claimed",
+                'value': "please claim guild using `!claimguild`"
+            })
+        return help_dict
 
 
 def help_discord(player_obj, bot_category, all_commands):
