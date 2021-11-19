@@ -3017,7 +3017,7 @@ async def removeuserclaim(ctx, user_id):
         # user was deleted properly
         await ctx.send(f"user with id {user_id} was deleted")
 
-
+"""
 # client events
 @client.event
 async def on_member_join(ctx):
@@ -3029,13 +3029,14 @@ async def on_member_join(ctx):
             ctx.guild.roles, id=db_role_obj.discord_role_id)
         if discord_role_obj:
             await ctx.add_roles(discord_role_obj)
+"""
 
 
 @client.event
 async def on_member_remove(member):
-    print(f'{member} has left the server')
+    print(f'{member} has left {member.guild.name} id {member.guild.id}')
 
-
+"""
 @client.event
 async def on_reaction_add(reaction, user):
     # if the reactor is clash discord
@@ -3104,6 +3105,7 @@ async def on_reaction_add(reaction, user):
     else:
         for emoji in emoji_list:
             await reaction.message.add_reaction(emoji)
+"""
 
 
 @client.event
