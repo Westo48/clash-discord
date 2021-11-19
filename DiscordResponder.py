@@ -1395,6 +1395,8 @@ def embed_message(
     return embed_list
 
 
+# help
+
 def help_main(db_guild_obj, db_player_obj, player_obj, bot_categories):
     help_dict = {
         'field_dict_list': [],
@@ -1667,6 +1669,11 @@ def help_cwlwar(player_obj, bot_category, all_commands):
         })
     return help_dict
 
+
+# roles
+
+
+# old
 
 def role_add_remove_list(needed_role_list, current_role_list):
     """
