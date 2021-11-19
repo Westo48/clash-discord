@@ -46,7 +46,7 @@ async def help(ctx):
         player_obj = None
 
     help_dict = discord_responder.help_main(
-        db_guild_obj, db_player_obj, player_obj, client_data.bot_categories)
+        db_guild_obj, ctx.author.id, player_obj, client_data.bot_categories)
     field_dict_list = help_dict['field_dict_list']
     emoji_list = help_dict['emoji_list']
 
