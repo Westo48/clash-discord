@@ -125,8 +125,7 @@ def select_clan_role_from_list(discord_role_id_list):
 
 def select_clan_role_from_tag(discord_guild_id, clan_tag):
     """
-        Takes in discord_role_id and
-        returns clan_role db discord_role_id and clan db id
+        finds clan role obj matching guild id and clan tag
 
         Args:
             discord_guild_id (int): discord id for guild
