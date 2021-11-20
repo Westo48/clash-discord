@@ -2396,8 +2396,6 @@ async def claimplayer(ctx, player_tag, *, api_key):
         )
 
 
-# todo remove the user search
-# todo simply use "no claimed players found ad mention user"
 @client.command(
     aliases=['showplayers', 'showclaimedplayers',
              'showplayersclaim', 'showplayerlist'],
@@ -2407,14 +2405,7 @@ async def claimplayer(ctx, player_tag, *, api_key):
 )
 async def showplayerclaim(ctx):
     async with ctx.typing():
-        db_user_obj = db_responder.read_user(ctx.author.id)
-
-    # if user not found
-    if not db_user_obj:
-        await ctx.send(f"{ctx.author.mention} has not been claimed")
-        return
-
-    db_player_obj_list = db_responder.read_player_list(ctx.author.id)
+        db_player_obj_list = db_responder.read_player_list(ctx.author.id)
 
     # if the user is found, but has no claimed players
     if len(db_player_obj_list) == 0:
