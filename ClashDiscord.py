@@ -2583,18 +2583,22 @@ async def deleteplayer(ctx, player_tag):
 async def claimguild(ctx):
     async with ctx.typing():
         # getting db user object
-        user_obj = db_responder.read_user(ctx.author.id)
-    if user_obj:
-        guild_obj = db_responder.claim_guild(ctx.author.id, ctx.guild.id)
-        # if guild wasn't claimed and now is
-        if guild_obj:
-            await ctx.send(f"{ctx.guild.name} is now claimed "
-                           f"by admin user {ctx.author.mention}")
-        # if guild was already claimed
-        else:
-            await ctx.send(f"{ctx.guild.name} has already been claimed")
-    else:
+        db_user_obj = db_responder.read_user(ctx.author.id)
+
+    # user not found
+    if not db_user_obj:
         await ctx.send(f"{ctx.author.mention} has not been claimed")
+        return
+
+    db_guild_obj = db_responder.claim_guild(ctx.author.id, ctx.guild.id)
+
+    # guild already claimed or could not be claimed
+    if not db_guild_obj:
+        await ctx.send(f"{ctx.guild.name} has already been claimed")
+        return
+
+    await ctx.send(f"{ctx.guild.name} is now claimed "
+                   f"by admin user {ctx.author.mention}")
 
 
 # client clan
