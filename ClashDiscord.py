@@ -2437,13 +2437,6 @@ async def updateplayeractive(ctx, player_tag):
     async with ctx.typing():
         player_obj = clash_responder.get_player(player_tag, razbot_data.header)
 
-    db_user_obj = db_responder.read_user(ctx.author.id)
-
-    # if user not found
-    if not db_user_obj:
-        await ctx.send(f"{ctx.author.mention} has not been claimed")
-        return
-
     # if player with tag not found
     if not player_obj:
         await ctx.send(f"player with tag {player_tag} not found")
