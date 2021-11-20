@@ -2474,72 +2474,102 @@ async def updateplayeractive(ctx, player_tag):
 )
 async def deleteplayer(ctx, player_tag):
     async with ctx.typing():
-        player_obj = clash_responder.get_player(player_tag, razbot_data.header)
-    if player_obj:
-        # if player is found in clash
-        author = ctx.author
-        user = db_responder.read_user(author.id)
-        # if user is found
-        if user:
-            if db_responder.read_player(author.id, player_obj.tag):
-                # if the player is claimed by user
-                db_player_obj = db_responder.delete_player(
-                    author.id, player_obj.tag)
-                # if player was not deleted
-                if db_player_obj:
-                    await ctx.send(f"{player_obj.name} {player_obj.tag} "
-                                   f"could not be deleted "
-                                   f"from {author.mention} player list")
-                # if player was deleted
-                else:
-                    # check if there is a active player
-                    active_player_data = db_responder.read_player_active(
-                        author.id)
+        player_obj = clash_responder.get_player(
+            player_tag, razbot_data.header)
 
-                    if active_player_data:
-                        # if there is a active player
-                        # then no need to change the active
-                        await ctx.send(f"{player_obj.name} {player_obj.tag} "
-                                       f"has been deleted "
-                                       f"from {author.mention} player list")
-                    else:
-                        # if there is no active player
-                        # check if there are any other players
-                        player_list = db_responder.read_player_list(
-                            author.id)
-                        if len(player_list) == 0:
-                            # no additional players claimed by user
-                            await ctx.send(
-                                f"{player_obj.name} {player_obj.tag} "
-                                f"has been deleted, "
-                                f"{author.mention} has no more claimed players"
-                            )
-                        else:
-                            # if there are additional players claimed by user
-                            # update the first as the new active
-                            updated_active_player = db_responder.update_player_active(
-                                author.id, player_list[0].player_tag)
-                            if updated_active_player:
-                                # if update was successful
-                                clash_updated_active_player = clash_responder.get_player(
-                                    updated_active_player.player_tag, razbot_data.header)
-                                await ctx.send(
-                                    f"{player_obj.name} {player_obj.tag} "
-                                    f"has been deleted, "
-                                    f"{author.mention} active is now set to "
-                                    f"{clash_updated_active_player.name} "
-                                    f"{clash_updated_active_player.tag}"
-                                )
-            else:
-                # if player is not claimed by user
-                await ctx.send(f"{player_obj.name} {player_obj.tag} "
-                               f"is not claimed by {author.mention}")
-        # if user is not found
-        else:
-            await ctx.send(f"{author.mention} has not been claimed")
-    else:
-        # if player is not found in clash
-        await ctx.send(f"{player_tag} was not found")
+    # player not found
+    if not player_obj:
+        await ctx.send(f"player with tag {player_tag} not found")
+        return
+
+    db_user_obj = db_responder.read_user(ctx.author.id)
+
+    # db user not found
+    if not db_user_obj:
+        await ctx.send(f"{ctx.author.mention} has not been claimed")
+        return
+
+    db_player_obj = db_responder.read_player(ctx.author.id, player_obj.tag)
+
+    # db player not found
+    if not db_player_obj:
+        await ctx.send(f"{player_obj.name} {player_obj.tag} "
+                       f"is not claimed by {ctx.author.mention}")
+        return
+
+    db_del_player_obj = db_responder.delete_player(
+        ctx.author.id, player_obj.tag)
+
+    # player was not deleted
+    if db_del_player_obj:
+        await ctx.send(f"{player_obj.name} {player_obj.tag} "
+                       f"could not be deleted "
+                       f"from {ctx.author.mention} player list")
+        return
+
+    db_active_player_obj = db_responder.read_player_active(ctx.author.id)
+
+    # active player found
+    # no need to change the active player
+    if db_active_player_obj:
+        await ctx.send(f"{player_obj.name} {player_obj.tag} "
+                       f"has been deleted "
+                       f"from {ctx.author.mention} player list")
+        return
+
+    # no active player found
+    # check if there are any other players
+    db_player_obj_list = db_responder.read_player_list(
+        ctx.author.id)
+
+    # no additional players claimed
+    if len(db_player_obj_list) == 0:
+        await ctx.send(
+            f"{player_obj.name} {player_obj.tag} "
+            f"has been deleted, "
+            f"{ctx.author.mention} has no more claimed players"
+        )
+        return
+
+    # additional players claimed by user
+    # update the first as the new active
+    db_updated_player_obj = db_responder.update_player_active(
+        ctx.author.id, db_player_obj_list[0].player_tag)
+
+    # update not successful
+    if not db_updated_player_obj:
+        await ctx.send(
+            f"{player_obj.name} {player_obj.tag} "
+            f"has been deleted, could not update active player, "
+            f"{ctx.author.mention} has no active players"
+        )
+        return
+
+    # update was successful
+    clash_updated_player_obj = clash_responder.get_player(
+        db_updated_player_obj.player_tag, razbot_data.header)
+
+    # clash player not found
+    if not clash_updated_player_obj:
+        await ctx.send(
+            f"{player_obj.name} {player_obj.tag} "
+            f"has been deleted, "
+            f"{ctx.author.mention} active is now set to "
+            f"{db_updated_player_obj.player_tag}, "
+            f"could not find player in clash of clans"
+        )
+        return
+
+    # player deleted
+    # active player updated
+    # clash player found
+    await ctx.send(
+        f"{player_obj.name} {player_obj.tag} "
+        f"has been deleted, "
+        f"{ctx.author.mention} active is now set to "
+        f"{clash_updated_player_obj.name} "
+        f"{clash_updated_player_obj.tag}"
+    )
 
 
 # client guild
