@@ -2694,25 +2694,28 @@ async def showclanclaim(ctx):
     async with ctx.typing():
         db_guild_obj = db_responder.read_guild(ctx.guild.id)
 
-    if db_guild_obj:
-        # if guild is found
-        db_clan_obj_list = db_responder.read_clan_list_from_guild(ctx.guild.id)
-        if len(db_clan_obj_list) == 0:
-            # if guild is found, but has no claimed clans
-            await ctx.send(f"{ctx.guild.name} does not have any "
-                           f"claimed clans")
-        else:
-            message = f"{ctx.guild.name} has claimed "
-            for item in db_clan_obj_list:
-                clan = clash_responder.get_clan(
-                    item.clan_tag, razbot_data.header)
-                message += f"{clan.name} {clan.tag}, "
-            # cuts the last two characters from the string ', '
-            message = message[:-2]
-            await ctx.send(message)
-    else:
-        # if guild is not found in db
+    # guild not found
+    if not db_guild_obj:
         await ctx.send(f"{ctx.guild.name} has not been claimed")
+        return
+
+    db_clan_obj_list = db_responder.read_clan_list_from_guild(ctx.guild.id)
+
+    # guild has no claimed clans
+    if len(db_clan_obj_list) == 0:
+        await ctx.send(f"{ctx.guild.name} does not have any claimed clans")
+
+    message = f"{ctx.guild.name} has claimed "
+
+    for item in db_clan_obj_list:
+        clan = clash_responder.get_clan(
+            item.clan_tag, razbot_data.header)
+        message += f"{clan.name} {clan.tag}, "
+
+    # cuts the last two characters from the string ', '
+    message = message[:-2]
+
+    await ctx.send(message)
 
 
 @client.command(
