@@ -2648,18 +2648,27 @@ async def claimclan(ctx, clan_tag):
         await ctx.send(f"{ctx.author.mention} is not guild's admin")
         return
 
-    db_player_obj = db_responder.read_player_active(ctx.author.id)
+    db_player_obj_list = db_responder.read_player_list(ctx.author.id)
 
     # no claimed player
-    if not db_player_obj:
-        await ctx.send(f"{ctx.author.mention} has no active player")
+    if len(db_player_obj_list) == 0:
+        await ctx.send(f"{ctx.author.mention} has no claimed players")
         return
 
-    player_obj = clash_responder.get_player(
-        db_player_obj.player_tag, razbot_data.header)
+    user_in_clan = False
+
+    # validating any player in player list is in requested clan
+    for db_player_obj in db_player_obj_list:
+        player_obj = clash_responder.get_player(
+            db_player_obj.player_tag, razbot_data.header)
+
+        # player in clan
+        if player_obj.clan_tag == clan_obj.tag:
+            user_in_clan = True
+            break
 
     # player not in requested clan
-    if player_obj.clan_tag != clan_obj.tag:
+    if not user_in_clan:
         await ctx.send(f"{ctx.author.mention} is not in {clan_obj.name}")
         return
 
