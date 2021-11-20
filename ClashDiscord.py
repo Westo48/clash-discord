@@ -2437,28 +2437,40 @@ async def updateplayeractive(ctx, player_tag):
     async with ctx.typing():
         player_obj = clash_responder.get_player(player_tag, razbot_data.header)
 
-    user = db_responder.read_user(ctx.author.id)
-    # if user is found
-    if user:
-        db_player_obj = db_responder.read_player(
-            ctx.author.id, player_obj.tag)
-        if db_player_obj:
-            if db_player_obj.active:
-                await ctx.send(f"{player_obj.name} {player_obj.tag} "
-                               f"is already your active player "
-                               f"{ctx.author.mention}")
-            else:
-                db_player_obj = db_responder.update_player_active(
-                    ctx.author.id, player_obj.tag)
-                await ctx.send(f"{player_obj.name} {player_obj.tag} is now "
-                               f"your active player {ctx.author.mention}")
-        else:
-            await ctx.send(f"{ctx.author.mention} "
-                           f"has not claimed "
-                           f"{player_obj.name} {player_obj.tag}")
-    # if user is not found
-    else:
+    db_user_obj = db_responder.read_user(ctx.author.id)
+
+    # if user not found
+    if not db_user_obj:
         await ctx.send(f"{ctx.author.mention} has not been claimed")
+        return
+
+    # if player with tag not found
+    if not player_obj:
+        await ctx.send(f"player with tag {player_tag} not found")
+        return
+
+    db_player_obj = db_responder.read_player(ctx.author.id, player_obj.tag)
+
+    # if requested player is not claimed
+    if not db_player_obj:
+        await ctx.send(f"{ctx.author.mention} "
+                       f"has not claimed "
+                       f"{player_obj.name} {player_obj.tag}")
+        return
+
+    # if requested player is the active player
+    if db_player_obj.active:
+        await ctx.send(f"{player_obj.name} {player_obj.tag} "
+                       f"is already your active player "
+                       f"{ctx.author.mention}")
+        return
+
+    else:
+        db_player_obj = db_responder.update_player_active(
+            ctx.author.id, player_obj.tag)
+        await ctx.send(f"{player_obj.name} {player_obj.tag} is now "
+                       f"your active player {ctx.author.mention}")
+        return
 
 
 @client.command(
