@@ -2615,52 +2615,62 @@ async def claimguild(ctx):
 async def claimclan(ctx, clan_tag):
     async with ctx.typing():
         clan_obj = clash_responder.get_clan(clan_tag, razbot_data.header)
-    if clan_obj:
-        # if clan is found
-        claimed_clan_obj = db_responder.read_clan(ctx.guild.id, clan_tag)
-        if claimed_clan_obj:
-            # already claimed
-            await ctx.send(f"{clan_obj.name} has already been claimed")
-        else:
-            # getting db user object
-            user_obj = db_responder.read_user(ctx.author.id)
-            # getting db guild object
-            guild_obj = db_responder.read_guild(ctx.guild.id)
-            if user_obj:
-                # ? consolidate if user and if guild into one
-                # if user has been claimed
-                if guild_obj:
-                    if (guild_obj.admin_user_id == ctx.author.id
-                            or user_obj.super_user):
-                        # if user is guild admin or super user
-                        db_player_obj = db_responder.read_player_active(
-                            ctx.author.id)
-                        if db_player_obj:
-                            # if active player is found
-                            player_obj = clash_responder.get_player(
-                                db_player_obj.player_tag, razbot_data.header)
-                            if player_obj.clan_tag == clan_obj.tag:
-                                # if player is in requested clan
-                                db_clan_obj = db_responder.claim_clan(
-                                    ctx.guild.id, clan_obj.tag)
-                                if db_clan_obj:
-                                    # if clan has been claimed and returned
-                                    await ctx.send(
-                                        f"{clan_obj.name} has been claimed")
-                                else:
-                                    await ctx.send(f"Couldn't claim {clan_obj.name}")
-                            else:
-                                await ctx.send(f"{ctx.author.mention} is not in {clan_obj.name}")
-                        else:
-                            await ctx.send(f"{ctx.author.mention} has no active player")
-                    else:
-                        await ctx.send(f"{ctx.author.mention} is not guild's admin")
-                else:
-                    await ctx.send(f"{ctx.guild.name} has not been claimed")
-            else:
-                await ctx.send(f"{ctx.author.mention} has not been claimed")
-    else:
-        await ctx.send(f"Couldn't find clan {clan_tag}")
+
+    # clan not found
+    if not clan_obj:
+        await ctx.send(f"couldn't find clan {clan_tag}")
+        return
+
+    claimed_clan_obj = db_responder.read_clan(ctx.guild.id, clan_obj.tag)
+
+    # already claimed
+    if claimed_clan_obj:
+        await ctx.send(f"{clan_obj.name} has already been claimed for "
+                       f"{ctx.guild.name}")
+        return
+
+    db_user_obj = db_responder.read_user(ctx.author.id)
+
+    # user not claimed
+    if not db_user_obj:
+        await ctx.send(f"{ctx.author.mention} has not been claimed")
+        return
+
+    db_guild_obj = db_responder.read_guild(ctx.guild.id)
+
+    # guild not claimed
+    if not db_guild_obj:
+        await ctx.send(f"{ctx.guild.name} has not been claimed")
+
+    # user is not guild admin and is not super user
+    if (not db_guild_obj.admin_user_id == ctx.author.id
+            and not db_user_obj.super_user):
+        await ctx.send(f"{ctx.author.mention} is not guild's admin")
+        return
+
+    db_player_obj = db_responder.read_player_active(ctx.author.id)
+
+    # no claimed player
+    if not db_player_obj:
+        await ctx.send(f"{ctx.author.mention} has no active player")
+        return
+
+    player_obj = clash_responder.get_player(
+        db_player_obj.player_tag, razbot_data.header)
+
+    # player not in requested clan
+    if player_obj.clan_tag != clan_obj.tag:
+        await ctx.send(f"{ctx.author.mention} is not in {clan_obj.name}")
+        return
+
+    db_clan_obj = db_responder.claim_clan(ctx.guild.id, clan_obj.tag)
+
+    # clan not claimed
+    if not db_clan_obj:
+        await ctx.send(f"couldn't claim {clan_obj.name}")
+        return
+
+    await ctx.send(f"{clan_obj.name} has been claimed")
 
 
 @client.command(
