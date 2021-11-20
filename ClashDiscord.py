@@ -2407,29 +2407,33 @@ async def claimplayer(ctx, player_tag, *, api_key):
 )
 async def showplayerclaim(ctx):
     async with ctx.typing():
-        user = db_responder.read_user(ctx.author.id)
-    # if user is found
-    if user:
-        player_list = db_responder.read_player_list(ctx.author.id)
-        # if the user is found, but has no claimed players
-        if len(player_list) == 0:
-            await ctx.send(f"{ctx.author.mention} does not have any "
-                           f"claimed players")
-        else:
-            message = f"{ctx.author.mention} has claimed "
-            for item in player_list:
-                player_obj = clash_responder.get_player(
-                    item.player_tag, razbot_data.header)
-                if item.active:
-                    message += f"{player_obj.name} {player_obj.tag} (active), "
-                else:
-                    message += f"{player_obj.name} {player_obj.tag}, "
-            # cuts the last two characters from the string ', '
-            message = message[:-2]
-            await ctx.send(message)
-    # if user is not found
-    else:
+        db_user_obj = db_responder.read_user(ctx.author.id)
+
+    # if user not found
+    if not db_user_obj:
         await ctx.send(f"{ctx.author.mention} has not been claimed")
+        return
+
+    db_player_obj_list = db_responder.read_player_list(ctx.author.id)
+
+    # if the user is found, but has no claimed players
+    if len(db_player_obj_list) == 0:
+        await ctx.send(f"{ctx.author.mention} does not have any "
+                       f"claimed players")
+
+        return
+
+    message = f"{ctx.author.mention} has claimed "
+    for db_player_obj in db_player_obj_list:
+        player_obj = clash_responder.get_player(
+            db_player_obj.player_tag, razbot_data.header)
+        if db_player_obj.active:
+            message += f"{player_obj.name} {player_obj.tag} (active), "
+        else:
+            message += f"{player_obj.name} {player_obj.tag}, "
+    # cuts the last two characters from the string ', '
+    message = message[:-2]
+    await ctx.send(message)
 
 
 @client.command(
