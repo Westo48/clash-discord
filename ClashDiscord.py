@@ -3376,31 +3376,31 @@ async def removeclaimrankrole(ctx):
 async def removeguildclaim(ctx, guild_id):
 
     db_author_obj = db_responder.read_user(ctx.author.id)
+    # author is not claimed
     if not db_author_obj:
-        # author is not claimed
         await ctx.send(f"{ctx.author.mention} is not claimed")
         return
 
+    # author is not super user
     if not db_author_obj.super_user:
-        # author is not super user
         await ctx.send(f"{ctx.author.mention} is not super user")
         return
 
     # confirm guild is claimed
     db_guild_obj = db_responder.read_guild(guild_id)
+    # guild isn't claimed
     if not db_guild_obj:
-        # guild isn't claimed
         await ctx.send(f"guild with id {guild_id} is not claimed")
         return
 
     deleted_guild_obj = db_responder.delete_guild(guild_id)
+    # guild could not be deleted
     if deleted_guild_obj:
-        # guild could not be deleted
         await ctx.send(f"guild with id {guild_id} could not be deleted")
+        return
 
-    else:
-        # guild was deleted properly
-        await ctx.send(f"guild with id {guild_id} was deleted")
+    # guild was deleted properly
+    await ctx.send(f"guild with id {guild_id} was deleted")
 
 
 # super user client user
