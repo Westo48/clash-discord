@@ -1710,6 +1710,11 @@ def help_cwlwar(player_obj, bot_category, all_commands):
     return help_dict
 
 
+# roles
+
+
+# old
+
 def role_add_remove_list(needed_role_list, current_role_list):
     """
         Takes in list of needed and current role id's and
