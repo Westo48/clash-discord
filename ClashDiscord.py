@@ -3201,47 +3201,48 @@ async def claimclanrole(ctx, clan_tag):
     hidden=True
 )
 async def removeclaimclanrole(ctx):
-    if len(ctx.message.role_mentions) > 0:
-        # if the role has been mentioned
-        role = ctx.message.role_mentions[0]
-        async with ctx.typing():
-            # getting db user object
-            user_obj = db_responder.read_user(ctx.author.id)
-        # getting db guild object
-        guild_obj = db_responder.read_guild(ctx.guild.id)
-        if user_obj:
-            # ? consolidate if user and if guild into one
-            # if user has been claimed
-            if guild_obj:
-                # if guild has been claimed
-                if (guild_obj.admin_user_id == ctx.author.id
-                        or user_obj.super_user):
-                    # if user is guild admin or super user
-                    # get clan role from db
-                    clan_role_obj = db_responder.read_clan_role(role.id)
-                    if clan_role_obj:
-                        # clan role has been claimed in db
-                        # remove the clan role from db
-                        db_clan_role_found = db_responder.delete_clan_role(
-                            role.id)
-                        if db_clan_role_found:
-                            # clan role was found after deletion
-                            await ctx.send(f"{role.mention} "
-                                           f"could not be deleted from database")
-                        else:
-                            # clan role wasn't found after deletion
-                            await ctx.send(f"{role.mention} "
-                                           f"was deleted from database")
-                    else:
-                        await ctx.send(f"{role.mention} is not claimed")
-                else:
-                    await ctx.send(f"{ctx.author.mention} is not guild's admin")
-            else:
-                await ctx.send(f"{ctx.guild.name} has not been claimed")
-        else:
-            await ctx.send(f"{ctx.author.mention} has not been claimed")
-    else:
-        await ctx.send(f"You have to mention the role")
+    # role was not mentioned or more than one role mentioned
+    if (len(ctx.message.role_mentions) == 0
+            or len(ctx.message.role_mentions) > 1):
+        await ctx.send(f"one role must be mentioned")
+        return
+
+    role = ctx.message.role_mentions[0]
+
+    async with ctx.typing():
+        db_user_obj = db_responder.read_user(ctx.author.id)
+
+    # user not claimed
+    if not db_user_obj:
+        await ctx.send(f"{ctx.author.mention} has not been claimed")
+        return
+
+    db_guild_obj = db_responder.read_guild(ctx.guild.id)
+    # guild not claimed
+    if not db_guild_obj:
+        await ctx.send(f"{ctx.guild.name} has not been claimed")
+        return
+
+    # user is not guild admin and is not super user
+    if (not db_guild_obj.admin_user_id == ctx.author.id
+            and not db_user_obj.super_user):
+        await ctx.send(f"{ctx.author.mention} is not guild's admin")
+        return
+
+    db_clan_role_obj = db_responder.read_clan_role(role.id)
+    # clan role not claimed
+    if not db_clan_role_obj:
+        await ctx.send(f"{role.mention} is not claimed")
+        return
+
+    # delete clan role
+    db_clan_role_deletion = db_responder.delete_clan_role(role.id)
+    # clan role found after deletion
+    if db_clan_role_deletion:
+        await ctx.send(f"{role.mention} claim could not be removed")
+        return
+
+    await ctx.send(f"{role.mention} claim was removed")
 
 
 # client rank role
