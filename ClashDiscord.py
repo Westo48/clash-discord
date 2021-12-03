@@ -2835,13 +2835,6 @@ async def deleteplayer(ctx, player_tag):
         await ctx.send(f"player with tag {player_tag} not found")
         return
 
-    db_user_obj = db_responder.read_user(ctx.author.id)
-
-    # db user not found
-    if not db_user_obj:
-        await ctx.send(f"{ctx.author.mention} has not been claimed")
-        return
-
     db_player_obj = db_responder.read_player(ctx.author.id, player_obj.tag)
 
     # db player not found
@@ -3058,6 +3051,7 @@ async def showclanclaim(ctx):
     # guild has no claimed clans
     if len(db_clan_obj_list) == 0:
         await ctx.send(f"{ctx.guild.name} does not have any claimed clans")
+        return
 
     message = f"{ctx.guild.name} has claimed "
     for item in db_clan_obj_list:
