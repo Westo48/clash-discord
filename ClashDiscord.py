@@ -3254,52 +3254,61 @@ async def removeclaimclanrole(ctx):
     hidden=True
 )
 async def claimrankrole(ctx, rank_role_name):
-    if len(ctx.message.role_mentions) > 0:
-        # if the role has been mentioned
-        role = ctx.message.role_mentions[0]
-        async with ctx.typing():
-            # validate given role name with model
-            rank_role_model_obj = db_responder.read_rank_role_model(
-                rank_role_name)
-        if rank_role_model_obj:
-            # getting db user object
-            user_obj = db_responder.read_user(ctx.author.id)
-            # getting db guild object
-            guild_obj = db_responder.read_guild(ctx.guild.id)
-            if user_obj:
-                # ? consolidate if user and if guild into one
-                # if user has been claimed
-                if guild_obj:
-                    # if guild has been claimed
-                    if (guild_obj.admin_user_id == ctx.author.id
-                            or user_obj.super_user):
-                        # user is guild admin or super user
-                        # confirm role has not been claimed
-                        rank_role_obj = db_responder.read_rank_role(role.id)
-                        if rank_role_obj:
-                            # rank role has been claimed
-                            await ctx.send(f"{role.mention} has already been claimed")
-                        else:
-                            # rank role has not been claimed
-                            # claim rank role
-                            db_rank_role_obj = db_responder.claim_rank_role(
-                                role.id, ctx.guild.id, rank_role_name)
-                            if db_rank_role_obj:
-                                # if rank role has been claimed and returned
-                                await ctx.send(
-                                    f"{role.mention} has been claimed")
-                            else:
-                                await ctx.send(f"Couldn't claim requested discord role")
-                    else:
-                        await ctx.send(f"{ctx.author.mention} is not guild's admin")
-                else:
-                    await ctx.send(f"{ctx.guild.name} has not been claimed")
-            else:
-                await ctx.send(f"{ctx.author.mention} has not been claimed")
-        else:
-            await ctx.send(f"Invalid rank name given")
-    else:
-        await ctx.send(f"You have to mention the role")
+    # role was not mentioned or more than one role mentioned
+    if (len(ctx.message.role_mentions) == 0
+            or len(ctx.message.role_mentions) > 1):
+        await ctx.send(f"one role must be mentioned")
+        return
+
+    role = ctx.message.role_mentions[0]
+
+    async with ctx.typing():
+        # validate given role name with model
+        rank_role_model_obj = db_responder.read_rank_role_model(
+            rank_role_name)
+
+    # rank role name invalid
+    if not rank_role_model_obj:
+        await ctx.send(f"{rank_role_name} is not a valid rank")
+        return
+
+    db_user_obj = db_responder.read_user(ctx.author.id)
+    # user not claimed
+    if not db_user_obj:
+        await ctx.send(f"{ctx.author.mention} has not been claimed")
+        return
+
+    db_guild_obj = db_responder.read_guild(ctx.guild.id)
+    # guild not claimed
+    if not db_guild_obj:
+        await ctx.send(f"{ctx.guild.name} has not been claimed")
+        return
+
+    # user is not guild admin and is not super user
+    if (not db_guild_obj.admin_user_id == ctx.author.id
+            and not db_user_obj.super_user):
+        await ctx.send(f"{ctx.author.mention} is not guild's admin")
+        return
+
+    # confirm role has not been claimed
+    db_rank_role_obj = db_responder.read_rank_role(role.id)
+    # rank role has been claimed
+    if db_rank_role_obj:
+        await ctx.send(f"{role.mention} has already been claimed "
+                       f"for rank {db_rank_role_obj.model_name}")
+        return
+
+    # claim rank role
+    claimed_rank_role_obj = db_responder.claim_rank_role(
+        role.id, ctx.guild.id, rank_role_name)
+    # rank role could not be claimed
+    if not claimed_rank_role_obj:
+        await ctx.send(f"could not claim {role.mention} "
+                       f"for rank {db_rank_role_obj.model_name}")
+        return
+
+    await ctx.send(f"{role.mention} has been claimed "
+                   f"for rank {db_rank_role_obj.model_name}")
 
 
 @client.command(
