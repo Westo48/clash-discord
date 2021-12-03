@@ -3413,31 +3413,31 @@ async def removeguildclaim(ctx, guild_id):
 async def removeuserclaim(ctx, user_id):
 
     db_author_obj = db_responder.read_user(ctx.author.id)
+    # author is not claimed
     if not db_author_obj:
-        # author is not claimed
         await ctx.send(f"{ctx.author.mention} is not claimed")
         return
 
+    # author is not super user
     if not db_author_obj.super_user:
-        # author is not super user
         await ctx.send(f"{ctx.author.mention} is not super user")
         return
 
     # confirm user is claimed
     db_user_obj = db_responder.read_user(user_id)
+    # user isn't claimed
     if not db_user_obj:
-        # user isn't claimed
         await ctx.send(f"user with id {user_id} is not claimed")
         return
 
     deleted_user_obj = db_responder.delete_user(user_id)
+    # user could not be deleted
     if deleted_user_obj:
-        # user could not be deleted
         await ctx.send(f"user with id {user_id} could not be deleted")
+        return
 
-    else:
-        # user was deleted properly
-        await ctx.send(f"user with id {user_id} was deleted")
+    # user was deleted properly
+    await ctx.send(f"user with id {user_id} was deleted")
 
 
 # client events
