@@ -2994,6 +2994,7 @@ async def claimclan(ctx, clan_tag):
     # guild not claimed
     if not db_guild_obj:
         await ctx.send(f"{ctx.guild.name} has not been claimed")
+        return
 
     # user is not guild admin and is not super user
     if (not db_guild_obj.admin_user_id == ctx.author.id
@@ -3059,7 +3060,6 @@ async def showclanclaim(ctx):
         await ctx.send(f"{ctx.guild.name} does not have any claimed clans")
 
     message = f"{ctx.guild.name} has claimed "
-
     for item in db_clan_obj_list:
         clan = clash_responder.get_clan(
             item.clan_tag, razbot_data.header)
@@ -3082,44 +3082,44 @@ async def showclanclaim(ctx):
 async def deleteclan(ctx, clan_tag):
     async with ctx.typing():
         clan_obj = clash_responder.get_clan(clan_tag, razbot_data.header)
-    if clan_obj:
-        # clan has been found in clash
-        db_user_obj = db_responder.read_user(ctx.author.id)
-        if db_user_obj:
-            # user is found in db
-            db_guild_obj = db_responder.read_guild(ctx.guild.id)
-            if db_guild_obj:
-                # guild is found in db
-                if (db_guild_obj.admin_user_id == ctx.author.id
-                        or db_user_obj.super_user):
-                    # author is guild admin or user is super user
-                    db_clan_obj = db_responder.read_clan(
-                        ctx.guild.id, clan_obj.tag)
-                    if db_clan_obj:
-                        # clan is found in db
-                        db_clan_found = db_responder.delete_clan(
-                            ctx.guild.id, clan_obj.tag)
-                        if db_clan_found:
-                            await ctx.send(f"{clan_obj.name} could "
-                                           f"not be deleted")
-                        else:
-                            await ctx.send(f"{clan_obj.name} has been "
-                                           f"deleted from {ctx.guild.name}")
-                    else:
-                        # clan is not found in db
-                        await ctx.send(f"{clan_obj.name} has "
-                                       f"not been claimed")
-                else:
-                    await ctx.send(f"{ctx.author.mention} is not guild's admin")
-            else:
-                # guild is not found in db
-                await ctx.send(f"{ctx.guild.name} has not been claimed")
-        else:
-            # user is not found in db
-            await ctx.send(f"{ctx.author.mention} has not been claimed")
-    else:
-        # clan is not found in clash
-        await ctx.send(f"{clan_tag} was not found")
+
+    # clan not found
+    if not clan_obj:
+        await ctx.send(f"couldn't find clan {clan_tag}")
+        return
+
+    db_user_obj = db_responder.read_user(ctx.author.id)
+    # user not claimed
+    if not db_user_obj:
+        await ctx.send(f"{ctx.author.mention} has not been claimed")
+        return
+
+    db_guild_obj = db_responder.read_guild(ctx.guild.id)
+    # guild not claimed
+    if not db_guild_obj:
+        await ctx.send(f"{ctx.guild.name} has not been claimed")
+        return
+
+    # user is not guild admin and is not super user
+    if (not db_guild_obj.admin_user_id == ctx.author.id
+            and not db_user_obj.super_user):
+        await ctx.send(f"{ctx.author.mention} is not guild's admin")
+        return
+
+    db_clan_obj = db_responder.read_clan(ctx.guild.id, clan_obj.tag)
+    # clan not claimed by guild
+    if not db_clan_obj:
+        await ctx.send(f"{clan_obj.name} has not been claimed "
+                       f"by {ctx.guild.name}")
+        return
+
+    db_clan_deletion = db_responder.delete_clan(ctx.guild.id, clan_obj.tag)
+    # clan was found after deletion
+    if db_clan_deletion:
+        await ctx.send(f"{clan_obj.name} could not be deleted")
+        return
+
+    await ctx.send(f"{clan_obj.name} has been deleted from {ctx.guild.name}")
 
 
 # client clan role
