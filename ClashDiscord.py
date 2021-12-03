@@ -2760,7 +2760,7 @@ async def showplayerclaim(ctx):
     async with ctx.typing():
         db_player_obj_list = db_responder.read_player_list(ctx.author.id)
 
-    # if the user is found, but has no claimed players
+    # user has no claimed players
     if len(db_player_obj_list) == 0:
         await ctx.send(f"{ctx.author.mention} does not have any "
                        f"claimed players")
