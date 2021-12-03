@@ -46,7 +46,7 @@ async def help(ctx):
         player_obj = None
 
     help_dict = discord_responder.help_main(
-        db_guild_obj, db_player_obj, player_obj, client_data.bot_categories)
+        db_guild_obj, ctx.author.id, player_obj, client_data.bot_categories)
     field_dict_list = help_dict['field_dict_list']
     emoji_list = help_dict['emoji_list']
 
@@ -2749,8 +2749,6 @@ async def claimplayer(ctx, player_tag, *, api_key):
         )
 
 
-# todo remove the user search
-# todo simply use "no claimed players found ad mention user"
 @client.command(
     aliases=['showplayers', 'showclaimedplayers',
              'showplayersclaim', 'showplayerlist'],
@@ -2760,29 +2758,26 @@ async def claimplayer(ctx, player_tag, *, api_key):
 )
 async def showplayerclaim(ctx):
     async with ctx.typing():
-        user = db_responder.read_user(ctx.author.id)
-    # if user is found
-    if user:
-        player_list = db_responder.read_player_list(ctx.author.id)
-        # if the user is found, but has no claimed players
-        if len(player_list) == 0:
-            await ctx.send(f"{ctx.author.mention} does not have any "
-                           f"claimed players")
+        db_player_obj_list = db_responder.read_player_list(ctx.author.id)
+
+    # if the user is found, but has no claimed players
+    if len(db_player_obj_list) == 0:
+        await ctx.send(f"{ctx.author.mention} does not have any "
+                       f"claimed players")
+
+        return
+
+    message = f"{ctx.author.mention} has claimed "
+    for db_player_obj in db_player_obj_list:
+        player_obj = clash_responder.get_player(
+            db_player_obj.player_tag, razbot_data.header)
+        if db_player_obj.active:
+            message += f"{player_obj.name} {player_obj.tag} (active), "
         else:
-            message = f"{ctx.author.mention} has claimed "
-            for item in player_list:
-                player_obj = clash_responder.get_player(
-                    item.player_tag, razbot_data.header)
-                if item.active:
-                    message += f"{player_obj.name} {player_obj.tag} (active), "
-                else:
-                    message += f"{player_obj.name} {player_obj.tag}, "
-            # cuts the last two characters from the string ', '
-            message = message[:-2]
-            await ctx.send(message)
-    # if user is not found
-    else:
-        await ctx.send(f"{ctx.author.mention} has not been claimed")
+            message += f"{player_obj.name} {player_obj.tag}, "
+    # cuts the last two characters from the string ', '
+    message = message[:-2]
+    await ctx.send(message)
 
 
 @client.command(
@@ -2795,28 +2790,33 @@ async def updateplayeractive(ctx, player_tag):
     async with ctx.typing():
         player_obj = clash_responder.get_player(player_tag, razbot_data.header)
 
-    user = db_responder.read_user(ctx.author.id)
-    # if user is found
-    if user:
-        db_player_obj = db_responder.read_player(
-            ctx.author.id, player_obj.tag)
-        if db_player_obj:
-            if db_player_obj.active:
-                await ctx.send(f"{player_obj.name} {player_obj.tag} "
-                               f"is already your active player "
-                               f"{ctx.author.mention}")
-            else:
-                db_player_obj = db_responder.update_player_active(
-                    ctx.author.id, player_obj.tag)
-                await ctx.send(f"{player_obj.name} {player_obj.tag} is now "
-                               f"your active player {ctx.author.mention}")
-        else:
-            await ctx.send(f"{ctx.author.mention} "
-                           f"has not claimed "
-                           f"{player_obj.name} {player_obj.tag}")
-    # if user is not found
+    # if player with tag not found
+    if not player_obj:
+        await ctx.send(f"player with tag {player_tag} not found")
+        return
+
+    db_player_obj = db_responder.read_player(ctx.author.id, player_obj.tag)
+
+    # if requested player is not claimed
+    if not db_player_obj:
+        await ctx.send(f"{ctx.author.mention} "
+                       f"has not claimed "
+                       f"{player_obj.name} {player_obj.tag}")
+        return
+
+    # if requested player is the active player
+    if db_player_obj.active:
+        await ctx.send(f"{player_obj.name} {player_obj.tag} "
+                       f"is already your active player "
+                       f"{ctx.author.mention}")
+        return
+
     else:
-        await ctx.send(f"{ctx.author.mention} has not been claimed")
+        db_player_obj = db_responder.update_player_active(
+            ctx.author.id, player_obj.tag)
+        await ctx.send(f"{player_obj.name} {player_obj.tag} is now "
+                       f"your active player {ctx.author.mention}")
+        return
 
 
 @client.command(
@@ -2827,72 +2827,102 @@ async def updateplayeractive(ctx, player_tag):
 )
 async def deleteplayer(ctx, player_tag):
     async with ctx.typing():
-        player_obj = clash_responder.get_player(player_tag, razbot_data.header)
-    if player_obj:
-        # if player is found in clash
-        author = ctx.author
-        user = db_responder.read_user(author.id)
-        # if user is found
-        if user:
-            if db_responder.read_player(author.id, player_obj.tag):
-                # if the player is claimed by user
-                db_player_obj = db_responder.delete_player(
-                    author.id, player_obj.tag)
-                # if player was not deleted
-                if db_player_obj:
-                    await ctx.send(f"{player_obj.name} {player_obj.tag} "
-                                   f"could not be deleted "
-                                   f"from {author.mention} player list")
-                # if player was deleted
-                else:
-                    # check if there is a active player
-                    active_player_data = db_responder.read_player_active(
-                        author.id)
+        player_obj = clash_responder.get_player(
+            player_tag, razbot_data.header)
 
-                    if active_player_data:
-                        # if there is a active player
-                        # then no need to change the active
-                        await ctx.send(f"{player_obj.name} {player_obj.tag} "
-                                       f"has been deleted "
-                                       f"from {author.mention} player list")
-                    else:
-                        # if there is no active player
-                        # check if there are any other players
-                        player_list = db_responder.read_player_list(
-                            author.id)
-                        if len(player_list) == 0:
-                            # no additional players claimed by user
-                            await ctx.send(
-                                f"{player_obj.name} {player_obj.tag} "
-                                f"has been deleted, "
-                                f"{author.mention} has no more claimed players"
-                            )
-                        else:
-                            # if there are additional players claimed by user
-                            # update the first as the new active
-                            updated_active_player = db_responder.update_player_active(
-                                author.id, player_list[0].player_tag)
-                            if updated_active_player:
-                                # if update was successful
-                                clash_updated_active_player = clash_responder.get_player(
-                                    updated_active_player.player_tag, razbot_data.header)
-                                await ctx.send(
-                                    f"{player_obj.name} {player_obj.tag} "
-                                    f"has been deleted, "
-                                    f"{author.mention} active is now set to "
-                                    f"{clash_updated_active_player.name} "
-                                    f"{clash_updated_active_player.tag}"
-                                )
-            else:
-                # if player is not claimed by user
-                await ctx.send(f"{player_obj.name} {player_obj.tag} "
-                               f"is not claimed by {author.mention}")
-        # if user is not found
-        else:
-            await ctx.send(f"{author.mention} has not been claimed")
-    else:
-        # if player is not found in clash
-        await ctx.send(f"{player_tag} was not found")
+    # player not found
+    if not player_obj:
+        await ctx.send(f"player with tag {player_tag} not found")
+        return
+
+    db_user_obj = db_responder.read_user(ctx.author.id)
+
+    # db user not found
+    if not db_user_obj:
+        await ctx.send(f"{ctx.author.mention} has not been claimed")
+        return
+
+    db_player_obj = db_responder.read_player(ctx.author.id, player_obj.tag)
+
+    # db player not found
+    if not db_player_obj:
+        await ctx.send(f"{player_obj.name} {player_obj.tag} "
+                       f"is not claimed by {ctx.author.mention}")
+        return
+
+    db_del_player_obj = db_responder.delete_player(
+        ctx.author.id, player_obj.tag)
+
+    # player was not deleted
+    if db_del_player_obj:
+        await ctx.send(f"{player_obj.name} {player_obj.tag} "
+                       f"could not be deleted "
+                       f"from {ctx.author.mention} player list")
+        return
+
+    db_active_player_obj = db_responder.read_player_active(ctx.author.id)
+
+    # active player found
+    # no need to change the active player
+    if db_active_player_obj:
+        await ctx.send(f"{player_obj.name} {player_obj.tag} "
+                       f"has been deleted "
+                       f"from {ctx.author.mention} player list")
+        return
+
+    # no active player found
+    # check if there are any other players
+    db_player_obj_list = db_responder.read_player_list(
+        ctx.author.id)
+
+    # no additional players claimed
+    if len(db_player_obj_list) == 0:
+        await ctx.send(
+            f"{player_obj.name} {player_obj.tag} "
+            f"has been deleted, "
+            f"{ctx.author.mention} has no more claimed players"
+        )
+        return
+
+    # additional players claimed by user
+    # update the first as the new active
+    db_updated_player_obj = db_responder.update_player_active(
+        ctx.author.id, db_player_obj_list[0].player_tag)
+
+    # update not successful
+    if not db_updated_player_obj:
+        await ctx.send(
+            f"{player_obj.name} {player_obj.tag} "
+            f"has been deleted, could not update active player, "
+            f"{ctx.author.mention} has no active players"
+        )
+        return
+
+    # update was successful
+    clash_updated_player_obj = clash_responder.get_player(
+        db_updated_player_obj.player_tag, razbot_data.header)
+
+    # clash player not found
+    if not clash_updated_player_obj:
+        await ctx.send(
+            f"{player_obj.name} {player_obj.tag} "
+            f"has been deleted, "
+            f"{ctx.author.mention} active is now set to "
+            f"{db_updated_player_obj.player_tag}, "
+            f"could not find player in clash of clans"
+        )
+        return
+
+    # player deleted
+    # active player updated
+    # clash player found
+    await ctx.send(
+        f"{player_obj.name} {player_obj.tag} "
+        f"has been deleted, "
+        f"{ctx.author.mention} active is now set to "
+        f"{clash_updated_player_obj.name} "
+        f"{clash_updated_player_obj.tag}"
+    )
 
 
 # client guild
@@ -2906,18 +2936,22 @@ async def deleteplayer(ctx, player_tag):
 async def claimguild(ctx):
     async with ctx.typing():
         # getting db user object
-        user_obj = db_responder.read_user(ctx.author.id)
-    if user_obj:
-        guild_obj = db_responder.claim_guild(ctx.author.id, ctx.guild.id)
-        # if guild wasn't claimed and now is
-        if guild_obj:
-            await ctx.send(f"{ctx.guild.name} is now claimed "
-                           f"by admin user {ctx.author.mention}")
-        # if guild was already claimed
-        else:
-            await ctx.send(f"{ctx.guild.name} has already been claimed")
-    else:
+        db_user_obj = db_responder.read_user(ctx.author.id)
+
+    # user not found
+    if not db_user_obj:
         await ctx.send(f"{ctx.author.mention} has not been claimed")
+        return
+
+    db_guild_obj = db_responder.claim_guild(ctx.author.id, ctx.guild.id)
+
+    # guild already claimed or could not be claimed
+    if not db_guild_obj:
+        await ctx.send(f"{ctx.guild.name} has already been claimed")
+        return
+
+    await ctx.send(f"{ctx.guild.name} is now claimed "
+                   f"by admin user {ctx.author.mention}")
 
 
 # client clan
@@ -2934,52 +2968,71 @@ async def claimguild(ctx):
 async def claimclan(ctx, clan_tag):
     async with ctx.typing():
         clan_obj = clash_responder.get_clan(clan_tag, razbot_data.header)
-    if clan_obj:
-        # if clan is found
-        claimed_clan_obj = db_responder.read_clan(ctx.guild.id, clan_tag)
-        if claimed_clan_obj:
-            # already claimed
-            await ctx.send(f"{clan_obj.name} has already been claimed")
-        else:
-            # getting db user object
-            user_obj = db_responder.read_user(ctx.author.id)
-            # getting db guild object
-            guild_obj = db_responder.read_guild(ctx.guild.id)
-            if user_obj:
-                # ? consolidate if user and if guild into one
-                # if user has been claimed
-                if guild_obj:
-                    if (guild_obj.admin_user_id == ctx.author.id
-                            or user_obj.super_user):
-                        # if user is guild admin or super user
-                        db_player_obj = db_responder.read_player_active(
-                            ctx.author.id)
-                        if db_player_obj:
-                            # if active player is found
-                            player_obj = clash_responder.get_player(
-                                db_player_obj.player_tag, razbot_data.header)
-                            if player_obj.clan_tag == clan_obj.tag:
-                                # if player is in requested clan
-                                db_clan_obj = db_responder.claim_clan(
-                                    ctx.guild.id, clan_obj.tag)
-                                if db_clan_obj:
-                                    # if clan has been claimed and returned
-                                    await ctx.send(
-                                        f"{clan_obj.name} has been claimed")
-                                else:
-                                    await ctx.send(f"Couldn't claim {clan_obj.name}")
-                            else:
-                                await ctx.send(f"{ctx.author.mention} is not in {clan_obj.name}")
-                        else:
-                            await ctx.send(f"{ctx.author.mention} has no active player")
-                    else:
-                        await ctx.send(f"{ctx.author.mention} is not guild's admin")
-                else:
-                    await ctx.send(f"{ctx.guild.name} has not been claimed")
-            else:
-                await ctx.send(f"{ctx.author.mention} has not been claimed")
-    else:
-        await ctx.send(f"Couldn't find clan {clan_tag}")
+
+    # clan not found
+    if not clan_obj:
+        await ctx.send(f"couldn't find clan {clan_tag}")
+        return
+
+    claimed_clan_obj = db_responder.read_clan(ctx.guild.id, clan_obj.tag)
+
+    # already claimed
+    if claimed_clan_obj:
+        await ctx.send(f"{clan_obj.name} has already been claimed for "
+                       f"{ctx.guild.name}")
+        return
+
+    db_user_obj = db_responder.read_user(ctx.author.id)
+
+    # user not claimed
+    if not db_user_obj:
+        await ctx.send(f"{ctx.author.mention} has not been claimed")
+        return
+
+    db_guild_obj = db_responder.read_guild(ctx.guild.id)
+
+    # guild not claimed
+    if not db_guild_obj:
+        await ctx.send(f"{ctx.guild.name} has not been claimed")
+
+    # user is not guild admin and is not super user
+    if (not db_guild_obj.admin_user_id == ctx.author.id
+            and not db_user_obj.super_user):
+        await ctx.send(f"{ctx.author.mention} is not guild's admin")
+        return
+
+    db_player_obj_list = db_responder.read_player_list(ctx.author.id)
+
+    # no claimed player
+    if len(db_player_obj_list) == 0:
+        await ctx.send(f"{ctx.author.mention} has no claimed players")
+        return
+
+    user_in_clan = False
+
+    # validating any player in player list is in requested clan
+    for db_player_obj in db_player_obj_list:
+        player_obj = clash_responder.get_player(
+            db_player_obj.player_tag, razbot_data.header)
+
+        # player in clan
+        if player_obj.clan_tag == clan_obj.tag:
+            user_in_clan = True
+            break
+
+    # player not in requested clan
+    if not user_in_clan:
+        await ctx.send(f"{ctx.author.mention} is not in {clan_obj.name}")
+        return
+
+    db_clan_obj = db_responder.claim_clan(ctx.guild.id, clan_obj.tag)
+
+    # clan not claimed
+    if not db_clan_obj:
+        await ctx.send(f"couldn't claim {clan_obj.name}")
+        return
+
+    await ctx.send(f"{clan_obj.name} has been claimed")
 
 
 @client.command(
@@ -2994,25 +3047,28 @@ async def showclanclaim(ctx):
     async with ctx.typing():
         db_guild_obj = db_responder.read_guild(ctx.guild.id)
 
-    if db_guild_obj:
-        # if guild is found
-        db_clan_obj_list = db_responder.read_clan_list_from_guild(ctx.guild.id)
-        if len(db_clan_obj_list) == 0:
-            # if guild is found, but has no claimed clans
-            await ctx.send(f"{ctx.guild.name} does not have any "
-                           f"claimed clans")
-        else:
-            message = f"{ctx.guild.name} has claimed "
-            for item in db_clan_obj_list:
-                clan = clash_responder.get_clan(
-                    item.clan_tag, razbot_data.header)
-                message += f"{clan.name} {clan.tag}, "
-            # cuts the last two characters from the string ', '
-            message = message[:-2]
-            await ctx.send(message)
-    else:
-        # if guild is not found in db
+    # guild not found
+    if not db_guild_obj:
         await ctx.send(f"{ctx.guild.name} has not been claimed")
+        return
+
+    db_clan_obj_list = db_responder.read_clan_list_from_guild(ctx.guild.id)
+
+    # guild has no claimed clans
+    if len(db_clan_obj_list) == 0:
+        await ctx.send(f"{ctx.guild.name} does not have any claimed clans")
+
+    message = f"{ctx.guild.name} has claimed "
+
+    for item in db_clan_obj_list:
+        clan = clash_responder.get_clan(
+            item.clan_tag, razbot_data.header)
+        message += f"{clan.name} {clan.tag}, "
+
+    # cuts the last two characters from the string ', '
+    message = message[:-2]
+
+    await ctx.send(message)
 
 
 @client.command(
@@ -3297,7 +3353,7 @@ async def removeclaimrankrole(ctx):
 # super user client guild
 @client.command(
     aliases=['removeguild'],
-    brief='client',
+    brief='clientsuperuser',
     description=("delete a claimed guild from id"),
     hidden=True
 )
@@ -3334,7 +3390,7 @@ async def removeguildclaim(ctx, guild_id):
 # super user client user
 @client.command(
     aliases=['removeuser'],
-    brief='client',
+    brief='clientsuperuser',
     description=('delete a claimed user'),
     hidden=True
 )

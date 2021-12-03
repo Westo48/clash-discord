@@ -2,6 +2,7 @@ import math
 import Clan
 from Player import super_troop_list
 import ClashResponder as clash_responder
+import RazBotDB_Responder as db_responder
 
 
 # PLAYER
@@ -1395,9 +1396,7 @@ def embed_message(
     return embed_list
 
 
-# help
-
-def help_main(db_guild_obj, db_player_obj, player_obj, bot_categories):
+def help_main(db_guild_obj, user_id, player_obj, bot_categories):
     help_dict = {
         'field_dict_list': [],
         'emoji_list': []
@@ -1412,7 +1411,13 @@ def help_main(db_guild_obj, db_player_obj, player_obj, bot_categories):
                 help_dict['emoji_list'].append(category.emoji)
                 return help_dict
 
+    db_user_obj = db_responder.read_user(user_id)
     for category in bot_categories:
+        if category.brief == "clientsuperuser":
+            if not db_user_obj:
+                continue
+            if not db_user_obj.super_user:
+                continue
         if (
             category.brief == "discord" and
             not player_obj or
@@ -1446,7 +1451,10 @@ def help_emoji_to_category(emoji, bot_categories):
 def help_switch(db_guild_obj, db_player_obj, player_obj, user_id, emoji,
                 bot_category, bot_categories, all_commands):
     if not bot_category:
-        return help_main(db_guild_obj, db_player_obj, player_obj, bot_categories)
+        return help_main(db_guild_obj, user_id, player_obj, bot_categories)
+    if bot_category.brief == "clientsuperuser":
+        return help_client_super_user(db_guild_obj, user_id,
+                                      bot_category, all_commands)
     if bot_category.brief == "client":
         return help_client(db_guild_obj, user_id, bot_category, all_commands)
     if bot_category.brief == "discord":
@@ -1461,7 +1469,39 @@ def help_switch(db_guild_obj, db_player_obj, player_obj, user_id, emoji,
         return help_cwlgroup(player_obj, bot_category, all_commands)
     if bot_category.brief == "cwlwar":
         return help_cwlwar(player_obj, bot_category, all_commands)
-    return help_main(db_guild_obj, db_player_obj, player_obj, bot_categories)
+    return help_main(db_guild_obj, user_id, player_obj, bot_categories)
+
+
+def help_client_super_user(db_guild_obj, user_id, bot_category, all_commands):
+    help_dict = {
+        'field_dict_list': [],
+        'emoji_list': []
+    }
+    db_user_obj = db_responder.read_user(user_id)
+    if not db_user_obj.super_user:
+        # if user is not super user
+        help_dict['field_dict_list'].append({
+            'name': "user is not super user",
+            'value': "must be super user to view super user commands"
+        })
+        return help_dict
+
+    for command_name in all_commands:
+        # if the command is in the correct category
+        if not bot_category.brief == all_commands[command_name].brief:
+            continue
+        # if the command is the main command and not an alias
+        if command_name != all_commands[command_name].name:
+            continue
+
+        field_name = f"{all_commands[command_name].name}"
+        for param in all_commands[command_name].clean_params:
+            field_name += f" <{param}>"
+        help_dict['field_dict_list'].append({
+            'name': field_name,
+            'value': all_commands[command_name].description
+        })
+    return help_dict
 
 
 def help_client(db_guild_obj, user_id, bot_category, all_commands):
