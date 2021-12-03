@@ -3131,60 +3131,65 @@ async def deleteclan(ctx, clan_tag):
     hidden=True
 )
 async def claimclanrole(ctx, clan_tag):
+    # role was not mentioned or more than one role mentioned
+    if (len(ctx.message.role_mentions) == 0
+            or len(ctx.message.role_mentions) > 1):
+        await ctx.send(f"one role must be mentioned")
+        return
 
-    if len(ctx.message.role_mentions) > 0:
-        # if the role has been mentioned
-        role = ctx.message.role_mentions[0]
-        async with ctx.typing():
-            # get the clash of clans clan object
-            clan_obj = clash_responder.get_clan(clan_tag, razbot_data.header)
-        if clan_obj:
-            # if clan is found
-            db_clan_obj = db_responder.read_clan(ctx.guild.id, clan_obj.tag)
-            if db_clan_obj:
-                # claimed by guild
-                # getting db user object
-                user_obj = db_responder.read_user(ctx.author.id)
-                # getting db guild object
-                guild_obj = db_responder.read_guild(ctx.guild.id)
-                if user_obj:
-                    # ? consolidate if user and if guild into one
-                    # if user has been claimed
-                    if guild_obj:
-                        # if guild has been claimed
-                        if (guild_obj.admin_user_id == ctx.author.id
-                                or user_obj.super_user):
-                            # if user is guild admin or super user
-                            # confirm role has not been claimed
-                            clan_role_obj = db_responder.read_clan_role(
-                                role.id)
-                            if clan_role_obj:
-                                # clan role has been claimed
-                                await ctx.send(f"{role.mention} has already been claimed")
-                            else:
-                                # clan role has not been claimed
-                                # claim clan role
-                                db_clan_role_obj = db_responder.claim_clan_role(
-                                    role.id, ctx.guild.id, clan_obj.tag)
-                                if db_clan_role_obj:
-                                    # if clan role has been claimed and returned
-                                    await ctx.send(
-                                        f"{role.mention} has been claimed")
-                                else:
-                                    await ctx.send(f"couldn't claim requested discord role")
-                        else:
-                            await ctx.send(f"{ctx.author.mention} is not guild's admin")
-                    else:
-                        await ctx.send(f"{ctx.guild.name} has not been claimed")
-                else:
-                    await ctx.send(f"{ctx.author.mention} has not been claimed")
-            else:
-                await ctx.send(f"{clan_obj.name} is not claimed "
-                               f"within {ctx.guild.name}")
-        else:
-            await ctx.send(f"Couldn't find clan {clan_tag}")
-    else:
-        await ctx.send(f"You have to mention the role")
+    role = ctx.message.role_mentions[0]
+
+    async with ctx.typing():
+        clan_obj = clash_responder.get_clan(clan_tag, razbot_data.header)
+
+    # clan not found
+    if not clan_obj:
+        await ctx.send(f"couldn't find clan {clan_tag}")
+        return
+
+    db_user_obj = db_responder.read_user(ctx.author.id)
+    # user not claimed
+    if not db_user_obj:
+        await ctx.send(f"{ctx.author.mention} has not been claimed")
+        return
+
+    db_guild_obj = db_responder.read_guild(ctx.guild.id)
+    # guild not claimed
+    if not db_guild_obj:
+        await ctx.send(f"{ctx.guild.name} has not been claimed")
+        return
+
+    # user is not guild admin and is not super user
+    if (not db_guild_obj.admin_user_id == ctx.author.id
+            and not db_user_obj.super_user):
+        await ctx.send(f"{ctx.author.mention} is not guild's admin")
+        return
+
+    db_clan_obj = db_responder.read_clan(ctx.guild.id, clan_obj.tag)
+    # clan not claimed by guild
+    if not db_clan_obj:
+        await ctx.send(f"{clan_obj.name} has not been claimed "
+                       f"by {ctx.guild.name}")
+        return
+
+    # confirm role has not been claimed
+    db_clan_role_obj = db_responder.read_clan_role(role.id)
+    # clan role has been claimed
+    if db_clan_role_obj:
+        await ctx.send(f"{role.mention} has already been claimed")
+        return
+
+    # claim clan role
+    claimed_clan_role_obj = db_responder.claim_clan_role(
+        role.id, ctx.guild.id, clan_obj.tag)
+    # clan role could not be claimed
+    if not claimed_clan_role_obj:
+        await ctx.send(f"could not claim {role.mention} "
+                       f"for clan {clan_obj.tag}")
+        return
+
+    await ctx.send(
+        f"{role.mention} has been claimed for clan {clan_obj.tag}")
 
 
 @client.command(
