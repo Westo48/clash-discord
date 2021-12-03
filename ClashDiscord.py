@@ -3166,11 +3166,20 @@ async def claimclanrole(ctx, clan_tag):
                        f"by {ctx.guild.name}")
         return
 
-    # confirm role has not been claimed
+    # confirm clan role has not been claimed
     db_clan_role_obj = db_responder.read_clan_role(role.id)
     # clan role has been claimed
     if db_clan_role_obj:
-        await ctx.send(f"{role.mention} has already been claimed")
+        await ctx.send(f"{role.mention} has already been claimed "
+                       f"for clan {db_clan_role_obj.clan_tag}")
+        return
+
+    # confirm rank role has not been claimed
+    db_rank_role_obj = db_responder.read_rank_role(role.id)
+    # rank role has been claimed
+    if db_rank_role_obj:
+        await ctx.send(f"{role.mention} has already been claimed "
+                       f"for rank {db_rank_role_obj.model_name}")
         return
 
     # claim clan role
@@ -3284,7 +3293,15 @@ async def claimrankrole(ctx, rank_role_name):
         await ctx.send(f"{ctx.author.mention} is not guild's admin")
         return
 
-    # confirm role has not been claimed
+    # confirm clan role has not been claimed
+    db_clan_role_obj = db_responder.read_clan_role(role.id)
+    # clan role has been claimed
+    if db_clan_role_obj:
+        await ctx.send(f"{role.mention} has already been claimed "
+                       f"for clan {db_clan_role_obj.clan_tag}")
+        return
+
+    # confirm rank role has not been claimed
     db_rank_role_obj = db_responder.read_rank_role(role.id)
     # rank role has been claimed
     if db_rank_role_obj:
@@ -3302,7 +3319,7 @@ async def claimrankrole(ctx, rank_role_name):
         return
 
     await ctx.send(f"{role.mention} has been claimed "
-                   f"for rank {db_rank_role_obj.model_name}")
+                   f"for rank {claimed_rank_role_obj.model_name}")
 
 
 @client.command(
