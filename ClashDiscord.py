@@ -116,7 +116,7 @@ async def findplayer(ctx, *, player_tag):
         color=discord.Color(client_data.embed_color),
         icon_url=(ctx.bot.user.avatar_url.BASE +
                   ctx.bot.user.avatar_url._url),
-        title=player_obj.name,
+        title=f"{player_obj.name} {player_obj.tag}",
         bot_prefix=ctx.prefix,
         bot_user_name=ctx.bot.user.name,
         thumbnail=player_obj.league_icons,
@@ -171,7 +171,7 @@ async def player(ctx):
         color=discord.Color(client_data.embed_color),
         icon_url=(ctx.bot.user.avatar_url.BASE +
                   ctx.bot.user.avatar_url._url),
-        title=player_obj.name,
+        title=f"{player_obj.name} {player_obj.tag}",
         bot_prefix=ctx.prefix,
         bot_user_name=ctx.bot.user.name,
         thumbnail=player_obj.league_icons,
@@ -1003,14 +1003,15 @@ async def supertroopsearch(ctx, *, unit_name):
 @client.command(
     aliases=['findclanuser', 'findclanmemberusers'],
     brief='clan',
-    description="returns the users linked to the active player's clan"
+    description="returns the users linked to the active player's clan",
+    hidden=True
 )
 async def findclanusers(ctx):
     async with ctx.typing():
         db_player_obj = db_responder.read_player_active(
             ctx.author.id)
 
-    verification_payload = discord_responder.clan_verification(
+    verification_payload = discord_responder.clan_leadership_verification(
         db_player_obj, ctx.author, razbot_data.header)
     if not verification_payload['verified']:
         embed_list = discord_responder.embed_message(
@@ -1049,7 +1050,7 @@ async def findclanusers(ctx):
         title=f"{clan_obj.name} linked users",
         bot_prefix=ctx.prefix,
         bot_user_name=ctx.bot.user.name,
-        thumbnail=player_obj.league_icons,
+        thumbnail=clan_obj.clan_icons,
         field_list=field_dict_list,
         image_url=None,
         author_display_name=ctx.author.display_name,
