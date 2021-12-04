@@ -52,8 +52,7 @@ async def help(ctx):
     embed_list = discord_responder.embed_message(
         Embed=disnake.Embed,
         color=disnake.Color(client_data.embed_color),
-        icon_url=(ctx.bot.user.avatar_url.BASE +
-                  ctx.bot.user.avatar_url._url),
+        icon_url=ctx.bot.user.avatar.url,
         title=f"{ctx.bot.user.name} help menu",
         bot_prefix=ctx.prefix,
         bot_user_name=ctx.bot.user.name,
@@ -61,8 +60,7 @@ async def help(ctx):
         field_list=field_dict_list,
         image_url=None,
         author_display_name=ctx.author.display_name,
-        author_avatar_url=(ctx.author.avatar_url.BASE +
-                           ctx.author.avatar_url._url)
+        author_avatar_url=ctx.author.avatar.url
     )
 
     for embed in embed_list:
@@ -114,8 +112,7 @@ async def findplayer(ctx, *, player_tag):
     embed_list = discord_responder.embed_message(
         Embed=disnake.Embed,
         color=disnake.Color(client_data.embed_color),
-        icon_url=(ctx.bot.user.avatar_url.BASE +
-                  ctx.bot.user.avatar_url._url),
+        icon_url=ctx.bot.user.avatar.url,
         title=f"{player_obj.name} {player_obj.tag}",
         bot_prefix=ctx.prefix,
         bot_user_name=ctx.bot.user.name,
@@ -123,8 +120,7 @@ async def findplayer(ctx, *, player_tag):
         field_list=field_dict_list,
         image_url=None,
         author_display_name=ctx.author.display_name,
-        author_avatar_url=(ctx.author.avatar_url.BASE +
-                           ctx.author.avatar_url._url)
+        author_avatar_url=ctx.author.avatar.url
     )
 
     for embed in embed_list:
@@ -146,8 +142,7 @@ async def player(ctx):
         embed_list = discord_responder.embed_message(
             Embed=disnake.Embed,
             color=disnake.Color(client_data.embed_color),
-            icon_url=(ctx.bot.user.avatar_url.BASE +
-                      ctx.bot.user.avatar_url._url),
+            icon_url=ctx.bot.user.avatar.url,
             title=None,
             bot_prefix=ctx.prefix,
             bot_user_name=ctx.bot.user.name,
@@ -155,8 +150,7 @@ async def player(ctx):
             field_list=verification_payload['field_dict_list'],
             image_url=None,
             author_display_name=ctx.author.display_name,
-            author_avatar_url=(ctx.author.avatar_url.BASE +
-                               ctx.author.avatar_url._url)
+            author_avatar_url=ctx.author.avatar.url
         )
         for embed in embed_list:
             await ctx.send(embed=embed)
@@ -169,8 +163,7 @@ async def player(ctx):
     embed_list = discord_responder.embed_message(
         Embed=disnake.Embed,
         color=disnake.Color(client_data.embed_color),
-        icon_url=(ctx.bot.user.avatar_url.BASE +
-                  ctx.bot.user.avatar_url._url),
+        icon_url=ctx.bot.user.avatar.url,
         title=f"{player_obj.name} {player_obj.tag}",
         bot_prefix=ctx.prefix,
         bot_user_name=ctx.bot.user.name,
@@ -178,8 +171,7 @@ async def player(ctx):
         field_list=field_dict_list,
         image_url=None,
         author_display_name=ctx.author.display_name,
-        author_avatar_url=(ctx.author.avatar_url.BASE +
-                           ctx.author.avatar_url._url)
+        author_avatar_url=ctx.author.avatar.url
     )
 
     for embed in embed_list:
@@ -208,8 +200,7 @@ async def playermember(ctx):
         embed_list = discord_responder.embed_message(
             Embed=disnake.Embed,
             color=disnake.Color(client_data.embed_color),
-            icon_url=(ctx.bot.user.avatar_url.BASE +
-                      ctx.bot.user.avatar_url._url),
+            icon_url=ctx.bot.user.avatar.url,
             title=None,
             bot_prefix=ctx.prefix,
             bot_user_name=ctx.bot.user.name,
@@ -217,8 +208,7 @@ async def playermember(ctx):
             field_list=verification_payload['field_dict_list'],
             image_url=None,
             author_display_name=ctx.author.display_name,
-            author_avatar_url=(ctx.author.avatar_url.BASE +
-                               ctx.author.avatar_url._url)
+            author_avatar_url=ctx.author.avatar.url
         )
         for embed in embed_list:
             await ctx.send(embed=embed)
@@ -231,8 +221,7 @@ async def playermember(ctx):
     embed_list = discord_responder.embed_message(
         Embed=disnake.Embed,
         color=disnake.Color(client_data.embed_color),
-        icon_url=(ctx.bot.user.avatar_url.BASE +
-                  ctx.bot.user.avatar_url._url),
+        icon_url=ctx.bot.user.avatar.url,
         title=player_obj.name,
         bot_prefix=ctx.prefix,
         bot_user_name=ctx.bot.user.name,
@@ -240,8 +229,7 @@ async def playermember(ctx):
         field_list=field_dict_list,
         image_url=None,
         author_display_name=ctx.author.display_name,
-        author_avatar_url=(ctx.author.avatar_url.BASE +
-                           ctx.author.avatar_url._url)
+        author_avatar_url=ctx.author.avatar.url
     )
 
     for embed in embed_list:
@@ -263,8 +251,7 @@ async def unitlvl(ctx, *, unit_name):
         embed_list = discord_responder.embed_message(
             Embed=disnake.Embed,
             color=disnake.Color(client_data.embed_color),
-            icon_url=(ctx.bot.user.avatar_url.BASE +
-                      ctx.bot.user.avatar_url._url),
+            icon_url=ctx.bot.user.avatar.url,
             title=None,
             bot_prefix=ctx.prefix,
             bot_user_name=ctx.bot.user.name,
@@ -272,8 +259,7 @@ async def unitlvl(ctx, *, unit_name):
             field_list=verification_payload['field_dict_list'],
             image_url=None,
             author_display_name=ctx.author.display_name,
-            author_avatar_url=(ctx.author.avatar_url.BASE +
-                               ctx.author.avatar_url._url)
+            author_avatar_url=ctx.author.avatar.url
         )
         for embed in embed_list:
             await ctx.send(embed=embed)
@@ -287,8 +273,7 @@ async def unitlvl(ctx, *, unit_name):
     embed_list = discord_responder.embed_message(
         Embed=disnake.Embed,
         color=disnake.Color(client_data.embed_color),
-        icon_url=(ctx.bot.user.avatar_url.BASE +
-                  ctx.bot.user.avatar_url._url),
+        icon_url=ctx.bot.user.avatar.url,
         title=f"{player_obj.name} {unit_obj.name}",
         bot_prefix=ctx.prefix,
         bot_user_name=ctx.bot.user.name,
@@ -296,8 +281,7 @@ async def unitlvl(ctx, *, unit_name):
         field_list=field_dict_list,
         image_url=None,
         author_display_name=ctx.author.display_name,
-        author_avatar_url=(ctx.author.avatar_url.BASE +
-                           ctx.author.avatar_url._url)
+        author_avatar_url=ctx.author.avatar.url
     )
     for embed in embed_list:
         await ctx.send(embed=embed)
@@ -318,8 +302,7 @@ async def allunitlvl(ctx):
         embed_list = discord_responder.embed_message(
             Embed=disnake.Embed,
             color=disnake.Color(client_data.embed_color),
-            icon_url=(ctx.bot.user.avatar_url.BASE +
-                      ctx.bot.user.avatar_url._url),
+            icon_url=ctx.bot.user.avatar.url,
             title=None,
             bot_prefix=ctx.prefix,
             bot_user_name=ctx.bot.user.name,
@@ -327,8 +310,7 @@ async def allunitlvl(ctx):
             field_list=verification_payload['field_dict_list'],
             image_url=None,
             author_display_name=ctx.author.display_name,
-            author_avatar_url=(ctx.author.avatar_url.BASE +
-                               ctx.author.avatar_url._url)
+            author_avatar_url=ctx.author.avatar.url
         )
         for embed in embed_list:
             await ctx.send(embed=embed)
@@ -340,8 +322,7 @@ async def allunitlvl(ctx):
     embed_list = discord_responder.embed_message(
         Embed=disnake.Embed,
         color=disnake.Color(client_data.embed_color),
-        icon_url=(ctx.bot.user.avatar_url.BASE +
-                  ctx.bot.user.avatar_url._url),
+        icon_url=ctx.bot.user.avatar.url,
         title=f"{player_obj.name} units",
         bot_prefix=ctx.prefix,
         bot_user_name=ctx.bot.user.name,
@@ -349,8 +330,7 @@ async def allunitlvl(ctx):
         field_list=field_dict_list,
         image_url=None,
         author_display_name=ctx.author.display_name,
-        author_avatar_url=(ctx.author.avatar_url.BASE +
-                           ctx.author.avatar_url._url)
+        author_avatar_url=ctx.author.avatar.url
     )
     for embed in embed_list:
         await ctx.send(embed=embed)
@@ -371,8 +351,7 @@ async def allherolvl(ctx):
         embed_list = discord_responder.embed_message(
             Embed=disnake.Embed,
             color=disnake.Color(client_data.embed_color),
-            icon_url=(ctx.bot.user.avatar_url.BASE +
-                      ctx.bot.user.avatar_url._url),
+            icon_url=ctx.bot.user.avatar.url,
             title=None,
             bot_prefix=ctx.prefix,
             bot_user_name=ctx.bot.user.name,
@@ -380,8 +359,7 @@ async def allherolvl(ctx):
             field_list=verification_payload['field_dict_list'],
             image_url=None,
             author_display_name=ctx.author.display_name,
-            author_avatar_url=(ctx.author.avatar_url.BASE +
-                               ctx.author.avatar_url._url)
+            author_avatar_url=ctx.author.avatar.url
         )
         for embed in embed_list:
             await ctx.send(embed=embed)
@@ -393,8 +371,7 @@ async def allherolvl(ctx):
     embed_list = discord_responder.embed_message(
         Embed=disnake.Embed,
         color=disnake.Color(client_data.embed_color),
-        icon_url=(ctx.bot.user.avatar_url.BASE +
-                  ctx.bot.user.avatar_url._url),
+        icon_url=ctx.bot.user.avatar.url,
         title=f"{player_obj.name} heroes",
         bot_prefix=ctx.prefix,
         bot_user_name=ctx.bot.user.name,
@@ -402,8 +379,7 @@ async def allherolvl(ctx):
         field_list=field_dict_list,
         image_url=None,
         author_display_name=ctx.author.display_name,
-        author_avatar_url=(ctx.author.avatar_url.BASE +
-                           ctx.author.avatar_url._url)
+        author_avatar_url=ctx.author.avatar.url
     )
     for embed in embed_list:
         await ctx.send(embed=embed)
@@ -424,8 +400,7 @@ async def alltrooplvl(ctx):
         embed_list = discord_responder.embed_message(
             Embed=disnake.Embed,
             color=disnake.Color(client_data.embed_color),
-            icon_url=(ctx.bot.user.avatar_url.BASE +
-                      ctx.bot.user.avatar_url._url),
+            icon_url=ctx.bot.user.avatar.url,
             title=None,
             bot_prefix=ctx.prefix,
             bot_user_name=ctx.bot.user.name,
@@ -433,8 +408,7 @@ async def alltrooplvl(ctx):
             field_list=verification_payload['field_dict_list'],
             image_url=None,
             author_display_name=ctx.author.display_name,
-            author_avatar_url=(ctx.author.avatar_url.BASE +
-                               ctx.author.avatar_url._url)
+            author_avatar_url=ctx.author.avatar.url
         )
         for embed in embed_list:
             await ctx.send(embed=embed)
@@ -446,8 +420,7 @@ async def alltrooplvl(ctx):
     embed_list = discord_responder.embed_message(
         Embed=disnake.Embed,
         color=disnake.Color(client_data.embed_color),
-        icon_url=(ctx.bot.user.avatar_url.BASE +
-                  ctx.bot.user.avatar_url._url),
+        icon_url=ctx.bot.user.avatar.url,
         title=f"{player_obj.name} troops",
         bot_prefix=ctx.prefix,
         bot_user_name=ctx.bot.user.name,
@@ -455,8 +428,7 @@ async def alltrooplvl(ctx):
         field_list=field_dict_list,
         image_url=None,
         author_display_name=ctx.author.display_name,
-        author_avatar_url=(ctx.author.avatar_url.BASE +
-                           ctx.author.avatar_url._url)
+        author_avatar_url=ctx.author.avatar.url
     )
     for embed in embed_list:
         await ctx.send(embed=embed)
@@ -477,8 +449,7 @@ async def allspelllvl(ctx):
         embed_list = discord_responder.embed_message(
             Embed=disnake.Embed,
             color=disnake.Color(client_data.embed_color),
-            icon_url=(ctx.bot.user.avatar_url.BASE +
-                      ctx.bot.user.avatar_url._url),
+            icon_url=ctx.bot.user.avatar.url,
             title=None,
             bot_prefix=ctx.prefix,
             bot_user_name=ctx.bot.user.name,
@@ -486,8 +457,7 @@ async def allspelllvl(ctx):
             field_list=verification_payload['field_dict_list'],
             image_url=None,
             author_display_name=ctx.author.display_name,
-            author_avatar_url=(ctx.author.avatar_url.BASE +
-                               ctx.author.avatar_url._url)
+            author_avatar_url=ctx.author.avatar.url
         )
         for embed in embed_list:
             await ctx.send(embed=embed)
@@ -499,8 +469,7 @@ async def allspelllvl(ctx):
     embed_list = discord_responder.embed_message(
         Embed=disnake.Embed,
         color=disnake.Color(client_data.embed_color),
-        icon_url=(ctx.bot.user.avatar_url.BASE +
-                  ctx.bot.user.avatar_url._url),
+        icon_url=ctx.bot.user.avatar.url,
         title=f"{player_obj.name} spells",
         bot_prefix=ctx.prefix,
         bot_user_name=ctx.bot.user.name,
@@ -508,8 +477,7 @@ async def allspelllvl(ctx):
         field_list=field_dict_list,
         image_url=None,
         author_display_name=ctx.author.display_name,
-        author_avatar_url=(ctx.author.avatar_url.BASE +
-                           ctx.author.avatar_url._url)
+        author_avatar_url=ctx.author.avatar.url
     )
     for embed in embed_list:
         await ctx.send(embed=embed)
@@ -530,8 +498,7 @@ async def activesupertroop(ctx):
         embed_list = discord_responder.embed_message(
             Embed=disnake.Embed,
             color=disnake.Color(client_data.embed_color),
-            icon_url=(ctx.bot.user.avatar_url.BASE +
-                      ctx.bot.user.avatar_url._url),
+            icon_url=ctx.bot.user.avatar.url,
             title=None,
             bot_prefix=ctx.prefix,
             bot_user_name=ctx.bot.user.name,
@@ -539,8 +506,7 @@ async def activesupertroop(ctx):
             field_list=verification_payload['field_dict_list'],
             image_url=None,
             author_display_name=ctx.author.display_name,
-            author_avatar_url=(ctx.author.avatar_url.BASE +
-                               ctx.author.avatar_url._url)
+            author_avatar_url=ctx.author.avatar.url
         )
         for embed in embed_list:
             await ctx.send(embed=embed)
@@ -555,8 +521,7 @@ async def activesupertroop(ctx):
     embed_list = discord_responder.embed_message(
         Embed=disnake.Embed,
         color=disnake.Color(client_data.embed_color),
-        icon_url=(ctx.bot.user.avatar_url.BASE +
-                  ctx.bot.user.avatar_url._url),
+        icon_url=ctx.bot.user.avatar.url,
         title=f"{player_obj.name} super troops",
         bot_prefix=ctx.prefix,
         bot_user_name=ctx.bot.user.name,
@@ -564,8 +529,7 @@ async def activesupertroop(ctx):
         field_list=field_dict_list,
         image_url=None,
         author_display_name=ctx.author.display_name,
-        author_avatar_url=(ctx.author.avatar_url.BASE +
-                           ctx.author.avatar_url._url)
+        author_avatar_url=ctx.author.avatar.url
     )
     for embed in embed_list:
         await ctx.send(embed=embed)
@@ -592,8 +556,7 @@ async def finduser(ctx, player_tag):
     embed_list = discord_responder.embed_message(
         Embed=disnake.Embed,
         color=disnake.Color(client_data.embed_color),
-        icon_url=(ctx.bot.user.avatar_url.BASE +
-                  ctx.bot.user.avatar_url._url),
+        icon_url=ctx.bot.user.avatar.url,
         title=None,
         bot_prefix=ctx.prefix,
         bot_user_name=ctx.bot.user.name,
@@ -601,8 +564,7 @@ async def finduser(ctx, player_tag):
         field_list=field_dict_list,
         image_url=None,
         author_display_name=ctx.author.display_name,
-        author_avatar_url=(ctx.author.avatar_url.BASE +
-                           ctx.author.avatar_url._url)
+        author_avatar_url=ctx.author.avatar.url
     )
     for embed in embed_list:
         await ctx.send(embed=embed)
@@ -630,8 +592,7 @@ async def findclan(ctx, *, clan_tag):
     embed_list = discord_responder.embed_message(
         Embed=disnake.Embed,
         color=disnake.Color(client_data.embed_color),
-        icon_url=(ctx.bot.user.avatar_url.BASE +
-                  ctx.bot.user.avatar_url._url),
+        icon_url=ctx.bot.user.avatar.url,
         title=f"{clan_obj.name} {clan_obj.tag}",
         bot_prefix=ctx.prefix,
         bot_user_name=ctx.bot.user.name,
@@ -639,8 +600,7 @@ async def findclan(ctx, *, clan_tag):
         field_list=field_dict_list,
         image_url=None,
         author_display_name=ctx.author.display_name,
-        author_avatar_url=(ctx.author.avatar_url.BASE +
-                           ctx.author.avatar_url._url)
+        author_avatar_url=ctx.author.avatar.url
     )
     for embed in embed_list:
         await ctx.send(embed=embed)
@@ -661,8 +621,7 @@ async def clan(ctx):
         embed_list = discord_responder.embed_message(
             Embed=disnake.Embed,
             color=disnake.Color(client_data.embed_color),
-            icon_url=(ctx.bot.user.avatar_url.BASE +
-                      ctx.bot.user.avatar_url._url),
+            icon_url=ctx.bot.user.avatar.url,
             title=None,
             bot_prefix=ctx.prefix,
             bot_user_name=ctx.bot.user.name,
@@ -670,8 +629,7 @@ async def clan(ctx):
             field_list=verification_payload['field_dict_list'],
             image_url=None,
             author_display_name=ctx.author.display_name,
-            author_avatar_url=(ctx.author.avatar_url.BASE +
-                               ctx.author.avatar_url._url)
+            author_avatar_url=ctx.author.avatar.url
         )
         for embed in embed_list:
             await ctx.send(embed=embed)
@@ -685,8 +643,7 @@ async def clan(ctx):
     embed_list = discord_responder.embed_message(
         Embed=disnake.Embed,
         color=disnake.Color(client_data.embed_color),
-        icon_url=(ctx.bot.user.avatar_url.BASE +
-                  ctx.bot.user.avatar_url._url),
+        icon_url=ctx.bot.user.avatar.url,
         title=f"{clan_obj.name} {clan_obj.tag}",
         bot_prefix=ctx.prefix,
         bot_user_name=ctx.bot.user.name,
@@ -694,8 +651,7 @@ async def clan(ctx):
         field_list=field_dict_list,
         image_url=None,
         author_display_name=ctx.author.display_name,
-        author_avatar_url=(ctx.author.avatar_url.BASE +
-                           ctx.author.avatar_url._url)
+        author_avatar_url=ctx.author.avatar.url
     )
     for embed in embed_list:
         await ctx.send(embed=embed)
@@ -735,8 +691,7 @@ async def clanmention(ctx):
     embed_list = discord_responder.embed_message(
         Embed=disnake.Embed,
         color=disnake.Color(client_data.embed_color),
-        icon_url=(ctx.bot.user.avatar_url.BASE +
-                  ctx.bot.user.avatar_url._url),
+        icon_url=ctx.bot.user.avatar.url,
         title=f"{clan_obj.name} {clan_obj.tag}",
         bot_prefix=ctx.prefix,
         bot_user_name=ctx.bot.user.name,
@@ -744,8 +699,7 @@ async def clanmention(ctx):
         field_list=field_dict_list,
         image_url=None,
         author_display_name=ctx.author.display_name,
-        author_avatar_url=(ctx.author.avatar_url.BASE +
-                           ctx.author.avatar_url._url)
+        author_avatar_url=ctx.author.avatar.url
     )
     for embed in embed_list:
         await ctx.send(embed=embed)
@@ -765,8 +719,7 @@ async def clanlineup(ctx):
         embed_list = discord_responder.embed_message(
             Embed=disnake.Embed,
             color=disnake.Color(client_data.embed_color),
-            icon_url=(ctx.bot.user.avatar_url.BASE +
-                      ctx.bot.user.avatar_url._url),
+            icon_url=ctx.bot.user.avatar.url,
             title=None,
             bot_prefix=ctx.prefix,
             bot_user_name=ctx.bot.user.name,
@@ -774,8 +727,7 @@ async def clanlineup(ctx):
             field_list=verification_payload['field_dict_list'],
             image_url=None,
             author_display_name=ctx.author.display_name,
-            author_avatar_url=(ctx.author.avatar_url.BASE +
-                               ctx.author.avatar_url._url)
+            author_avatar_url=ctx.author.avatar.url
         )
         for embed in embed_list:
             await ctx.send(embed=embed)
@@ -796,8 +748,7 @@ async def clanlineup(ctx):
     embed_list = discord_responder.embed_message(
         Embed=disnake.Embed,
         color=disnake.Color(client_data.embed_color),
-        icon_url=(ctx.bot.user.avatar_url.BASE +
-                  ctx.bot.user.avatar_url._url),
+        icon_url=ctx.bot.user.avatar.url,
         title=f"{clan_obj.name} lineup",
         bot_prefix=ctx.prefix,
         bot_user_name=ctx.bot.user.name,
@@ -805,8 +756,7 @@ async def clanlineup(ctx):
         field_list=field_dict_list,
         image_url=None,
         author_display_name=ctx.author.display_name,
-        author_avatar_url=(ctx.author.avatar_url.BASE +
-                           ctx.author.avatar_url._url)
+        author_avatar_url=ctx.author.avatar.url
     )
     for embed in embed_list:
         await ctx.send(embed=embed)
@@ -827,8 +777,7 @@ async def clanwarpreference(ctx):
         embed_list = discord_responder.embed_message(
             Embed=disnake.Embed,
             color=disnake.Color(client_data.embed_color),
-            icon_url=(ctx.bot.user.avatar_url.BASE +
-                      ctx.bot.user.avatar_url._url),
+            icon_url=ctx.bot.user.avatar.url,
             title=None,
             bot_prefix=ctx.prefix,
             bot_user_name=ctx.bot.user.name,
@@ -836,8 +785,7 @@ async def clanwarpreference(ctx):
             field_list=verification_payload['field_dict_list'],
             image_url=None,
             author_display_name=ctx.author.display_name,
-            author_avatar_url=(ctx.author.avatar_url.BASE +
-                               ctx.author.avatar_url._url)
+            author_avatar_url=ctx.author.avatar.url
         )
         for embed in embed_list:
             await ctx.send(embed=embed)
@@ -858,8 +806,7 @@ async def clanwarpreference(ctx):
     embed_list = discord_responder.embed_message(
         Embed=disnake.Embed,
         color=disnake.Color(client_data.embed_color),
-        icon_url=(ctx.bot.user.avatar_url.BASE +
-                  ctx.bot.user.avatar_url._url),
+        icon_url=ctx.bot.user.avatar.url,
         title=f"{clan_obj.name} war preference",
         bot_prefix=ctx.prefix,
         bot_user_name=ctx.bot.user.name,
@@ -867,8 +814,7 @@ async def clanwarpreference(ctx):
         field_list=field_dict_list,
         image_url=None,
         author_display_name=ctx.author.display_name,
-        author_avatar_url=(ctx.author.avatar_url.BASE +
-                           ctx.author.avatar_url._url)
+        author_avatar_url=ctx.author.avatar.url
     )
     for embed in embed_list:
         await ctx.send(embed=embed)
@@ -890,8 +836,7 @@ async def donation(ctx, *, unit_name):
         embed_list = discord_responder.embed_message(
             Embed=disnake.Embed,
             color=disnake.Color(client_data.embed_color),
-            icon_url=(ctx.bot.user.avatar_url.BASE +
-                      ctx.bot.user.avatar_url._url),
+            icon_url=ctx.bot.user.avatar.url,
             title=None,
             bot_prefix=ctx.prefix,
             bot_user_name=ctx.bot.user.name,
@@ -899,8 +844,7 @@ async def donation(ctx, *, unit_name):
             field_list=verification_payload['field_dict_list'],
             image_url=None,
             author_display_name=ctx.author.display_name,
-            author_avatar_url=(ctx.author.avatar_url.BASE +
-                               ctx.author.avatar_url._url)
+            author_avatar_url=ctx.author.avatar.url
         )
         for embed in embed_list:
             await ctx.send(embed=embed)
@@ -918,8 +862,7 @@ async def donation(ctx, *, unit_name):
     embed_list = discord_responder.embed_message(
         Embed=disnake.Embed,
         color=disnake.Color(client_data.embed_color),
-        icon_url=(ctx.bot.user.avatar_url.BASE +
-                  ctx.bot.user.avatar_url._url),
+        icon_url=ctx.bot.user.avatar.url,
         title=f"{clan_obj.name} {clan_obj.tag}",
         bot_prefix=ctx.prefix,
         bot_user_name=ctx.bot.user.name,
@@ -927,8 +870,7 @@ async def donation(ctx, *, unit_name):
         field_list=field_dict_list,
         image_url=None,
         author_display_name=ctx.author.display_name,
-        author_avatar_url=(ctx.author.avatar_url.BASE +
-                           ctx.author.avatar_url._url)
+        author_avatar_url=ctx.author.avatar.url
     )
     for embed in embed_list:
         await ctx.send(embed=embed)
@@ -949,8 +891,7 @@ async def supertroopsearch(ctx, *, unit_name):
         embed_list = discord_responder.embed_message(
             Embed=disnake.Embed,
             color=disnake.Color(client_data.embed_color),
-            icon_url=(ctx.bot.user.avatar_url.BASE +
-                      ctx.bot.user.avatar_url._url),
+            icon_url=ctx.bot.user.avatar.url,
             title=None,
             bot_prefix=ctx.prefix,
             bot_user_name=ctx.bot.user.name,
@@ -958,8 +899,7 @@ async def supertroopsearch(ctx, *, unit_name):
             field_list=verification_payload['field_dict_list'],
             image_url=None,
             author_display_name=ctx.author.display_name,
-            author_avatar_url=(ctx.author.avatar_url.BASE +
-                               ctx.author.avatar_url._url)
+            author_avatar_url=ctx.author.avatar.url
         )
         for embed in embed_list:
             await ctx.send(embed=embed)
@@ -984,8 +924,7 @@ async def supertroopsearch(ctx, *, unit_name):
     embed_list = discord_responder.embed_message(
         Embed=disnake.Embed,
         color=disnake.Color(client_data.embed_color),
-        icon_url=(ctx.bot.user.avatar_url.BASE +
-                  ctx.bot.user.avatar_url._url),
+        icon_url=ctx.bot.user.avatar.url,
         title=f"{clan_obj.name} {clan_obj.tag}",
         bot_prefix=ctx.prefix,
         bot_user_name=ctx.bot.user.name,
@@ -993,8 +932,7 @@ async def supertroopsearch(ctx, *, unit_name):
         field_list=field_dict_list,
         image_url=None,
         author_display_name=ctx.author.display_name,
-        author_avatar_url=(ctx.author.avatar_url.BASE +
-                           ctx.author.avatar_url._url)
+        author_avatar_url=ctx.author.avatar.url
     )
     for embed in embed_list:
         await ctx.send(embed=embed)
@@ -1017,8 +955,7 @@ async def findclanusers(ctx):
         embed_list = discord_responder.embed_message(
             Embed=disnake.Embed,
             color=disnake.Color(client_data.embed_color),
-            icon_url=(ctx.bot.user.avatar_url.BASE +
-                      ctx.bot.user.avatar_url._url),
+            icon_url=ctx.bot.user.avatar.url,
             title=None,
             bot_prefix=ctx.prefix,
             bot_user_name=ctx.bot.user.name,
@@ -1026,8 +963,7 @@ async def findclanusers(ctx):
             field_list=verification_payload['field_dict_list'],
             image_url=None,
             author_display_name=ctx.author.display_name,
-            author_avatar_url=(ctx.author.avatar_url.BASE +
-                               ctx.author.avatar_url._url)
+            author_avatar_url=ctx.author.avatar.url
         )
         for embed in embed_list:
             await ctx.send(embed=embed)
@@ -1045,8 +981,7 @@ async def findclanusers(ctx):
     embed_list = discord_responder.embed_message(
         Embed=disnake.Embed,
         color=disnake.Color(client_data.embed_color),
-        icon_url=(ctx.bot.user.avatar_url.BASE +
-                  ctx.bot.user.avatar_url._url),
+        icon_url=ctx.bot.user.avatar.url,
         title=f"{clan_obj.name} linked users",
         bot_prefix=ctx.prefix,
         bot_user_name=ctx.bot.user.name,
@@ -1054,8 +989,7 @@ async def findclanusers(ctx):
         field_list=field_dict_list,
         image_url=None,
         author_display_name=ctx.author.display_name,
-        author_avatar_url=(ctx.author.avatar_url.BASE +
-                           ctx.author.avatar_url._url)
+        author_avatar_url=ctx.author.avatar.url
     )
     for embed in embed_list:
         await ctx.send(embed=embed)
@@ -1079,8 +1013,7 @@ async def waroverview(ctx):
         embed_list = discord_responder.embed_message(
             Embed=disnake.Embed,
             color=disnake.Color(client_data.embed_color),
-            icon_url=(ctx.bot.user.avatar_url.BASE +
-                      ctx.bot.user.avatar_url._url),
+            icon_url=ctx.bot.user.avatar.url,
             title=None,
             bot_prefix=ctx.prefix,
             bot_user_name=ctx.bot.user.name,
@@ -1088,8 +1021,7 @@ async def waroverview(ctx):
             field_list=verification_payload['field_dict_list'],
             image_url=None,
             author_display_name=ctx.author.display_name,
-            author_avatar_url=(ctx.author.avatar_url.BASE +
-                               ctx.author.avatar_url._url)
+            author_avatar_url=ctx.author.avatar.url
         )
         for embed in embed_list:
             await ctx.send(embed=embed)
@@ -1103,8 +1035,7 @@ async def waroverview(ctx):
     embed_list = discord_responder.embed_message(
         Embed=disnake.Embed,
         color=disnake.Color(client_data.embed_color),
-        icon_url=(ctx.bot.user.avatar_url.BASE +
-                  ctx.bot.user.avatar_url._url),
+        icon_url=ctx.bot.user.avatar.url,
         title=f"{war_obj.clan.name} vs. {war_obj.opponent.name}",
         bot_prefix=ctx.prefix,
         bot_user_name=ctx.bot.user.name,
@@ -1112,8 +1043,7 @@ async def waroverview(ctx):
         field_list=field_dict_list,
         image_url=None,
         author_display_name=ctx.author.display_name,
-        author_avatar_url=(ctx.author.avatar_url.BASE +
-                           ctx.author.avatar_url._url)
+        author_avatar_url=ctx.author.avatar.url
     )
     for embed in embed_list:
         await ctx.send(embed=embed)
@@ -1132,8 +1062,7 @@ async def wartime(ctx):
         embed_list = discord_responder.embed_message(
             Embed=disnake.Embed,
             color=disnake.Color(client_data.embed_color),
-            icon_url=(ctx.bot.user.avatar_url.BASE +
-                      ctx.bot.user.avatar_url._url),
+            icon_url=ctx.bot.user.avatar.url,
             title=None,
             bot_prefix=ctx.prefix,
             bot_user_name=ctx.bot.user.name,
@@ -1141,8 +1070,7 @@ async def wartime(ctx):
             field_list=verification_payload['field_dict_list'],
             image_url=None,
             author_display_name=ctx.author.display_name,
-            author_avatar_url=(ctx.author.avatar_url.BASE +
-                               ctx.author.avatar_url._url)
+            author_avatar_url=ctx.author.avatar.url
         )
         for embed in embed_list:
             await ctx.send(embed=embed)
@@ -1156,8 +1084,7 @@ async def wartime(ctx):
     embed_list = discord_responder.embed_message(
         Embed=disnake.Embed,
         color=disnake.Color(client_data.embed_color),
-        icon_url=(ctx.bot.user.avatar_url.BASE +
-                  ctx.bot.user.avatar_url._url),
+        icon_url=ctx.bot.user.avatar.url,
         title=f"{war_obj.clan.name} vs. {war_obj.opponent.name}",
         bot_prefix=ctx.prefix,
         bot_user_name=ctx.bot.user.name,
@@ -1165,8 +1092,7 @@ async def wartime(ctx):
         field_list=field_dict_list,
         image_url=None,
         author_display_name=ctx.author.display_name,
-        author_avatar_url=(ctx.author.avatar_url.BASE +
-                           ctx.author.avatar_url._url)
+        author_avatar_url=ctx.author.avatar.url
     )
     for embed in embed_list:
         await ctx.send(embed=embed)
@@ -1188,8 +1114,7 @@ async def warnoattack(ctx):
         embed_list = discord_responder.embed_message(
             Embed=disnake.Embed,
             color=disnake.Color(client_data.embed_color),
-            icon_url=(ctx.bot.user.avatar_url.BASE +
-                      ctx.bot.user.avatar_url._url),
+            icon_url=ctx.bot.user.avatar.url,
             title=None,
             bot_prefix=ctx.prefix,
             bot_user_name=ctx.bot.user.name,
@@ -1197,8 +1122,7 @@ async def warnoattack(ctx):
             field_list=verification_payload['field_dict_list'],
             image_url=None,
             author_display_name=ctx.author.display_name,
-            author_avatar_url=(ctx.author.avatar_url.BASE +
-                               ctx.author.avatar_url._url)
+            author_avatar_url=ctx.author.avatar.url
         )
         for embed in embed_list:
             await ctx.send(embed=embed)
@@ -1212,8 +1136,7 @@ async def warnoattack(ctx):
     embed_list = discord_responder.embed_message(
         Embed=disnake.Embed,
         color=disnake.Color(client_data.embed_color),
-        icon_url=(ctx.bot.user.avatar_url.BASE +
-                  ctx.bot.user.avatar_url._url),
+        icon_url=ctx.bot.user.avatar.url,
         title=f"{war_obj.clan.name} vs. {war_obj.opponent.name}",
         bot_prefix=ctx.prefix,
         bot_user_name=ctx.bot.user.name,
@@ -1221,8 +1144,7 @@ async def warnoattack(ctx):
         field_list=field_dict_list,
         image_url=None,
         author_display_name=ctx.author.display_name,
-        author_avatar_url=(ctx.author.avatar_url.BASE +
-                           ctx.author.avatar_url._url)
+        author_avatar_url=ctx.author.avatar.url
     )
     for embed in embed_list:
         await ctx.send(embed=embed)
@@ -1244,8 +1166,7 @@ async def warclanstars(ctx):
         embed_list = discord_responder.embed_message(
             Embed=disnake.Embed,
             color=disnake.Color(client_data.embed_color),
-            icon_url=(ctx.bot.user.avatar_url.BASE +
-                      ctx.bot.user.avatar_url._url),
+            icon_url=ctx.bot.user.avatar.url,
             title=None,
             bot_prefix=ctx.prefix,
             bot_user_name=ctx.bot.user.name,
@@ -1253,8 +1174,7 @@ async def warclanstars(ctx):
             field_list=verification_payload['field_dict_list'],
             image_url=None,
             author_display_name=ctx.author.display_name,
-            author_avatar_url=(ctx.author.avatar_url.BASE +
-                               ctx.author.avatar_url._url)
+            author_avatar_url=ctx.author.avatar.url
         )
         for embed in embed_list:
             await ctx.send(embed=embed)
@@ -1268,8 +1188,7 @@ async def warclanstars(ctx):
     embed_list = discord_responder.embed_message(
         Embed=disnake.Embed,
         color=disnake.Color(client_data.embed_color),
-        icon_url=(ctx.bot.user.avatar_url.BASE +
-                  ctx.bot.user.avatar_url._url),
+        icon_url=ctx.bot.user.avatar.url,
         title=f"{war_obj.clan.name} vs. {war_obj.opponent.name}",
         bot_prefix=ctx.prefix,
         bot_user_name=ctx.bot.user.name,
@@ -1277,8 +1196,7 @@ async def warclanstars(ctx):
         field_list=field_dict_list,
         image_url=None,
         author_display_name=ctx.author.display_name,
-        author_avatar_url=(ctx.author.avatar_url.BASE +
-                           ctx.author.avatar_url._url)
+        author_avatar_url=ctx.author.avatar.url
     )
     for embed in embed_list:
         await ctx.send(embed=embed)
@@ -1300,8 +1218,7 @@ async def warallattacks(ctx):
         embed_list = discord_responder.embed_message(
             Embed=disnake.Embed,
             color=disnake.Color(client_data.embed_color),
-            icon_url=(ctx.bot.user.avatar_url.BASE +
-                      ctx.bot.user.avatar_url._url),
+            icon_url=ctx.bot.user.avatar.url,
             title=None,
             bot_prefix=ctx.prefix,
             bot_user_name=ctx.bot.user.name,
@@ -1309,8 +1226,7 @@ async def warallattacks(ctx):
             field_list=verification_payload['field_dict_list'],
             image_url=None,
             author_display_name=ctx.author.display_name,
-            author_avatar_url=(ctx.author.avatar_url.BASE +
-                               ctx.author.avatar_url._url)
+            author_avatar_url=ctx.author.avatar.url
         )
         for embed in embed_list:
             await ctx.send(embed=embed)
@@ -1324,8 +1240,7 @@ async def warallattacks(ctx):
     embed_list = discord_responder.embed_message(
         Embed=disnake.Embed,
         color=disnake.Color(client_data.embed_color),
-        icon_url=(ctx.bot.user.avatar_url.BASE +
-                  ctx.bot.user.avatar_url._url),
+        icon_url=ctx.bot.user.avatar.url,
         title=f"{war_obj.clan.name} vs. {war_obj.opponent.name}",
         bot_prefix=ctx.prefix,
         bot_user_name=ctx.bot.user.name,
@@ -1333,8 +1248,7 @@ async def warallattacks(ctx):
         field_list=field_dict_list,
         image_url=None,
         author_display_name=ctx.author.display_name,
-        author_avatar_url=(ctx.author.avatar_url.BASE +
-                           ctx.author.avatar_url._url)
+        author_avatar_url=ctx.author.avatar.url
     )
     for embed in embed_list:
         await ctx.send(embed=embed)
@@ -1356,8 +1270,7 @@ async def warclanscore(ctx):
         embed_list = discord_responder.embed_message(
             Embed=disnake.Embed,
             color=disnake.Color(client_data.embed_color),
-            icon_url=(ctx.bot.user.avatar_url.BASE +
-                      ctx.bot.user.avatar_url._url),
+            icon_url=ctx.bot.user.avatar.url,
             title=None,
             bot_prefix=ctx.prefix,
             bot_user_name=ctx.bot.user.name,
@@ -1365,8 +1278,7 @@ async def warclanscore(ctx):
             field_list=verification_payload['field_dict_list'],
             image_url=None,
             author_display_name=ctx.author.display_name,
-            author_avatar_url=(ctx.author.avatar_url.BASE +
-                               ctx.author.avatar_url._url)
+            author_avatar_url=ctx.author.avatar.url
         )
         for embed in embed_list:
             await ctx.send(embed=embed)
@@ -1380,8 +1292,7 @@ async def warclanscore(ctx):
     embed_list = discord_responder.embed_message(
         Embed=disnake.Embed,
         color=disnake.Color(client_data.embed_color),
-        icon_url=(ctx.bot.user.avatar_url.BASE +
-                  ctx.bot.user.avatar_url._url),
+        icon_url=ctx.bot.user.avatar.url,
         title=f"{war_obj.clan.name} vs. {war_obj.opponent.name}",
         bot_prefix=ctx.prefix,
         bot_user_name=ctx.bot.user.name,
@@ -1389,8 +1300,7 @@ async def warclanscore(ctx):
         field_list=field_dict_list,
         image_url=None,
         author_display_name=ctx.author.display_name,
-        author_avatar_url=(ctx.author.avatar_url.BASE +
-                           ctx.author.avatar_url._url)
+        author_avatar_url=ctx.author.avatar.url
     )
 
     for embed in embed_list:
@@ -1438,8 +1348,7 @@ async def cwllineup(ctx):
         embed_list = discord_responder.embed_message(
             Embed=disnake.Embed,
             color=disnake.Color(client_data.embed_color),
-            icon_url=(ctx.bot.user.avatar_url.BASE +
-                      ctx.bot.user.avatar_url._url),
+            icon_url=ctx.bot.user.avatar.url,
             title=f"{player_obj.clan_name} {player_obj.clan_tag}",
             bot_prefix=ctx.prefix,
             bot_user_name=ctx.bot.user.name,
@@ -1447,8 +1356,7 @@ async def cwllineup(ctx):
             field_list=field_dict_list,
             image_url=None,
             author_display_name=ctx.author.display_name,
-            author_avatar_url=(ctx.author.avatar_url.BASE +
-                               ctx.author.avatar_url._url)
+            author_avatar_url=ctx.author.avatar.url
         )
         for embed in embed_list:
             await ctx.send(embed=embed)
@@ -1472,8 +1380,7 @@ async def cwlclanscore(ctx):
         embed_list = discord_responder.embed_message(
             Embed=disnake.Embed,
             color=disnake.Color(client_data.embed_color),
-            icon_url=(ctx.bot.user.avatar_url.BASE +
-                      ctx.bot.user.avatar_url._url),
+            icon_url=ctx.bot.user.avatar.url,
             title=None,
             bot_prefix=ctx.prefix,
             bot_user_name=ctx.bot.user.name,
@@ -1481,8 +1388,7 @@ async def cwlclanscore(ctx):
             field_list=verification_payload['field_dict_list'],
             image_url=None,
             author_display_name=ctx.author.display_name,
-            author_avatar_url=(ctx.author.avatar_url.BASE +
-                               ctx.author.avatar_url._url)
+            author_avatar_url=ctx.author.avatar.url
         )
         for embed in embed_list:
             await ctx.send(embed=embed)
@@ -1496,8 +1402,7 @@ async def cwlclanscore(ctx):
     embed_list = discord_responder.embed_message(
         Embed=disnake.Embed,
         color=disnake.Color(client_data.embed_color),
-        icon_url=(ctx.bot.user.avatar_url.BASE +
-                  ctx.bot.user.avatar_url._url),
+        icon_url=ctx.bot.user.avatar.url,
         title=f"{player_obj.clan_name} CWL scores",
         bot_prefix=ctx.prefix,
         bot_user_name=ctx.bot.user.name,
@@ -1505,8 +1410,7 @@ async def cwlclanscore(ctx):
         field_list=field_dict_list,
         image_url=None,
         author_display_name=ctx.author.display_name,
-        author_avatar_url=(ctx.author.avatar_url.BASE +
-                           ctx.author.avatar_url._url)
+        author_avatar_url=ctx.author.avatar.url
     )
 
     for embed in embed_list:
@@ -1527,8 +1431,7 @@ async def cwlscore(ctx):
         embed_list = discord_responder.embed_message(
             Embed=disnake.Embed,
             color=disnake.Color(client_data.embed_color),
-            icon_url=(ctx.bot.user.avatar_url.BASE +
-                      ctx.bot.user.avatar_url._url),
+            icon_url=ctx.bot.user.avatar.url,
             title=None,
             bot_prefix=ctx.prefix,
             bot_user_name=ctx.bot.user.name,
@@ -1536,8 +1439,7 @@ async def cwlscore(ctx):
             field_list=verification_payload['field_dict_list'],
             image_url=None,
             author_display_name=ctx.author.display_name,
-            author_avatar_url=(ctx.author.avatar_url.BASE +
-                               ctx.author.avatar_url._url)
+            author_avatar_url=ctx.author.avatar.url
         )
         for embed in embed_list:
             await ctx.send(embed=embed)
@@ -1551,8 +1453,7 @@ async def cwlscore(ctx):
     embed_list = discord_responder.embed_message(
         Embed=disnake.Embed,
         color=disnake.Color(client_data.embed_color),
-        icon_url=(ctx.bot.user.avatar_url.BASE +
-                  ctx.bot.user.avatar_url._url),
+        icon_url=ctx.bot.user.avatar.url,
         title=f"{player_obj.name} CWL score",
         bot_prefix=ctx.prefix,
         bot_user_name=ctx.bot.user.name,
@@ -1560,8 +1461,7 @@ async def cwlscore(ctx):
         field_list=field_dict_list,
         image_url=None,
         author_display_name=ctx.author.display_name,
-        author_avatar_url=(ctx.author.avatar_url.BASE +
-                           ctx.author.avatar_url._url)
+        author_avatar_url=ctx.author.avatar.url
     )
 
     for embed in embed_list:
@@ -1589,8 +1489,7 @@ async def cwlmemberscore(ctx):
         embed_list = discord_responder.embed_message(
             Embed=disnake.Embed,
             color=disnake.Color(client_data.embed_color),
-            icon_url=(ctx.bot.user.avatar_url.BASE +
-                      ctx.bot.user.avatar_url._url),
+            icon_url=ctx.bot.user.avatar.url,
             title=None,
             bot_prefix=ctx.prefix,
             bot_user_name=ctx.bot.user.name,
@@ -1598,8 +1497,7 @@ async def cwlmemberscore(ctx):
             field_list=verification_payload['field_dict_list'],
             image_url=None,
             author_display_name=ctx.author.display_name,
-            author_avatar_url=(ctx.author.avatar_url.BASE +
-                               ctx.author.avatar_url._url)
+            author_avatar_url=ctx.author.avatar.url
         )
         for embed in embed_list:
             await ctx.send(embed=embed)
@@ -1613,8 +1511,7 @@ async def cwlmemberscore(ctx):
     embed_list = discord_responder.embed_message(
         Embed=disnake.Embed,
         color=disnake.Color(client_data.embed_color),
-        icon_url=(ctx.bot.user.avatar_url.BASE +
-                  ctx.bot.user.avatar_url._url),
+        icon_url=ctx.bot.user.avatar.url,
         title=f"{player_obj.name} CWL score",
         bot_prefix=ctx.prefix,
         bot_user_name=ctx.bot.user.name,
@@ -1622,8 +1519,7 @@ async def cwlmemberscore(ctx):
         field_list=field_dict_list,
         image_url=None,
         author_display_name=ctx.author.display_name,
-        author_avatar_url=(ctx.author.avatar_url.BASE +
-                           ctx.author.avatar_url._url)
+        author_avatar_url=ctx.author.avatar.url
     )
 
     for embed in embed_list:
@@ -1648,8 +1544,7 @@ async def cwlwaroverview(ctx):
         embed_list = discord_responder.embed_message(
             Embed=disnake.Embed,
             color=disnake.Color(client_data.embed_color),
-            icon_url=(ctx.bot.user.avatar_url.BASE +
-                      ctx.bot.user.avatar_url._url),
+            icon_url=ctx.bot.user.avatar.url,
             title=None,
             bot_prefix=ctx.prefix,
             bot_user_name=ctx.bot.user.name,
@@ -1657,8 +1552,7 @@ async def cwlwaroverview(ctx):
             field_list=verification_payload['field_dict_list'],
             image_url=None,
             author_display_name=ctx.author.display_name,
-            author_avatar_url=(ctx.author.avatar_url.BASE +
-                               ctx.author.avatar_url._url)
+            author_avatar_url=ctx.author.avatar.url
         )
         for embed in embed_list:
             await ctx.send(embed=embed)
@@ -1672,8 +1566,7 @@ async def cwlwaroverview(ctx):
     embed_list = discord_responder.embed_message(
         Embed=disnake.Embed,
         color=disnake.Color(client_data.embed_color),
-        icon_url=(ctx.bot.user.avatar_url.BASE +
-                  ctx.bot.user.avatar_url._url),
+        icon_url=ctx.bot.user.avatar.url,
         title=f"{cwl_war_obj.clan.name} vs. {cwl_war_obj.opponent.name}",
         bot_prefix=ctx.prefix,
         bot_user_name=ctx.bot.user.name,
@@ -1681,8 +1574,7 @@ async def cwlwaroverview(ctx):
         field_list=field_dict_list,
         image_url=None,
         author_display_name=ctx.author.display_name,
-        author_avatar_url=(ctx.author.avatar_url.BASE +
-                           ctx.author.avatar_url._url)
+        author_avatar_url=ctx.author.avatar.url
     )
 
     for embed in embed_list:
@@ -1703,8 +1595,7 @@ async def cwlwartime(ctx):
         embed_list = discord_responder.embed_message(
             Embed=disnake.Embed,
             color=disnake.Color(client_data.embed_color),
-            icon_url=(ctx.bot.user.avatar_url.BASE +
-                      ctx.bot.user.avatar_url._url),
+            icon_url=ctx.bot.user.avatar.url,
             title=None,
             bot_prefix=ctx.prefix,
             bot_user_name=ctx.bot.user.name,
@@ -1712,8 +1603,7 @@ async def cwlwartime(ctx):
             field_list=verification_payload['field_dict_list'],
             image_url=None,
             author_display_name=ctx.author.display_name,
-            author_avatar_url=(ctx.author.avatar_url.BASE +
-                               ctx.author.avatar_url._url)
+            author_avatar_url=ctx.author.avatar.url
         )
         for embed in embed_list:
             await ctx.send(embed=embed)
@@ -1727,8 +1617,7 @@ async def cwlwartime(ctx):
     embed_list = discord_responder.embed_message(
         Embed=disnake.Embed,
         color=disnake.Color(client_data.embed_color),
-        icon_url=(ctx.bot.user.avatar_url.BASE +
-                  ctx.bot.user.avatar_url._url),
+        icon_url=ctx.bot.user.avatar.url,
         title=f"{cwl_war_obj.clan.name} vs. {cwl_war_obj.opponent.name}",
         bot_prefix=ctx.prefix,
         bot_user_name=ctx.bot.user.name,
@@ -1736,8 +1625,7 @@ async def cwlwartime(ctx):
         field_list=field_dict_list,
         image_url=None,
         author_display_name=ctx.author.display_name,
-        author_avatar_url=(ctx.author.avatar_url.BASE +
-                           ctx.author.avatar_url._url)
+        author_avatar_url=ctx.author.avatar.url
     )
 
     for embed in embed_list:
@@ -1760,8 +1648,7 @@ async def cwlwarnoattack(ctx):
         embed_list = discord_responder.embed_message(
             Embed=disnake.Embed,
             color=disnake.Color(client_data.embed_color),
-            icon_url=(ctx.bot.user.avatar_url.BASE +
-                      ctx.bot.user.avatar_url._url),
+            icon_url=ctx.bot.user.avatar.url,
             title=None,
             bot_prefix=ctx.prefix,
             bot_user_name=ctx.bot.user.name,
@@ -1769,8 +1656,7 @@ async def cwlwarnoattack(ctx):
             field_list=verification_payload['field_dict_list'],
             image_url=None,
             author_display_name=ctx.author.display_name,
-            author_avatar_url=(ctx.author.avatar_url.BASE +
-                               ctx.author.avatar_url._url)
+            author_avatar_url=ctx.author.avatar.url
         )
         for embed in embed_list:
             await ctx.send(embed=embed)
@@ -1784,8 +1670,7 @@ async def cwlwarnoattack(ctx):
     embed_list = discord_responder.embed_message(
         Embed=disnake.Embed,
         color=disnake.Color(client_data.embed_color),
-        icon_url=(ctx.bot.user.avatar_url.BASE +
-                  ctx.bot.user.avatar_url._url),
+        icon_url=ctx.bot.user.avatar.url,
         title=f"{cwl_war_obj.clan.name} vs. {cwl_war_obj.opponent.name}",
         bot_prefix=ctx.prefix,
         bot_user_name=ctx.bot.user.name,
@@ -1793,8 +1678,7 @@ async def cwlwarnoattack(ctx):
         field_list=field_dict_list,
         image_url=None,
         author_display_name=ctx.author.display_name,
-        author_avatar_url=(ctx.author.avatar_url.BASE +
-                           ctx.author.avatar_url._url)
+        author_avatar_url=ctx.author.avatar.url
     )
 
     for embed in embed_list:
@@ -1817,8 +1701,7 @@ async def cwlwarallattack(ctx):
         embed_list = discord_responder.embed_message(
             Embed=disnake.Embed,
             color=disnake.Color(client_data.embed_color),
-            icon_url=(ctx.bot.user.avatar_url.BASE +
-                      ctx.bot.user.avatar_url._url),
+            icon_url=ctx.bot.user.avatar.url,
             title=None,
             bot_prefix=ctx.prefix,
             bot_user_name=ctx.bot.user.name,
@@ -1826,8 +1709,7 @@ async def cwlwarallattack(ctx):
             field_list=verification_payload['field_dict_list'],
             image_url=None,
             author_display_name=ctx.author.display_name,
-            author_avatar_url=(ctx.author.avatar_url.BASE +
-                               ctx.author.avatar_url._url)
+            author_avatar_url=ctx.author.avatar.url
         )
         for embed in embed_list:
             await ctx.send(embed=embed)
@@ -1841,8 +1723,7 @@ async def cwlwarallattack(ctx):
     embed_list = discord_responder.embed_message(
         Embed=disnake.Embed,
         color=disnake.Color(client_data.embed_color),
-        icon_url=(ctx.bot.user.avatar_url.BASE +
-                  ctx.bot.user.avatar_url._url),
+        icon_url=ctx.bot.user.avatar.url,
         title=f"{cwl_war_obj.clan.name} vs. {cwl_war_obj.opponent.name}",
         bot_prefix=ctx.prefix,
         bot_user_name=ctx.bot.user.name,
@@ -1850,8 +1731,7 @@ async def cwlwarallattack(ctx):
         field_list=field_dict_list,
         image_url=None,
         author_display_name=ctx.author.display_name,
-        author_avatar_url=(ctx.author.avatar_url.BASE +
-                           ctx.author.avatar_url._url)
+        author_avatar_url=ctx.author.avatar.url
     )
 
     for embed in embed_list:
@@ -1871,8 +1751,7 @@ async def mentionrazgriz(ctx):
     embed_list = discord_responder.embed_message(
         Embed=disnake.Embed,
         color=disnake.Color(client_data.embed_color),
-        icon_url=(ctx.bot.user.avatar_url.BASE +
-                  ctx.bot.user.avatar_url._url),
+        icon_url=ctx.bot.user.avatar.url,
         title=f"mention testing",
         bot_prefix=ctx.prefix,
         bot_user_name=ctx.bot.user.name,
@@ -1880,8 +1759,7 @@ async def mentionrazgriz(ctx):
         field_list=field_dict_list,
         image_url=None,
         author_display_name=ctx.author.display_name,
-        author_avatar_url=(ctx.author.avatar_url.BASE +
-                           ctx.author.avatar_url._url)
+        author_avatar_url=ctx.author.avatar.url
     )
 
     for embed in embed_list:
@@ -1927,8 +1805,7 @@ async def role(ctx):
         embed_list = discord_responder.embed_message(
             Embed=disnake.Embed,
             color=disnake.Color(client_data.embed_color),
-            icon_url=(ctx.bot.user.avatar_url.BASE +
-                      ctx.bot.user.avatar_url._url),
+            icon_url=ctx.bot.user.avatar.url,
             title=f"{discord_user_obj.display_name}",
             bot_prefix=ctx.prefix,
             bot_user_name=ctx.bot.user.name,
@@ -1936,8 +1813,7 @@ async def role(ctx):
             field_list=field_dict_list,
             image_url=None,
             author_display_name=ctx.author.display_name,
-            author_avatar_url=(ctx.author.avatar_url.BASE +
-                               ctx.author.avatar_url._url)
+            author_avatar_url=ctx.author.avatar.url
         )
         for embed in embed_list:
             await ctx.send(embed=embed)
@@ -1971,8 +1847,7 @@ async def role(ctx):
             embed_list = discord_responder.embed_message(
                 Embed=disnake.Embed,
                 color=disnake.Color(client_data.embed_color),
-                icon_url=(ctx.bot.user.avatar_url.BASE +
-                          ctx.bot.user.avatar_url._url),
+                icon_url=ctx.bot.user.avatar.url,
                 title=f"{discord_user_obj.display_name} {player_obj.name}",
                 bot_prefix=ctx.prefix,
                 bot_user_name=ctx.bot.user.name,
@@ -1980,8 +1855,7 @@ async def role(ctx):
                 field_list=field_dict_list,
                 image_url=None,
                 author_display_name=ctx.author.display_name,
-                author_avatar_url=(ctx.author.avatar_url.BASE +
-                                   ctx.author.avatar_url._url)
+                author_avatar_url=ctx.author.avatar.url
             )
             for embed in embed_list:
                 await ctx.send(embed=embed)
@@ -2003,8 +1877,7 @@ async def role(ctx):
             embed_list = discord_responder.embed_message(
                 Embed=disnake.Embed,
                 color=disnake.Color(client_data.embed_color),
-                icon_url=(ctx.bot.user.avatar_url.BASE +
-                          ctx.bot.user.avatar_url._url),
+                icon_url=ctx.bot.user.avatar.url,
                 title=f"{discord_user_obj.display_name} {player_obj.name}",
                 bot_prefix=ctx.prefix,
                 bot_user_name=ctx.bot.user.name,
@@ -2012,8 +1885,7 @@ async def role(ctx):
                 field_list=field_dict_list,
                 image_url=None,
                 author_display_name=ctx.author.display_name,
-                author_avatar_url=(ctx.author.avatar_url.BASE +
-                                   ctx.author.avatar_url._url)
+                author_avatar_url=ctx.author.avatar.url
             )
             for embed in embed_list:
                 await ctx.send(embed=embed)
@@ -2108,8 +1980,7 @@ async def role(ctx):
         embed_list = discord_responder.embed_message(
             Embed=disnake.Embed,
             color=disnake.Color(client_data.embed_color),
-            icon_url=(ctx.bot.user.avatar_url.BASE +
-                      ctx.bot.user.avatar_url._url),
+            icon_url=ctx.bot.user.avatar.url,
             title=f"{discord_user_obj.display_name}",
             bot_prefix=ctx.prefix,
             bot_user_name=ctx.bot.user.name,
@@ -2117,8 +1988,7 @@ async def role(ctx):
             field_list=field_dict_list,
             image_url=None,
             author_display_name=ctx.author.display_name,
-            author_avatar_url=(ctx.author.avatar_url.BASE +
-                               ctx.author.avatar_url._url)
+            author_avatar_url=ctx.author.avatar.url
         )
         for embed in embed_list:
             await ctx.send(embed=embed)
@@ -2151,8 +2021,7 @@ async def role(ctx):
         embed_list = discord_responder.embed_message(
             Embed=disnake.Embed,
             color=disnake.Color(client_data.embed_color),
-            icon_url=(ctx.bot.user.avatar_url.BASE +
-                      ctx.bot.user.avatar_url._url),
+            icon_url=ctx.bot.user.avatar.url,
             title=f"{discord_user_obj.display_name}",
             bot_prefix=ctx.prefix,
             bot_user_name=ctx.bot.user.name,
@@ -2160,8 +2029,7 @@ async def role(ctx):
             field_list=field_dict_list,
             image_url=None,
             author_display_name=ctx.author.display_name,
-            author_avatar_url=(ctx.author.avatar_url.BASE +
-                               ctx.author.avatar_url._url)
+            author_avatar_url=ctx.author.avatar.url
         )
         for embed in embed_list:
             await ctx.send(embed=embed)
@@ -2198,8 +2066,7 @@ async def rolemember(ctx):
         embed_list = discord_responder.embed_message(
             Embed=disnake.Embed,
             color=disnake.Color(client_data.embed_color),
-            icon_url=(ctx.bot.user.avatar_url.BASE +
-                      ctx.bot.user.avatar_url._url),
+            icon_url=ctx.bot.user.avatar.url,
             title=None,
             bot_prefix=ctx.prefix,
             bot_user_name=ctx.bot.user.name,
@@ -2207,8 +2074,7 @@ async def rolemember(ctx):
             field_list=verification_payload['field_dict_list'],
             image_url=None,
             author_display_name=ctx.author.display_name,
-            author_avatar_url=(ctx.author.avatar_url.BASE +
-                               ctx.author.avatar_url._url)
+            author_avatar_url=ctx.author.avatar.url
         )
         for embed in embed_list:
             await ctx.send(embed=embed)
@@ -2230,8 +2096,7 @@ async def rolemember(ctx):
         embed_list = discord_responder.embed_message(
             Embed=disnake.Embed,
             color=disnake.Color(client_data.embed_color),
-            icon_url=(ctx.bot.user.avatar_url.BASE +
-                      ctx.bot.user.avatar_url._url),
+            icon_url=ctx.bot.user.avatar.url,
             title=f"{discord_user_obj.display_name}",
             bot_prefix=ctx.prefix,
             bot_user_name=ctx.bot.user.name,
@@ -2239,8 +2104,7 @@ async def rolemember(ctx):
             field_list=field_dict_list,
             image_url=None,
             author_display_name=ctx.author.display_name,
-            author_avatar_url=(ctx.author.avatar_url.BASE +
-                               ctx.author.avatar_url._url)
+            author_avatar_url=ctx.author.avatar.url
         )
         for embed in embed_list:
             await ctx.send(embed=embed)
@@ -2274,8 +2138,7 @@ async def rolemember(ctx):
             embed_list = discord_responder.embed_message(
                 Embed=disnake.Embed,
                 color=disnake.Color(client_data.embed_color),
-                icon_url=(ctx.bot.user.avatar_url.BASE +
-                          ctx.bot.user.avatar_url._url),
+                icon_url=ctx.bot.user.avatar.url,
                 title=f"{discord_user_obj.display_name} {player_obj.name}",
                 bot_prefix=ctx.prefix,
                 bot_user_name=ctx.bot.user.name,
@@ -2283,8 +2146,7 @@ async def rolemember(ctx):
                 field_list=field_dict_list,
                 image_url=None,
                 author_display_name=ctx.author.display_name,
-                author_avatar_url=(ctx.author.avatar_url.BASE +
-                                   ctx.author.avatar_url._url)
+                author_avatar_url=ctx.author.avatar.url
             )
             for embed in embed_list:
                 await ctx.send(embed=embed)
@@ -2306,8 +2168,7 @@ async def rolemember(ctx):
             embed_list = discord_responder.embed_message(
                 Embed=disnake.Embed,
                 color=disnake.Color(client_data.embed_color),
-                icon_url=(ctx.bot.user.avatar_url.BASE +
-                          ctx.bot.user.avatar_url._url),
+                icon_url=ctx.bot.user.avatar.url,
                 title=f"{discord_user_obj.display_name} {player_obj.name}",
                 bot_prefix=ctx.prefix,
                 bot_user_name=ctx.bot.user.name,
@@ -2315,8 +2176,7 @@ async def rolemember(ctx):
                 field_list=field_dict_list,
                 image_url=None,
                 author_display_name=ctx.author.display_name,
-                author_avatar_url=(ctx.author.avatar_url.BASE +
-                                   ctx.author.avatar_url._url)
+                author_avatar_url=ctx.author.avatar.url
             )
             for embed in embed_list:
                 await ctx.send(embed=embed)
@@ -2411,8 +2271,7 @@ async def rolemember(ctx):
         embed_list = discord_responder.embed_message(
             Embed=disnake.Embed,
             color=disnake.Color(client_data.embed_color),
-            icon_url=(ctx.bot.user.avatar_url.BASE +
-                      ctx.bot.user.avatar_url._url),
+            icon_url=ctx.bot.user.avatar.url,
             title=f"{discord_user_obj.display_name}",
             bot_prefix=ctx.prefix,
             bot_user_name=ctx.bot.user.name,
@@ -2420,8 +2279,7 @@ async def rolemember(ctx):
             field_list=field_dict_list,
             image_url=None,
             author_display_name=ctx.author.display_name,
-            author_avatar_url=(ctx.author.avatar_url.BASE +
-                               ctx.author.avatar_url._url)
+            author_avatar_url=ctx.author.avatar.url
         )
         for embed in embed_list:
             await ctx.send(embed=embed)
@@ -2454,8 +2312,7 @@ async def rolemember(ctx):
         embed_list = discord_responder.embed_message(
             Embed=disnake.Embed,
             color=disnake.Color(client_data.embed_color),
-            icon_url=(ctx.bot.user.avatar_url.BASE +
-                      ctx.bot.user.avatar_url._url),
+            icon_url=ctx.bot.user.avatar.url,
             title=f"{discord_user_obj.display_name}",
             bot_prefix=ctx.prefix,
             bot_user_name=ctx.bot.user.name,
@@ -2463,8 +2320,7 @@ async def rolemember(ctx):
             field_list=field_dict_list,
             image_url=None,
             author_display_name=ctx.author.display_name,
-            author_avatar_url=(ctx.author.avatar_url.BASE +
-                               ctx.author.avatar_url._url)
+            author_avatar_url=ctx.author.avatar.url
         )
         for embed in embed_list:
             await ctx.send(embed=embed)
@@ -2515,8 +2371,7 @@ async def roleall(ctx):
             embed_list = discord_responder.embed_message(
                 Embed=disnake.Embed,
                 color=disnake.Color(client_data.embed_color),
-                icon_url=(ctx.bot.user.avatar_url.BASE +
-                          ctx.bot.user.avatar_url._url),
+                icon_url=ctx.bot.user.avatar.url,
                 title=f"{discord_user_obj.display_name}",
                 bot_prefix=ctx.prefix,
                 bot_user_name=ctx.bot.user.name,
@@ -2524,8 +2379,7 @@ async def roleall(ctx):
                 field_list=field_dict_list,
                 image_url=None,
                 author_display_name=ctx.author.display_name,
-                author_avatar_url=(ctx.author.avatar_url.BASE +
-                                   ctx.author.avatar_url._url)
+                author_avatar_url=ctx.author.avatar.url
             )
             for embed in embed_list:
                 await ctx.send(embed=embed)
@@ -2560,8 +2414,7 @@ async def roleall(ctx):
                 embed_list = discord_responder.embed_message(
                     Embed=disnake.Embed,
                     color=disnake.Color(client_data.embed_color),
-                    icon_url=(ctx.bot.user.avatar_url.BASE +
-                              ctx.bot.user.avatar_url._url),
+                    icon_url=ctx.bot.user.avatar.url,
                     title=f"{discord_user_obj.display_name} {player_obj.name}",
                     bot_prefix=ctx.prefix,
                     bot_user_name=ctx.bot.user.name,
@@ -2569,8 +2422,7 @@ async def roleall(ctx):
                     field_list=field_dict_list,
                     image_url=None,
                     author_display_name=ctx.author.display_name,
-                    author_avatar_url=(ctx.author.avatar_url.BASE +
-                                       ctx.author.avatar_url._url)
+                    author_avatar_url=ctx.author.avatar.url
                 )
                 for embed in embed_list:
                     await ctx.send(embed=embed)
@@ -2592,8 +2444,7 @@ async def roleall(ctx):
                 embed_list = discord_responder.embed_message(
                     Embed=disnake.Embed,
                     color=disnake.Color(client_data.embed_color),
-                    icon_url=(ctx.bot.user.avatar_url.BASE +
-                              ctx.bot.user.avatar_url._url),
+                    icon_url=ctx.bot.user.avatar.url,
                     title=f"{discord_user_obj.display_name} {player_obj.name}",
                     bot_prefix=ctx.prefix,
                     bot_user_name=ctx.bot.user.name,
@@ -2601,8 +2452,7 @@ async def roleall(ctx):
                     field_list=field_dict_list,
                     image_url=None,
                     author_display_name=ctx.author.display_name,
-                    author_avatar_url=(ctx.author.avatar_url.BASE +
-                                       ctx.author.avatar_url._url)
+                    author_avatar_url=ctx.author.avatar.url
                 )
                 for embed in embed_list:
                     await ctx.send(embed=embed)
@@ -2697,8 +2547,7 @@ async def roleall(ctx):
             embed_list = discord_responder.embed_message(
                 Embed=disnake.Embed,
                 color=disnake.Color(client_data.embed_color),
-                icon_url=(ctx.bot.user.avatar_url.BASE +
-                          ctx.bot.user.avatar_url._url),
+                icon_url=ctx.bot.user.avatar.url,
                 title=f"{discord_user_obj.display_name}",
                 bot_prefix=ctx.prefix,
                 bot_user_name=ctx.bot.user.name,
@@ -2706,8 +2555,7 @@ async def roleall(ctx):
                 field_list=field_dict_list,
                 image_url=None,
                 author_display_name=ctx.author.display_name,
-                author_avatar_url=(ctx.author.avatar_url.BASE +
-                                   ctx.author.avatar_url._url)
+                author_avatar_url=ctx.author.avatar.url
             )
             for embed in embed_list:
                 await ctx.send(embed=embed)
@@ -2740,8 +2588,7 @@ async def roleall(ctx):
             embed_list = discord_responder.embed_message(
                 Embed=disnake.Embed,
                 color=disnake.Color(client_data.embed_color),
-                icon_url=(ctx.bot.user.avatar_url.BASE +
-                          ctx.bot.user.avatar_url._url),
+                icon_url=ctx.bot.user.avatar.url,
                 title=f"{discord_user_obj.display_name}",
                 bot_prefix=ctx.prefix,
                 bot_user_name=ctx.bot.user.name,
@@ -2749,8 +2596,7 @@ async def roleall(ctx):
                 field_list=field_dict_list,
                 image_url=None,
                 author_display_name=ctx.author.display_name,
-                author_avatar_url=(ctx.author.avatar_url.BASE +
-                                   ctx.author.avatar_url._url)
+                author_avatar_url=ctx.author.avatar.url
             )
             for embed in embed_list:
                 await ctx.send(embed=embed)
@@ -3612,8 +3458,7 @@ async def on_reaction_add(reaction, user):
     embed_list = discord_responder.embed_message(
         Embed=disnake.Embed,
         color=disnake.Color(client_data.embed_color),
-        icon_url=(ctx.bot.user.avatar_url.BASE +
-                  ctx.bot.user.avatar_url._url),
+        icon_url=ctx.bot.user.avatar.url,
         title=embed_title,
         bot_prefix=ctx.bot.command_prefix,
         bot_user_name=ctx.bot.user.name,
