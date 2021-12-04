@@ -3,7 +3,7 @@ import Clan
 from Player import super_troop_list
 import ClashResponder as clash_responder
 import RazBotDB_Responder as db_responder
-from discord.utils import get
+from disnake.utils import get
 
 
 # PLAYER
