@@ -105,8 +105,8 @@ async def findplayer(ctx, *, player_tag):
         player_obj = clash_responder.get_player(
             player_tag, razbot_data.header)
 
+    # player with given tag not found
     if not player_obj:
-        # player with given tag not found
         await ctx.send(f"could not find player with tag {player_tag}")
         return
 
@@ -563,6 +563,101 @@ async def activesupertroop(ctx):
         bot_user_name=ctx.bot.user.name,
         thumbnail=player_obj.league_icons,
         field_list=field_dict_list,
+        image_url=None,
+        author_display_name=ctx.author.display_name,
+        author_avatar_url=(ctx.author.avatar_url.BASE +
+                           ctx.author.avatar_url._url)
+    )
+    for embed in embed_list:
+        await ctx.send(embed=embed)
+
+
+@client.command(
+    aliases=['finduserfromplayer'],
+    brief='player',
+    description='returns the user that claimed a specified player'
+)
+async def finduser(ctx, player_tag):
+    async with ctx.typing():
+        player_obj = clash_responder.get_player(
+            player_tag, razbot_data.header)
+
+    # player with given tag not found
+    if not player_obj:
+        await ctx.send(f"could not find player with tag {player_tag}")
+        return
+
+    db_user_obj = db_responder.read_user_from_tag(player_obj.tag)
+    # user with requested player tag not found
+    if not db_user_obj:
+        embed_list = discord_responder.embed_message(
+            Embed=discord.Embed,
+            color=discord.Color(client_data.embed_color),
+            icon_url=(ctx.bot.user.avatar_url.BASE +
+                      ctx.bot.user.avatar_url._url),
+            title=None,
+            bot_prefix=ctx.prefix,
+            bot_user_name=ctx.bot.user.name,
+            thumbnail=None,
+            field_list=[{
+                "name": f"linked user not found",
+                "value": (
+                    f"could not find a user linked to "
+                    f"{player_obj.name} tag {player_obj.tag}"
+                )
+            }],
+            image_url=None,
+            author_display_name=ctx.author.display_name,
+            author_avatar_url=(ctx.author.avatar_url.BASE +
+                               ctx.author.avatar_url._url)
+        )
+        for embed in embed_list:
+            await ctx.send(embed=embed)
+        return
+
+    # find user in guild
+    user_obj = discord.utils.get(ctx.guild.members, id=db_user_obj.discord_id)
+
+    # user not found in guild
+    if not user_obj:
+        embed_list = discord_responder.embed_message(
+            Embed=discord.Embed,
+            color=discord.Color(client_data.embed_color),
+            icon_url=(ctx.bot.user.avatar_url.BASE +
+                      ctx.bot.user.avatar_url._url),
+            title=None,
+            bot_prefix=ctx.prefix,
+            bot_user_name=ctx.bot.user.name,
+            thumbnail=None,
+            field_list=[{
+                "name": f"linked user not in server",
+                "value": (
+                    f"user with {player_obj.name} "
+                    f"tag {player_obj.tag} is not in this server"
+                )
+            }],
+            image_url=None,
+            author_display_name=ctx.author.display_name,
+            author_avatar_url=(ctx.author.avatar_url.BASE +
+                               ctx.author.avatar_url._url)
+        )
+        for embed in embed_list:
+            await ctx.send(embed=embed)
+        return
+
+    embed_list = discord_responder.embed_message(
+        Embed=discord.Embed,
+        color=discord.Color(client_data.embed_color),
+        icon_url=(ctx.bot.user.avatar_url.BASE +
+                  ctx.bot.user.avatar_url._url),
+        title=None,
+        bot_prefix=ctx.prefix,
+        bot_user_name=ctx.bot.user.name,
+        thumbnail=player_obj.league_icons,
+        field_list=[{
+            "name": f"{player_obj.name} tag {player_obj.tag}",
+            "value": (f"claimed by {user_obj.mention}")
+        }],
         image_url=None,
         author_display_name=ctx.author.display_name,
         author_avatar_url=(ctx.author.avatar_url.BASE +
