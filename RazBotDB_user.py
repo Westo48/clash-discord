@@ -169,6 +169,31 @@ def select_user_all():
     return data
 
 
+def select_user_from_tag(player_tag):
+    """
+        Takes in a player tag and returns discord_id, admin, and super_user
+        linked to the requested player
+
+        Args:
+            discord_id (int): id received from discord
+
+        Returns:
+            discord_id: user's discord id in db
+            admin: 1 or 0 (T or F) if user is admin
+            super_user: 1 or 0 (T or F) if user is super user
+    """
+    # set up the query
+    query = (
+        f"SELECT discord_id, admin, super_user FROM user "
+        f"WHERE id = ("
+        f"SELECT user_id FROM player WHERE player_tag = '{player_tag}');"
+    )
+
+    # execute and return query
+    data = preset.select(query)
+    return data
+
+
 def update_user_admin_toggle(discord_id):
     """
         takes in the discord_id and toggles the db admin status,
