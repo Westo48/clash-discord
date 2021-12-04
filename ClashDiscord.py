@@ -1,6 +1,6 @@
-import discord
+import disnake
 from asyncio.tasks import sleep
-from discord.ext import commands
+from disnake.ext import commands
 import RazBot_Data
 import ClashDiscord_Client_Data
 import ClashResponder as clash_responder
@@ -10,7 +10,7 @@ import RazBotDB_Responder as db_responder
 razbot_data = RazBot_Data.RazBot_Data()
 client_data = ClashDiscord_Client_Data.ClashDiscord_Data()
 
-intents = discord.Intents.all()
+intents = disnake.Intents.all()
 
 client = commands.Bot(
     command_prefix=razbot_data.prefix, intents=intents)
@@ -50,8 +50,8 @@ async def help(ctx):
     emoji_list = help_dict['emoji_list']
 
     embed_list = discord_responder.embed_message(
-        Embed=discord.Embed,
-        color=discord.Color(client_data.embed_color),
+        Embed=disnake.Embed,
+        color=disnake.Color(client_data.embed_color),
         icon_url=(ctx.bot.user.avatar_url.BASE +
                   ctx.bot.user.avatar_url._url),
         title=f"{ctx.bot.user.name} help menu",
@@ -112,8 +112,8 @@ async def findplayer(ctx, *, player_tag):
     field_dict_list = discord_responder.player_info(player_obj)
 
     embed_list = discord_responder.embed_message(
-        Embed=discord.Embed,
-        color=discord.Color(client_data.embed_color),
+        Embed=disnake.Embed,
+        color=disnake.Color(client_data.embed_color),
         icon_url=(ctx.bot.user.avatar_url.BASE +
                   ctx.bot.user.avatar_url._url),
         title=f"{player_obj.name} {player_obj.tag}",
@@ -144,8 +144,8 @@ async def player(ctx):
         db_player_obj, ctx.author, razbot_data.header)
     if not verification_payload['verified']:
         embed_list = discord_responder.embed_message(
-            Embed=discord.Embed,
-            color=discord.Color(client_data.embed_color),
+            Embed=disnake.Embed,
+            color=disnake.Color(client_data.embed_color),
             icon_url=(ctx.bot.user.avatar_url.BASE +
                       ctx.bot.user.avatar_url._url),
             title=None,
@@ -167,8 +167,8 @@ async def player(ctx):
     field_dict_list = discord_responder.player_info(player_obj)
 
     embed_list = discord_responder.embed_message(
-        Embed=discord.Embed,
-        color=discord.Color(client_data.embed_color),
+        Embed=disnake.Embed,
+        color=disnake.Color(client_data.embed_color),
         icon_url=(ctx.bot.user.avatar_url.BASE +
                   ctx.bot.user.avatar_url._url),
         title=f"{player_obj.name} {player_obj.tag}",
@@ -206,8 +206,8 @@ async def playermember(ctx):
         db_player_obj, discord_member, razbot_data.header)
     if not verification_payload['verified']:
         embed_list = discord_responder.embed_message(
-            Embed=discord.Embed,
-            color=discord.Color(client_data.embed_color),
+            Embed=disnake.Embed,
+            color=disnake.Color(client_data.embed_color),
             icon_url=(ctx.bot.user.avatar_url.BASE +
                       ctx.bot.user.avatar_url._url),
             title=None,
@@ -229,8 +229,8 @@ async def playermember(ctx):
     field_dict_list = discord_responder.player_info(player_obj)
 
     embed_list = discord_responder.embed_message(
-        Embed=discord.Embed,
-        color=discord.Color(client_data.embed_color),
+        Embed=disnake.Embed,
+        color=disnake.Color(client_data.embed_color),
         icon_url=(ctx.bot.user.avatar_url.BASE +
                   ctx.bot.user.avatar_url._url),
         title=player_obj.name,
@@ -261,8 +261,8 @@ async def unitlvl(ctx, *, unit_name):
         db_player_obj, ctx.author, razbot_data.header)
     if not verification_payload['verified']:
         embed_list = discord_responder.embed_message(
-            Embed=discord.Embed,
-            color=discord.Color(client_data.embed_color),
+            Embed=disnake.Embed,
+            color=disnake.Color(client_data.embed_color),
             icon_url=(ctx.bot.user.avatar_url.BASE +
                       ctx.bot.user.avatar_url._url),
             title=None,
@@ -285,8 +285,8 @@ async def unitlvl(ctx, *, unit_name):
     field_dict_list = [discord_responder.unit_lvl(
         player_obj, unit_obj, unit_name)]
     embed_list = discord_responder.embed_message(
-        Embed=discord.Embed,
-        color=discord.Color(client_data.embed_color),
+        Embed=disnake.Embed,
+        color=disnake.Color(client_data.embed_color),
         icon_url=(ctx.bot.user.avatar_url.BASE +
                   ctx.bot.user.avatar_url._url),
         title=f"{player_obj.name} {unit_obj.name}",
@@ -316,8 +316,8 @@ async def allunitlvl(ctx):
         db_player_obj, ctx.author, razbot_data.header)
     if not verification_payload['verified']:
         embed_list = discord_responder.embed_message(
-            Embed=discord.Embed,
-            color=discord.Color(client_data.embed_color),
+            Embed=disnake.Embed,
+            color=disnake.Color(client_data.embed_color),
             icon_url=(ctx.bot.user.avatar_url.BASE +
                       ctx.bot.user.avatar_url._url),
             title=None,
@@ -338,8 +338,8 @@ async def allunitlvl(ctx):
 
     field_dict_list = discord_responder.unit_lvl_all(player_obj)
     embed_list = discord_responder.embed_message(
-        Embed=discord.Embed,
-        color=discord.Color(client_data.embed_color),
+        Embed=disnake.Embed,
+        color=disnake.Color(client_data.embed_color),
         icon_url=(ctx.bot.user.avatar_url.BASE +
                   ctx.bot.user.avatar_url._url),
         title=f"{player_obj.name} units",
@@ -369,8 +369,8 @@ async def allherolvl(ctx):
         db_player_obj, ctx.author, razbot_data.header)
     if not verification_payload['verified']:
         embed_list = discord_responder.embed_message(
-            Embed=discord.Embed,
-            color=discord.Color(client_data.embed_color),
+            Embed=disnake.Embed,
+            color=disnake.Color(client_data.embed_color),
             icon_url=(ctx.bot.user.avatar_url.BASE +
                       ctx.bot.user.avatar_url._url),
             title=None,
@@ -391,8 +391,8 @@ async def allherolvl(ctx):
 
     field_dict_list = discord_responder.hero_lvl_all(player_obj)
     embed_list = discord_responder.embed_message(
-        Embed=discord.Embed,
-        color=discord.Color(client_data.embed_color),
+        Embed=disnake.Embed,
+        color=disnake.Color(client_data.embed_color),
         icon_url=(ctx.bot.user.avatar_url.BASE +
                   ctx.bot.user.avatar_url._url),
         title=f"{player_obj.name} heroes",
@@ -422,8 +422,8 @@ async def alltrooplvl(ctx):
         db_player_obj, ctx.author, razbot_data.header)
     if not verification_payload['verified']:
         embed_list = discord_responder.embed_message(
-            Embed=discord.Embed,
-            color=discord.Color(client_data.embed_color),
+            Embed=disnake.Embed,
+            color=disnake.Color(client_data.embed_color),
             icon_url=(ctx.bot.user.avatar_url.BASE +
                       ctx.bot.user.avatar_url._url),
             title=None,
@@ -444,8 +444,8 @@ async def alltrooplvl(ctx):
 
     field_dict_list = discord_responder.troop_lvl_all(player_obj)
     embed_list = discord_responder.embed_message(
-        Embed=discord.Embed,
-        color=discord.Color(client_data.embed_color),
+        Embed=disnake.Embed,
+        color=disnake.Color(client_data.embed_color),
         icon_url=(ctx.bot.user.avatar_url.BASE +
                   ctx.bot.user.avatar_url._url),
         title=f"{player_obj.name} troops",
@@ -475,8 +475,8 @@ async def allspelllvl(ctx):
         db_player_obj, ctx.author, razbot_data.header)
     if not verification_payload['verified']:
         embed_list = discord_responder.embed_message(
-            Embed=discord.Embed,
-            color=discord.Color(client_data.embed_color),
+            Embed=disnake.Embed,
+            color=disnake.Color(client_data.embed_color),
             icon_url=(ctx.bot.user.avatar_url.BASE +
                       ctx.bot.user.avatar_url._url),
             title=None,
@@ -497,8 +497,8 @@ async def allspelllvl(ctx):
 
     field_dict_list = discord_responder.spell_lvl_all(player_obj)
     embed_list = discord_responder.embed_message(
-        Embed=discord.Embed,
-        color=discord.Color(client_data.embed_color),
+        Embed=disnake.Embed,
+        color=disnake.Color(client_data.embed_color),
         icon_url=(ctx.bot.user.avatar_url.BASE +
                   ctx.bot.user.avatar_url._url),
         title=f"{player_obj.name} spells",
@@ -528,8 +528,8 @@ async def activesupertroop(ctx):
         db_player_obj, ctx.author, razbot_data.header)
     if not verification_payload['verified']:
         embed_list = discord_responder.embed_message(
-            Embed=discord.Embed,
-            color=discord.Color(client_data.embed_color),
+            Embed=disnake.Embed,
+            color=disnake.Color(client_data.embed_color),
             icon_url=(ctx.bot.user.avatar_url.BASE +
                       ctx.bot.user.avatar_url._url),
             title=None,
@@ -553,8 +553,8 @@ async def activesupertroop(ctx):
     field_dict_list = discord_responder.active_super_troops(
         player_obj, active_super_troops)
     embed_list = discord_responder.embed_message(
-        Embed=discord.Embed,
-        color=discord.Color(client_data.embed_color),
+        Embed=disnake.Embed,
+        color=disnake.Color(client_data.embed_color),
         icon_url=(ctx.bot.user.avatar_url.BASE +
                   ctx.bot.user.avatar_url._url),
         title=f"{player_obj.name} super troops",
@@ -590,8 +590,8 @@ async def finduser(ctx, player_tag):
         player_obj, ctx.guild.members)]
 
     embed_list = discord_responder.embed_message(
-        Embed=discord.Embed,
-        color=discord.Color(client_data.embed_color),
+        Embed=disnake.Embed,
+        color=disnake.Color(client_data.embed_color),
         icon_url=(ctx.bot.user.avatar_url.BASE +
                   ctx.bot.user.avatar_url._url),
         title=None,
@@ -628,8 +628,8 @@ async def findclan(ctx, *, clan_tag):
     field_dict_list = discord_responder.clan_info(clan_obj)
 
     embed_list = discord_responder.embed_message(
-        Embed=discord.Embed,
-        color=discord.Color(client_data.embed_color),
+        Embed=disnake.Embed,
+        color=disnake.Color(client_data.embed_color),
         icon_url=(ctx.bot.user.avatar_url.BASE +
                   ctx.bot.user.avatar_url._url),
         title=f"{clan_obj.name} {clan_obj.tag}",
@@ -659,8 +659,8 @@ async def clan(ctx):
         db_player_obj, ctx.author, razbot_data.header)
     if not verification_payload['verified']:
         embed_list = discord_responder.embed_message(
-            Embed=discord.Embed,
-            color=discord.Color(client_data.embed_color),
+            Embed=disnake.Embed,
+            color=disnake.Color(client_data.embed_color),
             icon_url=(ctx.bot.user.avatar_url.BASE +
                       ctx.bot.user.avatar_url._url),
             title=None,
@@ -683,8 +683,8 @@ async def clan(ctx):
     field_dict_list = discord_responder.clan_info(clan_obj)
 
     embed_list = discord_responder.embed_message(
-        Embed=discord.Embed,
-        color=discord.Color(client_data.embed_color),
+        Embed=disnake.Embed,
+        color=disnake.Color(client_data.embed_color),
         icon_url=(ctx.bot.user.avatar_url.BASE +
                   ctx.bot.user.avatar_url._url),
         title=f"{clan_obj.name} {clan_obj.tag}",
@@ -733,8 +733,8 @@ async def clanmention(ctx):
     field_dict_list = discord_responder.clan_info(clan_obj)
 
     embed_list = discord_responder.embed_message(
-        Embed=discord.Embed,
-        color=discord.Color(client_data.embed_color),
+        Embed=disnake.Embed,
+        color=disnake.Color(client_data.embed_color),
         icon_url=(ctx.bot.user.avatar_url.BASE +
                   ctx.bot.user.avatar_url._url),
         title=f"{clan_obj.name} {clan_obj.tag}",
@@ -763,8 +763,8 @@ async def clanlineup(ctx):
         db_player_obj, ctx.author, razbot_data.header)
     if not verification_payload['verified']:
         embed_list = discord_responder.embed_message(
-            Embed=discord.Embed,
-            color=discord.Color(client_data.embed_color),
+            Embed=disnake.Embed,
+            color=disnake.Color(client_data.embed_color),
             icon_url=(ctx.bot.user.avatar_url.BASE +
                       ctx.bot.user.avatar_url._url),
             title=None,
@@ -794,8 +794,8 @@ async def clanlineup(ctx):
         clan_obj, razbot_data.header)
 
     embed_list = discord_responder.embed_message(
-        Embed=discord.Embed,
-        color=discord.Color(client_data.embed_color),
+        Embed=disnake.Embed,
+        color=disnake.Color(client_data.embed_color),
         icon_url=(ctx.bot.user.avatar_url.BASE +
                   ctx.bot.user.avatar_url._url),
         title=f"{clan_obj.name} lineup",
@@ -825,8 +825,8 @@ async def clanwarpreference(ctx):
         db_player_obj, ctx.author, razbot_data.header)
     if not verification_payload['verified']:
         embed_list = discord_responder.embed_message(
-            Embed=discord.Embed,
-            color=discord.Color(client_data.embed_color),
+            Embed=disnake.Embed,
+            color=disnake.Color(client_data.embed_color),
             icon_url=(ctx.bot.user.avatar_url.BASE +
                       ctx.bot.user.avatar_url._url),
             title=None,
@@ -856,8 +856,8 @@ async def clanwarpreference(ctx):
         clan_obj, razbot_data.header)
 
     embed_list = discord_responder.embed_message(
-        Embed=discord.Embed,
-        color=discord.Color(client_data.embed_color),
+        Embed=disnake.Embed,
+        color=disnake.Color(client_data.embed_color),
         icon_url=(ctx.bot.user.avatar_url.BASE +
                   ctx.bot.user.avatar_url._url),
         title=f"{clan_obj.name} war preference",
@@ -888,8 +888,8 @@ async def donation(ctx, *, unit_name):
         db_player_obj, ctx.author, razbot_data.header)
     if not verification_payload['verified']:
         embed_list = discord_responder.embed_message(
-            Embed=discord.Embed,
-            color=discord.Color(client_data.embed_color),
+            Embed=disnake.Embed,
+            color=disnake.Color(client_data.embed_color),
             icon_url=(ctx.bot.user.avatar_url.BASE +
                       ctx.bot.user.avatar_url._url),
             title=None,
@@ -916,8 +916,8 @@ async def donation(ctx, *, unit_name):
         clan_obj, donator_list, unit_name)
 
     embed_list = discord_responder.embed_message(
-        Embed=discord.Embed,
-        color=discord.Color(client_data.embed_color),
+        Embed=disnake.Embed,
+        color=disnake.Color(client_data.embed_color),
         icon_url=(ctx.bot.user.avatar_url.BASE +
                   ctx.bot.user.avatar_url._url),
         title=f"{clan_obj.name} {clan_obj.tag}",
@@ -947,8 +947,8 @@ async def supertroopsearch(ctx, *, unit_name):
         db_player_obj, ctx.author, razbot_data.header)
     if not verification_payload['verified']:
         embed_list = discord_responder.embed_message(
-            Embed=discord.Embed,
-            color=discord.Color(client_data.embed_color),
+            Embed=disnake.Embed,
+            color=disnake.Color(client_data.embed_color),
             icon_url=(ctx.bot.user.avatar_url.BASE +
                       ctx.bot.user.avatar_url._url),
             title=None,
@@ -982,8 +982,8 @@ async def supertroopsearch(ctx, *, unit_name):
         clan_obj, donor_list, super_troop_name)
 
     embed_list = discord_responder.embed_message(
-        Embed=discord.Embed,
-        color=discord.Color(client_data.embed_color),
+        Embed=disnake.Embed,
+        color=disnake.Color(client_data.embed_color),
         icon_url=(ctx.bot.user.avatar_url.BASE +
                   ctx.bot.user.avatar_url._url),
         title=f"{clan_obj.name} {clan_obj.tag}",
@@ -1015,8 +1015,8 @@ async def findclanusers(ctx):
         db_player_obj, ctx.author, razbot_data.header)
     if not verification_payload['verified']:
         embed_list = discord_responder.embed_message(
-            Embed=discord.Embed,
-            color=discord.Color(client_data.embed_color),
+            Embed=disnake.Embed,
+            color=disnake.Color(client_data.embed_color),
             icon_url=(ctx.bot.user.avatar_url.BASE +
                       ctx.bot.user.avatar_url._url),
             title=None,
@@ -1043,8 +1043,8 @@ async def findclanusers(ctx):
             member_obj, ctx.guild.members))
 
     embed_list = discord_responder.embed_message(
-        Embed=discord.Embed,
-        color=discord.Color(client_data.embed_color),
+        Embed=disnake.Embed,
+        color=disnake.Color(client_data.embed_color),
         icon_url=(ctx.bot.user.avatar_url.BASE +
                   ctx.bot.user.avatar_url._url),
         title=f"{clan_obj.name} linked users",
@@ -1077,8 +1077,8 @@ async def waroverview(ctx):
         db_player_obj, ctx.author, razbot_data.header)
     if not verification_payload['verified']:
         embed_list = discord_responder.embed_message(
-            Embed=discord.Embed,
-            color=discord.Color(client_data.embed_color),
+            Embed=disnake.Embed,
+            color=disnake.Color(client_data.embed_color),
             icon_url=(ctx.bot.user.avatar_url.BASE +
                       ctx.bot.user.avatar_url._url),
             title=None,
@@ -1101,8 +1101,8 @@ async def waroverview(ctx):
     field_dict_list = discord_responder.war_overview(war_obj)
 
     embed_list = discord_responder.embed_message(
-        Embed=discord.Embed,
-        color=discord.Color(client_data.embed_color),
+        Embed=disnake.Embed,
+        color=disnake.Color(client_data.embed_color),
         icon_url=(ctx.bot.user.avatar_url.BASE +
                   ctx.bot.user.avatar_url._url),
         title=f"{war_obj.clan.name} vs. {war_obj.opponent.name}",
@@ -1130,8 +1130,8 @@ async def wartime(ctx):
         db_player_obj, ctx.author, razbot_data.header)
     if not verification_payload['verified']:
         embed_list = discord_responder.embed_message(
-            Embed=discord.Embed,
-            color=discord.Color(client_data.embed_color),
+            Embed=disnake.Embed,
+            color=disnake.Color(client_data.embed_color),
             icon_url=(ctx.bot.user.avatar_url.BASE +
                       ctx.bot.user.avatar_url._url),
             title=None,
@@ -1154,8 +1154,8 @@ async def wartime(ctx):
     field_dict_list = discord_responder.war_time(war_obj)
 
     embed_list = discord_responder.embed_message(
-        Embed=discord.Embed,
-        color=discord.Color(client_data.embed_color),
+        Embed=disnake.Embed,
+        color=disnake.Color(client_data.embed_color),
         icon_url=(ctx.bot.user.avatar_url.BASE +
                   ctx.bot.user.avatar_url._url),
         title=f"{war_obj.clan.name} vs. {war_obj.opponent.name}",
@@ -1186,8 +1186,8 @@ async def warnoattack(ctx):
         db_player_obj, ctx.author, razbot_data.header)
     if not verification_payload['verified']:
         embed_list = discord_responder.embed_message(
-            Embed=discord.Embed,
-            color=discord.Color(client_data.embed_color),
+            Embed=disnake.Embed,
+            color=disnake.Color(client_data.embed_color),
             icon_url=(ctx.bot.user.avatar_url.BASE +
                       ctx.bot.user.avatar_url._url),
             title=None,
@@ -1210,8 +1210,8 @@ async def warnoattack(ctx):
     field_dict_list = discord_responder.war_no_attack(war_obj)
 
     embed_list = discord_responder.embed_message(
-        Embed=discord.Embed,
-        color=discord.Color(client_data.embed_color),
+        Embed=disnake.Embed,
+        color=disnake.Color(client_data.embed_color),
         icon_url=(ctx.bot.user.avatar_url.BASE +
                   ctx.bot.user.avatar_url._url),
         title=f"{war_obj.clan.name} vs. {war_obj.opponent.name}",
@@ -1242,8 +1242,8 @@ async def warclanstars(ctx):
         db_player_obj, ctx.author, razbot_data.header)
     if not verification_payload['verified']:
         embed_list = discord_responder.embed_message(
-            Embed=discord.Embed,
-            color=discord.Color(client_data.embed_color),
+            Embed=disnake.Embed,
+            color=disnake.Color(client_data.embed_color),
             icon_url=(ctx.bot.user.avatar_url.BASE +
                       ctx.bot.user.avatar_url._url),
             title=None,
@@ -1266,8 +1266,8 @@ async def warclanstars(ctx):
     field_dict_list = discord_responder.war_members_overview(war_obj)
 
     embed_list = discord_responder.embed_message(
-        Embed=discord.Embed,
-        color=discord.Color(client_data.embed_color),
+        Embed=disnake.Embed,
+        color=disnake.Color(client_data.embed_color),
         icon_url=(ctx.bot.user.avatar_url.BASE +
                   ctx.bot.user.avatar_url._url),
         title=f"{war_obj.clan.name} vs. {war_obj.opponent.name}",
@@ -1298,8 +1298,8 @@ async def warallattacks(ctx):
         db_player_obj, ctx.author, razbot_data.header)
     if not verification_payload['verified']:
         embed_list = discord_responder.embed_message(
-            Embed=discord.Embed,
-            color=discord.Color(client_data.embed_color),
+            Embed=disnake.Embed,
+            color=disnake.Color(client_data.embed_color),
             icon_url=(ctx.bot.user.avatar_url.BASE +
                       ctx.bot.user.avatar_url._url),
             title=None,
@@ -1322,8 +1322,8 @@ async def warallattacks(ctx):
     field_dict_list = discord_responder.war_all_attacks(war_obj)
 
     embed_list = discord_responder.embed_message(
-        Embed=discord.Embed,
-        color=discord.Color(client_data.embed_color),
+        Embed=disnake.Embed,
+        color=disnake.Color(client_data.embed_color),
         icon_url=(ctx.bot.user.avatar_url.BASE +
                   ctx.bot.user.avatar_url._url),
         title=f"{war_obj.clan.name} vs. {war_obj.opponent.name}",
@@ -1354,8 +1354,8 @@ async def warclanscore(ctx):
         db_player_obj, ctx.author, razbot_data.header)
     if not verification_payload['verified']:
         embed_list = discord_responder.embed_message(
-            Embed=discord.Embed,
-            color=discord.Color(client_data.embed_color),
+            Embed=disnake.Embed,
+            color=disnake.Color(client_data.embed_color),
             icon_url=(ctx.bot.user.avatar_url.BASE +
                       ctx.bot.user.avatar_url._url),
             title=None,
@@ -1378,8 +1378,8 @@ async def warclanscore(ctx):
     field_dict_list = discord_responder.war_all_member_standing(
         war_obj)
     embed_list = discord_responder.embed_message(
-        Embed=discord.Embed,
-        color=discord.Color(client_data.embed_color),
+        Embed=disnake.Embed,
+        color=disnake.Color(client_data.embed_color),
         icon_url=(ctx.bot.user.avatar_url.BASE +
                   ctx.bot.user.avatar_url._url),
         title=f"{war_obj.clan.name} vs. {war_obj.opponent.name}",
@@ -1436,8 +1436,8 @@ async def cwllineup(ctx):
             'value': f"is not in CWL"
         }]
         embed_list = discord_responder.embed_message(
-            Embed=discord.Embed,
-            color=discord.Color(client_data.embed_color),
+            Embed=disnake.Embed,
+            color=disnake.Color(client_data.embed_color),
             icon_url=(ctx.bot.user.avatar_url.BASE +
                       ctx.bot.user.avatar_url._url),
             title=f"{player_obj.clan_name} {player_obj.clan_tag}",
@@ -1470,8 +1470,8 @@ async def cwlclanscore(ctx):
         db_player_obj, ctx.author, razbot_data.header)
     if not verification_payload['verified']:
         embed_list = discord_responder.embed_message(
-            Embed=discord.Embed,
-            color=discord.Color(client_data.embed_color),
+            Embed=disnake.Embed,
+            color=disnake.Color(client_data.embed_color),
             icon_url=(ctx.bot.user.avatar_url.BASE +
                       ctx.bot.user.avatar_url._url),
             title=None,
@@ -1494,8 +1494,8 @@ async def cwlclanscore(ctx):
     field_dict_list = discord_responder.cwl_clan_standing(
         cwl_group_obj, player_obj.clan_tag, razbot_data.header)
     embed_list = discord_responder.embed_message(
-        Embed=discord.Embed,
-        color=discord.Color(client_data.embed_color),
+        Embed=disnake.Embed,
+        color=disnake.Color(client_data.embed_color),
         icon_url=(ctx.bot.user.avatar_url.BASE +
                   ctx.bot.user.avatar_url._url),
         title=f"{player_obj.clan_name} CWL scores",
@@ -1525,8 +1525,8 @@ async def cwlscore(ctx):
         db_player_obj, ctx.author, razbot_data.header)
     if not verification_payload['verified']:
         embed_list = discord_responder.embed_message(
-            Embed=discord.Embed,
-            color=discord.Color(client_data.embed_color),
+            Embed=disnake.Embed,
+            color=disnake.Color(client_data.embed_color),
             icon_url=(ctx.bot.user.avatar_url.BASE +
                       ctx.bot.user.avatar_url._url),
             title=None,
@@ -1549,8 +1549,8 @@ async def cwlscore(ctx):
     field_dict_list = discord_responder.cwl_member_standing(
         player_obj, cwl_group_obj, player_obj.clan_tag, razbot_data.header)
     embed_list = discord_responder.embed_message(
-        Embed=discord.Embed,
-        color=discord.Color(client_data.embed_color),
+        Embed=disnake.Embed,
+        color=disnake.Color(client_data.embed_color),
         icon_url=(ctx.bot.user.avatar_url.BASE +
                   ctx.bot.user.avatar_url._url),
         title=f"{player_obj.name} CWL score",
@@ -1587,8 +1587,8 @@ async def cwlmemberscore(ctx):
         db_player_obj, discord_member, razbot_data.header)
     if not verification_payload['verified']:
         embed_list = discord_responder.embed_message(
-            Embed=discord.Embed,
-            color=discord.Color(client_data.embed_color),
+            Embed=disnake.Embed,
+            color=disnake.Color(client_data.embed_color),
             icon_url=(ctx.bot.user.avatar_url.BASE +
                       ctx.bot.user.avatar_url._url),
             title=None,
@@ -1611,8 +1611,8 @@ async def cwlmemberscore(ctx):
     field_dict_list = discord_responder.cwl_member_standing(
         player_obj, cwl_group_obj, player_obj.clan_tag, razbot_data.header)
     embed_list = discord_responder.embed_message(
-        Embed=discord.Embed,
-        color=discord.Color(client_data.embed_color),
+        Embed=disnake.Embed,
+        color=disnake.Color(client_data.embed_color),
         icon_url=(ctx.bot.user.avatar_url.BASE +
                   ctx.bot.user.avatar_url._url),
         title=f"{player_obj.name} CWL score",
@@ -1646,8 +1646,8 @@ async def cwlwaroverview(ctx):
         db_player_obj, ctx.author, razbot_data.header)
     if not verification_payload['verified']:
         embed_list = discord_responder.embed_message(
-            Embed=discord.Embed,
-            color=discord.Color(client_data.embed_color),
+            Embed=disnake.Embed,
+            color=disnake.Color(client_data.embed_color),
             icon_url=(ctx.bot.user.avatar_url.BASE +
                       ctx.bot.user.avatar_url._url),
             title=None,
@@ -1670,8 +1670,8 @@ async def cwlwaroverview(ctx):
     field_dict_list = discord_responder.war_overview(
         cwl_war_obj)
     embed_list = discord_responder.embed_message(
-        Embed=discord.Embed,
-        color=discord.Color(client_data.embed_color),
+        Embed=disnake.Embed,
+        color=disnake.Color(client_data.embed_color),
         icon_url=(ctx.bot.user.avatar_url.BASE +
                   ctx.bot.user.avatar_url._url),
         title=f"{cwl_war_obj.clan.name} vs. {cwl_war_obj.opponent.name}",
@@ -1701,8 +1701,8 @@ async def cwlwartime(ctx):
         db_player_obj, ctx.author, razbot_data.header)
     if not verification_payload['verified']:
         embed_list = discord_responder.embed_message(
-            Embed=discord.Embed,
-            color=discord.Color(client_data.embed_color),
+            Embed=disnake.Embed,
+            color=disnake.Color(client_data.embed_color),
             icon_url=(ctx.bot.user.avatar_url.BASE +
                       ctx.bot.user.avatar_url._url),
             title=None,
@@ -1725,8 +1725,8 @@ async def cwlwartime(ctx):
     field_dict_list = discord_responder.war_time(
         cwl_war_obj)
     embed_list = discord_responder.embed_message(
-        Embed=discord.Embed,
-        color=discord.Color(client_data.embed_color),
+        Embed=disnake.Embed,
+        color=disnake.Color(client_data.embed_color),
         icon_url=(ctx.bot.user.avatar_url.BASE +
                   ctx.bot.user.avatar_url._url),
         title=f"{cwl_war_obj.clan.name} vs. {cwl_war_obj.opponent.name}",
@@ -1758,8 +1758,8 @@ async def cwlwarnoattack(ctx):
         db_player_obj, ctx.author, razbot_data.header)
     if not verification_payload['verified']:
         embed_list = discord_responder.embed_message(
-            Embed=discord.Embed,
-            color=discord.Color(client_data.embed_color),
+            Embed=disnake.Embed,
+            color=disnake.Color(client_data.embed_color),
             icon_url=(ctx.bot.user.avatar_url.BASE +
                       ctx.bot.user.avatar_url._url),
             title=None,
@@ -1782,8 +1782,8 @@ async def cwlwarnoattack(ctx):
     field_dict_list = discord_responder.war_no_attack(
         cwl_war_obj)
     embed_list = discord_responder.embed_message(
-        Embed=discord.Embed,
-        color=discord.Color(client_data.embed_color),
+        Embed=disnake.Embed,
+        color=disnake.Color(client_data.embed_color),
         icon_url=(ctx.bot.user.avatar_url.BASE +
                   ctx.bot.user.avatar_url._url),
         title=f"{cwl_war_obj.clan.name} vs. {cwl_war_obj.opponent.name}",
@@ -1815,8 +1815,8 @@ async def cwlwarallattack(ctx):
         db_player_obj, ctx.author, razbot_data.header)
     if not verification_payload['verified']:
         embed_list = discord_responder.embed_message(
-            Embed=discord.Embed,
-            color=discord.Color(client_data.embed_color),
+            Embed=disnake.Embed,
+            color=disnake.Color(client_data.embed_color),
             icon_url=(ctx.bot.user.avatar_url.BASE +
                       ctx.bot.user.avatar_url._url),
             title=None,
@@ -1839,8 +1839,8 @@ async def cwlwarallattack(ctx):
     field_dict_list = discord_responder.war_all_attacks(
         cwl_war_obj)
     embed_list = discord_responder.embed_message(
-        Embed=discord.Embed,
-        color=discord.Color(client_data.embed_color),
+        Embed=disnake.Embed,
+        color=disnake.Color(client_data.embed_color),
         icon_url=(ctx.bot.user.avatar_url.BASE +
                   ctx.bot.user.avatar_url._url),
         title=f"{cwl_war_obj.clan.name} vs. {cwl_war_obj.opponent.name}",
@@ -1869,8 +1869,8 @@ async def cwlwarallattack(ctx):
 async def mentionrazgriz(ctx):
     field_dict_list = []
     embed_list = discord_responder.embed_message(
-        Embed=discord.Embed,
-        color=discord.Color(client_data.embed_color),
+        Embed=disnake.Embed,
+        color=disnake.Color(client_data.embed_color),
         icon_url=(ctx.bot.user.avatar_url.BASE +
                   ctx.bot.user.avatar_url._url),
         title=f"mention testing",
@@ -1925,8 +1925,8 @@ async def role(ctx):
         }]
 
         embed_list = discord_responder.embed_message(
-            Embed=discord.Embed,
-            color=discord.Color(client_data.embed_color),
+            Embed=disnake.Embed,
+            color=disnake.Color(client_data.embed_color),
             icon_url=(ctx.bot.user.avatar_url.BASE +
                       ctx.bot.user.avatar_url._url),
             title=f"{discord_user_obj.display_name}",
@@ -1969,8 +1969,8 @@ async def role(ctx):
             }]
 
             embed_list = discord_responder.embed_message(
-                Embed=discord.Embed,
-                color=discord.Color(client_data.embed_color),
+                Embed=disnake.Embed,
+                color=disnake.Color(client_data.embed_color),
                 icon_url=(ctx.bot.user.avatar_url.BASE +
                           ctx.bot.user.avatar_url._url),
                 title=f"{discord_user_obj.display_name} {player_obj.name}",
@@ -2001,8 +2001,8 @@ async def role(ctx):
             }]
 
             embed_list = discord_responder.embed_message(
-                Embed=discord.Embed,
-                color=discord.Color(client_data.embed_color),
+                Embed=disnake.Embed,
+                color=disnake.Color(client_data.embed_color),
                 icon_url=(ctx.bot.user.avatar_url.BASE +
                           ctx.bot.user.avatar_url._url),
                 title=f"{discord_user_obj.display_name} {player_obj.name}",
@@ -2065,7 +2065,7 @@ async def role(ctx):
     add_role_obj_list = []
     for add_role_id in add_role_id_list:
         # returns None if role is not found
-        add_role_obj = discord.utils.get(ctx.guild.roles, id=add_role_id)
+        add_role_obj = disnake.utils.get(ctx.guild.roles, id=add_role_id)
         if add_role_obj:
             # role was found in guild.roles
             add_role_obj_list.append(add_role_obj)
@@ -2079,7 +2079,7 @@ async def role(ctx):
     remove_role_obj_list = []
     for remove_role_id in remove_role_id_list:
         # returns None if role is not found
-        remove_role_obj = discord.utils.get(
+        remove_role_obj = disnake.utils.get(
             ctx.guild.roles, id=remove_role_id)
         if remove_role_obj:
             # role was found in guild.roles
@@ -2106,8 +2106,8 @@ async def role(ctx):
         }]
 
         embed_list = discord_responder.embed_message(
-            Embed=discord.Embed,
-            color=discord.Color(client_data.embed_color),
+            Embed=disnake.Embed,
+            color=disnake.Color(client_data.embed_color),
             icon_url=(ctx.bot.user.avatar_url.BASE +
                       ctx.bot.user.avatar_url._url),
             title=f"{discord_user_obj.display_name}",
@@ -2149,8 +2149,8 @@ async def role(ctx):
             })
 
         embed_list = discord_responder.embed_message(
-            Embed=discord.Embed,
-            color=discord.Color(client_data.embed_color),
+            Embed=disnake.Embed,
+            color=disnake.Color(client_data.embed_color),
             icon_url=(ctx.bot.user.avatar_url.BASE +
                       ctx.bot.user.avatar_url._url),
             title=f"{discord_user_obj.display_name}",
@@ -2196,8 +2196,8 @@ async def rolemember(ctx):
 
     if not verification_payload['verified']:
         embed_list = discord_responder.embed_message(
-            Embed=discord.Embed,
-            color=discord.Color(client_data.embed_color),
+            Embed=disnake.Embed,
+            color=disnake.Color(client_data.embed_color),
             icon_url=(ctx.bot.user.avatar_url.BASE +
                       ctx.bot.user.avatar_url._url),
             title=None,
@@ -2228,8 +2228,8 @@ async def rolemember(ctx):
         }]
 
         embed_list = discord_responder.embed_message(
-            Embed=discord.Embed,
-            color=discord.Color(client_data.embed_color),
+            Embed=disnake.Embed,
+            color=disnake.Color(client_data.embed_color),
             icon_url=(ctx.bot.user.avatar_url.BASE +
                       ctx.bot.user.avatar_url._url),
             title=f"{discord_user_obj.display_name}",
@@ -2272,8 +2272,8 @@ async def rolemember(ctx):
             }]
 
             embed_list = discord_responder.embed_message(
-                Embed=discord.Embed,
-                color=discord.Color(client_data.embed_color),
+                Embed=disnake.Embed,
+                color=disnake.Color(client_data.embed_color),
                 icon_url=(ctx.bot.user.avatar_url.BASE +
                           ctx.bot.user.avatar_url._url),
                 title=f"{discord_user_obj.display_name} {player_obj.name}",
@@ -2304,8 +2304,8 @@ async def rolemember(ctx):
             }]
 
             embed_list = discord_responder.embed_message(
-                Embed=discord.Embed,
-                color=discord.Color(client_data.embed_color),
+                Embed=disnake.Embed,
+                color=disnake.Color(client_data.embed_color),
                 icon_url=(ctx.bot.user.avatar_url.BASE +
                           ctx.bot.user.avatar_url._url),
                 title=f"{discord_user_obj.display_name} {player_obj.name}",
@@ -2368,7 +2368,7 @@ async def rolemember(ctx):
     add_role_obj_list = []
     for add_role_id in add_role_id_list:
         # returns None if role is not found
-        add_role_obj = discord.utils.get(ctx.guild.roles, id=add_role_id)
+        add_role_obj = disnake.utils.get(ctx.guild.roles, id=add_role_id)
         if add_role_obj:
             # role was found in guild.roles
             add_role_obj_list.append(add_role_obj)
@@ -2382,7 +2382,7 @@ async def rolemember(ctx):
     remove_role_obj_list = []
     for remove_role_id in remove_role_id_list:
         # returns None if role is not found
-        remove_role_obj = discord.utils.get(
+        remove_role_obj = disnake.utils.get(
             ctx.guild.roles, id=remove_role_id)
         if remove_role_obj:
             # role was found in guild.roles
@@ -2409,8 +2409,8 @@ async def rolemember(ctx):
         }]
 
         embed_list = discord_responder.embed_message(
-            Embed=discord.Embed,
-            color=discord.Color(client_data.embed_color),
+            Embed=disnake.Embed,
+            color=disnake.Color(client_data.embed_color),
             icon_url=(ctx.bot.user.avatar_url.BASE +
                       ctx.bot.user.avatar_url._url),
             title=f"{discord_user_obj.display_name}",
@@ -2452,8 +2452,8 @@ async def rolemember(ctx):
             })
 
         embed_list = discord_responder.embed_message(
-            Embed=discord.Embed,
-            color=discord.Color(client_data.embed_color),
+            Embed=disnake.Embed,
+            color=disnake.Color(client_data.embed_color),
             icon_url=(ctx.bot.user.avatar_url.BASE +
                       ctx.bot.user.avatar_url._url),
             title=f"{discord_user_obj.display_name}",
@@ -2513,8 +2513,8 @@ async def roleall(ctx):
             }]
 
             embed_list = discord_responder.embed_message(
-                Embed=discord.Embed,
-                color=discord.Color(client_data.embed_color),
+                Embed=disnake.Embed,
+                color=disnake.Color(client_data.embed_color),
                 icon_url=(ctx.bot.user.avatar_url.BASE +
                           ctx.bot.user.avatar_url._url),
                 title=f"{discord_user_obj.display_name}",
@@ -2558,8 +2558,8 @@ async def roleall(ctx):
                 }]
 
                 embed_list = discord_responder.embed_message(
-                    Embed=discord.Embed,
-                    color=discord.Color(client_data.embed_color),
+                    Embed=disnake.Embed,
+                    color=disnake.Color(client_data.embed_color),
                     icon_url=(ctx.bot.user.avatar_url.BASE +
                               ctx.bot.user.avatar_url._url),
                     title=f"{discord_user_obj.display_name} {player_obj.name}",
@@ -2590,8 +2590,8 @@ async def roleall(ctx):
                 }]
 
                 embed_list = discord_responder.embed_message(
-                    Embed=discord.Embed,
-                    color=discord.Color(client_data.embed_color),
+                    Embed=disnake.Embed,
+                    color=disnake.Color(client_data.embed_color),
                     icon_url=(ctx.bot.user.avatar_url.BASE +
                               ctx.bot.user.avatar_url._url),
                     title=f"{discord_user_obj.display_name} {player_obj.name}",
@@ -2654,7 +2654,7 @@ async def roleall(ctx):
         add_role_obj_list = []
         for add_role_id in add_role_id_list:
             # returns None if role is not found
-            add_role_obj = discord.utils.get(ctx.guild.roles, id=add_role_id)
+            add_role_obj = disnake.utils.get(ctx.guild.roles, id=add_role_id)
             if add_role_obj:
                 # role was found in guild.roles
                 add_role_obj_list.append(add_role_obj)
@@ -2668,7 +2668,7 @@ async def roleall(ctx):
         remove_role_obj_list = []
         for remove_role_id in remove_role_id_list:
             # returns None if role is not found
-            remove_role_obj = discord.utils.get(
+            remove_role_obj = disnake.utils.get(
                 ctx.guild.roles, id=remove_role_id)
             if remove_role_obj:
                 # role was found in guild.roles
@@ -2695,8 +2695,8 @@ async def roleall(ctx):
             }]
 
             embed_list = discord_responder.embed_message(
-                Embed=discord.Embed,
-                color=discord.Color(client_data.embed_color),
+                Embed=disnake.Embed,
+                color=disnake.Color(client_data.embed_color),
                 icon_url=(ctx.bot.user.avatar_url.BASE +
                           ctx.bot.user.avatar_url._url),
                 title=f"{discord_user_obj.display_name}",
@@ -2738,8 +2738,8 @@ async def roleall(ctx):
                 })
 
             embed_list = discord_responder.embed_message(
-                Embed=discord.Embed,
-                color=discord.Color(client_data.embed_color),
+                Embed=disnake.Embed,
+                color=disnake.Color(client_data.embed_color),
                 icon_url=(ctx.bot.user.avatar_url.BASE +
                           ctx.bot.user.avatar_url._url),
                 title=f"{discord_user_obj.display_name}",
@@ -3555,7 +3555,7 @@ async def on_member_join(ctx):
     db_role_obj = db_responder.read_rank_role_from_guild_and_clash(
         ctx.guild.id, 'uninitiated')
     if db_role_obj:
-        discord_role_obj = discord.utils.get(
+        discord_role_obj = disnake.utils.get(
             ctx.guild.roles, id=db_role_obj.discord_role_id)
         if discord_role_obj:
             await ctx.add_roles(discord_role_obj)
@@ -3610,8 +3610,8 @@ async def on_reaction_add(reaction, user):
         embed_title = f"{ctx.bot.user.name} help menu"
 
     embed_list = discord_responder.embed_message(
-        Embed=discord.Embed,
-        color=discord.Color(client_data.embed_color),
+        Embed=disnake.Embed,
+        color=disnake.Color(client_data.embed_color),
         icon_url=(ctx.bot.user.avatar_url.BASE +
                   ctx.bot.user.avatar_url._url),
         title=embed_title,
