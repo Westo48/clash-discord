@@ -3,6 +3,7 @@ import Clan
 from Player import super_troop_list
 import ClashResponder as clash_responder
 import RazBotDB_Responder as db_responder
+from discord.utils import get
 
 
 # PLAYER
@@ -1396,6 +1397,7 @@ def embed_message(
     return embed_list
 
 
+# help
 def help_main(db_guild_obj, user_id, player_obj, bot_categories):
     help_dict = {
         'field_dict_list': [],
@@ -1708,6 +1710,44 @@ def help_cwlwar(player_obj, bot_category, all_commands):
             'value': all_commands[command_name].description
         })
     return help_dict
+
+
+# user
+
+def find_user_from_tag(player_obj, member_list):
+    """
+        finding a user from a requested player
+
+        Args:
+            player_obj (obj): clash player object
+            member_list (list): list of members in guild
+
+        Returns:
+            list: field_dict_list
+    """
+
+    db_user_obj = db_responder.read_user_from_tag(player_obj.tag)
+    # user with requested player tag not found
+    if not db_user_obj:
+        return {
+            "name": f"{player_obj.name} tag {player_obj.tag}",
+            "value": (f"linked user not found")
+        }
+
+    # find user in guild
+    user_obj = get(member_list, id=db_user_obj.discord_id)
+
+    # user not found in guild
+    if not user_obj:
+        return {
+            "name": f"{player_obj.name} tag {player_obj.tag}",
+            "value": (f"linked user not in server")
+        }
+
+    return {
+        "name": f"{player_obj.name} tag {player_obj.tag}",
+        "value": f"claimed by {user_obj.mention}"
+    }
 
 
 # roles

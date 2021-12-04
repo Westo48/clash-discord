@@ -59,6 +59,27 @@ def read_user(discord_user_id):
         return None
 
 
+def read_user_from_tag(player_tag):
+    """
+        finds user with given player tag in db,
+        if user is not found returns None
+
+        Args:
+            player_tag (str): requested player tag
+
+        Returns:
+            obj: user object (discord_id, admin, super_user)
+    """
+    user_data = user.select_user_from_tag(player_tag)
+    # if user data is found return user
+    if user_data:
+        user_discord_id, user_admin, user_super_user = user_data
+        return user.User(user_discord_id, bool(
+            user_admin), bool(user_super_user))
+    else:
+        return None
+
+
 def delete_user(discord_user_id):
     """
         deletes user and returns None if the user 
