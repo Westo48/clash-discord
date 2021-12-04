@@ -156,6 +156,12 @@ ClashDiscord is largely **command** focused, meaning it doesn't do anything that
   - roleall
     - adds and removes necessary roles in discord based on claimed players clan and role in that clan for all users in guild
     - restricted to leaders and co-leaders
+  - finduser `player_tag`
+    - returns the user linked to a requested player
+    - example
+      - `!finduser #RGQ8RGU9`
+  - findclanusers
+    - returns the users linked to the active player's clan
 
 - ## <a id="command-list-player"></a>Player
 
