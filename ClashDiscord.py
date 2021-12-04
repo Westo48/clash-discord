@@ -12,23 +12,23 @@ client_data = ClashDiscord_Client_Data.ClashDiscord_Data()
 
 intents = disnake.Intents.all()
 
-client = commands.Bot(
+bot = commands.Bot(
     command_prefix=razbot_data.prefix, intents=intents)
-client.remove_command('help')
+bot.remove_command('help')
 
 # todo move entry validation to modules (setting # in front of player tags)
 # todo add client, admin, and super user bot categories
 # had emoji id as well
 
 
-@client.event
+@bot.event
 async def on_ready():
     print(f"RazBot is ready")
 
 
 # todo allow leader or co-leader
 # todo hide clan help if user is not in a clan
-@client.command(
+@bot.command(
     aliases=['helpme'],
     brief='discord',
     description='Returns the help text you see before you'
@@ -70,14 +70,14 @@ async def help(ctx):
         await message.add_reaction(emoji)
 
 
-@client.command(
+@bot.command(
     brief='misc', description='Misc Command'
 )
 async def hellothere(ctx):
     await ctx.send(f'General Kenobi')
 
 
-@client.command(
+@bot.command(
     brief='misc'
 )
 async def ping(ctx):
@@ -92,7 +92,7 @@ async def ping(ctx):
 
 # Player
 
-@client.command(
+@bot.command(
     aliases=['searchplayer'],
     brief='player',
     description="get information about a specified player"
@@ -127,7 +127,7 @@ async def findplayer(ctx, *, player_tag):
         await ctx.send(embed=embed)
 
 
-@client.command(
+@bot.command(
     aliases=['showplayer', 'showactiveplayer', 'activeplayer'],
     brief='player',
     description="get information about your active player"
@@ -178,7 +178,7 @@ async def player(ctx):
         await ctx.send(embed=embed)
 
 
-@client.command(
+@bot.command(
     aliases=['showmemberplayer', 'showmemberactiveplayer', 'memberplayer'],
     brief='player',
     description="get information about a member's active player"
@@ -236,7 +236,7 @@ async def playermember(ctx):
         await ctx.send(embed=embed)
 
 
-@client.command(
+@bot.command(
     aliases=['trooplvl'],
     brief='player',
     description='get level information for a specified unit'
@@ -287,7 +287,7 @@ async def unitlvl(ctx, *, unit_name):
         await ctx.send(embed=embed)
 
 
-@client.command(
+@bot.command(
     brief='player',
     description='get all your unit levels',
     hidden=True
@@ -336,7 +336,7 @@ async def allunitlvl(ctx):
         await ctx.send(embed=embed)
 
 
-@client.command(
+@bot.command(
     brief='player',
     description='get all your hero levels',
     hidden=True
@@ -385,7 +385,7 @@ async def allherolvl(ctx):
         await ctx.send(embed=embed)
 
 
-@client.command(
+@bot.command(
     brief='player',
     description='get all your troop levels',
     hidden=True
@@ -434,7 +434,7 @@ async def alltrooplvl(ctx):
         await ctx.send(embed=embed)
 
 
-@client.command(
+@bot.command(
     brief='player',
     description='get all your spell levels',
     hidden=True
@@ -483,7 +483,7 @@ async def allspelllvl(ctx):
         await ctx.send(embed=embed)
 
 
-@client.command(
+@bot.command(
     aliases=['activesupertroops', 'supertroop', 'supertroops'],
     brief='player',
     description='Check to see what super troops you have active.'
@@ -535,7 +535,7 @@ async def activesupertroop(ctx):
         await ctx.send(embed=embed)
 
 
-@client.command(
+@bot.command(
     aliases=['finduserfromplayer'],
     brief='player',
     description='returns the user linked to a requested player'
@@ -573,7 +573,7 @@ async def finduser(ctx, player_tag):
 # Clan
 
 
-@client.command(
+@bot.command(
     aliases=['clansearch'],
     brief='clan',
     description="Enter a clan's tag and get a clan's information"
@@ -606,7 +606,7 @@ async def findclan(ctx, *, clan_tag):
         await ctx.send(embed=embed)
 
 
-@client.command(
+@bot.command(
     aliases=['showclan', 'playerclan', 'showplayerclan'],
     brief='clan',
     description="Get information about your active player's clan"
@@ -657,7 +657,7 @@ async def clan(ctx):
         await ctx.send(embed=embed)
 
 
-@client.command(
+@bot.command(
     aliases=['showclanmention'],
     brief='clan',
     description="Get information about mentioned clan"
@@ -705,7 +705,7 @@ async def clanmention(ctx):
         await ctx.send(embed=embed)
 
 
-@client.command(
+@bot.command(
     brief='clan',
     description="clan's TH lineup"
 )
@@ -762,7 +762,7 @@ async def clanlineup(ctx):
         await ctx.send(embed=embed)
 
 
-@client.command(
+@bot.command(
     aliases=['warpreference'],
     brief='clan',
     description="rundown of clan member's war preference"
@@ -820,7 +820,7 @@ async def clanwarpreference(ctx):
         await ctx.send(embed=embed)
 
 
-@client.command(
+@bot.command(
     aliases=['donate'],
     brief='clan',
     description='Enter a troop name to see who in the clan '
@@ -876,7 +876,7 @@ async def donation(ctx, *, unit_name):
         await ctx.send(embed=embed)
 
 
-@client.command(
+@bot.command(
     aliases=['searchsupertroop'],
     brief='clan',
     description='Search who in the clan has a requested super troop active.'
@@ -938,7 +938,7 @@ async def supertroopsearch(ctx, *, unit_name):
         await ctx.send(embed=embed)
 
 
-@client.command(
+@bot.command(
     aliases=['findclanuser', 'findclanmemberusers'],
     brief='clan',
     description="returns the users linked to the active player's clan",
@@ -998,7 +998,7 @@ async def findclanusers(ctx):
 # War
 # todo warmember gets a war overview for a specific war member
 
-@client.command(
+@bot.command(
     aliases=['war'],
     brief='war',
     description='Returns an overview of the current war'
@@ -1049,7 +1049,7 @@ async def waroverview(ctx):
         await ctx.send(embed=embed)
 
 
-@client.command(
+@bot.command(
     brief='war',
     description='Returns the time remaining in the current war')
 async def wartime(ctx):
@@ -1098,7 +1098,7 @@ async def wartime(ctx):
         await ctx.send(embed=embed)
 
 
-@client.command(
+@bot.command(
     aliases=['warnoatk'],
     brief='war',
     description='Returns a list of players that have/did not use '
@@ -1150,7 +1150,7 @@ async def warnoattack(ctx):
         await ctx.send(embed=embed)
 
 
-@client.command(
+@bot.command(
     aliases=['warclan', 'warstars'],
     brief='war',
     description='overview of all members in war',
@@ -1202,7 +1202,7 @@ async def warclanstars(ctx):
         await ctx.send(embed=embed)
 
 
-@client.command(
+@bot.command(
     aliases=['warallatk'],
     brief='war',
     description='showing all attacks for every member',
@@ -1254,7 +1254,7 @@ async def warallattacks(ctx):
         await ctx.send(embed=embed)
 
 
-@client.command(
+@bot.command(
     aliases=['warscore'],
     brief='war',
     description='showing every member score',
@@ -1310,7 +1310,7 @@ async def warclanscore(ctx):
 # CWL Group
 # todo cwl_group overview, scoreboard, cwl_clan_noatk
 
-@client.command(
+@bot.command(
     aliases=['cwlgroup'],
     brief='cwlgroup',
     description='Returns the CWL group lineup',
@@ -1365,7 +1365,7 @@ async def cwllineup(ctx):
     await ctx.send(discord_responder.cwl_lineup(cwl_group))
 
 
-@client.command(
+@bot.command(
     brief='cwlgroup',
     description='Lists each member and their score in CWL',
     hidden=True
@@ -1417,7 +1417,7 @@ async def cwlclanscore(ctx):
         await ctx.send(embed=embed)
 
 
-@client.command(
+@bot.command(
     brief='cwlgroup',
     description='Lists each score you have in CWL'
 )
@@ -1468,7 +1468,7 @@ async def cwlscore(ctx):
         await ctx.send(embed=embed)
 
 
-@client.command(
+@bot.command(
     aliases=['cwlclanmatescore'],
     brief='cwlgroup',
     description='Lists each score the specified member has in CWL'
@@ -1529,7 +1529,7 @@ async def cwlmemberscore(ctx):
 # CWL War
 # todo cwlwar war_time_prep, war_overview_prep, war_overview_round,
 
-@client.command(
+@bot.command(
     aliases=['cwlwar'],
     brief='cwlwar',
     description='Returns an overview of the current CWL war'
@@ -1581,7 +1581,7 @@ async def cwlwaroverview(ctx):
         await ctx.send(embed=embed)
 
 
-@client.command(
+@bot.command(
     brief='cwlwar',
     description='Returns the time remaining in the current CWL war'
 )
@@ -1632,7 +1632,7 @@ async def cwlwartime(ctx):
         await ctx.send(embed=embed)
 
 
-@client.command(
+@bot.command(
     aliases=['cwlwarnoatk'],
     brief='cwlwar',
     description='Returns a list of players that have/did not use '
@@ -1685,7 +1685,7 @@ async def cwlwarnoattack(ctx):
         await ctx.send(embed=embed)
 
 
-@client.command(
+@bot.command(
     aliases=['cwlwarallatk'],
     brief='cwlwar',
     description='showing all attacks for every member in the current war',
@@ -1740,7 +1740,7 @@ async def cwlwarallattack(ctx):
 
 # Discord
 
-@client.command(
+@bot.command(
     aliases=['mentionraz'],
     brief='testing',
     description=('This will send a message to mention Razgriz'),
@@ -1766,7 +1766,7 @@ async def mentionrazgriz(ctx):
         await ctx.send(embed=embed)
 
 
-@client.command(
+@bot.command(
     aliases=['emoji'],
     brief='testing',
     description=('emoji testing'),
@@ -1776,7 +1776,7 @@ async def emojitesting(ctx):
     await ctx.send(f"this is currently not in use, only for emoji testing")
 
 
-@client.command(
+@bot.command(
     aliases=['roleme'],
     brief='discord',
     description=('This will give you your clan role '
@@ -2036,7 +2036,7 @@ async def role(ctx):
 
 
 # usable by leader and co leader
-@client.command(
+@bot.command(
     aliases=['roleplayer'],
     brief='discord',
     description=('this will role the mentioned user'),
@@ -2326,7 +2326,7 @@ async def rolemember(ctx):
             await ctx.send(embed=embed)
 
 
-@client.command(
+@bot.command(
     aliases=['roleguild'],
     brief='discord',
     description=('this will role all members in the guild'),
@@ -2605,7 +2605,7 @@ async def roleall(ctx):
 # CLIENT
 
 # client user
-@client.command(
+@bot.command(
     aliases=['claim_user', 'userclaim'],
     brief='client',
     description=(
@@ -2623,7 +2623,7 @@ async def claimuser(ctx):
 
 
 # client player
-@client.command(
+@bot.command(
     aliases=['playerclaim'],
     brief='client',
     description=(
@@ -2692,7 +2692,7 @@ async def claimplayer(ctx, player_tag, *, api_key):
         )
 
 
-@client.command(
+@bot.command(
     aliases=['showplayers', 'showclaimedplayers',
              'showplayersclaim', 'showplayerlist'],
     brief='client',
@@ -2723,7 +2723,7 @@ async def showplayerclaim(ctx):
     await ctx.send(message)
 
 
-@client.command(
+@bot.command(
     aliases=['updateactiveplayer', 'updateplayer'],
     brief='client',
     description=(
@@ -2762,7 +2762,7 @@ async def updateplayeractive(ctx, player_tag):
         return
 
 
-@client.command(
+@bot.command(
     aliases=['removeplayer'],
     brief='client',
     description=(
@@ -2862,7 +2862,7 @@ async def deleteplayer(ctx, player_tag):
 
 
 # client guild
-@client.command(
+@bot.command(
     aliases=['claim_guild', 'guildclaim'],
     brief='client',
     description=(
@@ -2893,7 +2893,7 @@ async def claimguild(ctx):
 # client clan
 # todo pull the clan tag from the db player to player tag to player.clan_tag
 # ? simplify this...
-@client.command(
+@bot.command(
     aliases=['clanclaim'],
     brief='client',
     description=(
@@ -2972,7 +2972,7 @@ async def claimclan(ctx, clan_tag):
     await ctx.send(f"{clan_obj.name} has been claimed")
 
 
-@client.command(
+@bot.command(
     aliases=['showclaimclan', 'showclaimedclan',
              'showclaimedclans', 'showclansclaim', 'showclanlist'],
     brief='client',
@@ -3008,7 +3008,7 @@ async def showclanclaim(ctx):
     await ctx.send(message)
 
 
-@client.command(
+@bot.command(
     aliases=['removeclan', 'deleteclanclaim',
              'deleteclaimclan', 'deleteclaimedclan'],
     brief='client',
@@ -3060,7 +3060,7 @@ async def deleteclan(ctx, clan_tag):
 
 
 # client clan role
-@client.command(
+@bot.command(
     aliases=['clanroleclaim'],
     brief='client',
     description=(
@@ -3138,7 +3138,7 @@ async def claimclanrole(ctx, clan_tag):
         f"{role.mention} has been claimed for clan {clan_obj.tag}")
 
 
-@client.command(
+@bot.command(
     aliases=['removeclanroleclaim'],
     brief='client',
     description=(
@@ -3192,7 +3192,7 @@ async def removeclaimclanrole(ctx):
 
 
 # client rank role
-@client.command(
+@bot.command(
     aliases=['rankroleclaim'],
     brief='client',
     description=(
@@ -3265,7 +3265,7 @@ async def claimrankrole(ctx, rank_role_name):
                    f"for rank {claimed_rank_role_obj.model_name}")
 
 
-@client.command(
+@bot.command(
     aliases=['removerankroleclaim'],
     brief='client',
     description=(
@@ -3321,7 +3321,7 @@ async def removeclaimrankrole(ctx):
 # client super user administration
 
 # super user client guild
-@client.command(
+@bot.command(
     aliases=['removeguild'],
     brief='clientsuperuser',
     description=("delete a claimed guild from id"),
@@ -3358,7 +3358,7 @@ async def removeguildclaim(ctx, guild_id):
 
 
 # super user client user
-@client.command(
+@bot.command(
     aliases=['removeuser'],
     brief='clientsuperuser',
     description=('delete a claimed user'),
@@ -3395,7 +3395,7 @@ async def removeuserclaim(ctx, user_id):
 
 
 # client events
-@client.event
+@bot.event
 async def on_member_join(ctx):
     # get uninitiated role from db
     db_role_obj = db_responder.read_rank_role_from_guild_and_clash(
@@ -3407,12 +3407,12 @@ async def on_member_join(ctx):
             await ctx.add_roles(discord_role_obj)
 
 
-@client.event
+@bot.event
 async def on_member_remove(member):
     print(f'{member} has left {member.guild.name} id {member.guild.id}')
 
 
-@client.event
+@bot.event
 async def on_reaction_add(reaction, user):
     # if the reactor is clash discord
     if user.id == razbot_data.discord_id:
@@ -3430,7 +3430,7 @@ async def on_reaction_add(reaction, user):
     if 'help' not in reaction.message.embeds[0].title:
         return
 
-    ctx = await client.get_context(reaction.message)
+    ctx = await bot.get_context(reaction.message)
 
     db_guild_obj = db_responder.read_guild(ctx.guild.id)
     db_player_obj = db_responder.read_player_active(user.id)
@@ -3466,8 +3466,7 @@ async def on_reaction_add(reaction, user):
         field_list=field_dict_list,
         image_url=None,
         author_display_name=user.display_name,
-        author_avatar_url=(user.avatar_url.BASE +
-                           user.avatar_url._url)
+        author_avatar_url=user.avatar.url
     )
 
     for embed in embed_list:
@@ -3481,7 +3480,7 @@ async def on_reaction_add(reaction, user):
             await reaction.message.add_reaction(emoji)
 
 
-@client.event
+@bot.event
 async def on_command_error(ctx, error):
     if isinstance(error, commands.CommandNotFound):
         await ctx.send(f"command '{ctx.invoked_with}' could not be found")
@@ -3496,4 +3495,4 @@ async def on_command_error(ctx, error):
         await ctx.send(f"there was an error that I have not accounted for, "
                        f"please let Razgriz know")
 
-client.run(razbot_data.token)
+bot.run(razbot_data.token)
