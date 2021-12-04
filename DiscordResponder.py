@@ -441,6 +441,54 @@ def clan_verification(db_player_obj, user_obj, header):
     return verification_payload
 
 
+def clan_leadership_verification(db_player_obj, user_obj, header):
+    """
+        verifying a clan through player_leadership_verification
+        and returning verification payload
+
+        Args:
+            db_player_obj (obj): player object from db
+            user_obj (obj): discord user obj
+            header (dict): clash api key header
+
+        Returns:
+            dict: verification_payload
+                (verified, field_dict_list, player_obj, clan)
+    """
+
+    player_leadership_verification_payload = (player_leadership_verification(
+        db_player_obj, user_obj, header))
+
+    if not player_leadership_verification_payload['verified']:
+        return player_leadership_verification_payload
+
+    player_obj = player_leadership_verification_payload['player_obj']
+
+    # player is not in clan
+    if not player_obj.clan_tag:
+        return {
+            'verified': False,
+            'field_dict_list': [{
+                'name': (f"{player_obj.clan_name} "
+                         f"{player_obj.clan_tag}"),
+                'value': "not in a clan"
+            }],
+            'player_obj': player_obj,
+            'clan_obj': None
+        }
+
+    clan_obj = clash_responder.get_clan(
+        player_obj.clan_tag, header)
+
+    verification_payload = {
+        'verified': True,
+        'field_dict_list': None,
+        'player_obj': player_obj,
+        'clan_obj': clan_obj
+    }
+    return verification_payload
+
+
 def clan_lineup(clan_obj, header):
     clan_lineup_dict = clash_responder.clan_lineup(clan_obj, header)
 
