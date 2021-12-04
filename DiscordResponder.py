@@ -1729,25 +1729,25 @@ def find_user_from_tag(player_obj, member_list):
     db_user_obj = db_responder.read_user_from_tag(player_obj.tag)
     # user with requested player tag not found
     if not db_user_obj:
-        return [{
+        return {
             "name": f"{player_obj.name} tag {player_obj.tag}",
             "value": (f"linked user not found")
-        }]
+        }
 
     # find user in guild
     user_obj = get(member_list, id=db_user_obj.discord_id)
 
     # user not found in guild
     if not user_obj:
-        return [{
+        return {
             "name": f"{player_obj.name} tag {player_obj.tag}",
             "value": (f"linked user not in server")
-        }]
+        }
 
-    return [{
+    return {
         "name": f"{player_obj.name} tag {player_obj.tag}",
         "value": f"claimed by {user_obj.mention}"
-    }]
+    }
 
 
 # roles
