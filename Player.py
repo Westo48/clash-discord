@@ -466,7 +466,8 @@ def verify_token(api_key, tag, header):
 super_troop_list = [
     'Super Barbarian', 'Super Archer', 'Super Giant', 'Sneaky Goblin',
     'Super Wall Breaker', 'Super Wizard', 'Inferno Dragon', 'Super Minion',
-    'Super Valkyrie', 'Super Witch', 'Ice Hound', 'Rocket Balloon', 'Super Bowler'
+    'Super Valkyrie', 'Super Witch', 'Ice Hound', 'Rocket Balloon',
+    'Super Bowler', 'Super Dragon'
 ]
 
 troop_dict = {
