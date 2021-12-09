@@ -466,7 +466,8 @@ def verify_token(api_key, tag, header):
 super_troop_list = [
     'Super Barbarian', 'Super Archer', 'Super Giant', 'Sneaky Goblin',
     'Super Wall Breaker', 'Super Wizard', 'Inferno Dragon', 'Super Minion',
-    'Super Valkyrie', 'Super Witch', 'Ice Hound', 'Rocket Balloon', 'Super Bowler'
+    'Super Valkyrie', 'Super Witch', 'Ice Hound', 'Rocket Balloon',
+    'Super Bowler', 'Super Dragon'
 ]
 
 troop_dict = {
@@ -596,6 +597,9 @@ troop_dict = {
             },
             'Log Launcher': {
                 'name': 'Log Launcher', 'thMax': 0, 'type': 'Gold'
+            },
+            'Flame Flinger': {
+                'name': 'Flame Flinger', 'thMax': 0, 'type': 'Gold'
             },
             'L.A.S.S.I': {
                 'name': 'L.A.S.S.I', 'thMax': 0, 'type': 'Dark Elixir'
@@ -776,6 +780,9 @@ troop_dict = {
             'Log Launcher': {
                 'name': 'Log Launcher', 'thMax': 0, 'type': 'Gold'
             },
+            'Flame Flinger': {
+                'name': 'Flame Flinger', 'thMax': 0, 'type': 'Gold'
+            },
             'L.A.S.S.I': {
                 'name': 'L.A.S.S.I', 'thMax': 0, 'type': 'Dark Elixir'
             },
@@ -954,6 +961,9 @@ troop_dict = {
             },
             'Log Launcher': {
                 'name': 'Log Launcher', 'thMax': 0, 'type': 'Gold'
+            },
+            'Flame Flinger': {
+                'name': 'Flame Flinger', 'thMax': 0, 'type': 'Gold'
             },
             'L.A.S.S.I': {
                 'name': 'L.A.S.S.I', 'thMax': 0, 'type': 'Dark Elixir'
@@ -1134,6 +1144,9 @@ troop_dict = {
             'Log Launcher': {
                 'name': 'Log Launcher', 'thMax': 0, 'type': 'Gold'
             },
+            'Flame Flinger': {
+                'name': 'Flame Flinger', 'thMax': 0, 'type': 'Gold'
+            },
             'L.A.S.S.I': {
                 'name': 'L.A.S.S.I', 'thMax': 0, 'type': 'Dark Elixir'
             },
@@ -1312,6 +1325,9 @@ troop_dict = {
             },
             'Log Launcher': {
                 'name': 'Log Launcher', 'thMax': 0, 'type': 'Gold'
+            },
+            'Flame Flinger': {
+                'name': 'Flame Flinger', 'thMax': 0, 'type': 'Gold'
             },
             'L.A.S.S.I': {
                 'name': 'L.A.S.S.I', 'thMax': 0, 'type': 'Dark Elixir'
@@ -1492,6 +1508,9 @@ troop_dict = {
             'Log Launcher': {
                 'name': 'Log Launcher', 'thMax': 0, 'type': 'Gold'
             },
+            'Flame Flinger': {
+                'name': 'Flame Flinger', 'thMax': 0, 'type': 'Gold'
+            },
             'L.A.S.S.I': {
                 'name': 'L.A.S.S.I', 'thMax': 0, 'type': 'Dark Elixir'
             },
@@ -1670,6 +1689,9 @@ troop_dict = {
             },
             'Log Launcher': {
                 'name': 'Log Launcher', 'thMax': 0, 'type': 'Gold'
+            },
+            'Flame Flinger': {
+                'name': 'Flame Flinger', 'thMax': 0, 'type': 'Gold'
             },
             'L.A.S.S.I': {
                 'name': 'L.A.S.S.I', 'thMax': 0, 'type': 'Dark Elixir'
@@ -1850,6 +1872,9 @@ troop_dict = {
             'Log Launcher': {
                 'name': 'Log Launcher', 'thMax': 0, 'type': 'Gold'
             },
+            'Flame Flinger': {
+                'name': 'Flame Flinger', 'thMax': 0, 'type': 'Gold'
+            },
             'L.A.S.S.I': {
                 'name': 'L.A.S.S.I', 'thMax': 0, 'type': 'Dark Elixir'
             },
@@ -2028,6 +2053,9 @@ troop_dict = {
             },
             'Log Launcher': {
                 'name': 'Log Launcher', 'thMax': 0, 'type': 'Gold'
+            },
+            'Flame Flinger': {
+                'name': 'Flame Flinger', 'thMax': 0, 'type': 'Gold'
             },
             'L.A.S.S.I': {
                 'name': 'L.A.S.S.I', 'thMax': 0, 'type': 'Dark Elixir'
@@ -2208,6 +2236,9 @@ troop_dict = {
             'Log Launcher': {
                 'name': 'Log Launcher', 'thMax': 0, 'type': 'Gold'
             },
+            'Flame Flinger': {
+                'name': 'Flame Flinger', 'thMax': 0, 'type': 'Gold'
+            },
             'L.A.S.S.I': {
                 'name': 'L.A.S.S.I', 'thMax': 0, 'type': 'Dark Elixir'
             },
@@ -2386,6 +2417,9 @@ troop_dict = {
             },
             'Log Launcher': {
                 'name': 'Log Launcher', 'thMax': 0, 'type': 'Gold'
+            },
+            'Flame Flinger': {
+                'name': 'Flame Flinger', 'thMax': 0, 'type': 'Gold'
             },
             'L.A.S.S.I': {
                 'name': 'L.A.S.S.I', 'thMax': 0, 'type': 'Dark Elixir'
@@ -2566,6 +2600,9 @@ troop_dict = {
             'Log Launcher': {
                 'name': 'Log Launcher', 'thMax': 0, 'type': 'Gold'
             },
+            'Flame Flinger': {
+                'name': 'Flame Flinger', 'thMax': 0, 'type': 'Gold'
+            },
             'L.A.S.S.I': {
                 'name': 'L.A.S.S.I', 'thMax': 0, 'type': 'Dark Elixir'
             },
@@ -2745,6 +2782,9 @@ troop_dict = {
             'Log Launcher': {
                 'name': 'Log Launcher', 'thMax': 4, 'type': 'Gold'
             },
+            'Flame Flinger': {
+                'name': 'Flame Flinger', 'thMax': 0, 'type': 'Gold'
+            },
             'L.A.S.S.I': {
                 'name': 'L.A.S.S.I', 'thMax': 0, 'type': 'Dark Elixir'
             },
@@ -2923,6 +2963,9 @@ troop_dict = {
             },
             'Log Launcher': {
                 'name': 'Log Launcher', 'thMax': 4, 'type': 'Gold'
+            },
+            'Flame Flinger': {
+                'name': 'Flame Flinger', 'thMax': 0, 'type': 'Gold'
             },
             'L.A.S.S.I': {
                 'name': 'L.A.S.S.I', 'thMax': 10, 'type': 'Dark Elixir'
