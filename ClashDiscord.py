@@ -270,11 +270,20 @@ async def unitlvl(ctx, *, unit_name):
     unit_obj = clash_responder.find_unit(player_obj, unit_name)
     field_dict_list = [discord_responder.unit_lvl(
         player_obj, unit_obj, unit_name)]
+    # unit_obj not found
+    # set title to player name
+    if not unit_obj:
+        title_string = player_obj.name
+    # unit_obj found
+    # set title to player_name unit_name
+    else:
+        title_string = f"{player_obj.name} {unit_obj.name}"
+
     embed_list = discord_responder.embed_message(
         Embed=disnake.Embed,
         color=disnake.Color(client_data.embed_color),
         icon_url=ctx.bot.user.avatar.url,
-        title=f"{player_obj.name} {unit_obj.name}",
+        title=title_string,
         bot_prefix=ctx.prefix,
         bot_user_name=ctx.bot.user.name,
         thumbnail=player_obj.league_icons,
