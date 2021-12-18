@@ -357,8 +357,14 @@ def get(tag, header):
             previous_legend_rank = None
             previous_legend_trophies = None
 
-        best_legend_rank = player_json['legendStatistics']['bestSeason']['rank']
-        best_legend_trophies = player_json['legendStatistics']['bestSeason']['trophies']
+        if 'bestSeason' in player_json['legendStatistics']:
+            best_legend_rank = (player_json['legendStatistics']
+                                ['bestSeason']['rank'])
+            best_legend_trophies = (player_json['legendStatistics']
+                                    ['bestSeason']['trophies'])
+        else:
+            best_legend_rank = None
+            best_legend_trophies = None
 
         if 'rank' in player_json['legendStatistics']['currentSeason']:
             current_legend_rank = player_json['legendStatistics']['currentSeason']['rank']
