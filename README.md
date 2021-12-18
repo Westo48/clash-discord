@@ -222,7 +222,10 @@ ClashDiscord is largely **command** focused, meaning it doesn't do anything that
     - displays players that are missing attacks in war
   - warclanscore
     - displays every war member's score
-    - will send a message for _every_ war member, not currently suggested
+  - warlineup
+    - displays a lineup for your clan and your opponent
+  - warmemberlineup
+    - displays a lineup for each member in your clan and your opponent
 
 - ## <a id="command-list-cwl-group"></a>CWL Group
 
@@ -231,7 +234,6 @@ ClashDiscord is largely **command** focused, meaning it doesn't do anything that
     - uses active player's clan for all cwlgroup and cwlwar commands
   - cwlclanscore
     - displays every cwl member's score
-    - will send a message for _every_ cwl member, not currently suggested
   - cwlscore
     - lists your player's score for each war in cwl
   - cwlmemberscore `mentionuser`
