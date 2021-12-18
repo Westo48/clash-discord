@@ -3668,8 +3668,8 @@ async def on_member_remove(member):
 
 @client.event
 async def on_reaction_add(reaction, user):
-    # if the reactor is clash discord
-    if user.id == razbot_data.discord_id:
+    # if the reactor is a bot
+    if user.bot:
         return
 
     # if the author of the reacted message is not clash discord
