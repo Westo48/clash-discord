@@ -1475,7 +1475,26 @@ async def warmemberlineup(ctx):
     player_obj = verification_payload['player_obj']
     war_obj = verification_payload['war_obj']
 
-    await ctx.send(discord_responder.war_member_lineup(war_obj))
+    field_dict_list = discord_responder.war_member_lineup(
+        war_obj)
+    embed_list = discord_responder.embed_message(
+        Embed=discord.Embed,
+        color=discord.Color(client_data.embed_color),
+        icon_url=(ctx.bot.user.avatar_url.BASE +
+                  ctx.bot.user.avatar_url._url),
+        title=f"{war_obj.clan.name} vs. {war_obj.opponent.name}",
+        bot_prefix=ctx.prefix,
+        bot_user_name=ctx.bot.user.name,
+        thumbnail=player_obj.clan_icons,
+        field_list=field_dict_list,
+        image_url=None,
+        author_display_name=ctx.author.display_name,
+        author_avatar_url=(ctx.author.avatar_url.BASE +
+                           ctx.author.avatar_url._url)
+    )
+
+    for embed in embed_list:
+        await ctx.send(embed=embed)
 
 
 # CWL Group
