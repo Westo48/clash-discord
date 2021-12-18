@@ -1003,6 +1003,69 @@ def war_all_member_standing(war_obj):
         return return_list
 
 
+def war_lineup(war_obj):
+    # prepping message and title
+    message = (
+        "```\n"
+        "War Lineup\n"
+        "14 | 13 | 12 | 11 | 10 | 9  | 8\n"
+        "-------------------------------\n"
+    )
+    # prepping clan lineup message
+    clan_lineup = f"{war_obj.clan.name}\n"
+    clan_lineup_dict = clash_responder.war_clan_lineup(war_obj.clan)
+    for th in clan_lineup_dict:
+        if th >= 8:
+            clan_lineup += f"{clan_lineup_dict[th]}"
+            if clan_lineup_dict[th] >= 10:
+                # if it is a double digit number
+                clan_lineup += " | "
+            else:
+                # if it is a single digit number add an extra space
+                clan_lineup += "  | "
+    # removes the last 4 characters '  | ' of the string
+    clan_lineup = clan_lineup[:-4]
+    clan_lineup += "\n\n"
+    message += clan_lineup
+
+    # prepping opponent lineup message
+    opp_lineup = f"{war_obj.opponent.name}\n"
+    opp_lineup_dict = clash_responder.war_clan_lineup(war_obj.opponent)
+    for th in opp_lineup_dict:
+        if th >= 8:
+            opp_lineup += f"{opp_lineup_dict[th]}"
+            if opp_lineup_dict[th] >= 10:
+                # if it is a double digit number
+                opp_lineup += " | "
+            else:
+                # if it is a single digit number add an extra space
+                opp_lineup += "  | "
+    # removes the last 4 characters '  | ' of the string
+    opp_lineup = opp_lineup[:-4]
+    opp_lineup += "\n\n"
+    message += opp_lineup
+
+    message += "```"
+    return message
+
+
+def war_member_lineup(war_obj):
+    field_dict_list = []
+
+    for clan_member in war_obj.clan.members:
+        opp_member_obj = war_obj.opponent.members[clan_member.map_position-1]
+        field_dict_list.append({
+            "name": clan_member.map_position,
+            "value": (
+                f"{clan_member.th_lvl} | {clan_member.name}\n"
+                f"{opp_member_obj.th_lvl} | {opp_member_obj.name}\n"
+            ),
+            "inline": False
+        })
+
+    return field_dict_list
+
+
 # CWL GROUP
 
 def cwl_group_verification(db_player_obj, user_obj, header):

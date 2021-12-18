@@ -2971,7 +2971,7 @@ troop_dict = {
                 'name': 'Log Launcher', 'thMax': 4, 'type': 'Gold'
             },
             'Flame Flinger': {
-                'name': 'Flame Flinger', 'thMax': 0, 'type': 'Gold'
+                'name': 'Flame Flinger', 'thMax': 4, 'type': 'Gold'
             },
             'L.A.S.S.I': {
                 'name': 'L.A.S.S.I', 'thMax': 10, 'type': 'Dark Elixir'
