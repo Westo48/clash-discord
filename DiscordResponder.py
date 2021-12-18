@@ -1007,7 +1007,7 @@ def war_lineup(war_obj):
     # prepping message and title
     message = (
         "```\n"
-        "CWL Group Lineup\n"
+        "War Lineup\n"
         "14 | 13 | 12 | 11 | 10 | 9  | 8\n"
         "-------------------------------\n"
     )
@@ -1044,6 +1044,47 @@ def war_lineup(war_obj):
     opp_lineup = opp_lineup[:-4]
     opp_lineup += "\n\n"
     message += opp_lineup
+
+    message += "```"
+    return message
+
+
+def war_member_lineup(war_obj):
+    # prepping message and title
+
+    # getting only the first 13 characters of the clan names
+    clan_name = war_obj.clan.name[:13]
+    opp_clan_name = war_obj.opponent.name[:13]
+    message = (
+        "```\n"
+        "War Lineup\n\n"
+        f"{clan_name} vs. {opp_clan_name}\n\n\n"
+    )
+
+    member_index = 0
+    for clan_member in war_obj.clan.members:
+        member_name = clan_member.name[:11]
+
+        # add a space if th lvl is single digit
+        if clan_member.th_lvl < 10:
+            member_th = f"{clan_member.th_lvl} "
+        else:
+            member_th = f"{clan_member.th_lvl}"
+
+        opp_member_obj = war_obj.opponent.members[member_index]
+
+        opp_name = opp_member_obj.name[:11]
+
+        # add a space if th lvl is single digit
+        if clan_member.th_lvl < 10:
+            opp_th = f"{opp_member_obj.th_lvl} "
+        else:
+            opp_th = f"{opp_member_obj.th_lvl}"
+
+        lineup_message = f"{member_name} {member_th} | {opp_name} {opp_th}\n\n"
+        message += lineup_message
+
+        member_index += 1
 
     message += "```"
     return message
