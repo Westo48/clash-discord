@@ -1,4 +1,5 @@
 import discord
+import coc
 from asyncio.tasks import sleep
 from discord.ext import commands
 import RazBot_Data
@@ -10,10 +11,16 @@ import RazBotDB_Responder as db_responder
 razbot_data = RazBot_Data.RazBot_Data()
 client_data = ClashDiscord_Client_Data.ClashDiscord_Data()
 
+coc_client = coc.login(
+    email=razbot_data.coc_dev_email,
+    password=razbot_data.coc_dev_password
+)
+
 intents = discord.Intents.all()
 
 client = commands.Bot(
-    command_prefix=razbot_data.prefix, intents=intents)
+    command_prefix=discord_responder.get_client_prefix(),
+    intents=intents)
 client.remove_command('help')
 
 # todo move entry validation to modules (setting # in front of player tags)
@@ -101,8 +108,8 @@ async def ping(ctx):
 )
 async def findplayer(ctx, *, player_tag):
     async with ctx.typing():
-        player_obj = clash_responder.get_player(
-            player_tag, razbot_data.header)
+        player_obj = await clash_responder.get_player(
+            player_tag, coc_client)
 
     # player with given tag not found
     if not player_obj:
@@ -119,7 +126,7 @@ async def findplayer(ctx, *, player_tag):
         title=f"{player_obj.name} {player_obj.tag}",
         bot_prefix=ctx.prefix,
         bot_user_name=ctx.bot.user.name,
-        thumbnail=player_obj.league_icons,
+        thumbnail=player_obj.league.icon,
         field_list=field_dict_list,
         image_url=None,
         author_display_name=ctx.author.display_name,
@@ -140,8 +147,8 @@ async def player(ctx):
     async with ctx.typing():
         db_player_obj = db_responder.read_player_active(ctx.author.id)
 
-    verification_payload = discord_responder.player_verification(
-        db_player_obj, ctx.author, razbot_data.header)
+    verification_payload = await discord_responder.player_verification(
+        db_player_obj, ctx.author, coc_client)
     if not verification_payload['verified']:
         embed_list = discord_responder.embed_message(
             Embed=discord.Embed,
@@ -174,7 +181,7 @@ async def player(ctx):
         title=f"{player_obj.name} {player_obj.tag}",
         bot_prefix=ctx.prefix,
         bot_user_name=ctx.bot.user.name,
-        thumbnail=player_obj.league_icons,
+        thumbnail=player_obj.league.icon,
         field_list=field_dict_list,
         image_url=None,
         author_display_name=ctx.author.display_name,
@@ -202,8 +209,8 @@ async def playermember(ctx):
     async with ctx.typing():
         db_player_obj = db_responder.read_player_active(discord_member.id)
 
-    verification_payload = discord_responder.player_verification(
-        db_player_obj, discord_member, razbot_data.header)
+    verification_payload = await discord_responder.player_verification(
+        db_player_obj, discord_member, coc_client)
     if not verification_payload['verified']:
         embed_list = discord_responder.embed_message(
             Embed=discord.Embed,
@@ -236,7 +243,7 @@ async def playermember(ctx):
         title=player_obj.name,
         bot_prefix=ctx.prefix,
         bot_user_name=ctx.bot.user.name,
-        thumbnail=player_obj.league_icons,
+        thumbnail=player_obj.league.icon,
         field_list=field_dict_list,
         image_url=None,
         author_display_name=ctx.author.display_name,
@@ -257,8 +264,8 @@ async def unitlvl(ctx, *, unit_name):
     async with ctx.typing():
         db_player_obj = db_responder.read_player_active(ctx.author.id)
 
-    verification_payload = discord_responder.player_verification(
-        db_player_obj, ctx.author, razbot_data.header)
+    verification_payload = await discord_responder.player_verification(
+        db_player_obj, ctx.author, coc_client)
     if not verification_payload['verified']:
         embed_list = discord_responder.embed_message(
             Embed=discord.Embed,
@@ -301,7 +308,7 @@ async def unitlvl(ctx, *, unit_name):
         title=title_string,
         bot_prefix=ctx.prefix,
         bot_user_name=ctx.bot.user.name,
-        thumbnail=player_obj.league_icons,
+        thumbnail=player_obj.league.icon,
         field_list=field_dict_list,
         image_url=None,
         author_display_name=ctx.author.display_name,
@@ -321,8 +328,8 @@ async def allunitlvl(ctx):
     async with ctx.typing():
         db_player_obj = db_responder.read_player_active(ctx.author.id)
 
-    verification_payload = discord_responder.player_verification(
-        db_player_obj, ctx.author, razbot_data.header)
+    verification_payload = await discord_responder.player_verification(
+        db_player_obj, ctx.author, coc_client)
     if not verification_payload['verified']:
         embed_list = discord_responder.embed_message(
             Embed=discord.Embed,
@@ -354,7 +361,7 @@ async def allunitlvl(ctx):
         title=f"{player_obj.name} units",
         bot_prefix=ctx.prefix,
         bot_user_name=ctx.bot.user.name,
-        thumbnail=player_obj.league_icons,
+        thumbnail=player_obj.league.icon,
         field_list=field_dict_list,
         image_url=None,
         author_display_name=ctx.author.display_name,
@@ -374,8 +381,8 @@ async def allherolvl(ctx):
     async with ctx.typing():
         db_player_obj = db_responder.read_player_active(ctx.author.id)
 
-    verification_payload = discord_responder.player_verification(
-        db_player_obj, ctx.author, razbot_data.header)
+    verification_payload = await discord_responder.player_verification(
+        db_player_obj, ctx.author, coc_client)
     if not verification_payload['verified']:
         embed_list = discord_responder.embed_message(
             Embed=discord.Embed,
@@ -407,7 +414,61 @@ async def allherolvl(ctx):
         title=f"{player_obj.name} heroes",
         bot_prefix=ctx.prefix,
         bot_user_name=ctx.bot.user.name,
-        thumbnail=player_obj.league_icons,
+        thumbnail=player_obj.league.icon,
+        field_list=field_dict_list,
+        image_url=None,
+        author_display_name=ctx.author.display_name,
+        author_avatar_url=(ctx.author.avatar_url.BASE +
+                           ctx.author.avatar_url._url)
+    )
+    for embed in embed_list:
+        await ctx.send(embed=embed)
+        await ctx.send(embed=embed)
+
+
+@client.command(
+    brief='player',
+    description='get all your pet levels',
+    hidden=True
+)
+async def allpetlvl(ctx):
+    async with ctx.typing():
+        db_player_obj = db_responder.read_player_active(ctx.author.id)
+
+    verification_payload = await discord_responder.player_verification(
+        db_player_obj, ctx.author, coc_client)
+    if not verification_payload['verified']:
+        embed_list = discord_responder.embed_message(
+            Embed=discord.Embed,
+            color=discord.Color(client_data.embed_color),
+            icon_url=(ctx.bot.user.avatar_url.BASE +
+                      ctx.bot.user.avatar_url._url),
+            title=None,
+            bot_prefix=ctx.prefix,
+            bot_user_name=ctx.bot.user.name,
+            thumbnail=None,
+            field_list=verification_payload['field_dict_list'],
+            image_url=None,
+            author_display_name=ctx.author.display_name,
+            author_avatar_url=(ctx.author.avatar_url.BASE +
+                               ctx.author.avatar_url._url)
+        )
+        for embed in embed_list:
+            await ctx.send(embed=embed)
+        return
+
+    player_obj = verification_payload['player_obj']
+
+    field_dict_list = discord_responder.pet_lvl_all(player_obj)
+    embed_list = discord_responder.embed_message(
+        Embed=discord.Embed,
+        color=discord.Color(client_data.embed_color),
+        icon_url=(ctx.bot.user.avatar_url.BASE +
+                  ctx.bot.user.avatar_url._url),
+        title=f"{player_obj.name} pets",
+        bot_prefix=ctx.prefix,
+        bot_user_name=ctx.bot.user.name,
+        thumbnail=player_obj.league.icon,
         field_list=field_dict_list,
         image_url=None,
         author_display_name=ctx.author.display_name,
@@ -427,8 +488,8 @@ async def alltrooplvl(ctx):
     async with ctx.typing():
         db_player_obj = db_responder.read_player_active(ctx.author.id)
 
-    verification_payload = discord_responder.player_verification(
-        db_player_obj, ctx.author, razbot_data.header)
+    verification_payload = await discord_responder.player_verification(
+        db_player_obj, ctx.author, coc_client)
     if not verification_payload['verified']:
         embed_list = discord_responder.embed_message(
             Embed=discord.Embed,
@@ -460,7 +521,7 @@ async def alltrooplvl(ctx):
         title=f"{player_obj.name} troops",
         bot_prefix=ctx.prefix,
         bot_user_name=ctx.bot.user.name,
-        thumbnail=player_obj.league_icons,
+        thumbnail=player_obj.league.icon,
         field_list=field_dict_list,
         image_url=None,
         author_display_name=ctx.author.display_name,
@@ -480,8 +541,8 @@ async def allspelllvl(ctx):
     async with ctx.typing():
         db_player_obj = db_responder.read_player_active(ctx.author.id)
 
-    verification_payload = discord_responder.player_verification(
-        db_player_obj, ctx.author, razbot_data.header)
+    verification_payload = await discord_responder.player_verification(
+        db_player_obj, ctx.author, coc_client)
     if not verification_payload['verified']:
         embed_list = discord_responder.embed_message(
             Embed=discord.Embed,
@@ -513,7 +574,7 @@ async def allspelllvl(ctx):
         title=f"{player_obj.name} spells",
         bot_prefix=ctx.prefix,
         bot_user_name=ctx.bot.user.name,
-        thumbnail=player_obj.league_icons,
+        thumbnail=player_obj.league.icon,
         field_list=field_dict_list,
         image_url=None,
         author_display_name=ctx.author.display_name,
@@ -533,8 +594,8 @@ async def activesupertroop(ctx):
     async with ctx.typing():
         db_player_obj = db_responder.read_player_active(ctx.author.id)
 
-    verification_payload = discord_responder.player_verification(
-        db_player_obj, ctx.author, razbot_data.header)
+    verification_payload = await discord_responder.player_verification(
+        db_player_obj, ctx.author, coc_client)
     if not verification_payload['verified']:
         embed_list = discord_responder.embed_message(
             Embed=discord.Embed,
@@ -557,10 +618,11 @@ async def activesupertroop(ctx):
 
     player_obj = verification_payload['player_obj']
 
-    active_super_troops = player_obj.find_active_super_troops()
+    active_super_troop_list = clash_responder.player_active_super_troops(
+        player_obj)
 
     field_dict_list = discord_responder.active_super_troops(
-        player_obj, active_super_troops)
+        player_obj, active_super_troop_list)
     embed_list = discord_responder.embed_message(
         Embed=discord.Embed,
         color=discord.Color(client_data.embed_color),
@@ -569,7 +631,7 @@ async def activesupertroop(ctx):
         title=f"{player_obj.name} super troops",
         bot_prefix=ctx.prefix,
         bot_user_name=ctx.bot.user.name,
-        thumbnail=player_obj.league_icons,
+        thumbnail=player_obj.league.icon,
         field_list=field_dict_list,
         image_url=None,
         author_display_name=ctx.author.display_name,
@@ -606,7 +668,7 @@ async def finduser(ctx, player_tag):
         title=None,
         bot_prefix=ctx.prefix,
         bot_user_name=ctx.bot.user.name,
-        thumbnail=player_obj.league_icons,
+        thumbnail=player_obj.league.icon,
         field_list=field_dict_list,
         image_url=None,
         author_display_name=ctx.author.display_name,
@@ -1656,7 +1718,7 @@ async def cwlscore(ctx):
         title=f"{player_obj.name} CWL score",
         bot_prefix=ctx.prefix,
         bot_user_name=ctx.bot.user.name,
-        thumbnail=player_obj.league_icons,
+        thumbnail=player_obj.league.icon,
         field_list=field_dict_list,
         image_url=None,
         author_display_name=ctx.author.display_name,
@@ -1718,7 +1780,7 @@ async def cwlmemberscore(ctx):
         title=f"{player_obj.name} CWL score",
         bot_prefix=ctx.prefix,
         bot_user_name=ctx.bot.user.name,
-        thumbnail=player_obj.league_icons,
+        thumbnail=player_obj.league.icon,
         field_list=field_dict_list,
         image_url=None,
         author_display_name=ctx.author.display_name,
@@ -2076,7 +2138,7 @@ async def role(ctx):
                 title=f"{discord_user_obj.display_name} {player_obj.name}",
                 bot_prefix=ctx.prefix,
                 bot_user_name=ctx.bot.user.name,
-                thumbnail=player_obj.league_icons,
+                thumbnail=player_obj.league.icon,
                 field_list=field_dict_list,
                 image_url=None,
                 author_display_name=ctx.author.display_name,
@@ -2108,7 +2170,7 @@ async def role(ctx):
                 title=f"{discord_user_obj.display_name} {player_obj.name}",
                 bot_prefix=ctx.prefix,
                 bot_user_name=ctx.bot.user.name,
-                thumbnail=player_obj.league_icons,
+                thumbnail=player_obj.league.icon,
                 field_list=field_dict_list,
                 image_url=None,
                 author_display_name=ctx.author.display_name,
@@ -2379,7 +2441,7 @@ async def rolemember(ctx):
                 title=f"{discord_user_obj.display_name} {player_obj.name}",
                 bot_prefix=ctx.prefix,
                 bot_user_name=ctx.bot.user.name,
-                thumbnail=player_obj.league_icons,
+                thumbnail=player_obj.league.icon,
                 field_list=field_dict_list,
                 image_url=None,
                 author_display_name=ctx.author.display_name,
@@ -2411,7 +2473,7 @@ async def rolemember(ctx):
                 title=f"{discord_user_obj.display_name} {player_obj.name}",
                 bot_prefix=ctx.prefix,
                 bot_user_name=ctx.bot.user.name,
-                thumbnail=player_obj.league_icons,
+                thumbnail=player_obj.league.icon,
                 field_list=field_dict_list,
                 image_url=None,
                 author_display_name=ctx.author.display_name,
@@ -2665,7 +2727,7 @@ async def roleall(ctx):
                     title=f"{discord_user_obj.display_name} {player_obj.name}",
                     bot_prefix=ctx.prefix,
                     bot_user_name=ctx.bot.user.name,
-                    thumbnail=player_obj.league_icons,
+                    thumbnail=player_obj.league.icon,
                     field_list=field_dict_list,
                     image_url=None,
                     author_display_name=ctx.author.display_name,
@@ -2697,7 +2759,7 @@ async def roleall(ctx):
                     title=f"{discord_user_obj.display_name} {player_obj.name}",
                     bot_prefix=ctx.prefix,
                     bot_user_name=ctx.bot.user.name,
-                    thumbnail=player_obj.league_icons,
+                    thumbnail=player_obj.league.icon,
                     field_list=field_dict_list,
                     image_url=None,
                     author_display_name=ctx.author.display_name,

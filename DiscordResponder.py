@@ -1,14 +1,28 @@
 import math
-import Clan
-from Player import super_troop_list
-import ClashResponder as clash_responder
+from coc import NotFound, Maintenance, PrivateWarLog
+# import Clan
+import RazBot_Data
+# from Player import super_troop_list
+# import ClashResponder as clash_responder
 import RazBotDB_Responder as db_responder
 from discord.utils import get
 
+razbot_data = RazBot_Data.RazBot_Data()
+
+
+# CLIENT
+
+
+def get_client_prefix():
+    """
+        simply returns RazBot_Data client prefix
+    """
+    return razbot_data.prefix
 
 # PLAYER
 
-def player_verification(db_player_obj, user_obj, header):
+
+async def player_verification(db_player_obj, user_obj, coc_client):
     """
         verifying a player
         and returning verification payload
@@ -34,10 +48,18 @@ def player_verification(db_player_obj, user_obj, header):
             'player_obj': None
         }
 
-    player_obj = clash_responder.get_player(
-        db_player_obj.player_tag, header)
-    if not player_obj:
-        # player with tag from db not found
+    try:
+        player_obj = await coc_client.get_player(player_tag=db_player_obj.player_tag)
+    except Maintenance:
+        return {
+            'verified': False,
+            'field_dict_list': [{
+                'name': "Clash of Clans is under maintenance",
+                'value': "please try again later"
+            }],
+            'player_obj': None
+        }
+    except NotFound:
         return {
             'verified': False,
             'field_dict_list': [{
@@ -141,18 +163,18 @@ def player_info(player_obj):
     field_dict_list = []
     field_dict_list.append({
         'name': '**Exp Lvl**',
-        'value': player_obj.xp_lvl,
+        'value': player_obj.exp_level,
         'inline': True
     })
     field_dict_list.append({
         'name': '**TH Lvl**',
-        'value': player_obj.th_lvl,
+        'value': player_obj.town_hall,
         'inline': True
     })
-    if player_obj.th_weapon_lvl:
+    if player_obj.town_hall_weapon:
         field_dict_list.append({
             'name': '**TH Weapon Lvl**',
-            'value': player_obj.th_weapon_lvl,
+            'value': player_obj.town_hall_weapon,
             'inline': True
         })
     field_dict_list.append({
@@ -165,31 +187,37 @@ def player_info(player_obj):
         'value': player_obj.best_trophies,
         'inline': True
     })
-    if player_obj.legend_trophies:
+    if player_obj.legend_statistics:
         field_dict_list.append({
             'name': '**Legend Trophies**',
-            'value': player_obj.legend_trophies,
+            'value': player_obj.legend_statistics.legend_trophies,
             'inline': True
         })
-    if player_obj.best_legend_rank:
+    if player_obj.legend_statistics:
         field_dict_list.append({
             'name': '**Best Rank | Trophies**',
-            'value': (f"{player_obj.best_legend_rank} | "
-                      f"{player_obj.best_legend_trophies}"),
+            'value': (
+                f"{player_obj.legend_statistics.best_season.rank} | "
+                f"{player_obj.legend_statistics.best_season.trophies}"
+            ),
             'inline': True
         })
-    if player_obj.current_legend_rank:
+    if player_obj.legend_statistics:
         field_dict_list.append({
             'name': '**Current Rank | Trophies**',
-            'value': (f"{player_obj.current_legend_rank} | "
-                      f"{player_obj.current_legend_trophies}"),
+            'value': (
+                f"{player_obj.legend_statistics.current_season.rank} | "
+                f"{player_obj.legend_statistics.current_season.trophies}"
+            ),
             'inline': True
         })
-    if player_obj.previous_legend_rank:
+    if player_obj.legend_statistics:
         field_dict_list.append({
             'name': '**Previous Rank | Trophies**',
-            'value': (f"{player_obj.previous_legend_rank} | "
-                      f"{player_obj.previous_legend_trophies}"),
+            'value': (
+                f"{player_obj.legend_statistics.previous_season.rank} | "
+                f"{player_obj.legend_statistics.previous_season.trophies}"
+            ),
             'inline': True
         })
 
@@ -198,27 +226,16 @@ def player_info(player_obj):
         'value': player_obj.war_stars,
         'inline': True
     })
-    if player_obj.clan_tag:
+    if player_obj.clan:
         field_dict_list.append({
             'name': '**Clan**',
-            'value': (f"[{player_obj.clan_name}]"
-                      f"(https://link.clashofclans.com/"
-                      f"en?action=OpenClanProfile&tag="
-                      f"{player_obj.clan_tag[1:]})"),
+            'value': (f"[{player_obj.clan.name}]"
+                      f"({player_obj.clan.share_link})"),
             'inline': True
         })
-
-        if player_obj.role == 'leader':
-            role_name = 'Leader'
-        elif player_obj.role == 'coLeader':
-            role_name = 'Co-Leader'
-        elif player_obj.role == 'admin':
-            role_name = 'Elder'
-        else:
-            role_name = 'Member'
         field_dict_list.append({
             'name': '**Clan Role**',
-            'value': role_name,
+            'value': player_obj.role.in_game_name,
             'inline': True
         })
     else:
@@ -228,7 +245,7 @@ def player_info(player_obj):
             'inline': True
         })
 
-    if player_obj.war_preference:
+    if player_obj.war_opted_in:
         field_dict_list.append({
             'name': '**War Preference**',
             'value': "in",
@@ -246,16 +263,16 @@ def player_info(player_obj):
     for hero in player_obj.heroes:
         if hero.name == 'Barbarian King':
             hero_title = 'BK'
-            hero_value = f'{hero.lvl}'
+            hero_value = f'{hero.level}'
         elif hero.name == 'Archer Queen':
             hero_title += ' | AQ'
-            hero_value += f' | {hero.lvl}'
+            hero_value += f' | {hero.level}'
         elif hero.name == 'Grand Warden':
             hero_title += ' | GW'
-            hero_value += f' | {hero.lvl}'
+            hero_value += f' | {hero.level}'
         elif hero.name == 'Royal Champion':
             hero_title += ' | RC'
-            hero_value += f' | {hero.lvl}'
+            hero_value += f' | {hero.level}'
         else:
             break
     if hero_title != '':
@@ -267,19 +284,19 @@ def player_info(player_obj):
 
     pet_title = ''
     pet_value = ''
-    for troop in player_obj.troops:
-        if troop.name == 'L.A.S.S.I':
+    for pet in player_obj.hero_pets:
+        if pet.name == 'L.A.S.S.I':
             pet_title = 'LA'
-            pet_value = f'{troop.lvl}'
-        elif troop.name == 'Mighty Yak':
+            pet_value = f'{pet.level}'
+        elif pet.name == 'Mighty Yak':
             pet_title += ' | MY'
-            pet_value += f' | {troop.lvl}'
-        elif troop.name == 'Electro Owl':
+            pet_value += f' | {pet.level}'
+        elif pet.name == 'Electro Owl':
             pet_title += ' | EO'
-            pet_value += f' | {troop.lvl}'
-        elif troop.name == 'Unicorn':
+            pet_value += f' | {pet.level}'
+        elif pet.name == 'Unicorn':
             pet_title += ' | UC'
-            pet_value += f' | {troop.lvl}'
+            pet_value += f' | {pet.level}'
     if pet_title != '':
         field_dict_list.append({
             'name': f'**{pet_title}**',
@@ -290,9 +307,7 @@ def player_info(player_obj):
     field_dict_list.append({
         'name': '**Link**',
         'value': (f"[{player_obj.name}]"
-                  f"(https://link.clashofclans.com/"
-                  f"en?action=OpenPlayerProfile&tag="
-                  f"{player_obj.tag[1:]})"),
+                  f"({player_obj.share_link})"),
         'inline': True
     })
     return field_dict_list
@@ -306,36 +321,42 @@ def unit_lvl(player_obj, unit_obj, unit_name):
             'value': f"you either do not have it unlocked or it is misspelled"
         }
 
-    if unit_obj.lvl == unit_obj.max_lvl:
-        # unit is max lvl
+    try:
+        max_level_for_townhall = unit_obj.get_max_level_for_townhall(
+            player_obj.town_hall)
+    except:
+        max_level_for_townhall = unit_obj.max_level
+
+    # unit is max lvl
+    if unit_obj.level == unit_obj.max_level:
         return {
-            'name': f"{unit_obj.name} lvl {unit_obj.lvl}",
+            'name': f"{unit_obj.name} lvl {unit_obj.level}",
             'value': f"max lvl"
         }
-    elif unit_obj.lvl == unit_obj.th_max:
-        # unit is max for th, but not total max
+    # unit is max for th, but not total max
+    elif (unit_obj.level == max_level_for_townhall):
         return {
-            'name': f"{unit_obj.name} lvl {unit_obj.lvl}",
+            'name': f"{unit_obj.name} lvl {unit_obj.level}",
             'value': (
-                f"TH {player_obj.th_lvl} max, "
-                f"max {unit_obj.name} is {unit_obj.max_lvl}"
+                f"TH {player_obj.town_hall} max, "
+                f"max {unit_obj.name} is {unit_obj.max_level}"
             )
         }
+    # unit is not max for th nor is it total max
     else:
-        # unit is not max for th nor is it total max
-        if unit_obj.max_lvl == unit_obj.th_max:
-            # unit max is the same as th max
+        # unit max is the same as th max
+        if (unit_obj.max_level == max_level_for_townhall):
             return {
-                'name': f"{unit_obj.name} lvl {unit_obj.lvl}",
-                'value': f"max {unit_obj.name} is {unit_obj.max_lvl}"
+                'name': f"{unit_obj.name} lvl {unit_obj.level}",
+                'value': f"max {unit_obj.name} is {unit_obj.max_level}"
             }
+        # unit max is not the same as th max
         else:
-            # unit max is not the same as th max
             return {
-                'name': f"{unit_obj.name} lvl {unit_obj.lvl}",
+                'name': f"{unit_obj.name} lvl {unit_obj.level}",
                 'value': (
-                    f"TH {player_obj.th_lvl} max is {unit_obj.th_max}, "
-                    f"max {unit_obj.name} is {unit_obj.max_lvl}"
+                    f"TH {player_obj.town_hall} max is {max_level_for_townhall}, "
+                    f"max {unit_obj.name} is {unit_obj.max_level}"
                 )
             }
 
@@ -343,6 +364,8 @@ def unit_lvl(player_obj, unit_obj, unit_name):
 def unit_lvl_all(player_obj):
     field_dict_list = []
     for field_dict in hero_lvl_all(player_obj):
+        field_dict_list.append(field_dict)
+    for field_dict in pet_lvl_all(player_obj):
         field_dict_list.append(field_dict)
     for field_dict in troop_lvl_all(player_obj):
         field_dict_list.append(field_dict)
@@ -358,11 +381,21 @@ def hero_lvl_all(player_obj):
             field_dict_list.append(unit_lvl(
                 player_obj, hero_obj, hero_obj.name))
     return field_dict_list
+    return field_dict_list
+
+
+def pet_lvl_all(player_obj):
+    field_dict_list = []
+    for pet_obj in player_obj.hero_pets:
+        if pet_obj.village == 'home':
+            field_dict_list.append(unit_lvl(
+                player_obj, pet_obj, pet_obj.name))
+    return field_dict_list
 
 
 def troop_lvl_all(player_obj):
     field_dict_list = []
-    for troop_obj in player_obj.troops:
+    for troop_obj in player_obj.home_troops:
         if troop_obj.village == 'home':
             field_dict_list.append(unit_lvl(
                 player_obj, troop_obj, troop_obj.name))
@@ -378,17 +411,17 @@ def spell_lvl_all(player_obj):
     return field_dict_list
 
 
-def active_super_troops(player_obj, active_super_troops):
-    if len(active_super_troops) == 0:
+def active_super_troops(player_obj, active_super_troop_list):
+    if len(active_super_troop_list) == 0:
         return [{
             'name': player_obj.name,
             'value': f"has no active super troops"
         }]
     else:
         field_dict_list = []
-        for super_troop in active_super_troops:
+        for troop_obj in active_super_troop_list:
             field_dict_list.append({
-                'name': super_troop.name,
+                'name': troop_obj.name,
                 'value': f"is active"
             })
         return field_dict_list
@@ -1460,7 +1493,7 @@ def embed_message(
     )
     if thumbnail:
         embed.set_thumbnail(
-            url=thumbnail['small'])
+            url=thumbnail.small)
 
     if image_url:
         embed.set_image(

@@ -181,6 +181,16 @@ ClashDiscord is largely **command** focused, meaning it doesn't do anything that
       - `!trooplvl hog rider`
       - `!trooplvl jump spell`
       - `!trooplvl archer queen`
+  - allunitlvl
+    - shows the level your units
+  - allherolvl
+    - shows the level your heroes
+  - allpetlvl
+    - shows the level your pets
+  - alltrooplvl
+    - shows the level your troops
+  - allspelllvl
+    - shows the level your spells
   - activesupertroop
     - shows the super troops you have active
 
