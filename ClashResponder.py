@@ -25,8 +25,8 @@ th_lineup_dict = {
 
 # Player
 
-def get_player(player_tag, header):
-    return Player.get(player_tag, header)
+async def get_player(player_tag, coc_client):
+    return await coc_client.get_player(player_tag)
 
 
 def verify_token(api_key, player_tag, header):
@@ -36,13 +36,23 @@ def verify_token(api_key, player_tag, header):
 
 
 def find_unit(player_obj, unit_name):
-    unit_obj = player_obj.find_unit(unit_name)
+    unit_obj = player_obj.get_hero(unit_name)
+    # hero was found
     if unit_obj:
-        # unit was found
         return unit_obj
-    if not unit_obj:
-        # unit was not found
-        return None
+
+    unit_obj = player_obj.get_troop(unit_name)
+    # troop was found
+    if unit_obj:
+        return unit_obj
+
+    unit_obj = player_obj.get_spell(unit_name)
+    # troop was found
+    if unit_obj:
+        return unit_obj
+
+    # unit was not found
+    return None
 
 
 def super_troop_unit_name(unit_name):
@@ -50,6 +60,18 @@ def super_troop_unit_name(unit_name):
         if unit_name.lower() == super_troop.lower():
             return super_troop
     return None
+
+
+def player_active_super_troops(player_obj):
+    """
+        Returns a list of active super troops,
+        if no active super troops are found it will return an empty list
+    """
+    active_super_troops = []
+    for troop_obj in player_obj.troops:
+        if troop_obj.is_active:
+            active_super_troops.append(troop_obj)
+    return active_super_troops
 
 
 # Clan
