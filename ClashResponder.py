@@ -178,7 +178,7 @@ def get_war(clan_tag, header):
     return War.get(clan_tag, header)
 
 
-def war_clan_lineup(war_clan_obj, header):
+def war_clan_lineup(war_clan_obj):
     clan_lineup_dict = th_lineup_dict.copy()
 
     for member in war_clan_obj.members:

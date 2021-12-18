@@ -1406,6 +1406,42 @@ async def warclanscore(ctx):
         await ctx.send(embed=embed)
 
 
+@client.command(
+    brief='war',
+    description='town hall lineup for war'
+)
+async def warlineup(ctx):
+    async with ctx.typing():
+        db_player_obj = db_responder.read_player_active(ctx.author.id)
+
+    verification_payload = discord_responder.war_verification(
+        db_player_obj, ctx.author, razbot_data.header)
+    if not verification_payload['verified']:
+        embed_list = discord_responder.embed_message(
+            Embed=discord.Embed,
+            color=discord.Color(client_data.embed_color),
+            icon_url=(ctx.bot.user.avatar_url.BASE +
+                      ctx.bot.user.avatar_url._url),
+            title=None,
+            bot_prefix=ctx.prefix,
+            bot_user_name=ctx.bot.user.name,
+            thumbnail=None,
+            field_list=verification_payload['field_dict_list'],
+            image_url=None,
+            author_display_name=ctx.author.display_name,
+            author_avatar_url=(ctx.author.avatar_url.BASE +
+                               ctx.author.avatar_url._url)
+        )
+        for embed in embed_list:
+            await ctx.send(embed=embed)
+        return
+
+    player_obj = verification_payload['player_obj']
+    war_obj = verification_payload['war_obj']
+
+    await ctx.send(discord_responder.war_lineup(war_obj))
+
+
 # CWL Group
 # todo cwl_group overview, scoreboard, cwl_clan_noatk
 
