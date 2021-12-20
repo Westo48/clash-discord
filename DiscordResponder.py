@@ -1536,6 +1536,7 @@ def embed_message(
                     color=color,
                     icon_url=icon_url,
                     title=title,
+                    description=description,
                     bot_prefix=bot_prefix,
                     bot_user_name=bot_user_name,
                     thumbnail=thumbnail,
