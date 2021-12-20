@@ -1,6 +1,7 @@
 import math
 from coc import NotFound, Maintenance, PrivateWarLog
 import RazBot_Data
+import ClashResponder as clash_responder
 import RazBotDB_Responder as db_responder
 from discord.utils import get
 
@@ -27,15 +28,15 @@ async def player_verification(db_player_obj, user_obj, coc_client):
         Args:
             db_player_obj (obj): player object from db
             user_obj (obj): discord user obj
-            header (dict): clash api key header
+            coc_client (obj): coc.py client
 
         Returns:
             dict: verification_payload
                 (verified, field_dict_list, player_obj)
     """
 
+    # user active player not found
     if not db_player_obj:
-        # user active player not found
         return {
             'verified': False,
             'field_dict_list': [{
@@ -75,7 +76,7 @@ async def player_verification(db_player_obj, user_obj, coc_client):
     return verification_payload
 
 
-def player_clan_verification(db_player_obj, user_obj, header):
+async def player_clan_verification(db_player_obj, user_obj, coc_client):
     """
         verifying a player is in a clan
         and returning verification payload
@@ -83,21 +84,25 @@ def player_clan_verification(db_player_obj, user_obj, header):
         Args:
             db_player_obj (obj): player object from db
             user_obj (obj): discord user obj
-            header (dict): clash api key header
+            coc_client (obj): coc.py client
 
         Returns:
             dict: verification_payload
                 (verified, field_dict_list, player_obj)
     """
 
-    player_verification_payload = (player_verification(
-        db_player_obj, user_obj, header))
+    player_verification_payload = (await player_verification(
+        db_player_obj, user_obj, coc_client))
+
+    # player verification failed
+    # player in maintenance or not found
     if not player_verification_payload['verified']:
         return player_verification_payload
 
     player_obj = player_verification_payload['player_obj']
-    if not player_obj.clan_tag:
-        # player not in a clan
+
+    # player not in a clan
+    if not player_obj.clan:
         return {
             'verified': False,
             'field_dict_list': [{
@@ -116,7 +121,7 @@ def player_clan_verification(db_player_obj, user_obj, header):
     return verification_payload
 
 
-def player_leadership_verification(db_player_obj, user_obj, header):
+async def player_leadership_verification(db_player_obj, user_obj, header):
     """
         verifying a player is in a clan and leadership
         and returning verification payload
@@ -124,21 +129,25 @@ def player_leadership_verification(db_player_obj, user_obj, header):
         Args:
             db_player_obj (obj): player object from db
             user_obj (obj): discord user obj
-            header (dict): clash api key header
+            coc_client (obj): coc.py client
 
         Returns:
             dict: verification_payload
                 (verified, field_dict_list, player_obj)
     """
 
-    player_clan_verification_payload = (player_clan_verification(
+    player_clan_verification_payload = (await player_clan_verification(
         db_player_obj, user_obj, header))
+
+    # player clan verification failed
+    # player clash in maintenance, not found, or player not in clan
     if not player_clan_verification_payload['verified']:
         return player_clan_verification_payload
 
     player_obj = player_clan_verification_payload['player_obj']
-    if player_obj.role != "leader" and player_obj.role != "coLeader":
-        # player not leader or coleader
+    # player not leader or coleader
+    if (player_obj.role.name != "leader" and
+            player_obj.role.name != "co_leader"):
         return {
             'verified': False,
             'field_dict_list': [{
@@ -439,7 +448,7 @@ def active_super_troops(player_obj, active_super_troop_list):
 
 # CLAN
 
-def clan_verification(db_player_obj, user_obj, header):
+async def clan_verification(db_player_obj, user_obj, coc_client):
     """
         verifying a clan
         and returning verification payload
@@ -447,29 +456,31 @@ def clan_verification(db_player_obj, user_obj, header):
         Args:
             db_player_obj (obj): player object from db
             user_obj (obj): discord user obj
-            header (dict): clash api key header
+            coc_client (obj): coc.py client
 
         Returns:
             dict: verification_payload
                 (verified, field_dict_list, player_obj, clan_obj)
     """
 
-    player_clan_verification_payload = (player_clan_verification(
-        db_player_obj, user_obj, header))
+    player_clan_verification_payload = (await player_clan_verification(
+        db_player_obj, user_obj, coc_client))
+
+    # player clan verification failed
+    # player clash in maintenance, not found, or player not in clan
     if not player_clan_verification_payload['verified']:
         return player_clan_verification_payload
 
     player_obj = player_clan_verification_payload['player_obj']
 
-    clan_obj = clash_responder.get_clan(
-        player_obj.clan_tag, header)
+    clan_obj = await player_obj.get_detailed_clan()
+    # clan with tag from player not found
     if not clan_obj:
-        # clan with tag from player not found
         return {
             'verified': False,
             'field_dict_list': [{
-                'name': "could not find clan",
-                'value': player_obj.clan_tag
+                'name': f"{player_obj.name} {player_obj.tag}",
+                'value': "not in a clan"
             }],
             'player_obj': player_obj,
             'clan_obj': clan_obj
@@ -484,7 +495,7 @@ def clan_verification(db_player_obj, user_obj, header):
     return verification_payload
 
 
-def clan_leadership_verification(db_player_obj, user_obj, header):
+async def clan_leadership_verification(db_player_obj, user_obj, coc_client):
     """
         verifying a clan through player_leadership_verification
         and returning verification payload
@@ -492,36 +503,36 @@ def clan_leadership_verification(db_player_obj, user_obj, header):
         Args:
             db_player_obj (obj): player object from db
             user_obj (obj): discord user obj
-            header (dict): clash api key header
+            coc_client (obj): coc.py client
 
         Returns:
             dict: verification_payload
                 (verified, field_dict_list, player_obj, clan)
     """
 
-    player_leadership_verification_payload = (player_leadership_verification(
-        db_player_obj, user_obj, header))
+    player_leadership_verification_payload = (await player_leadership_verification(
+        db_player_obj, user_obj, coc_client))
 
+    # player leadership verification failed
+    # player clash in maintenance, not found, or player not in leadership
     if not player_leadership_verification_payload['verified']:
         return player_leadership_verification_payload
 
     player_obj = player_leadership_verification_payload['player_obj']
 
     # player is not in clan
-    if not player_obj.clan_tag:
+    clan_obj = await player_obj.get_detailed_clan()
+
+    if not clan_obj:
         return {
             'verified': False,
             'field_dict_list': [{
-                'name': (f"{player_obj.clan_name} "
-                         f"{player_obj.clan_tag}"),
+                'name': f"{player_obj.name} {player_obj.tag}",
                 'value': "not in a clan"
             }],
             'player_obj': player_obj,
-            'clan_obj': None
+            'clan_obj': clan_obj
         }
-
-    clan_obj = clash_responder.get_clan(
-        player_obj.clan_tag, header)
 
     verification_payload = {
         'verified': True,
@@ -532,8 +543,45 @@ def clan_leadership_verification(db_player_obj, user_obj, header):
     return verification_payload
 
 
-def clan_lineup(clan_obj, header):
-    clan_lineup_dict = clash_responder.clan_lineup(clan_obj, header)
+def clan_info(clan_obj):
+    field_dict_list = []
+
+    field_dict_list.append({
+        'name': "**Description**",
+        'value': clan_obj.description,
+        'inline': False
+    })
+    field_dict_list.append({
+        'name': "**Members**",
+        'value': clan_obj.member_count,
+        'inline': True
+    })
+    field_dict_list.append({
+        'name': "**Clan Lvl**",
+        'value': clan_obj.level,
+        'inline': True
+    })
+    field_dict_list.append({
+        'name': "**Clan War League**",
+        'value': clan_obj.war_league.name,
+        'inline': True
+    })
+    field_dict_list.append({
+        'name': "**Total Points**",
+        'value': clan_obj.points,
+        'inline': True
+    })
+    field_dict_list.append({
+        'name': "**Link**",
+        'value': (f"[{clan_obj.name}]({clan_obj.share_link})"),
+        'inline': True
+    })
+
+    return field_dict_list
+
+
+async def clan_lineup(clan_obj, coc_client):
+    clan_lineup_dict = await clash_responder.clan_lineup(clan_obj, coc_client)
 
     field_dict_list = []
 
@@ -548,51 +596,11 @@ def clan_lineup(clan_obj, header):
     return field_dict_list
 
 
-def clan_info(clan_obj):
-    field_dict_list = []
-
-    field_dict_list.append({
-        'name': "**Description**",
-        'value': clan_obj.description,
-        'inline': False
-    })
-    field_dict_list.append({
-        'name': "**Members**",
-        'value': len(clan_obj.members),
-        'inline': True
-    })
-    field_dict_list.append({
-        'name': "**Clan Lvl**",
-        'value': clan_obj.clan_lvl,
-        'inline': True
-    })
-    field_dict_list.append({
-        'name': "**Clan War League**",
-        'value': clan_obj.war_league_name,
-        'inline': True
-    })
-    field_dict_list.append({
-        'name': "**Total Points**",
-        'value': clan_obj.clan_points,
-        'inline': True
-    })
-    field_dict_list.append({
-        'name': "**Link**",
-        'value': (f"[{clan_obj.name}]"
-                  f"(https://link.clashofclans.com/"
-                  f"en?action=OpenClanProfile&tag="
-                  f"{clan_obj.tag[1:]})"),
-        'inline': True
-    })
-
-    return field_dict_list
-
-
-def clan_war_preference(clan_obj, header):
+async def clan_war_preference(clan_obj, coc_client):
     in_count = 0
     for member in clan_obj.members:
-        player_obj = clash_responder.get_player(member.tag, header)
-        if player_obj.war_preference:
+        player_obj = await coc_client.get_player(member.tag)
+        if player_obj.war_opted_in:
             in_count += 1
 
     field_dict_list = []
@@ -604,7 +612,7 @@ def clan_war_preference(clan_obj, header):
     })
     field_dict_list.append({
         'name': "out",
-        'value': f"{len(clan_obj.members) - in_count}",
+        'value': f"{clan_obj.member_count - in_count}",
         'inline': False
     })
 
@@ -612,56 +620,58 @@ def clan_war_preference(clan_obj, header):
 
 
 def donation(clan_obj, donator_list, unit_name):
-    if not donator_list:
-        # unit is a hero
+    # unit is a hero or pet
+    if donator_list is None:
         return [{
             'name': f"{unit_name}",
             'value': "not a valid donatable unit"
         }]
+    # nobody can donate unit
     if len(donator_list) == 0:
-        # nobody can donate unit
         return [{
             'name': clan_obj.name,
             'value': f"unable to donate {unit_name}"
         }]
 
     field_dict_list = []
-    if ((donator_list[0].unit.lvl + clan_obj.donation_upgrade) >=
-            donator_list[0].unit.max_lvl):
-        # if donators can donate max
+    donation_upgrade = clash_responder.clan_donation_upgrade(clan_obj)
+
+    # donators can donate max
+    if ((donator_list[0].unit_obj.level + donation_upgrade) >=
+            donator_list[0].unit_obj.max_level):
         value = (
-            f"{donator_list[0].unit.name} "
-            f"lvl {donator_list[0].unit.max_lvl}, "
+            f"{donator_list[0].unit_obj.name} "
+            f"lvl {donator_list[0].unit_obj.max_level}, "
             f"max"
         )
     else:
         value = (
-            f"{donator_list[0].unit.name} "
-            f"lvl {donator_list[0].unit.lvl + clan_obj.donation_upgrade} "
-            f"max is {donator_list[0].unit.max_lvl}"
+            f"{donator_list[0].unit_obj.name} "
+            f"lvl {donator_list[0].unit_obj.level + donation_upgrade} "
+            f"max is {donator_list[0].unit_obj.max_level}"
         )
 
     for donator in donator_list:
         field_dict_list.append({
-            'name': donator.player.name,
+            'name': donator.player_obj.name,
             'value': value
         })
 
     return field_dict_list
 
 
-def super_troop_search(clan_obj, donor_list, unit_name):
+def super_troop_search(clan_obj, donor_list, super_troop_obj):
     if len(donor_list) == 0:
         return [{
             'name': clan_obj.name,
-            'value': f"does not have {unit_name} activated"
+            'value': f"does not have {super_troop_obj.name} activated"
         }]
 
     field_dict_list = []
     for donator in donor_list:
         field_dict_list.append({
             'name': donator.name,
-            'value': f"has {unit_name} active"
+            'value': f"has {super_troop_obj.name} active"
         })
 
     return field_dict_list
@@ -669,7 +679,7 @@ def super_troop_search(clan_obj, donor_list, unit_name):
 
 # WAR
 
-def war_verification(db_player_obj, user_obj, header):
+async def war_verification(db_player_obj, user_obj, coc_client):
     """
         verifying a war
         and returning verification payload
@@ -677,16 +687,18 @@ def war_verification(db_player_obj, user_obj, header):
         Args:
             db_player_obj (obj): player object from db
             user_obj (obj): discord user obj
-            header (dict): clash api key header
+            coc_client (obj): coc.py client
 
         Returns:
             dict: verification_payload
                 (verified, field_dict_list, player_obj, war_obj)
     """
 
-    player_clan_verification_payload = (player_clan_verification(
-        db_player_obj, user_obj, header))
+    player_clan_verification_payload = (await player_clan_verification(
+        db_player_obj, user_obj, coc_client))
 
+    # player clan verification failed
+    # player clash in maintenance, not found, or player not in clan
     if not player_clan_verification_payload['verified']:
         return player_clan_verification_payload
 
@@ -716,7 +728,7 @@ def war_verification(db_player_obj, user_obj, header):
     return verification_payload
 
 
-def war_leadership_verification(db_player_obj, user_obj, header):
+def war_leadership_verification(db_player_obj, user_obj, coc_client):
     """
         verifying a war through player_leadership_verification
         and returning verification payload
@@ -724,7 +736,7 @@ def war_leadership_verification(db_player_obj, user_obj, header):
         Args:
             db_player_obj (obj): player object from db
             user_obj (obj): discord user obj
-            header (dict): clash api key header
+            coc_client (obj): coc.py client
 
         Returns:
             dict: verification_payload
@@ -732,7 +744,7 @@ def war_leadership_verification(db_player_obj, user_obj, header):
     """
 
     player_leadership_verification_payload = (player_leadership_verification(
-        db_player_obj, user_obj, header))
+        db_player_obj, user_obj, coc_client))
 
     if not player_leadership_verification_payload['verified']:
         return player_leadership_verification_payload
@@ -1111,21 +1123,21 @@ def war_member_lineup(war_obj):
 
 # CWL GROUP
 
-def cwl_group_verification(db_player_obj, user_obj, header):
+def cwl_group_verification(db_player_obj, user_obj, coc_client):
     """
         verifying a cwl group
         and returning verification payload
         Args:
             db_player_obj (obj): player object from db
             user_obj (obj): discord user obj
-            header (dict): clash api key header
+            coc_client (obj): coc.py client
         Returns:
             dict: verification_payload
                 (verified, field_dict_list, player_obj, cwl_group_obj)
     """
 
     player_clan_verification_payload = (player_clan_verification(
-        db_player_obj, user_obj, header))
+        db_player_obj, user_obj, coc_client))
 
     if not player_clan_verification_payload['verified']:
         return player_clan_verification_payload
@@ -1156,21 +1168,21 @@ def cwl_group_verification(db_player_obj, user_obj, header):
     return verification_payload
 
 
-def cwl_group_leadership_verification(db_player_obj, user_obj, header):
+def cwl_group_leadership_verification(db_player_obj, user_obj, coc_client):
     """
         verifying a cwl group through player_leadership_verification
         and returning verification payload
         Args:
             db_player_obj (obj): player object from db
             user_obj (obj): discord user obj
-            header (dict): clash api key header
+            coc_client (obj): coc.py client
         Returns:
             dict: verification_payload
                 (verified, field_dict_list, player_obj, cwl_group_obj)
     """
 
     player_leadership_verification_payload = (player_leadership_verification(
-        db_player_obj, user_obj, header))
+        db_player_obj, user_obj, coc_client))
 
     if not player_leadership_verification_payload['verified']:
         return player_leadership_verification_payload
@@ -1381,21 +1393,21 @@ def cwl_member_standing(player_obj, cwl_group, clan_tag, header):
 
 # CWL WAR
 
-def cwl_war_verification(db_player_obj, user_obj, header):
+def cwl_war_verification(db_player_obj, user_obj, coc_client):
     """
         verifying a cwl war
         and returning verification payload
         Args:
             db_player_obj (obj): player object from db
             user_obj (obj): discord user obj
-            header (dict): clash api key header
+            coc_client (obj): coc.py client
         Returns:
             dict: verification_payload
                 (verified, field_dict_list, player_obj, cwl_war_obj)
     """
 
     cwl_group_verification_payload = (cwl_group_verification(
-        db_player_obj, user_obj, header))
+        db_player_obj, user_obj, coc_client))
 
     if not cwl_group_verification_payload['verified']:
         return cwl_group_verification_payload
@@ -1428,14 +1440,14 @@ def cwl_war_verification(db_player_obj, user_obj, header):
     return verification_payload
 
 
-def cwl_war_leadership_verification(db_player_obj, user_obj, header):
+def cwl_war_leadership_verification(db_player_obj, user_obj, coc_client):
     """
         verifying a cwl war through cwl_group_leadership_verification
         and returning verification payload
         Args:
             db_player_obj (obj): player object from db
             user_obj (obj): discord user obj
-            header (dict): clash api key header
+            coc_client (obj): coc.py client
         Returns:
             dict: verification_payload
                 (verified, field_dict_list, player_obj, cwl_war_obj)
@@ -1443,7 +1455,7 @@ def cwl_war_leadership_verification(db_player_obj, user_obj, header):
 
     cwl_group_leadership_verification_payload = (
         cwl_group_leadership_verification(
-            db_player_obj, user_obj, header))
+            db_player_obj, user_obj, coc_client))
 
     if not cwl_group_leadership_verification_payload['verified']:
         return cwl_group_leadership_verification_payload

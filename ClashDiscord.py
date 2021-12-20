@@ -709,7 +709,7 @@ async def finduser(ctx, player_tag):
 )
 async def findclan(ctx, *, clan_tag):
     async with ctx.typing():
-        clan_obj = clash_responder.get_clan(clan_tag, coc_client)
+        clan_obj = await clash_responder.get_clan(clan_tag, coc_client)
 
     if not clan_obj:
         # clan with given tag not found
@@ -727,7 +727,7 @@ async def findclan(ctx, *, clan_tag):
         description=None,
         bot_prefix=ctx.prefix,
         bot_user_name=ctx.bot.user.name,
-        thumbnail=clan_obj.clan_icons,
+        thumbnail=clan_obj.badge,
         field_list=field_dict_list,
         image_url=None,
         author_display_name=ctx.author.display_name,
@@ -747,7 +747,7 @@ async def clan(ctx):
     async with ctx.typing():
         db_player_obj = db_responder.read_player_active(ctx.author.id)
 
-    verification_payload = discord_responder.clan_verification(
+    verification_payload = await discord_responder.clan_verification(
         db_player_obj, ctx.author, coc_client)
     if not verification_payload['verified']:
         embed_list = discord_responder.embed_message(
@@ -784,7 +784,7 @@ async def clan(ctx):
         description=None,
         bot_prefix=ctx.prefix,
         bot_user_name=ctx.bot.user.name,
-        thumbnail=clan_obj.clan_icons,
+        thumbnail=clan_obj.badge,
         field_list=field_dict_list,
         image_url=None,
         author_display_name=ctx.author.display_name,
@@ -817,7 +817,7 @@ async def clanmention(ctx):
         await ctx.send(f"role mentioned is not linked to a clan")
         return
 
-    clan_obj = clash_responder.get_clan(
+    clan_obj = await clash_responder.get_clan(
         db_clan_role.clan_tag, coc_client)
     if not clan_obj:
         # clan with tag from db clan role not found
@@ -835,7 +835,7 @@ async def clanmention(ctx):
         description=None,
         bot_prefix=ctx.prefix,
         bot_user_name=ctx.bot.user.name,
-        thumbnail=clan_obj.clan_icons,
+        thumbnail=clan_obj.badge,
         field_list=field_dict_list,
         image_url=None,
         author_display_name=ctx.author.display_name,
@@ -854,7 +854,7 @@ async def clanlineup(ctx):
     async with ctx.typing():
         db_player_obj = db_responder.read_player_active(ctx.author.id)
 
-    verification_payload = discord_responder.clan_verification(
+    verification_payload = await discord_responder.clan_leadership_verification(
         db_player_obj, ctx.author, coc_client)
     if not verification_payload['verified']:
         embed_list = discord_responder.embed_message(
@@ -880,13 +880,7 @@ async def clanlineup(ctx):
     player_obj = verification_payload['player_obj']
     clan_obj = verification_payload['clan_obj']
 
-    if not (player_obj.role == 'coLeader' or
-            player_obj.role == 'leader'):
-        # command can only be run by leadership
-        await ctx.send(f"command can only be run by leader or co-leader")
-        return
-
-    field_dict_list = discord_responder.clan_lineup(
+    field_dict_list = await discord_responder.clan_lineup(
         clan_obj, coc_client)
 
     embed_list = discord_responder.embed_message(
@@ -898,7 +892,7 @@ async def clanlineup(ctx):
         description=None,
         bot_prefix=ctx.prefix,
         bot_user_name=ctx.bot.user.name,
-        thumbnail=clan_obj.clan_icons,
+        thumbnail=clan_obj.badge,
         field_list=field_dict_list,
         image_url=None,
         author_display_name=ctx.author.display_name,
@@ -918,7 +912,7 @@ async def clanwarpreference(ctx):
     async with ctx.typing():
         db_player_obj = db_responder.read_player_active(ctx.author.id)
 
-    verification_payload = discord_responder.clan_verification(
+    verification_payload = await discord_responder.clan_leadership_verification(
         db_player_obj, ctx.author, coc_client)
     if not verification_payload['verified']:
         embed_list = discord_responder.embed_message(
@@ -944,13 +938,7 @@ async def clanwarpreference(ctx):
     player_obj = verification_payload['player_obj']
     clan_obj = verification_payload['clan_obj']
 
-    if not (player_obj.role == 'coLeader' or
-            player_obj.role == 'leader'):
-        # command can only be run by leadership
-        await ctx.send(f"command can only be run by leader or co-leader")
-        return
-
-    field_dict_list = discord_responder.clan_war_preference(
+    field_dict_list = await discord_responder.clan_war_preference(
         clan_obj, coc_client)
 
     embed_list = discord_responder.embed_message(
@@ -962,7 +950,7 @@ async def clanwarpreference(ctx):
         description=None,
         bot_prefix=ctx.prefix,
         bot_user_name=ctx.bot.user.name,
-        thumbnail=clan_obj.clan_icons,
+        thumbnail=clan_obj.badge,
         field_list=field_dict_list,
         image_url=None,
         author_display_name=ctx.author.display_name,
@@ -983,7 +971,7 @@ async def donation(ctx, *, unit_name):
     async with ctx.typing():
         db_player_obj = db_responder.read_player_active(ctx.author.id)
 
-    verification_payload = discord_responder.clan_verification(
+    verification_payload = await discord_responder.clan_verification(
         db_player_obj, ctx.author, coc_client)
     if not verification_payload['verified']:
         embed_list = discord_responder.embed_message(
@@ -1009,8 +997,8 @@ async def donation(ctx, *, unit_name):
     player_obj = verification_payload['player_obj']
     clan_obj = verification_payload['clan_obj']
 
-    donator_list = clash_responder.donation(
-        unit_name, clan_obj, coc_client)
+    donator_list = await clash_responder.donation(
+        clan_obj, unit_name, coc_client)
 
     field_dict_list = discord_responder.donation(
         clan_obj, donator_list, unit_name)
@@ -1024,7 +1012,7 @@ async def donation(ctx, *, unit_name):
         description=None,
         bot_prefix=ctx.prefix,
         bot_user_name=ctx.bot.user.name,
-        thumbnail=clan_obj.clan_icons,
+        thumbnail=clan_obj.badge,
         field_list=field_dict_list,
         image_url=None,
         author_display_name=ctx.author.display_name,
@@ -1044,7 +1032,7 @@ async def supertroopsearch(ctx, *, unit_name):
     async with ctx.typing():
         db_player_obj = db_responder.read_player_active(ctx.author.id)
 
-    verification_payload = discord_responder.clan_verification(
+    verification_payload = await discord_responder.clan_verification(
         db_player_obj, ctx.author, coc_client)
     if not verification_payload['verified']:
         embed_list = discord_responder.embed_message(
@@ -1070,18 +1058,18 @@ async def supertroopsearch(ctx, *, unit_name):
     player_obj = verification_payload['player_obj']
     clan_obj = verification_payload['clan_obj']
 
-    super_troop_name = clash_responder.super_troop_unit_name(
-        unit_name)
-    if not super_troop_name:
-        # super troop was not found
+    super_troop_obj = clash_responder.find_super_troop(
+        player_obj, unit_name)
+    # super troop was not found
+    if not super_troop_obj:
         await ctx.send(f"{unit_name} is not a viable request")
         return
 
-    donor_list = clash_responder.active_super_troop_search(
-        super_troop_name, clan_obj, coc_client)
+    donor_list = await clash_responder.active_super_troop_search(
+        super_troop_obj, clan_obj, coc_client)
 
     field_dict_list = discord_responder.super_troop_search(
-        clan_obj, donor_list, super_troop_name)
+        clan_obj, donor_list, super_troop_obj)
 
     embed_list = discord_responder.embed_message(
         Embed=discord.Embed,
@@ -1092,7 +1080,7 @@ async def supertroopsearch(ctx, *, unit_name):
         description=None,
         bot_prefix=ctx.prefix,
         bot_user_name=ctx.bot.user.name,
-        thumbnail=clan_obj.clan_icons,
+        thumbnail=clan_obj.badge,
         field_list=field_dict_list,
         image_url=None,
         author_display_name=ctx.author.display_name,
@@ -1155,7 +1143,7 @@ async def findclanusers(ctx):
         description=None,
         bot_prefix=ctx.prefix,
         bot_user_name=ctx.bot.user.name,
-        thumbnail=clan_obj.clan_icons,
+        thumbnail=clan_obj.badge,
         field_list=field_dict_list,
         image_url=None,
         author_display_name=ctx.author.display_name,
@@ -3889,8 +3877,12 @@ async def on_command_error(ctx, error):
                        f"requires more information")
     elif hasattr(error.original, "text"):
         await ctx.send(f"there was an error that I have not accounted for, "
-                       f"please let Razgriz know, "
+                       f"please let Razgriz know.\n\n"
                        f"error text: `{error.original.text}`")
+    elif hasattr(error.original, "args"):
+        await ctx.send(f"there was an error that I have not accounted for, "
+                       f"please let Razgriz know.\n\n"
+                       f"error text: `{error.original.args[0]}`")
     else:
         await ctx.send(f"there was an error that I have not accounted for, "
                        f"please let Razgriz know")

@@ -275,13 +275,6 @@ def find_unit(player_obj, unit_name):
     return None
 
 
-def super_troop_unit_name(unit_name):
-    for super_troop in Player.super_troop_list:
-        if unit_name.lower() == super_troop.lower():
-            return super_troop
-    return None
-
-
 def player_active_super_troops(player_obj):
     """
         Returns a list of active super troops,
@@ -296,23 +289,32 @@ def player_active_super_troops(player_obj):
 
 # Clan
 # todo DOCSTRING
-def get_clan(clan_tag, header):
-    return Clan.get(clan_tag, header)
+async def get_clan(clan_tag, coc_client):
+    try:
+        clan_obj = await coc_client.get_clan(clan_tag)
+
+    except Maintenance:
+        return None
+
+    except NotFound:
+        return None
+
+    return clan_obj
 
 
-def clan_lineup(clan_obj, header):
+async def clan_lineup(clan_obj, coc_client):
     clan_lineup_dict = th_lineup_dict.copy()
 
     for member in clan_obj.members:
-        player_obj = get_player(member.tag, header)
-        clan_lineup_dict[player_obj.th_lvl] += 1
+        player_obj = await coc_client.get_player(member.tag)
+        clan_lineup_dict[player_obj.town_hall] += 1
 
     return clan_lineup_dict
 
 
 # returns a string response of members that can donate the best of that unit
 # todo put this into the clan framework
-def donation(unit_name, clan, header):
+async def donation(clan_obj, unit_name, coc_client):
     """
         Takes in the unit name and clan tag, returns a list of players
         who can donate.
@@ -322,62 +324,85 @@ def donation(unit_name, clan, header):
 
         Args:
             unit_name (str): Name of requested unit.
-            clan (obj): Clan object.
-            header (dict): Json header
+            clan_obj (obj): Clan object.
+            coc_client (obj): coc.py client
 
         Returns:
             list: List of players who can donate.
     """
 
     class Donor(object):
-        def __init__(self, player, unit):
-            self.player = player
-            self.unit = unit
+        def __init__(self, player_obj, unit_obj):
+            self.player_obj = player_obj
+            self.unit_obj = unit_obj
 
     # get a member list to make less overall responses
     member_list = []
-    for member in clan.members:
-        player = Player.get(member.tag, header)
+    for member in clan_obj.members:
+        player_obj = await coc_client.get_player(member.tag)
 
         # checking if they have the specified unit
-        unit = player.find_unit(unit_name)
-        if unit:
-            member_list.append(Donor(player, unit))
+        unit_obj = find_unit(player_obj, unit_name)
+        if unit_obj:
+            member_list.append(Donor(player_obj, unit_obj))
 
     # if nobody has the requested unit
     if len(member_list) == 0:
         return member_list
 
     # if hero has been requested return None
-    if member_list[0].player.find_hero(unit_name):
+    if find_hero(member_list[0].player_obj, member_list[0].unit_obj.name):
         return None
 
-    donor_max = max(member.unit.lvl for member in member_list)
+    # if pet has been requested return None
+    if find_pet(member_list[0].player_obj, member_list[0].unit_obj.name):
+        return None
+
+    # if super troop has been requested return None
+    if member_list[0].unit_obj.is_super_troop:
+        return None
+
+    # if builder has been requested return None
+    if member_list[0].unit_obj.is_builder_base:
+        return None
+
+    donor_max = max(member.unit_obj.level for member in member_list)
 
     # list of those that can donate
-    donators = []
+    donor_list = []
+
+    # setting donation_upgrade
+    donation_upgrade = clan_donation_upgrade(clan_obj)
 
     # checking to see if anyone can donate max
-    if (donor_max + clan.donation_upgrade) >= member_list[0].unit.max_lvl:
+    if (donor_max + donation_upgrade) >= member_list[0].unit_obj.max_level:
         # go thru each member and return the donors that can donate max
         for member in member_list:
             # if the member can donate max unit
-            if (member.unit.lvl+clan.donation_upgrade) >= member.unit.max_lvl:
+            if ((member.unit_obj.level+donation_upgrade) >=
+                    member.unit_obj.max_level):
                 # adding the donor's name to the donator list
-                donators.append(member)
-        return donators
+                donor_list.append(member)
+        return donor_list
 
     # since nobody can donate max
-    # ! this still needs to be tested
     else:
-        for member in member_list:
-            troop = member.find_troop(unit_name)
-            if troop.lvl >= donor_max:
-                donators.append(member)
-        return donators
+        for member_obj in member_list:
+            if member_obj.unit_obj.level >= donor_max:
+                donor_list.append(member_obj)
+        return donor_list
 
 
-def active_super_troop_search(unit_name, clan, header):
+def clan_donation_upgrade(clan_obj):
+    if clan_obj.level < 5:
+        return 0
+    elif clan_obj.level < 10:
+        return 1
+    else:
+        return 2
+
+
+async def active_super_troop_search(super_troop_obj, clan_obj, coc_client):
     """
         Takes in the unit name and clan object, returns a list of players
         who have super troop active.
@@ -385,24 +410,23 @@ def active_super_troop_search(unit_name, clan, header):
         Returns an empty list if nobody has the super troop active.
 
         Args:
-            unit_name (str): Name of requested unit.
-            clan (obj): Clan object.
-            header (dict): Json header
+            super_troop_obj (obj): coc.py super troop object
+            clan_obj (obj): coc.py clan object
+            coc_client (obj): coc.py client
 
         Returns:
-            list: List of players who can donate.
+            list: list of players who can donate
     """
 
     donor_list = []
     # getting a list of members with the given super_troop activated
-    for member in clan.members:
-        player = Player.get(member.tag, header)
-        active_super_troops = player.find_active_super_troops()
-        for super_troop in active_super_troops:
-            # if the member has the requested active super troop add to list
-            if super_troop.name == unit_name:
-                donor_list.append(member)
-                break
+    for clan_member_obj in clan_obj.members:
+        member_obj = await get_player(clan_member_obj.tag, coc_client)
+        active_super_troop = member_obj.get_troop(super_troop_obj.name)
+        if not active_super_troop:
+            continue
+        if active_super_troop.is_active:
+            donor_list.append(member_obj)
     return donor_list
 
 
