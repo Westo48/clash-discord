@@ -1102,7 +1102,7 @@ async def findclanusers(ctx):
         db_player_obj = db_responder.read_player_active(
             ctx.author.id)
 
-    verification_payload = discord_responder.clan_leadership_verification(
+    verification_payload = await discord_responder.clan_leadership_verification(
         db_player_obj, ctx.author, coc_client)
     if not verification_payload['verified']:
         embed_list = discord_responder.embed_message(
