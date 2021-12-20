@@ -1,5 +1,5 @@
 import math
-from coc import NotFound, Maintenance, PrivateWarLog
+from coc import NotFound, Maintenance, PrivateWarLog, GatewayError
 import RazBot_Data
 import ClashResponder as clash_responder
 import RazBotDB_Responder as db_responder
@@ -64,6 +64,15 @@ async def player_verification(db_player_obj, user_obj, coc_client):
             'field_dict_list': [{
                 'name': "could not find player",
                 'value': db_player_obj.player_tag
+            }],
+            'player_obj': None
+        }
+    except GatewayError:
+        return {
+            'verified': False,
+            'field_dict_list': [{
+                'name': "coc.py ran into a gateway error",
+                'value': "please try again later"
             }],
             'player_obj': None
         }
@@ -704,15 +713,52 @@ async def war_verification(db_player_obj, user_obj, coc_client):
 
     player_obj = player_clan_verification_payload['player_obj']
 
-    war_obj = clash_responder.get_war(
-        player_obj.clan_tag, header)
+    try:
+        war_obj = await coc_client.get_clan_war(player_obj.clan.tag)
+    except Maintenance:
+        return {
+            'verified': False,
+            'field_dict_list': [{
+                'name': "Clash of Clans is under maintenance",
+                'value': "please try again later"
+            }],
+            'player_obj': None
+        }
+    except NotFound:
+        return {
+            'verified': False,
+            'field_dict_list': [{
+                'name': "could not find player",
+                'value': db_player_obj.player_tag
+            }],
+            'player_obj': None
+        }
+    except PrivateWarLog:
+        return {
+            'verified': False,
+            'field_dict_list': [{
+                'name': f"{player_obj.clan.name} {player_obj.clan.tag}",
+                'value': "war log is private"
+            }],
+            'player_obj': None
+        }
+    except GatewayError:
+        return {
+            'verified': False,
+            'field_dict_list': [{
+                'name': "coc.py ran into a gateway error",
+                'value': "please try again later"
+            }],
+            'player_obj': None
+        }
+
     if not war_obj:
         # clan is not in war
         return {
             'verified': False,
             'field_dict_list': [{
-                'name': (f"{player_obj.clan_name} "
-                         f"{player_obj.clan_tag}"),
+                'name': (f"{player_obj.clan.name} "
+                         f"{player_obj.clan.tag}"),
                 'value': "not in war"
             }],
             'player_obj': player_obj,
@@ -728,7 +774,7 @@ async def war_verification(db_player_obj, user_obj, coc_client):
     return verification_payload
 
 
-def war_leadership_verification(db_player_obj, user_obj, coc_client):
+async def war_leadership_verification(db_player_obj, user_obj, coc_client):
     """
         verifying a war through player_leadership_verification
         and returning verification payload
@@ -743,7 +789,7 @@ def war_leadership_verification(db_player_obj, user_obj, coc_client):
                 (verified, field_dict_list, player_obj, war_obj)
     """
 
-    player_leadership_verification_payload = (player_leadership_verification(
+    player_leadership_verification_payload = (await player_leadership_verification(
         db_player_obj, user_obj, coc_client))
 
     if not player_leadership_verification_payload['verified']:
@@ -751,15 +797,14 @@ def war_leadership_verification(db_player_obj, user_obj, coc_client):
 
     player_obj = player_leadership_verification_payload['player_obj']
 
-    war_obj = clash_responder.get_war(
-        player_obj.clan_tag, header)
+    war_obj = await coc_client.get_clan_war(player_obj.clan.tag)
     if not war_obj:
         # clan is not in war
         return {
             'verified': False,
             'field_dict_list': [{
-                'name': (f"{player_obj.clan_name} "
-                         f"{player_obj.clan_tag}"),
+                'name': (f"{player_obj.clan.name} "
+                         f"{player_obj.clan.tag}"),
                 'value': "not in war"
             }],
             'player_obj': player_obj,
@@ -775,7 +820,6 @@ def war_leadership_verification(db_player_obj, user_obj, coc_client):
     return verification_payload
 
 
-# returns a string of the war overview
 def war_overview(war_obj):
     if not war_obj:
         return [{
@@ -784,22 +828,22 @@ def war_overview(war_obj):
         }]
 
     if war_obj.state == "preparation":
-        time_string = war_obj.string_date_time()
+        time_string = clash_responder.string_date_time(war_obj)
 
         return [{
             'name': f"{time_string}",
             'value': f"left before war starts"
         }]
     elif war_obj.state == "inWar":
-        time_string = war_obj.string_date_time()
-        scoreboard_string = war_obj.string_scoreboard()
+        time_string = clash_responder.string_date_time(war_obj)
+        scoreboard_string = clash_responder.string_scoreboard(war_obj)
 
         return [{
             'name': f"{war_obj.clan.name} is {scoreboard_string}",
             'value': f"{time_string} left in war"
         }]
     elif war_obj.state == "warEnded":
-        scoreboard_string = war_obj.string_scoreboard()
+        scoreboard_string = war_obj.string_scoreboard(war_obj)
 
         return [{
             'name': f"{war_obj.clan.name} {scoreboard_string}",
@@ -1145,14 +1189,14 @@ def cwl_group_verification(db_player_obj, user_obj, coc_client):
     player_obj = player_clan_verification_payload['player_obj']
 
     cwl_group_obj = clash_responder.get_cwl_group(
-        player_obj.clan_tag, header)
+        player_obj.clan.tag, header)
     if not cwl_group_obj:
         # clan is not in cwl
         return {
             'verified': False,
             'field_dict_list': [{
-                'name': (f"{player_obj.clan_name} "
-                         f"{player_obj.clan_tag}"),
+                'name': (f"{player_obj.clan.name} "
+                         f"{player_obj.clan.tag}"),
                 'value': "not in cwl"
             }],
             'player_obj': player_obj,
@@ -1190,14 +1234,14 @@ def cwl_group_leadership_verification(db_player_obj, user_obj, coc_client):
     player_obj = player_leadership_verification_payload['player_obj']
 
     cwl_group_obj = clash_responder.get_cwl_group(
-        player_obj.clan_tag, header)
+        player_obj.clan.tag, header)
     if not cwl_group_obj:
         # clan is not in cwl
         return {
             'verified': False,
             'field_dict_list': [{
-                'name': (f"{player_obj.clan_name} "
-                         f"{player_obj.clan_tag}"),
+                'name': (f"{player_obj.clan.name} "
+                         f"{player_obj.clan.tag}"),
                 'value': "not in cwl"
             }],
             'player_obj': player_obj,
@@ -1416,15 +1460,15 @@ def cwl_war_verification(db_player_obj, user_obj, coc_client):
     cwl_group_obj = cwl_group_verification_payload['cwl_group_obj']
 
     cwl_war_obj = cwl_group_obj.find_current_war(
-        player_obj.clan_tag, header)
+        player_obj.clan.tag, header)
 
     if not cwl_war_obj:
         # clan is not in cwl war
         return {
             'verified': False,
             'field_dict_list': [{
-                'name': (f"{player_obj.clan_name} "
-                         f"{player_obj.clan_tag}"),
+                'name': (f"{player_obj.clan.name} "
+                         f"{player_obj.clan.tag}"),
                 'value': "not in cwl"
             }],
             'player_obj': player_obj,
@@ -1464,15 +1508,15 @@ def cwl_war_leadership_verification(db_player_obj, user_obj, coc_client):
     cwl_group_obj = cwl_group_leadership_verification_payload['cwl_group_obj']
 
     cwl_war_obj = cwl_group_obj.find_current_war(
-        player_obj.clan_tag, header)
+        player_obj.clan.tag, header)
 
     if not cwl_war_obj:
         # clan is not in cwl war
         return {
             'verified': False,
             'field_dict_list': [{
-                'name': (f"{player_obj.clan_name} "
-                         f"{player_obj.clan_tag}"),
+                'name': (f"{player_obj.clan.name} "
+                         f"{player_obj.clan.tag}"),
                 'value': "not in cwl"
             }],
             'player_obj': player_obj,
@@ -2021,7 +2065,7 @@ def role_switch(player, user_roles, client_clans):
             if role.name == clan.name:
                 old_clan = role.name
                 break
-    new_clan = player.clan_name
+    new_clan = player.clan.name
 
     # add the roles to the lists if the clans are not the same
     if old_clan != new_clan:

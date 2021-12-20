@@ -1,6 +1,6 @@
 import re
-
-from coc.errors import Maintenance, NotFound, PrivateWarLog
+import datetime
+from coc.errors import Maintenance, NotFound, PrivateWarLog, GatewayError
 import Player
 import Clan
 import War
@@ -36,6 +36,9 @@ async def get_player(player_tag, coc_client):
         return None
 
     except NotFound:
+        return None
+
+    except GatewayError:
         return None
 
     return player_obj
@@ -299,6 +302,9 @@ async def get_clan(clan_tag, coc_client):
     except NotFound:
         return None
 
+    except GatewayError:
+        return None
+
     return clan_obj
 
 
@@ -440,8 +446,23 @@ def response_member_role(player_name, clan_tag, header):
 
 # War
 # todo DOCSTRING
-def get_war(clan_tag, header):
-    return War.get(clan_tag, header)
+async def get_war(clan_tag, coc_client):
+    try:
+        war_obj = await coc_client.get_clan(clan_tag)
+
+    except Maintenance:
+        return None
+
+    except NotFound:
+        return None
+
+    except PrivateWarLog:
+        return None
+
+    except GatewayError:
+        return None
+
+    return war_obj
 
 
 def war_clan_lineup(war_clan_obj):
@@ -485,3 +506,102 @@ def cwl_clan_lineup(cwl_group_clan):
 
 
 # CWL War
+
+
+# UTILS
+
+def string_date_time(war_obj):
+    """
+        returns a string of the remaining time,
+        if warEnded or notInWar, then variables will be None
+    """
+    if (war_obj.state == 'warEnded'
+            or war_obj.state == 'notInWar'):
+        return None
+
+    if war_obj.state == "preparation":
+        time_final = war_obj.start_time
+    else:
+        time_final = war_obj.end_time
+    days, hours, minutes, seconds = date_time_calculator(
+        time_final)
+    return_string = ''
+    if days > 0:
+        if days == 1:
+            days_text = 'day'
+        else:
+            days_text = 'days'
+        return_string += f'{days} {days_text}, '
+
+    if hours > 0:
+        if hours == 1:
+            hour_text = 'hour'
+        else:
+            hour_text = 'hours'
+        return_string += f'{hours} {hour_text}, '
+
+    if minutes > 0:
+        if minutes == 1:
+            minute_text = 'minute'
+        else:
+            minute_text = 'minutes'
+        return_string += f'{minutes} {minute_text}, '
+
+    if seconds > 0:
+        if seconds == 1:
+            second_text = 'second'
+        else:
+            second_text = 'seconds'
+        return_string += f'{seconds} {second_text}, '
+
+    # removing the ', ' from the end of the string
+    return_string = return_string[:-2]
+
+    return return_string
+
+
+def date_time_calculator(time_final):
+    """
+        calculates the difference between now and final time
+    """
+    difference = time_final.time-time_final.now
+
+    days = difference.days
+    seconds = difference.seconds
+    minutes = int(seconds % 3600 / 60)
+    hours = int(seconds / 3600)
+    remaining_seconds = (seconds - hours * 3600 - minutes * 60)
+
+    return days, hours, minutes, remaining_seconds
+
+
+def string_scoreboard(war_obj):
+    """
+        Returns a string of the war score.
+    """
+    if (war_obj.state == 'warEnded'
+            or war_obj.state == 'notInWar'):
+        return None
+
+    star_difference = (war_obj.clan.stars - war_obj.opponent.stars)
+    destruction_difference = (war_obj.clan.destruction
+                              - war_obj.opponent.destruction)
+    # singular or plural
+    if abs(star_difference) == 1:
+        star_string = "star"
+    else:
+        star_string = "stars"
+
+    # there is a star difference
+    if star_difference != 0:
+        return f"{war_obj.status} by {abs(star_difference)} {star_string}"
+    # there is a destruction difference
+    elif destruction_difference != 0:
+        return (
+            f"{war_obj.status} by "
+            f"{round(abs(destruction_difference), 2)} "
+            f"destruction percentage."
+        )
+    # tied score
+    else:
+        return "tied"
