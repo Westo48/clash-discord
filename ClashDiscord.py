@@ -46,8 +46,8 @@ async def help(ctx):
         db_player_obj = db_responder.read_player_active(ctx.author.id)
 
     if db_player_obj:
-        player_obj = clash_responder.get_player(
-            db_player_obj.player_tag, razbot_data.header)
+        player_obj = await clash_responder.get_player(
+            db_player_obj.player_tag, coc_client)
     else:
         player_obj = None
 
@@ -62,6 +62,7 @@ async def help(ctx):
         icon_url=(ctx.bot.user.avatar_url.BASE +
                   ctx.bot.user.avatar_url._url),
         title=f"{ctx.bot.user.name} help menu",
+        description=None,
         bot_prefix=ctx.prefix,
         bot_user_name=ctx.bot.user.name,
         thumbnail=None,
@@ -124,6 +125,7 @@ async def findplayer(ctx, *, player_tag):
         icon_url=(ctx.bot.user.avatar_url.BASE +
                   ctx.bot.user.avatar_url._url),
         title=f"{player_obj.name} {player_obj.tag}",
+        description=None,
         bot_prefix=ctx.prefix,
         bot_user_name=ctx.bot.user.name,
         thumbnail=player_obj.league.icon,
@@ -156,6 +158,7 @@ async def player(ctx):
             icon_url=(ctx.bot.user.avatar_url.BASE +
                       ctx.bot.user.avatar_url._url),
             title=None,
+            description=None,
             bot_prefix=ctx.prefix,
             bot_user_name=ctx.bot.user.name,
             thumbnail=None,
@@ -179,6 +182,7 @@ async def player(ctx):
         icon_url=(ctx.bot.user.avatar_url.BASE +
                   ctx.bot.user.avatar_url._url),
         title=f"{player_obj.name} {player_obj.tag}",
+        description=None,
         bot_prefix=ctx.prefix,
         bot_user_name=ctx.bot.user.name,
         thumbnail=player_obj.league.icon,
@@ -218,6 +222,7 @@ async def playermember(ctx):
             icon_url=(ctx.bot.user.avatar_url.BASE +
                       ctx.bot.user.avatar_url._url),
             title=None,
+            description=None,
             bot_prefix=ctx.prefix,
             bot_user_name=ctx.bot.user.name,
             thumbnail=None,
@@ -241,6 +246,7 @@ async def playermember(ctx):
         icon_url=(ctx.bot.user.avatar_url.BASE +
                   ctx.bot.user.avatar_url._url),
         title=f"{player_obj.name} {player_obj.tag}",
+        description=None,
         bot_prefix=ctx.prefix,
         bot_user_name=ctx.bot.user.name,
         thumbnail=player_obj.league.icon,
@@ -273,6 +279,7 @@ async def unitlvl(ctx, *, unit_name):
             icon_url=(ctx.bot.user.avatar_url.BASE +
                       ctx.bot.user.avatar_url._url),
             title=None,
+            description=None,
             bot_prefix=ctx.prefix,
             bot_user_name=ctx.bot.user.name,
             thumbnail=None,
@@ -306,6 +313,7 @@ async def unitlvl(ctx, *, unit_name):
         icon_url=(ctx.bot.user.avatar_url.BASE +
                   ctx.bot.user.avatar_url._url),
         title=title_string,
+        description=None,
         bot_prefix=ctx.prefix,
         bot_user_name=ctx.bot.user.name,
         thumbnail=player_obj.league.icon,
@@ -337,6 +345,7 @@ async def allunitlvl(ctx):
             icon_url=(ctx.bot.user.avatar_url.BASE +
                       ctx.bot.user.avatar_url._url),
             title=None,
+            description=None,
             bot_prefix=ctx.prefix,
             bot_user_name=ctx.bot.user.name,
             thumbnail=None,
@@ -359,6 +368,7 @@ async def allunitlvl(ctx):
         icon_url=(ctx.bot.user.avatar_url.BASE +
                   ctx.bot.user.avatar_url._url),
         title=f"{player_obj.name} units",
+        description=None,
         bot_prefix=ctx.prefix,
         bot_user_name=ctx.bot.user.name,
         thumbnail=player_obj.league.icon,
@@ -390,6 +400,7 @@ async def allherolvl(ctx):
             icon_url=(ctx.bot.user.avatar_url.BASE +
                       ctx.bot.user.avatar_url._url),
             title=None,
+            description=None,
             bot_prefix=ctx.prefix,
             bot_user_name=ctx.bot.user.name,
             thumbnail=None,
@@ -412,6 +423,7 @@ async def allherolvl(ctx):
         icon_url=(ctx.bot.user.avatar_url.BASE +
                   ctx.bot.user.avatar_url._url),
         title=f"{player_obj.name} heroes",
+        description=None,
         bot_prefix=ctx.prefix,
         bot_user_name=ctx.bot.user.name,
         thumbnail=player_obj.league.icon,
@@ -443,6 +455,7 @@ async def allpetlvl(ctx):
             icon_url=(ctx.bot.user.avatar_url.BASE +
                       ctx.bot.user.avatar_url._url),
             title=None,
+            description=None,
             bot_prefix=ctx.prefix,
             bot_user_name=ctx.bot.user.name,
             thumbnail=None,
@@ -465,6 +478,7 @@ async def allpetlvl(ctx):
         icon_url=(ctx.bot.user.avatar_url.BASE +
                   ctx.bot.user.avatar_url._url),
         title=f"{player_obj.name} pets",
+        description=None,
         bot_prefix=ctx.prefix,
         bot_user_name=ctx.bot.user.name,
         thumbnail=player_obj.league.icon,
@@ -496,6 +510,7 @@ async def alltrooplvl(ctx):
             icon_url=(ctx.bot.user.avatar_url.BASE +
                       ctx.bot.user.avatar_url._url),
             title=None,
+            description=None,
             bot_prefix=ctx.prefix,
             bot_user_name=ctx.bot.user.name,
             thumbnail=None,
@@ -518,6 +533,7 @@ async def alltrooplvl(ctx):
         icon_url=(ctx.bot.user.avatar_url.BASE +
                   ctx.bot.user.avatar_url._url),
         title=f"{player_obj.name} troops",
+        description=None,
         bot_prefix=ctx.prefix,
         bot_user_name=ctx.bot.user.name,
         thumbnail=player_obj.league.icon,
@@ -549,6 +565,7 @@ async def allspelllvl(ctx):
             icon_url=(ctx.bot.user.avatar_url.BASE +
                       ctx.bot.user.avatar_url._url),
             title=None,
+            description=None,
             bot_prefix=ctx.prefix,
             bot_user_name=ctx.bot.user.name,
             thumbnail=None,
@@ -571,6 +588,7 @@ async def allspelllvl(ctx):
         icon_url=(ctx.bot.user.avatar_url.BASE +
                   ctx.bot.user.avatar_url._url),
         title=f"{player_obj.name} spells",
+        description=None,
         bot_prefix=ctx.prefix,
         bot_user_name=ctx.bot.user.name,
         thumbnail=player_obj.league.icon,
@@ -602,6 +620,7 @@ async def activesupertroop(ctx):
             icon_url=(ctx.bot.user.avatar_url.BASE +
                       ctx.bot.user.avatar_url._url),
             title=None,
+            description=None,
             bot_prefix=ctx.prefix,
             bot_user_name=ctx.bot.user.name,
             thumbnail=None,
@@ -628,6 +647,7 @@ async def activesupertroop(ctx):
         icon_url=(ctx.bot.user.avatar_url.BASE +
                   ctx.bot.user.avatar_url._url),
         title=f"{player_obj.name} super troops",
+        description=None,
         bot_prefix=ctx.prefix,
         bot_user_name=ctx.bot.user.name,
         thumbnail=player_obj.league.icon,
@@ -648,8 +668,8 @@ async def activesupertroop(ctx):
 )
 async def finduser(ctx, player_tag):
     async with ctx.typing():
-        player_obj = clash_responder.get_player(
-            player_tag, razbot_data.header)
+        player_obj = await clash_responder.get_player(
+            player_tag, coc_client)
 
     # player with given tag not found
     if not player_obj:
@@ -665,6 +685,7 @@ async def finduser(ctx, player_tag):
         icon_url=(ctx.bot.user.avatar_url.BASE +
                   ctx.bot.user.avatar_url._url),
         title=None,
+        description=None,
         bot_prefix=ctx.prefix,
         bot_user_name=ctx.bot.user.name,
         thumbnail=player_obj.league.icon,
@@ -688,7 +709,7 @@ async def finduser(ctx, player_tag):
 )
 async def findclan(ctx, *, clan_tag):
     async with ctx.typing():
-        clan_obj = clash_responder.get_clan(clan_tag, razbot_data.header)
+        clan_obj = clash_responder.get_clan(clan_tag, coc_client)
 
     if not clan_obj:
         # clan with given tag not found
@@ -703,6 +724,7 @@ async def findclan(ctx, *, clan_tag):
         icon_url=(ctx.bot.user.avatar_url.BASE +
                   ctx.bot.user.avatar_url._url),
         title=f"{clan_obj.name} {clan_obj.tag}",
+        description=None,
         bot_prefix=ctx.prefix,
         bot_user_name=ctx.bot.user.name,
         thumbnail=clan_obj.clan_icons,
@@ -726,7 +748,7 @@ async def clan(ctx):
         db_player_obj = db_responder.read_player_active(ctx.author.id)
 
     verification_payload = discord_responder.clan_verification(
-        db_player_obj, ctx.author, razbot_data.header)
+        db_player_obj, ctx.author, coc_client)
     if not verification_payload['verified']:
         embed_list = discord_responder.embed_message(
             Embed=discord.Embed,
@@ -734,6 +756,7 @@ async def clan(ctx):
             icon_url=(ctx.bot.user.avatar_url.BASE +
                       ctx.bot.user.avatar_url._url),
             title=None,
+            description=None,
             bot_prefix=ctx.prefix,
             bot_user_name=ctx.bot.user.name,
             thumbnail=None,
@@ -758,6 +781,7 @@ async def clan(ctx):
         icon_url=(ctx.bot.user.avatar_url.BASE +
                   ctx.bot.user.avatar_url._url),
         title=f"{clan_obj.name} {clan_obj.tag}",
+        description=None,
         bot_prefix=ctx.prefix,
         bot_user_name=ctx.bot.user.name,
         thumbnail=clan_obj.clan_icons,
@@ -794,7 +818,7 @@ async def clanmention(ctx):
         return
 
     clan_obj = clash_responder.get_clan(
-        db_clan_role.clan_tag, razbot_data.header)
+        db_clan_role.clan_tag, coc_client)
     if not clan_obj:
         # clan with tag from db clan role not found
         await ctx.send(f"could not find clan with tag {db_clan_role.clan_tag}")
@@ -808,6 +832,7 @@ async def clanmention(ctx):
         icon_url=(ctx.bot.user.avatar_url.BASE +
                   ctx.bot.user.avatar_url._url),
         title=f"{clan_obj.name} {clan_obj.tag}",
+        description=None,
         bot_prefix=ctx.prefix,
         bot_user_name=ctx.bot.user.name,
         thumbnail=clan_obj.clan_icons,
@@ -830,7 +855,7 @@ async def clanlineup(ctx):
         db_player_obj = db_responder.read_player_active(ctx.author.id)
 
     verification_payload = discord_responder.clan_verification(
-        db_player_obj, ctx.author, razbot_data.header)
+        db_player_obj, ctx.author, coc_client)
     if not verification_payload['verified']:
         embed_list = discord_responder.embed_message(
             Embed=discord.Embed,
@@ -838,6 +863,7 @@ async def clanlineup(ctx):
             icon_url=(ctx.bot.user.avatar_url.BASE +
                       ctx.bot.user.avatar_url._url),
             title=None,
+            description=None,
             bot_prefix=ctx.prefix,
             bot_user_name=ctx.bot.user.name,
             thumbnail=None,
@@ -861,7 +887,7 @@ async def clanlineup(ctx):
         return
 
     field_dict_list = discord_responder.clan_lineup(
-        clan_obj, razbot_data.header)
+        clan_obj, coc_client)
 
     embed_list = discord_responder.embed_message(
         Embed=discord.Embed,
@@ -869,6 +895,7 @@ async def clanlineup(ctx):
         icon_url=(ctx.bot.user.avatar_url.BASE +
                   ctx.bot.user.avatar_url._url),
         title=f"{clan_obj.name} lineup",
+        description=None,
         bot_prefix=ctx.prefix,
         bot_user_name=ctx.bot.user.name,
         thumbnail=clan_obj.clan_icons,
@@ -892,7 +919,7 @@ async def clanwarpreference(ctx):
         db_player_obj = db_responder.read_player_active(ctx.author.id)
 
     verification_payload = discord_responder.clan_verification(
-        db_player_obj, ctx.author, razbot_data.header)
+        db_player_obj, ctx.author, coc_client)
     if not verification_payload['verified']:
         embed_list = discord_responder.embed_message(
             Embed=discord.Embed,
@@ -900,6 +927,7 @@ async def clanwarpreference(ctx):
             icon_url=(ctx.bot.user.avatar_url.BASE +
                       ctx.bot.user.avatar_url._url),
             title=None,
+            description=None,
             bot_prefix=ctx.prefix,
             bot_user_name=ctx.bot.user.name,
             thumbnail=None,
@@ -923,7 +951,7 @@ async def clanwarpreference(ctx):
         return
 
     field_dict_list = discord_responder.clan_war_preference(
-        clan_obj, razbot_data.header)
+        clan_obj, coc_client)
 
     embed_list = discord_responder.embed_message(
         Embed=discord.Embed,
@@ -931,6 +959,7 @@ async def clanwarpreference(ctx):
         icon_url=(ctx.bot.user.avatar_url.BASE +
                   ctx.bot.user.avatar_url._url),
         title=f"{clan_obj.name} war preference",
+        description=None,
         bot_prefix=ctx.prefix,
         bot_user_name=ctx.bot.user.name,
         thumbnail=clan_obj.clan_icons,
@@ -955,7 +984,7 @@ async def donation(ctx, *, unit_name):
         db_player_obj = db_responder.read_player_active(ctx.author.id)
 
     verification_payload = discord_responder.clan_verification(
-        db_player_obj, ctx.author, razbot_data.header)
+        db_player_obj, ctx.author, coc_client)
     if not verification_payload['verified']:
         embed_list = discord_responder.embed_message(
             Embed=discord.Embed,
@@ -963,6 +992,7 @@ async def donation(ctx, *, unit_name):
             icon_url=(ctx.bot.user.avatar_url.BASE +
                       ctx.bot.user.avatar_url._url),
             title=None,
+            description=None,
             bot_prefix=ctx.prefix,
             bot_user_name=ctx.bot.user.name,
             thumbnail=None,
@@ -980,7 +1010,7 @@ async def donation(ctx, *, unit_name):
     clan_obj = verification_payload['clan_obj']
 
     donator_list = clash_responder.donation(
-        unit_name, clan_obj, razbot_data.header)
+        unit_name, clan_obj, coc_client)
 
     field_dict_list = discord_responder.donation(
         clan_obj, donator_list, unit_name)
@@ -991,6 +1021,7 @@ async def donation(ctx, *, unit_name):
         icon_url=(ctx.bot.user.avatar_url.BASE +
                   ctx.bot.user.avatar_url._url),
         title=f"{clan_obj.name} {clan_obj.tag}",
+        description=None,
         bot_prefix=ctx.prefix,
         bot_user_name=ctx.bot.user.name,
         thumbnail=clan_obj.clan_icons,
@@ -1014,7 +1045,7 @@ async def supertroopsearch(ctx, *, unit_name):
         db_player_obj = db_responder.read_player_active(ctx.author.id)
 
     verification_payload = discord_responder.clan_verification(
-        db_player_obj, ctx.author, razbot_data.header)
+        db_player_obj, ctx.author, coc_client)
     if not verification_payload['verified']:
         embed_list = discord_responder.embed_message(
             Embed=discord.Embed,
@@ -1022,6 +1053,7 @@ async def supertroopsearch(ctx, *, unit_name):
             icon_url=(ctx.bot.user.avatar_url.BASE +
                       ctx.bot.user.avatar_url._url),
             title=None,
+            description=None,
             bot_prefix=ctx.prefix,
             bot_user_name=ctx.bot.user.name,
             thumbnail=None,
@@ -1046,7 +1078,7 @@ async def supertroopsearch(ctx, *, unit_name):
         return
 
     donor_list = clash_responder.active_super_troop_search(
-        super_troop_name, clan_obj, razbot_data.header)
+        super_troop_name, clan_obj, coc_client)
 
     field_dict_list = discord_responder.super_troop_search(
         clan_obj, donor_list, super_troop_name)
@@ -1057,6 +1089,7 @@ async def supertroopsearch(ctx, *, unit_name):
         icon_url=(ctx.bot.user.avatar_url.BASE +
                   ctx.bot.user.avatar_url._url),
         title=f"{clan_obj.name} {clan_obj.tag}",
+        description=None,
         bot_prefix=ctx.prefix,
         bot_user_name=ctx.bot.user.name,
         thumbnail=clan_obj.clan_icons,
@@ -1082,7 +1115,7 @@ async def findclanusers(ctx):
             ctx.author.id)
 
     verification_payload = discord_responder.clan_leadership_verification(
-        db_player_obj, ctx.author, razbot_data.header)
+        db_player_obj, ctx.author, coc_client)
     if not verification_payload['verified']:
         embed_list = discord_responder.embed_message(
             Embed=discord.Embed,
@@ -1090,6 +1123,7 @@ async def findclanusers(ctx):
             icon_url=(ctx.bot.user.avatar_url.BASE +
                       ctx.bot.user.avatar_url._url),
             title=None,
+            description=None,
             bot_prefix=ctx.prefix,
             bot_user_name=ctx.bot.user.name,
             thumbnail=None,
@@ -1118,6 +1152,7 @@ async def findclanusers(ctx):
         icon_url=(ctx.bot.user.avatar_url.BASE +
                   ctx.bot.user.avatar_url._url),
         title=f"{clan_obj.name} linked users",
+        description=None,
         bot_prefix=ctx.prefix,
         bot_user_name=ctx.bot.user.name,
         thumbnail=clan_obj.clan_icons,
@@ -1144,7 +1179,7 @@ async def waroverview(ctx):
         db_player_obj = db_responder.read_player_active(ctx.author.id)
 
     verification_payload = discord_responder.war_verification(
-        db_player_obj, ctx.author, razbot_data.header)
+        db_player_obj, ctx.author, coc_client)
     if not verification_payload['verified']:
         embed_list = discord_responder.embed_message(
             Embed=discord.Embed,
@@ -1152,6 +1187,7 @@ async def waroverview(ctx):
             icon_url=(ctx.bot.user.avatar_url.BASE +
                       ctx.bot.user.avatar_url._url),
             title=None,
+            description=None,
             bot_prefix=ctx.prefix,
             bot_user_name=ctx.bot.user.name,
             thumbnail=None,
@@ -1176,6 +1212,7 @@ async def waroverview(ctx):
         icon_url=(ctx.bot.user.avatar_url.BASE +
                   ctx.bot.user.avatar_url._url),
         title=f"{war_obj.clan.name} vs. {war_obj.opponent.name}",
+        description=None,
         bot_prefix=ctx.prefix,
         bot_user_name=ctx.bot.user.name,
         thumbnail=player_obj.clan_icons,
@@ -1197,7 +1234,7 @@ async def wartime(ctx):
         db_player_obj = db_responder.read_player_active(ctx.author.id)
 
     verification_payload = discord_responder.war_verification(
-        db_player_obj, ctx.author, razbot_data.header)
+        db_player_obj, ctx.author, coc_client)
     if not verification_payload['verified']:
         embed_list = discord_responder.embed_message(
             Embed=discord.Embed,
@@ -1205,6 +1242,7 @@ async def wartime(ctx):
             icon_url=(ctx.bot.user.avatar_url.BASE +
                       ctx.bot.user.avatar_url._url),
             title=None,
+            description=None,
             bot_prefix=ctx.prefix,
             bot_user_name=ctx.bot.user.name,
             thumbnail=None,
@@ -1229,6 +1267,7 @@ async def wartime(ctx):
         icon_url=(ctx.bot.user.avatar_url.BASE +
                   ctx.bot.user.avatar_url._url),
         title=f"{war_obj.clan.name} vs. {war_obj.opponent.name}",
+        description=None,
         bot_prefix=ctx.prefix,
         bot_user_name=ctx.bot.user.name,
         thumbnail=player_obj.clan_icons,
@@ -1253,7 +1292,7 @@ async def warnoattack(ctx):
         db_player_obj = db_responder.read_player_active(ctx.author.id)
 
     verification_payload = discord_responder.war_verification(
-        db_player_obj, ctx.author, razbot_data.header)
+        db_player_obj, ctx.author, coc_client)
     if not verification_payload['verified']:
         embed_list = discord_responder.embed_message(
             Embed=discord.Embed,
@@ -1261,6 +1300,7 @@ async def warnoattack(ctx):
             icon_url=(ctx.bot.user.avatar_url.BASE +
                       ctx.bot.user.avatar_url._url),
             title=None,
+            description=None,
             bot_prefix=ctx.prefix,
             bot_user_name=ctx.bot.user.name,
             thumbnail=None,
@@ -1285,6 +1325,7 @@ async def warnoattack(ctx):
         icon_url=(ctx.bot.user.avatar_url.BASE +
                   ctx.bot.user.avatar_url._url),
         title=f"{war_obj.clan.name} vs. {war_obj.opponent.name}",
+        description=None,
         bot_prefix=ctx.prefix,
         bot_user_name=ctx.bot.user.name,
         thumbnail=player_obj.clan_icons,
@@ -1309,7 +1350,7 @@ async def warclanstars(ctx):
         db_player_obj = db_responder.read_player_active(ctx.author.id)
 
     verification_payload = discord_responder.war_leadership_verification(
-        db_player_obj, ctx.author, razbot_data.header)
+        db_player_obj, ctx.author, coc_client)
     if not verification_payload['verified']:
         embed_list = discord_responder.embed_message(
             Embed=discord.Embed,
@@ -1317,6 +1358,7 @@ async def warclanstars(ctx):
             icon_url=(ctx.bot.user.avatar_url.BASE +
                       ctx.bot.user.avatar_url._url),
             title=None,
+            description=None,
             bot_prefix=ctx.prefix,
             bot_user_name=ctx.bot.user.name,
             thumbnail=None,
@@ -1341,6 +1383,7 @@ async def warclanstars(ctx):
         icon_url=(ctx.bot.user.avatar_url.BASE +
                   ctx.bot.user.avatar_url._url),
         title=f"{war_obj.clan.name} vs. {war_obj.opponent.name}",
+        description=None,
         bot_prefix=ctx.prefix,
         bot_user_name=ctx.bot.user.name,
         thumbnail=player_obj.clan_icons,
@@ -1365,7 +1408,7 @@ async def warallattacks(ctx):
         db_player_obj = db_responder.read_player_active(ctx.author.id)
 
     verification_payload = discord_responder.war_leadership_verification(
-        db_player_obj, ctx.author, razbot_data.header)
+        db_player_obj, ctx.author, coc_client)
     if not verification_payload['verified']:
         embed_list = discord_responder.embed_message(
             Embed=discord.Embed,
@@ -1373,6 +1416,7 @@ async def warallattacks(ctx):
             icon_url=(ctx.bot.user.avatar_url.BASE +
                       ctx.bot.user.avatar_url._url),
             title=None,
+            description=None,
             bot_prefix=ctx.prefix,
             bot_user_name=ctx.bot.user.name,
             thumbnail=None,
@@ -1397,6 +1441,7 @@ async def warallattacks(ctx):
         icon_url=(ctx.bot.user.avatar_url.BASE +
                   ctx.bot.user.avatar_url._url),
         title=f"{war_obj.clan.name} vs. {war_obj.opponent.name}",
+        description=None,
         bot_prefix=ctx.prefix,
         bot_user_name=ctx.bot.user.name,
         thumbnail=player_obj.clan_icons,
@@ -1421,7 +1466,7 @@ async def warclanscore(ctx):
         db_player_obj = db_responder.read_player_active(ctx.author.id)
 
     verification_payload = discord_responder.war_leadership_verification(
-        db_player_obj, ctx.author, razbot_data.header)
+        db_player_obj, ctx.author, coc_client)
     if not verification_payload['verified']:
         embed_list = discord_responder.embed_message(
             Embed=discord.Embed,
@@ -1429,6 +1474,7 @@ async def warclanscore(ctx):
             icon_url=(ctx.bot.user.avatar_url.BASE +
                       ctx.bot.user.avatar_url._url),
             title=None,
+            description=None,
             bot_prefix=ctx.prefix,
             bot_user_name=ctx.bot.user.name,
             thumbnail=None,
@@ -1453,6 +1499,7 @@ async def warclanscore(ctx):
         icon_url=(ctx.bot.user.avatar_url.BASE +
                   ctx.bot.user.avatar_url._url),
         title=f"{war_obj.clan.name} vs. {war_obj.opponent.name}",
+        description=None,
         bot_prefix=ctx.prefix,
         bot_user_name=ctx.bot.user.name,
         thumbnail=player_obj.clan_icons,
@@ -1476,7 +1523,7 @@ async def warlineup(ctx):
         db_player_obj = db_responder.read_player_active(ctx.author.id)
 
     verification_payload = discord_responder.war_verification(
-        db_player_obj, ctx.author, razbot_data.header)
+        db_player_obj, ctx.author, coc_client)
     if not verification_payload['verified']:
         embed_list = discord_responder.embed_message(
             Embed=discord.Embed,
@@ -1484,6 +1531,7 @@ async def warlineup(ctx):
             icon_url=(ctx.bot.user.avatar_url.BASE +
                       ctx.bot.user.avatar_url._url),
             title=None,
+            description=None,
             bot_prefix=ctx.prefix,
             bot_user_name=ctx.bot.user.name,
             thumbnail=None,
@@ -1512,7 +1560,7 @@ async def warmemberlineup(ctx):
         db_player_obj = db_responder.read_player_active(ctx.author.id)
 
     verification_payload = discord_responder.war_verification(
-        db_player_obj, ctx.author, razbot_data.header)
+        db_player_obj, ctx.author, coc_client)
     if not verification_payload['verified']:
         embed_list = discord_responder.embed_message(
             Embed=discord.Embed,
@@ -1520,6 +1568,7 @@ async def warmemberlineup(ctx):
             icon_url=(ctx.bot.user.avatar_url.BASE +
                       ctx.bot.user.avatar_url._url),
             title=None,
+            description=None,
             bot_prefix=ctx.prefix,
             bot_user_name=ctx.bot.user.name,
             thumbnail=None,
@@ -1544,6 +1593,7 @@ async def warmemberlineup(ctx):
         icon_url=(ctx.bot.user.avatar_url.BASE +
                   ctx.bot.user.avatar_url._url),
         title=f"{war_obj.clan.name} vs. {war_obj.opponent.name}",
+        description=None,
         bot_prefix=ctx.prefix,
         bot_user_name=ctx.bot.user.name,
         thumbnail=player_obj.clan_icons,
@@ -1575,8 +1625,8 @@ async def cwllineup(ctx):
         await ctx.send(f"{ctx.author.mention} does not have an active player")
         return
 
-    player_obj = clash_responder.get_player(
-        db_player_obj.player_tag, razbot_data.header)
+    player_obj = await clash_responder.get_player(
+        db_player_obj.player_tag, coc_client)
     if not player_obj:
         # player with tag from db not found
         await ctx.send(f"could not find player with tag "
@@ -1589,7 +1639,7 @@ async def cwllineup(ctx):
         return
 
     cwl_group = clash_responder.get_cwl_group(
-        player_obj.clan_tag, razbot_data.header)
+        player_obj.clan_tag, coc_client)
     if not cwl_group:
         # clan is not in CWL
         field_dict_list = [{
@@ -1602,6 +1652,7 @@ async def cwllineup(ctx):
             icon_url=(ctx.bot.user.avatar_url.BASE +
                       ctx.bot.user.avatar_url._url),
             title=f"{player_obj.clan_name} {player_obj.clan_tag}",
+            description=None,
             bot_prefix=ctx.prefix,
             bot_user_name=ctx.bot.user.name,
             thumbnail=player_obj.clan_icons,
@@ -1628,7 +1679,7 @@ async def cwlclanscore(ctx):
         db_player_obj = db_responder.read_player_active(ctx.author.id)
 
     verification_payload = discord_responder.cwl_group_leadership_verification(
-        db_player_obj, ctx.author, razbot_data.header)
+        db_player_obj, ctx.author, coc_client)
     if not verification_payload['verified']:
         embed_list = discord_responder.embed_message(
             Embed=discord.Embed,
@@ -1636,6 +1687,7 @@ async def cwlclanscore(ctx):
             icon_url=(ctx.bot.user.avatar_url.BASE +
                       ctx.bot.user.avatar_url._url),
             title=None,
+            description=None,
             bot_prefix=ctx.prefix,
             bot_user_name=ctx.bot.user.name,
             thumbnail=None,
@@ -1653,13 +1705,14 @@ async def cwlclanscore(ctx):
     cwl_group_obj = verification_payload['cwl_group_obj']
 
     field_dict_list = discord_responder.cwl_clan_standing(
-        cwl_group_obj, player_obj.clan_tag, razbot_data.header)
+        cwl_group_obj, player_obj.clan_tag, coc_client)
     embed_list = discord_responder.embed_message(
         Embed=discord.Embed,
         color=discord.Color(client_data.embed_color),
         icon_url=(ctx.bot.user.avatar_url.BASE +
                   ctx.bot.user.avatar_url._url),
         title=f"{player_obj.clan_name} CWL scores",
+        description=None,
         bot_prefix=ctx.prefix,
         bot_user_name=ctx.bot.user.name,
         thumbnail=player_obj.clan_icons,
@@ -1683,7 +1736,7 @@ async def cwlscore(ctx):
         db_player_obj = db_responder.read_player_active(ctx.author.id)
 
     verification_payload = discord_responder.cwl_group_verification(
-        db_player_obj, ctx.author, razbot_data.header)
+        db_player_obj, ctx.author, coc_client)
     if not verification_payload['verified']:
         embed_list = discord_responder.embed_message(
             Embed=discord.Embed,
@@ -1691,6 +1744,7 @@ async def cwlscore(ctx):
             icon_url=(ctx.bot.user.avatar_url.BASE +
                       ctx.bot.user.avatar_url._url),
             title=None,
+            description=None,
             bot_prefix=ctx.prefix,
             bot_user_name=ctx.bot.user.name,
             thumbnail=None,
@@ -1708,13 +1762,14 @@ async def cwlscore(ctx):
     cwl_group_obj = verification_payload['cwl_group_obj']
 
     field_dict_list = discord_responder.cwl_member_standing(
-        player_obj, cwl_group_obj, player_obj.clan_tag, razbot_data.header)
+        player_obj, cwl_group_obj, player_obj.clan_tag, coc_client)
     embed_list = discord_responder.embed_message(
         Embed=discord.Embed,
         color=discord.Color(client_data.embed_color),
         icon_url=(ctx.bot.user.avatar_url.BASE +
                   ctx.bot.user.avatar_url._url),
         title=f"{player_obj.name} CWL score",
+        description=None,
         bot_prefix=ctx.prefix,
         bot_user_name=ctx.bot.user.name,
         thumbnail=player_obj.league.icon,
@@ -1745,7 +1800,7 @@ async def cwlmemberscore(ctx):
         db_player_obj = db_responder.read_player_active(discord_member.id)
 
     verification_payload = discord_responder.cwl_group_verification(
-        db_player_obj, discord_member, razbot_data.header)
+        db_player_obj, discord_member, coc_client)
     if not verification_payload['verified']:
         embed_list = discord_responder.embed_message(
             Embed=discord.Embed,
@@ -1753,6 +1808,7 @@ async def cwlmemberscore(ctx):
             icon_url=(ctx.bot.user.avatar_url.BASE +
                       ctx.bot.user.avatar_url._url),
             title=None,
+            description=None,
             bot_prefix=ctx.prefix,
             bot_user_name=ctx.bot.user.name,
             thumbnail=None,
@@ -1770,13 +1826,14 @@ async def cwlmemberscore(ctx):
     cwl_group_obj = verification_payload['cwl_group_obj']
 
     field_dict_list = discord_responder.cwl_member_standing(
-        player_obj, cwl_group_obj, player_obj.clan_tag, razbot_data.header)
+        player_obj, cwl_group_obj, player_obj.clan_tag, coc_client)
     embed_list = discord_responder.embed_message(
         Embed=discord.Embed,
         color=discord.Color(client_data.embed_color),
         icon_url=(ctx.bot.user.avatar_url.BASE +
                   ctx.bot.user.avatar_url._url),
         title=f"{player_obj.name} CWL score",
+        description=None,
         bot_prefix=ctx.prefix,
         bot_user_name=ctx.bot.user.name,
         thumbnail=player_obj.league.icon,
@@ -1804,7 +1861,7 @@ async def cwlwaroverview(ctx):
         db_player_obj = db_responder.read_player_active(ctx.author.id)
 
     verification_payload = discord_responder.cwl_war_verification(
-        db_player_obj, ctx.author, razbot_data.header)
+        db_player_obj, ctx.author, coc_client)
     if not verification_payload['verified']:
         embed_list = discord_responder.embed_message(
             Embed=discord.Embed,
@@ -1812,6 +1869,7 @@ async def cwlwaroverview(ctx):
             icon_url=(ctx.bot.user.avatar_url.BASE +
                       ctx.bot.user.avatar_url._url),
             title=None,
+            description=None,
             bot_prefix=ctx.prefix,
             bot_user_name=ctx.bot.user.name,
             thumbnail=None,
@@ -1836,6 +1894,7 @@ async def cwlwaroverview(ctx):
         icon_url=(ctx.bot.user.avatar_url.BASE +
                   ctx.bot.user.avatar_url._url),
         title=f"{cwl_war_obj.clan.name} vs. {cwl_war_obj.opponent.name}",
+        description=None,
         bot_prefix=ctx.prefix,
         bot_user_name=ctx.bot.user.name,
         thumbnail=player_obj.clan_icons,
@@ -1859,7 +1918,7 @@ async def cwlwartime(ctx):
         db_player_obj = db_responder.read_player_active(ctx.author.id)
 
     verification_payload = discord_responder.cwl_war_verification(
-        db_player_obj, ctx.author, razbot_data.header)
+        db_player_obj, ctx.author, coc_client)
     if not verification_payload['verified']:
         embed_list = discord_responder.embed_message(
             Embed=discord.Embed,
@@ -1867,6 +1926,7 @@ async def cwlwartime(ctx):
             icon_url=(ctx.bot.user.avatar_url.BASE +
                       ctx.bot.user.avatar_url._url),
             title=None,
+            description=None,
             bot_prefix=ctx.prefix,
             bot_user_name=ctx.bot.user.name,
             thumbnail=None,
@@ -1891,6 +1951,7 @@ async def cwlwartime(ctx):
         icon_url=(ctx.bot.user.avatar_url.BASE +
                   ctx.bot.user.avatar_url._url),
         title=f"{cwl_war_obj.clan.name} vs. {cwl_war_obj.opponent.name}",
+        description=None,
         bot_prefix=ctx.prefix,
         bot_user_name=ctx.bot.user.name,
         thumbnail=player_obj.clan_icons,
@@ -1916,7 +1977,7 @@ async def cwlwarnoattack(ctx):
         db_player_obj = db_responder.read_player_active(ctx.author.id)
 
     verification_payload = discord_responder.cwl_war_verification(
-        db_player_obj, ctx.author, razbot_data.header)
+        db_player_obj, ctx.author, coc_client)
     if not verification_payload['verified']:
         embed_list = discord_responder.embed_message(
             Embed=discord.Embed,
@@ -1924,6 +1985,7 @@ async def cwlwarnoattack(ctx):
             icon_url=(ctx.bot.user.avatar_url.BASE +
                       ctx.bot.user.avatar_url._url),
             title=None,
+            description=None,
             bot_prefix=ctx.prefix,
             bot_user_name=ctx.bot.user.name,
             thumbnail=None,
@@ -1948,6 +2010,7 @@ async def cwlwarnoattack(ctx):
         icon_url=(ctx.bot.user.avatar_url.BASE +
                   ctx.bot.user.avatar_url._url),
         title=f"{cwl_war_obj.clan.name} vs. {cwl_war_obj.opponent.name}",
+        description=None,
         bot_prefix=ctx.prefix,
         bot_user_name=ctx.bot.user.name,
         thumbnail=player_obj.clan_icons,
@@ -1973,7 +2036,7 @@ async def cwlwarallattack(ctx):
         db_player_obj = db_responder.read_player_active(ctx.author.id)
 
     verification_payload = discord_responder.cwl_war_leadership_verification(
-        db_player_obj, ctx.author, razbot_data.header)
+        db_player_obj, ctx.author, coc_client)
     if not verification_payload['verified']:
         embed_list = discord_responder.embed_message(
             Embed=discord.Embed,
@@ -1981,6 +2044,7 @@ async def cwlwarallattack(ctx):
             icon_url=(ctx.bot.user.avatar_url.BASE +
                       ctx.bot.user.avatar_url._url),
             title=None,
+            description=None,
             bot_prefix=ctx.prefix,
             bot_user_name=ctx.bot.user.name,
             thumbnail=None,
@@ -2005,6 +2069,7 @@ async def cwlwarallattack(ctx):
         icon_url=(ctx.bot.user.avatar_url.BASE +
                   ctx.bot.user.avatar_url._url),
         title=f"{cwl_war_obj.clan.name} vs. {cwl_war_obj.opponent.name}",
+        description=None,
         bot_prefix=ctx.prefix,
         bot_user_name=ctx.bot.user.name,
         thumbnail=player_obj.clan_icons,
@@ -2035,6 +2100,7 @@ async def mentionrazgriz(ctx):
         icon_url=(ctx.bot.user.avatar_url.BASE +
                   ctx.bot.user.avatar_url._url),
         title=f"mention testing",
+        description=None,
         bot_prefix=ctx.prefix,
         bot_user_name=ctx.bot.user.name,
         thumbnail={'small': "https://i.imgur.com/JBt2Kwt.gif"},
@@ -2091,6 +2157,7 @@ async def role(ctx):
             icon_url=(ctx.bot.user.avatar_url.BASE +
                       ctx.bot.user.avatar_url._url),
             title=f"{discord_user_obj.display_name}",
+            description=None,
             bot_prefix=ctx.prefix,
             bot_user_name=ctx.bot.user.name,
             thumbnail=None,
@@ -2107,8 +2174,8 @@ async def role(ctx):
     # getting a list of all claimed players
     player_obj_list = []
     for db_obj in db_player_obj_list:
-        player_obj = clash_responder.get_player(
-            db_obj.player_tag, razbot_data.header)
+        player_obj = await clash_responder.get_player(
+            db_obj.player_tag, coc_client)
         if player_obj:
             player_obj_list.append(player_obj)
         # player was not found from tag
@@ -2135,6 +2202,7 @@ async def role(ctx):
                 icon_url=(ctx.bot.user.avatar_url.BASE +
                           ctx.bot.user.avatar_url._url),
                 title=f"{discord_user_obj.display_name} {player_obj.name}",
+                description=None,
                 bot_prefix=ctx.prefix,
                 bot_user_name=ctx.bot.user.name,
                 thumbnail=player_obj.league.icon,
@@ -2167,6 +2235,7 @@ async def role(ctx):
                 icon_url=(ctx.bot.user.avatar_url.BASE +
                           ctx.bot.user.avatar_url._url),
                 title=f"{discord_user_obj.display_name} {player_obj.name}",
+                description=None,
                 bot_prefix=ctx.prefix,
                 bot_user_name=ctx.bot.user.name,
                 thumbnail=player_obj.league.icon,
@@ -2272,6 +2341,7 @@ async def role(ctx):
             icon_url=(ctx.bot.user.avatar_url.BASE +
                       ctx.bot.user.avatar_url._url),
             title=f"{discord_user_obj.display_name}",
+            description=None,
             bot_prefix=ctx.prefix,
             bot_user_name=ctx.bot.user.name,
             thumbnail=None,
@@ -2315,6 +2385,7 @@ async def role(ctx):
             icon_url=(ctx.bot.user.avatar_url.BASE +
                       ctx.bot.user.avatar_url._url),
             title=f"{discord_user_obj.display_name}",
+            description=None,
             bot_prefix=ctx.prefix,
             bot_user_name=ctx.bot.user.name,
             thumbnail=None,
@@ -2353,7 +2424,7 @@ async def rolemember(ctx):
     db_player_obj = db_responder.read_player_active(ctx.author.id)
 
     verification_payload = discord_responder.player_leadership_verification(
-        db_player_obj, ctx.author, razbot_data.header)
+        db_player_obj, ctx.author, coc_client)
 
     if not verification_payload['verified']:
         embed_list = discord_responder.embed_message(
@@ -2362,6 +2433,7 @@ async def rolemember(ctx):
             icon_url=(ctx.bot.user.avatar_url.BASE +
                       ctx.bot.user.avatar_url._url),
             title=None,
+            description=None,
             bot_prefix=ctx.prefix,
             bot_user_name=ctx.bot.user.name,
             thumbnail=None,
@@ -2394,6 +2466,7 @@ async def rolemember(ctx):
             icon_url=(ctx.bot.user.avatar_url.BASE +
                       ctx.bot.user.avatar_url._url),
             title=f"{discord_user_obj.display_name}",
+            description=None,
             bot_prefix=ctx.prefix,
             bot_user_name=ctx.bot.user.name,
             thumbnail=None,
@@ -2410,8 +2483,8 @@ async def rolemember(ctx):
     # getting a list of all claimed players
     player_obj_list = []
     for db_obj in db_player_obj_list:
-        player_obj = clash_responder.get_player(
-            db_obj.player_tag, razbot_data.header)
+        player_obj = await clash_responder.get_player(
+            db_obj.player_tag, coc_client)
         if player_obj:
             player_obj_list.append(player_obj)
         # player was not found from tag
@@ -2438,6 +2511,7 @@ async def rolemember(ctx):
                 icon_url=(ctx.bot.user.avatar_url.BASE +
                           ctx.bot.user.avatar_url._url),
                 title=f"{discord_user_obj.display_name} {player_obj.name}",
+                description=None,
                 bot_prefix=ctx.prefix,
                 bot_user_name=ctx.bot.user.name,
                 thumbnail=player_obj.league.icon,
@@ -2470,6 +2544,7 @@ async def rolemember(ctx):
                 icon_url=(ctx.bot.user.avatar_url.BASE +
                           ctx.bot.user.avatar_url._url),
                 title=f"{discord_user_obj.display_name} {player_obj.name}",
+                description=None,
                 bot_prefix=ctx.prefix,
                 bot_user_name=ctx.bot.user.name,
                 thumbnail=player_obj.league.icon,
@@ -2575,6 +2650,7 @@ async def rolemember(ctx):
             icon_url=(ctx.bot.user.avatar_url.BASE +
                       ctx.bot.user.avatar_url._url),
             title=f"{discord_user_obj.display_name}",
+            description=None,
             bot_prefix=ctx.prefix,
             bot_user_name=ctx.bot.user.name,
             thumbnail=None,
@@ -2618,6 +2694,7 @@ async def rolemember(ctx):
             icon_url=(ctx.bot.user.avatar_url.BASE +
                       ctx.bot.user.avatar_url._url),
             title=f"{discord_user_obj.display_name}",
+            description=None,
             bot_prefix=ctx.prefix,
             bot_user_name=ctx.bot.user.name,
             thumbnail=None,
@@ -2679,6 +2756,7 @@ async def roleall(ctx):
                 icon_url=(ctx.bot.user.avatar_url.BASE +
                           ctx.bot.user.avatar_url._url),
                 title=f"{discord_user_obj.display_name}",
+                description=None,
                 bot_prefix=ctx.prefix,
                 bot_user_name=ctx.bot.user.name,
                 thumbnail=None,
@@ -2695,8 +2773,8 @@ async def roleall(ctx):
         # getting a list of all claimed players
         player_obj_list = []
         for db_obj in db_player_obj_list:
-            player_obj = clash_responder.get_player(
-                db_obj.player_tag, razbot_data.header)
+            player_obj = await clash_responder.get_player(
+                db_obj.player_tag, coc_client)
             if player_obj:
                 player_obj_list.append(player_obj)
             # player was not found from tag
@@ -2724,6 +2802,7 @@ async def roleall(ctx):
                     icon_url=(ctx.bot.user.avatar_url.BASE +
                               ctx.bot.user.avatar_url._url),
                     title=f"{discord_user_obj.display_name} {player_obj.name}",
+                    description=None,
                     bot_prefix=ctx.prefix,
                     bot_user_name=ctx.bot.user.name,
                     thumbnail=player_obj.league.icon,
@@ -2756,6 +2835,7 @@ async def roleall(ctx):
                     icon_url=(ctx.bot.user.avatar_url.BASE +
                               ctx.bot.user.avatar_url._url),
                     title=f"{discord_user_obj.display_name} {player_obj.name}",
+                    description=None,
                     bot_prefix=ctx.prefix,
                     bot_user_name=ctx.bot.user.name,
                     thumbnail=player_obj.league.icon,
@@ -2861,6 +2941,7 @@ async def roleall(ctx):
                 icon_url=(ctx.bot.user.avatar_url.BASE +
                           ctx.bot.user.avatar_url._url),
                 title=f"{discord_user_obj.display_name}",
+                description=None,
                 bot_prefix=ctx.prefix,
                 bot_user_name=ctx.bot.user.name,
                 thumbnail=None,
@@ -2904,6 +2985,7 @@ async def roleall(ctx):
                 icon_url=(ctx.bot.user.avatar_url.BASE +
                           ctx.bot.user.avatar_url._url),
                 title=f"{discord_user_obj.display_name}",
+                description=None,
                 bot_prefix=ctx.prefix,
                 bot_user_name=ctx.bot.user.name,
                 thumbnail=None,
@@ -2950,8 +3032,8 @@ async def claimuser(ctx):
 async def claimplayer(ctx, player_tag, *, api_key):
     async with ctx.typing():
         # confirm valid player_tag
-        player_obj = clash_responder.get_player(
-            player_tag, razbot_data.header)
+        player_obj = await clash_responder.get_player(
+            player_tag, coc_client)
     if not player_obj:
         # player tag was not valid
         await ctx.send(f"player with tag {player_tag} was not found")
@@ -2978,7 +3060,7 @@ async def claimplayer(ctx, player_tag, *, api_key):
 
     # authenticate player api key
     player_verified = clash_responder.verify_token(
-        api_key, player_obj.tag, razbot_data.header)
+        api_key, player_obj.tag, coc_client)
     if not player_verified:
         # api key could not be verified
         await ctx.send(f"verification for "
@@ -3046,7 +3128,7 @@ async def showplayerclaim(ctx):
 )
 async def updateplayeractive(ctx, player_tag):
     async with ctx.typing():
-        player_obj = clash_responder.get_player(player_tag, razbot_data.header)
+        player_obj = await clash_responder.get_player(player_tag, coc_client)
 
     # if player with tag not found
     if not player_obj:
@@ -3218,7 +3300,7 @@ async def claimguild(ctx):
 )
 async def claimclan(ctx, clan_tag):
     async with ctx.typing():
-        clan_obj = clash_responder.get_clan(clan_tag, razbot_data.header)
+        clan_obj = clash_responder.get_clan(clan_tag, coc_client)
 
     # clan not found
     if not clan_obj:
@@ -3264,8 +3346,8 @@ async def claimclan(ctx, clan_tag):
 
     # validating any player in player list is in requested clan
     for db_player_obj in db_player_obj_list:
-        player_obj = clash_responder.get_player(
-            db_player_obj.player_tag, razbot_data.header)
+        player_obj = await clash_responder.get_player(
+            db_player_obj.player_tag, coc_client)
 
         # player in clan
         if player_obj.clan_tag == clan_obj.tag:
@@ -3314,7 +3396,7 @@ async def showclanclaim(ctx):
     message = f"{ctx.guild.name} has claimed "
     for item in db_clan_obj_list:
         clan = clash_responder.get_clan(
-            item.clan_tag, razbot_data.header)
+            item.clan_tag, coc_client)
         message += f"{clan.name} {clan.tag}, "
 
     # cuts the last two characters from the string ', '
@@ -3333,7 +3415,7 @@ async def showclanclaim(ctx):
 )
 async def deleteclan(ctx, clan_tag):
     async with ctx.typing():
-        clan_obj = clash_responder.get_clan(clan_tag, razbot_data.header)
+        clan_obj = clash_responder.get_clan(clan_tag, coc_client)
 
     # clan not found
     if not clan_obj:
@@ -3392,7 +3474,7 @@ async def claimclanrole(ctx, clan_tag):
     role = ctx.message.role_mentions[0]
 
     async with ctx.typing():
-        clan_obj = clash_responder.get_clan(clan_tag, razbot_data.header)
+        clan_obj = clash_responder.get_clan(clan_tag, coc_client)
 
     # clan not found
     if not clan_obj:
@@ -3751,8 +3833,8 @@ async def on_reaction_add(reaction, user):
     db_player_obj = db_responder.read_player_active(user.id)
 
     if db_player_obj:
-        player_obj = clash_responder.get_player(
-            db_player_obj.player_tag, razbot_data.header)
+        player_obj = await clash_responder.get_player(
+            db_player_obj.player_tag, coc_client)
     else:
         player_obj = None
 
@@ -3776,6 +3858,7 @@ async def on_reaction_add(reaction, user):
         icon_url=(ctx.bot.user.avatar_url.BASE +
                   ctx.bot.user.avatar_url._url),
         title=embed_title,
+        description=None,
         bot_prefix=ctx.bot.command_prefix,
         bot_user_name=ctx.bot.user.name,
         thumbnail=None,

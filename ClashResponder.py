@@ -1,4 +1,6 @@
 import re
+
+from coc.errors import Maintenance, NotFound, PrivateWarLog
 import Player
 import Clan
 import War
@@ -27,7 +29,16 @@ th_lineup_dict = {
 # Player
 
 async def get_player(player_tag, coc_client):
-    return await coc_client.get_player(player_tag)
+    try:
+        player_obj = await coc_client.get_player(player_tag)
+
+    except Maintenance:
+        return None
+
+    except NotFound:
+        return None
+
+    return player_obj
 
 
 def verify_token(api_key, player_tag, header):

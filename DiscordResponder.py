@@ -1,9 +1,6 @@
 import math
 from coc import NotFound, Maintenance, PrivateWarLog
-# import Clan
 import RazBot_Data
-# from Player import super_troop_list
-# import ClashResponder as clash_responder
 import RazBotDB_Responder as db_responder
 from discord.utils import get
 
@@ -49,7 +46,8 @@ async def player_verification(db_player_obj, user_obj, coc_client):
         }
 
     try:
-        player_obj = await coc_client.get_player(player_tag=db_player_obj.player_tag)
+        player_obj = await coc_client.get_player(
+            player_tag=db_player_obj.player_tag)
     except Maintenance:
         return {
             'verified': False,
@@ -1485,6 +1483,7 @@ def embed_message(
     color,
     icon_url,
     title,
+    description,
     bot_prefix,
     bot_user_name,
     thumbnail,
@@ -1494,10 +1493,26 @@ def embed_message(
     author_avatar_url
 ):
     embed_list = []
-    embed = Embed(
-        colour=color,
-        title=title
-    )
+    if title and description:
+        embed = Embed(
+            colour=color,
+            title=title,
+            description=description
+        )
+    elif title and not description:
+        embed = Embed(
+            colour=color,
+            title=title,
+        )
+    elif not title and description:
+        embed = Embed(
+            colour=color,
+            description=description
+        )
+    else:
+        embed = Embed(
+            colour=color
+        )
 
     embed.set_author(
         icon_url=icon_url,
@@ -1886,7 +1901,7 @@ def find_user_from_tag(player_obj, member_list):
     # user with requested player tag not found
     if not db_user_obj:
         return {
-            "name": f"{player_obj.name} tag {player_obj.tag}",
+            "name": f"{player_obj.name} {player_obj.tag}",
             "value": (f"linked user not found")
         }
 
@@ -1896,12 +1911,12 @@ def find_user_from_tag(player_obj, member_list):
     # user not found in guild
     if not user_obj:
         return {
-            "name": f"{player_obj.name} tag {player_obj.tag}",
+            "name": f"{player_obj.name} {player_obj.tag}",
             "value": (f"linked user not in server")
         }
 
     return {
-        "name": f"{player_obj.name} tag {player_obj.tag}",
+        "name": f"{player_obj.name} {player_obj.tag}",
         "value": f"claimed by {user_obj.mention}"
     }
 
