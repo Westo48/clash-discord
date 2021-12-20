@@ -240,7 +240,7 @@ async def playermember(ctx):
         color=discord.Color(client_data.embed_color),
         icon_url=(ctx.bot.user.avatar_url.BASE +
                   ctx.bot.user.avatar_url._url),
-        title=player_obj.name,
+        title=f"{player_obj.name} {player_obj.tag}",
         bot_prefix=ctx.prefix,
         bot_user_name=ctx.bot.user.name,
         thumbnail=player_obj.league.icon,
@@ -422,7 +422,6 @@ async def allherolvl(ctx):
                            ctx.author.avatar_url._url)
     )
     for embed in embed_list:
-        await ctx.send(embed=embed)
         await ctx.send(embed=embed)
 
 
@@ -3028,8 +3027,8 @@ async def showplayerclaim(ctx):
 
     message = f"{ctx.author.mention} has claimed "
     for db_player_obj in db_player_obj_list:
-        player_obj = clash_responder.get_player(
-            db_player_obj.player_tag, razbot_data.header)
+        player_obj = await clash_responder.get_player(
+            db_player_obj.player_tag, coc_client)
         if db_player_obj.active:
             message += f"{player_obj.name} {player_obj.tag} (active), "
         else:
@@ -3086,8 +3085,8 @@ async def updateplayeractive(ctx, player_tag):
 )
 async def deleteplayer(ctx, player_tag):
     async with ctx.typing():
-        player_obj = clash_responder.get_player(
-            player_tag, razbot_data.header)
+        player_obj = await clash_responder.get_player(
+            player_tag, coc_client)
 
     # player not found
     if not player_obj:
@@ -3151,8 +3150,8 @@ async def deleteplayer(ctx, player_tag):
         return
 
     # update was successful
-    clash_updated_player_obj = clash_responder.get_player(
-        db_updated_player_obj.player_tag, razbot_data.header)
+    clash_updated_player_obj = await clash_responder.get_player(
+        db_updated_player_obj.player_tag, coc_client)
 
     # clash player not found
     if not clash_updated_player_obj:

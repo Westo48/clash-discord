@@ -1,3 +1,4 @@
+import re
 import Player
 import Clan
 import War
@@ -32,24 +33,232 @@ async def get_player(player_tag, coc_client):
 def verify_token(api_key, player_tag, header):
     return Player.verify_token(api_key, player_tag, header)
 
-# returns player.name and troop.lvl
+
+def find_unit_name(unit_name, unit_list):
+    """
+        take in unit name and list of units
+        odered list of unit objects from coc.py
+        then returns the unit object provided by coc.py,
+        returns None if not found
+    """
+
+    # formatting the name for P.E.K.K.A
+    unit_name = re.sub('[.]', '', unit_name)
+    for unit_obj in unit_list:
+        # formatting the name for P.E.K.K.A
+        formatted_unit_name = re.sub('[.]', '', unit_obj.name)
+        if formatted_unit_name.lower() == unit_name.lower():
+            return unit_obj
+    return None
+
+
+def find_hero(player_obj, hero_name):
+    """
+        finds a hero based on unformatted name given
+
+        Args:
+            player_obj (obj): coc.py player object
+            hero_name (str): requested hero name
+
+        Returns:
+            hero: object of coc.py hero
+            None: if hero is not found returns none
+    """
+    # search in heroes
+    coc_hero_obj = find_unit_name(hero_name, player_obj.heroes)
+
+    # hero is found based on name retun hero object
+    if coc_hero_obj:
+        return coc_hero_obj
+
+    # hero was not found based on name
+    return None
+
+
+def find_pet(player_obj, pet_name):
+    """
+        finds a pet based on unformatted name given
+
+        Args:
+            player_obj (obj): coc.py player object
+            pet_name (str): requested pet name
+
+        Returns:
+            pet: object of coc.py pet
+            None: if pet is not found returns none
+    """
+    # search in pets
+    coc_pet_obj = find_unit_name(pet_name, player_obj.hero_pets)
+
+    # pet is found based on name retun pet object
+    if coc_pet_obj:
+        return coc_pet_obj
+
+    # pet was not found based on name
+    return None
+
+
+def find_home_troop(player_obj, troop_name):
+    """
+        finds a home troop based on unformatted name given
+
+        Args:
+            player_obj (obj): coc.py player object
+            troop_name (str): requested home troop name
+
+        Returns:
+            troop: object of coc.py troop
+            None: if troop is not found returns none
+    """
+    # search in home troops
+    coc_troop_obj = find_unit_name(troop_name, player_obj.home_troops)
+
+    # troop is found based on name retun troop object
+    if coc_troop_obj:
+        return coc_troop_obj
+
+    # troop was not found based on name
+    return None
+
+
+def find_siege(player_obj, siege_name):
+    """
+        finds a siege based on unformatted name given
+
+        Args:
+            player_obj (obj): coc.py player object
+            siege_name (str): requested siege name
+
+        Returns:
+            siege: object of coc.py siege
+            None: if siege is not found returns none
+    """
+    # search in sieges
+    coc_siege_obj = find_unit_name(siege_name, player_obj.siege_machines)
+
+    # siege is found based on name retun siege object
+    if coc_siege_obj:
+        return coc_siege_obj
+
+    # siege was not found based on name
+    return None
+
+
+def find_super_troop(player_obj, troop_name):
+    """
+        finds a super troop based on unformatted name given
+
+        Args:
+            player_obj (obj): coc.py player object
+            troop_name (str): requested super troop name
+
+        Returns:
+            super_troop: object of coc.py super troop
+            None: if super troop is not found returns none
+    """
+    # search in super troops
+    coc_troop_obj = find_unit_name(troop_name, player_obj.super_troops)
+
+    # super troop is found based on name retun super troop object
+    if coc_troop_obj:
+        return coc_troop_obj
+
+    # super troop was not found based on name
+    return None
+
+
+def find_spell(player_obj, spell_name):
+    """
+        finds a spell based on unformatted name given
+
+        Args:
+            player_obj (obj): coc.py player object
+            spell_name (str): requested spell name
+
+        Returns:
+            spell: object of coc.py spell
+            None: if spell is not found returns none
+    """
+    # search in spells
+    coc_spell_obj = find_unit_name(spell_name, player_obj.spells)
+
+    # spell is found based on name retun spell object
+    if coc_spell_obj:
+        return coc_spell_obj
+
+    # spell was not found based on name
+    return None
+
+
+def find_builder_troop(player_obj, troop_name):
+    """
+        finds a builder troop based on unformatted name given
+
+        Args:
+            player_obj (obj): coc.py player object
+            troop_name (str): requested builder troop name
+
+        Returns:
+            troop: object of coc.py troop
+            None: if troop is not found returns none
+    """
+    # search in builder troops
+    coc_troop_obj = find_unit_name(troop_name, player_obj.builder_troops)
+
+    # troop is found based on name retun troop object
+    if coc_troop_obj:
+        return coc_troop_obj
+
+    # troop was not found based on name
+    return None
 
 
 def find_unit(player_obj, unit_name):
-    unit_obj = player_obj.get_hero(unit_name)
-    # hero was found
-    if unit_obj:
-        return unit_obj
+    """
+        finds a unit based on unformatted name given
 
-    unit_obj = player_obj.get_troop(unit_name)
-    # troop was found
-    if unit_obj:
-        return unit_obj
+        Args:
+            player_obj (obj): coc.py player object
+            unit_name (str): requested unit name
 
-    unit_obj = player_obj.get_spell(unit_name)
-    # troop was found
-    if unit_obj:
-        return unit_obj
+        Returns:
+            coc_unit_obj: object of coc.py unit
+            None: if unit is not found returns none
+    """
+    # search in heroes
+    coc_unit_obj = find_hero(player_obj, unit_name)
+    if coc_unit_obj:
+        return coc_unit_obj
+
+    # search in hero pets
+    coc_unit_obj = find_pet(player_obj, unit_name)
+    if coc_unit_obj:
+        return coc_unit_obj
+
+    # search in home troops
+    coc_unit_obj = find_home_troop(player_obj, unit_name)
+    if coc_unit_obj:
+        return coc_unit_obj
+
+    # search in sieges
+    coc_unit_obj = find_siege(player_obj, unit_name)
+    if coc_unit_obj:
+        return coc_unit_obj
+
+    # search in super troops
+    coc_unit_obj = find_super_troop(player_obj, unit_name)
+    if coc_unit_obj:
+        return coc_unit_obj
+
+    # search in spells
+    coc_unit_obj = find_spell(player_obj, unit_name)
+    if coc_unit_obj:
+        return coc_unit_obj
+
+    # search in builder troops
+    coc_unit_obj = find_builder_troop(player_obj, unit_name)
+    if coc_unit_obj:
+        return coc_unit_obj
 
     # unit was not found
     return None

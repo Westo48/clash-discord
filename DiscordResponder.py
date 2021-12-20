@@ -377,37 +377,49 @@ def unit_lvl_all(player_obj):
 def hero_lvl_all(player_obj):
     field_dict_list = []
     for hero_obj in player_obj.heroes:
-        if hero_obj.village == 'home':
-            field_dict_list.append(unit_lvl(
-                player_obj, hero_obj, hero_obj.name))
-    return field_dict_list
+        # hero isn't a home base hero
+        if not hero_obj.is_home_base:
+            continue
+        field_dict_list.append(unit_lvl(
+            player_obj, hero_obj, hero_obj.name))
     return field_dict_list
 
 
 def pet_lvl_all(player_obj):
     field_dict_list = []
     for pet_obj in player_obj.hero_pets:
-        if pet_obj.village == 'home':
-            field_dict_list.append(unit_lvl(
-                player_obj, pet_obj, pet_obj.name))
+        # pet isn't a home base pet
+        if not pet_obj.is_home_base:
+            continue
+        field_dict_list.append(unit_lvl(
+            player_obj, pet_obj, pet_obj.name))
     return field_dict_list
 
 
 def troop_lvl_all(player_obj):
     field_dict_list = []
     for troop_obj in player_obj.home_troops:
-        if troop_obj.village == 'home':
-            field_dict_list.append(unit_lvl(
-                player_obj, troop_obj, troop_obj.name))
+        # troop isn't a home base troop
+        if not troop_obj.is_home_base:
+            continue
+
+        # troop is a super troop
+        if troop_obj.is_super_troop:
+            continue
+
+        field_dict_list.append(unit_lvl(
+            player_obj, troop_obj, troop_obj.name))
     return field_dict_list
 
 
 def spell_lvl_all(player_obj):
     field_dict_list = []
     for spell_obj in player_obj.spells:
-        if spell_obj.village == 'home':
-            field_dict_list.append(unit_lvl(
-                player_obj, spell_obj, spell_obj.name))
+        # spell isn't a home base spell
+        if not spell_obj.is_home_base:
+            continue
+        field_dict_list.append(unit_lvl(
+            player_obj, spell_obj, spell_obj.name))
     return field_dict_list
 
 
