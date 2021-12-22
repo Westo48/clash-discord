@@ -521,6 +521,59 @@ def cwl_clan_lineup(cwl_group_clan):
 
 # UTILS
 
+def member_score(war_member, war_obj):
+    class ScoredWarMember(object):
+        """
+            ScoredWarMember
+                Instance Attributes
+                    tag (str): WarMember's player tag
+                    name (str): WarMember's player name
+                    score (int): WarMember's war score
+        """
+
+        def __init__(self, tag, name, score):
+            self.tag = tag
+            self.name = name
+            self.score = score
+
+    # each missed attack should be -100
+    member_score = war_obj.attacks_per_member*(-100)
+    for attack in war_member.attacks:
+        # add 100 since the member attacked
+        member_score += 100
+
+        scored_attack = attack_score(attack, war_member, war_obj)
+
+        member_score += scored_attack.score
+    member_score = member_score/war_obj.attacks_per_member
+    return ScoredWarMember(war_member.tag, war_member.name, member_score)
+
+
+def attack_score(attack, war_member, war_obj):
+    class ScoredWarAttack(object):
+        """
+            ScoredWarAttack
+                Instance Attributes
+                    stars (str): WarMemberAttack's stars earned
+                    destruction (str): WarMemberAttack's destruction earned
+                    score (int): WarMemberAttack's attack score
+        """
+
+        def __init__(self, stars, destruction, score):
+            self.stars = stars
+            self.destruction = destruction
+            self.score = score
+
+    star_score = attack.stars/3
+    des_score = attack.destruction/100
+    defender = find_defender(war_obj.opponent, attack.defender_tag)
+    th_difference = defender.town_hall-war_member.town_hall
+    attack_score = (((star_score*.75)+(des_score*.25))
+                    * th_multiplier(th_difference))
+
+    return ScoredWarAttack(attack.stars, attack.destruction, attack_score)
+
+
 def string_date_time(war_obj):
     """
         returns a string of the remaining time,

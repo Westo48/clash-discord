@@ -1059,31 +1059,75 @@ def war_all_attacks(war_obj):
         }]
 
 
-def war_all_member_standing(war_obj):
+def war_member_standing(war_obj, player):
     "returns a response list of member scores"
+    field_dict_list = []
+    if war_obj.state == "notInWar":
+        field_dict_list.append({
+            "name": "you are not in war",
+            "value": "there is no score"
+        })
+        return field_dict_list
+
+    # member check before preparation check to see if the member is in the war
+    # find member in war
+    found = False
+    for war_member in war_obj.clan.members:
+        if war_member.tag == player.tag:
+            member = war_member
+            found = True
+            break
+    if not found:
+        return [{
+            'name': f"{player.name}",
+            'value': f"not found in war"
+        }]
+
+    if war_obj.state == "preparation":
+        field_dict_list.append({
+            "name": "war has not started",
+            "value": "there is no score"
+        })
+        return field_dict_list
+
+    scored_member = clash_responder.member_score(member, war_obj)
+    field_dict_list.append({
+        "name": scored_member.name,
+        "value": f"{round(scored_member.score, 3)}"
+    })
+    return field_dict_list
+
+
+def war_all_member_standing(war_obj):
+    "returns a response list of all member scores"
     return_list = []
-    if war_obj.state == 'preparation':
+    if war_obj.state == "notInWar":
         return_list.append({
-            'name': 'war has not started',
-            'value': 'there is no score'
+            "name": "you are not in war",
+            "value": "there is no score"
         })
         return return_list
-    elif war_obj.state == 'notInWar':
+    if war_obj.state == "preparation":
         return_list.append({
-            'name': 'you are not in war',
-            'value': 'there is no score'
+            "name": "war has not started",
+            "value": "there is no score"
         })
         return return_list
-    else:
-        war_members = sorted(
-            war_obj.clan.members, key=lambda member: member.score, reverse=True)
-        # razgriz has a score of
-        for member in war_members:
-            return_list.append({
-                'name': member.name,
-                'value': f'{round(member.score, 3)}'
-            })
-        return return_list
+
+    scored_member_list = []
+    # getting scored_member for each clan member
+    for member in war_obj.clan.members:
+        scored_member_list.append(
+            clash_responder.member_score(member, war_obj))
+
+    scored_member_list = sorted(
+        scored_member_list, key=lambda member: member.score, reverse=True)
+    for member in scored_member_list:
+        return_list.append({
+            "name": member.name,
+            "value": f"{round(member.score, 3)}"
+        })
+    return return_list
 
 
 def war_lineup(war_obj):
