@@ -1,5 +1,6 @@
 import re
 import datetime
+import math
 from coc.errors import Maintenance, NotFound, PrivateWarLog, GatewayError
 import Player
 import Clan
@@ -505,15 +506,69 @@ def war_no_attack_members(clan_tag, header):
 # todo update all for if not in CWL logic
 # CWL Group
 
-def get_cwl_group(clan_tag, header):
-    return CWLGroup.get(clan_tag, header)
+async def get_cwl_group(clan_tag, coc_client):
+    try:
+        cwl_group = await coc_client.get_league_group(clan_tag)
+
+    except Maintenance:
+        return None
+
+    except NotFound:
+        return None
+
+    except GatewayError:
+        return None
+
+    return cwl_group
 
 
 def cwl_clan_lineup(cwl_group_clan):
     clan_lineup_dict = th_lineup_dict.copy()
     for member in cwl_group_clan.members:
-        clan_lineup_dict[member.th_lvl] += 1
+        clan_lineup_dict[member.town_hall] += 1
     return clan_lineup_dict
+
+
+def cwl_member_score(cwl_wars, cwl_member):
+    class ScoredCWLMember(object):
+        """
+            ScoredWarMember
+                Instance Attributes
+                    tag (str): WarMember's player tag
+                    name (str): WarMember's player name
+                    wars (int): rounds participated
+                    score (int): WarMember's war score
+        """
+
+        def __init__(self, tag, name, wars, score):
+            self.tag = tag
+            self.name = name
+            self.wars = wars
+            self.score = score
+
+    scored_member = ScoredCWLMember(cwl_member.tag, cwl_member.name, 0, 0)
+    # for each war getting that war score and war count
+    for war in cwl_wars:
+        # do not include wars that are not even in preparation
+        if war.war_tag == "#0":
+            continue
+        # do not include wars that are not over
+        if war.status != "warEnded":
+            continue
+        for war_member in war.clan.members:
+            if war_member.tag == cwl_member.tag:
+                scored_member.wars += 1
+                scored_member.score += member_score(war_member, war).score
+                break
+    # return without operating if member did not participate
+    if scored_member.wars == 0:
+        return scored_member
+
+    avg_score = scored_member.score / scored_member.wars
+    participation_multiplier = math.log(
+        scored_member.wars, len(cwl_wars))
+    scored_member.score = avg_score * participation_multiplier
+    return scored_member
 
 
 # CWL War

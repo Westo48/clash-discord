@@ -1192,7 +1192,7 @@ async def war(ctx):
     player_obj = verification_payload['player_obj']
     war_obj = verification_payload['war_obj']
 
-    field_dict_list = discord_responder.war_overview(war_obj)
+    field_dict_list = discord_responder.war_info(war_obj)
 
     embed_list = discord_responder.embed_message(
         Embed=discord.Embed,
@@ -1727,65 +1727,8 @@ async def warmemberlineup(ctx):
 async def cwllineup(ctx):
     async with ctx.typing():
         db_player_obj = db_responder.read_player_active(ctx.author.id)
-    if not db_player_obj:
-        # user does not have an active player
-        await ctx.send(f"{ctx.author.mention} does not have an active player")
-        return
 
-    player_obj = await clash_responder.get_player(
-        db_player_obj.player_tag, coc_client)
-    if not player_obj:
-        # player with tag from db not found
-        await ctx.send(f"could not find player with tag "
-                       f"{db_player_obj.player_tag}")
-        return
-
-    if not player_obj.clan_tag:
-        # player is found but not in a clan
-        await ctx.send(f"{player_obj.name} is not in a clan")
-        return
-
-    cwl_group = clash_responder.get_cwl_group(
-        player_obj.clan_tag, coc_client)
-    if not cwl_group:
-        # clan is not in CWL
-        field_dict_list = [{
-            'name': f"{player_obj.clan_name} {player_obj.clan_tag}",
-            'value': f"is not in CWL"
-        }]
-        embed_list = discord_responder.embed_message(
-            Embed=discord.Embed,
-            color=discord.Color(client_data.embed_color),
-            icon_url=(ctx.bot.user.avatar_url.BASE +
-                      ctx.bot.user.avatar_url._url),
-            title=f"{player_obj.clan_name} {player_obj.clan_tag}",
-            description=None,
-            bot_prefix=ctx.prefix,
-            bot_user_name=ctx.bot.user.name,
-            thumbnail=player_obj.clan.badge,
-            field_list=field_dict_list,
-            image_url=None,
-            author_display_name=ctx.author.display_name,
-            author_avatar_url=(ctx.author.avatar_url.BASE +
-                               ctx.author.avatar_url._url)
-        )
-        for embed in embed_list:
-            await ctx.send(embed=embed)
-        return
-
-    await ctx.send(discord_responder.cwl_lineup(cwl_group))
-
-
-@client.command(
-    brief='cwlgroup',
-    description='Lists each member and their score in CWL',
-    hidden=True
-)
-async def cwlclanscore(ctx):
-    async with ctx.typing():
-        db_player_obj = db_responder.read_player_active(ctx.author.id)
-
-    verification_payload = discord_responder.cwl_group_leadership_verification(
+    verification_payload = await discord_responder.cwl_group_verification(
         db_player_obj, ctx.author, coc_client)
     if not verification_payload['verified']:
         embed_list = discord_responder.embed_message(
@@ -1811,8 +1754,47 @@ async def cwlclanscore(ctx):
     player_obj = verification_payload['player_obj']
     cwl_group_obj = verification_payload['cwl_group_obj']
 
+    await ctx.send(discord_responder.cwl_lineup(cwl_group_obj))
+
+
+@client.command(
+    brief='cwlgroup',
+    description='Lists each member and their score in CWL',
+    hidden=True
+)
+async def cwlclanscore(ctx):
+    async with ctx.typing():
+        db_player_obj = db_responder.read_player_active(ctx.author.id)
+
+    verification_payload = (
+        await discord_responder.cwl_group_leadership_verification(
+            db_player_obj, ctx.author, coc_client))
+    if not verification_payload['verified']:
+        embed_list = discord_responder.embed_message(
+            Embed=discord.Embed,
+            color=discord.Color(client_data.embed_color),
+            icon_url=(ctx.bot.user.avatar_url.BASE +
+                      ctx.bot.user.avatar_url._url),
+            title=None,
+            description=None,
+            bot_prefix=ctx.prefix,
+            bot_user_name=ctx.bot.user.name,
+            thumbnail=None,
+            field_list=verification_payload['field_dict_list'],
+            image_url=None,
+            author_display_name=ctx.author.display_name,
+            author_avatar_url=(ctx.author.avatar_url.BASE +
+                               ctx.author.avatar_url._url)
+        )
+        for embed in embed_list:
+            await ctx.send(embed=embed)
+        return
+
+    player_obj = verification_payload['player_obj']
+    cwl_group_obj = verification_payload['cwl_group_obj']
+
     field_dict_list = discord_responder.cwl_clan_standing(
-        cwl_group_obj, player_obj.clan_tag, coc_client)
+        cwl_group_obj, player_obj.clan.tag)
     embed_list = discord_responder.embed_message(
         Embed=discord.Embed,
         color=discord.Color(client_data.embed_color),
@@ -1842,7 +1824,7 @@ async def cwlscore(ctx):
     async with ctx.typing():
         db_player_obj = db_responder.read_player_active(ctx.author.id)
 
-    verification_payload = discord_responder.cwl_group_verification(
+    verification_payload = await discord_responder.cwl_group_verification(
         db_player_obj, ctx.author, coc_client)
     if not verification_payload['verified']:
         embed_list = discord_responder.embed_message(
@@ -1869,7 +1851,7 @@ async def cwlscore(ctx):
     cwl_group_obj = verification_payload['cwl_group_obj']
 
     field_dict_list = discord_responder.cwl_member_standing(
-        player_obj, cwl_group_obj, player_obj.clan_tag, coc_client)
+        player_obj, cwl_group_obj, player_obj.clan.tag, coc_client)
     embed_list = discord_responder.embed_message(
         Embed=discord.Embed,
         color=discord.Color(client_data.embed_color),
@@ -1897,8 +1879,8 @@ async def cwlscore(ctx):
     description='Lists each score the specified member has in CWL'
 )
 async def cwlmemberscore(ctx):
+    # user has not been mentioned
     if len(ctx.message.mentions) == 0:
-        # user has not been mentioned
         await ctx.send(f"you have to mention a member")
         return
 
@@ -1906,7 +1888,7 @@ async def cwlmemberscore(ctx):
     async with ctx.typing():
         db_player_obj = db_responder.read_player_active(discord_member.id)
 
-    verification_payload = discord_responder.cwl_group_verification(
+    verification_payload = await discord_responder.cwl_group_verification(
         db_player_obj, discord_member, coc_client)
     if not verification_payload['verified']:
         embed_list = discord_responder.embed_message(
@@ -1933,7 +1915,7 @@ async def cwlmemberscore(ctx):
     cwl_group_obj = verification_payload['cwl_group_obj']
 
     field_dict_list = discord_responder.cwl_member_standing(
-        player_obj, cwl_group_obj, player_obj.clan_tag, coc_client)
+        cwl_group_obj, player_obj.clan.tag)
     embed_list = discord_responder.embed_message(
         Embed=discord.Embed,
         color=discord.Color(client_data.embed_color),
@@ -1967,7 +1949,7 @@ async def cwlwaroverview(ctx):
     async with ctx.typing():
         db_player_obj = db_responder.read_player_active(ctx.author.id)
 
-    verification_payload = discord_responder.cwl_war_verification(
+    verification_payload = await discord_responder.cwl_war_verification(
         db_player_obj, ctx.author, coc_client)
     if not verification_payload['verified']:
         embed_list = discord_responder.embed_message(
@@ -1993,7 +1975,7 @@ async def cwlwaroverview(ctx):
     player_obj = verification_payload['player_obj']
     cwl_war_obj = verification_payload['cwl_war_obj']
 
-    field_dict_list = discord_responder.war_overview(
+    field_dict_list = discord_responder.war_info(
         cwl_war_obj)
     embed_list = discord_responder.embed_message(
         Embed=discord.Embed,
@@ -2024,7 +2006,7 @@ async def cwlwartime(ctx):
     async with ctx.typing():
         db_player_obj = db_responder.read_player_active(ctx.author.id)
 
-    verification_payload = discord_responder.cwl_war_verification(
+    verification_payload = await discord_responder.cwl_war_verification(
         db_player_obj, ctx.author, coc_client)
     if not verification_payload['verified']:
         embed_list = discord_responder.embed_message(
@@ -2083,7 +2065,7 @@ async def cwlwarnoattack(ctx):
     async with ctx.typing():
         db_player_obj = db_responder.read_player_active(ctx.author.id)
 
-    verification_payload = discord_responder.cwl_war_verification(
+    verification_payload = await discord_responder.cwl_war_verification(
         db_player_obj, ctx.author, coc_client)
     if not verification_payload['verified']:
         embed_list = discord_responder.embed_message(
@@ -2142,8 +2124,9 @@ async def cwlwarallattack(ctx):
     async with ctx.typing():
         db_player_obj = db_responder.read_player_active(ctx.author.id)
 
-    verification_payload = discord_responder.cwl_war_leadership_verification(
-        db_player_obj, ctx.author, coc_client)
+    verification_payload = (
+        await discord_responder.cwl_war_leadership_verification(
+            db_player_obj, ctx.author, coc_client))
     if not verification_payload['verified']:
         embed_list = discord_responder.embed_message(
             Embed=discord.Embed,
@@ -2295,11 +2278,11 @@ async def role(ctx):
     needed_role_list = []
     for player_obj in player_obj_list:
         # claimed clan validation
-        db_clan_obj = db_responder.read_clan(ctx.guild.id, player_obj.clan_tag)
+        db_clan_obj = db_responder.read_clan(ctx.guild.id, player_obj.clan.tag)
         # clan not found
         if not db_clan_obj:
             field_dict_list = [{
-                "name": f"{player_obj.clan_name} {player_obj.clan_tag}",
+                "name": f"{player_obj.clan_name} {player_obj.clan.tag}",
                 "value": f"not claimed in {ctx.guild.name} server"
             }]
 
@@ -2326,7 +2309,7 @@ async def role(ctx):
 
         # get discord clan and rank roles
         db_clan_role_obj = db_responder.read_clan_role_from_tag(
-            ctx.guild.id, player_obj.clan_tag)
+            ctx.guild.id, player_obj.clan.tag)
         db_rank_role_obj = (db_responder.read_rank_role_from_guild_and_clash(
             ctx.guild.id, player_obj.role))
 
@@ -2604,11 +2587,11 @@ async def rolemember(ctx):
     needed_role_list = []
     for player_obj in player_obj_list:
         # claimed clan validation
-        db_clan_obj = db_responder.read_clan(ctx.guild.id, player_obj.clan_tag)
+        db_clan_obj = db_responder.read_clan(ctx.guild.id, player_obj.clan.tag)
         # clan not found
         if not db_clan_obj:
             field_dict_list = [{
-                "name": f"{player_obj.clan_name} {player_obj.clan_tag}",
+                "name": f"{player_obj.clan_name} {player_obj.clan.tag}",
                 "value": f"not claimed in {ctx.guild.name} server"
             }]
 
@@ -2635,7 +2618,7 @@ async def rolemember(ctx):
 
         # get discord clan and rank roles
         db_clan_role_obj = db_responder.read_clan_role_from_tag(
-            ctx.guild.id, player_obj.clan_tag)
+            ctx.guild.id, player_obj.clan.tag)
         db_rank_role_obj = (db_responder.read_rank_role_from_guild_and_clash(
             ctx.guild.id, player_obj.role))
 
@@ -2895,11 +2878,11 @@ async def roleall(ctx):
         for player_obj in player_obj_list:
             # claimed clan validation
             db_clan_obj = db_responder.read_clan(
-                ctx.guild.id, player_obj.clan_tag)
+                ctx.guild.id, player_obj.clan.tag)
             # clan not found
             if not db_clan_obj:
                 field_dict_list = [{
-                    "name": f"{player_obj.clan_name} {player_obj.clan_tag}",
+                    "name": f"{player_obj.clan_name} {player_obj.clan.tag}",
                     "value": f"not claimed in {ctx.guild.name} server"
                 }]
 
@@ -2926,7 +2909,7 @@ async def roleall(ctx):
 
             # get discord clan and rank roles
             db_clan_role_obj = db_responder.read_clan_role_from_tag(
-                ctx.guild.id, player_obj.clan_tag)
+                ctx.guild.id, player_obj.clan.tag)
             db_rank_role_obj = (db_responder.read_rank_role_from_guild_and_clash(
                 ctx.guild.id, player_obj.role))
 
@@ -3395,7 +3378,7 @@ async def claimguild(ctx):
 
 
 # client clan
-# todo pull the clan tag from the db player to player tag to player.clan_tag
+# todo pull the clan tag from the db player to player tag to player.clan.tag
 # ? simplify this...
 @client.command(
     aliases=['clanclaim'],
@@ -3457,7 +3440,7 @@ async def claimclan(ctx, clan_tag):
             db_player_obj.player_tag, coc_client)
 
         # player in clan
-        if player_obj.clan_tag == clan_obj.tag:
+        if player_obj.clan.tag == clan_obj.tag:
             user_in_clan = True
             break
 

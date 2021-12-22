@@ -1,5 +1,7 @@
 import math
 from coc import NotFound, Maintenance, PrivateWarLog, GatewayError
+from discord.ext.commands.core import group
+from CWLGroup import CWLGroup
 import RazBot_Data
 import ClashResponder as clash_responder
 import RazBotDB_Responder as db_responder
@@ -47,8 +49,7 @@ async def player_verification(db_player_obj, user_obj, coc_client):
         }
 
     try:
-        player_obj = await coc_client.get_player(
-            player_tag=db_player_obj.player_tag)
+        player_obj = await coc_client.get_player(db_player_obj.player_tag)
     except Maintenance:
         return {
             'verified': False,
@@ -722,16 +723,18 @@ async def war_verification(db_player_obj, user_obj, coc_client):
                 'name': "Clash of Clans is under maintenance",
                 'value': "please try again later"
             }],
-            'player_obj': None
+            'player_obj': None,
+            'war_obj': None
         }
     except NotFound:
         return {
             'verified': False,
             'field_dict_list': [{
-                'name': "could not find player",
-                'value': db_player_obj.player_tag
+                'name': "war not found",
+                'value': f"{player_obj.clan.name} {player_obj.clan.tag}"
             }],
-            'player_obj': None
+            'player_obj': None,
+            'war_obj': None
         }
     except PrivateWarLog:
         return {
@@ -740,7 +743,8 @@ async def war_verification(db_player_obj, user_obj, coc_client):
                 'name': f"{player_obj.clan.name} {player_obj.clan.tag}",
                 'value': "war log is private"
             }],
-            'player_obj': None
+            'player_obj': None,
+            'war_obj': None
         }
     except GatewayError:
         return {
@@ -749,7 +753,8 @@ async def war_verification(db_player_obj, user_obj, coc_client):
                 'name': "coc.py ran into a gateway error",
                 'value': "please try again later"
             }],
-            'player_obj': None
+            'player_obj': None,
+            'war_obj': None
         }
 
     if not war_obj:
@@ -797,8 +802,50 @@ async def war_leadership_verification(db_player_obj, user_obj, coc_client):
 
     player_obj = player_leadership_verification_payload['player_obj']
 
-    war_obj = await coc_client.get_clan_war(player_obj.clan.tag)
-    if not war_obj:
+    try:
+        cwl_war_obj = await coc_client.get_clan_war(player_obj.clan.tag)
+    except Maintenance:
+        return {
+            'verified': False,
+            'field_dict_list': [{
+                'name': "Clash of Clans is under maintenance",
+                'value': "please try again later"
+            }],
+            'player_obj': None,
+            'war_obj': None
+        }
+    except NotFound:
+        return {
+            'verified': False,
+            'field_dict_list': [{
+                'name': "war not found",
+                'value': f"{player_obj.clan.name} {player_obj.clan.tag}"
+            }],
+            'player_obj': None,
+            'war_obj': None
+        }
+    except PrivateWarLog:
+        return {
+            'verified': False,
+            'field_dict_list': [{
+                'name': f"{player_obj.clan.name} {player_obj.clan.tag}",
+                'value': "war log is private"
+            }],
+            'player_obj': None,
+            'war_obj': None
+        }
+    except GatewayError:
+        return {
+            'verified': False,
+            'field_dict_list': [{
+                'name': "coc.py ran into a gateway error",
+                'value': "please try again later"
+            }],
+            'player_obj': None,
+            'war_obj': None
+        }
+
+    if not cwl_war_obj:
         # clan is not in war
         return {
             'verified': False,
@@ -820,7 +867,7 @@ async def war_leadership_verification(db_player_obj, user_obj, coc_client):
     return verification_payload
 
 
-def war_overview(war_obj):
+def war_info(war_obj):
     if not war_obj:
         return [{
             'name': f"not in war",
@@ -1196,7 +1243,7 @@ def war_member_lineup(war_obj):
 
 # CWL GROUP
 
-def cwl_group_verification(db_player_obj, user_obj, coc_client):
+async def cwl_group_verification(db_player_obj, user_obj, coc_client):
     """
         verifying a cwl group
         and returning verification payload
@@ -1209,7 +1256,7 @@ def cwl_group_verification(db_player_obj, user_obj, coc_client):
                 (verified, field_dict_list, player_obj, cwl_group_obj)
     """
 
-    player_clan_verification_payload = (player_clan_verification(
+    player_clan_verification_payload = (await player_clan_verification(
         db_player_obj, user_obj, coc_client))
 
     if not player_clan_verification_payload['verified']:
@@ -1217,18 +1264,36 @@ def cwl_group_verification(db_player_obj, user_obj, coc_client):
 
     player_obj = player_clan_verification_payload['player_obj']
 
-    cwl_group_obj = clash_responder.get_cwl_group(
-        player_obj.clan.tag, header)
-    if not cwl_group_obj:
-        # clan is not in cwl
+    try:
+        cwl_group_obj = await coc_client.get_league_group(player_obj.clan.tag)
+    except Maintenance:
         return {
             'verified': False,
             'field_dict_list': [{
-                'name': (f"{player_obj.clan.name} "
-                         f"{player_obj.clan.tag}"),
-                'value': "not in cwl"
+                'name': "Clash of Clans is under maintenance",
+                'value': "please try again later"
             }],
-            'player_obj': player_obj,
+            'player_obj': None,
+            'cwl_group_obj': None
+        }
+    except NotFound:
+        return {
+            'verified': False,
+            'field_dict_list': [{
+                'name': "CWL group not found",
+                'value': f"{player_obj.clan.name} {player_obj.clan.tag}"
+            }],
+            'player_obj': None,
+            'cwl_group_obj': None
+        }
+    except GatewayError:
+        return {
+            'verified': False,
+            'field_dict_list': [{
+                'name': "coc.py ran into a gateway error",
+                'value': "please try again later"
+            }],
+            'player_obj': None,
             'cwl_group_obj': None
         }
 
@@ -1241,7 +1306,7 @@ def cwl_group_verification(db_player_obj, user_obj, coc_client):
     return verification_payload
 
 
-def cwl_group_leadership_verification(db_player_obj, user_obj, coc_client):
+async def cwl_group_leadership_verification(db_player_obj, user_obj, coc_client):
     """
         verifying a cwl group through player_leadership_verification
         and returning verification payload
@@ -1254,26 +1319,46 @@ def cwl_group_leadership_verification(db_player_obj, user_obj, coc_client):
                 (verified, field_dict_list, player_obj, cwl_group_obj)
     """
 
-    player_leadership_verification_payload = (player_leadership_verification(
-        db_player_obj, user_obj, coc_client))
+    player_leadership_verification_payload = (
+        await player_leadership_verification(
+            db_player_obj, user_obj, coc_client)
+    )
 
     if not player_leadership_verification_payload['verified']:
         return player_leadership_verification_payload
 
     player_obj = player_leadership_verification_payload['player_obj']
 
-    cwl_group_obj = clash_responder.get_cwl_group(
-        player_obj.clan.tag, header)
-    if not cwl_group_obj:
-        # clan is not in cwl
+    try:
+        cwl_group_obj = await coc_client.get_league_group(player_obj.clan.tag)
+    except Maintenance:
         return {
             'verified': False,
             'field_dict_list': [{
-                'name': (f"{player_obj.clan.name} "
-                         f"{player_obj.clan.tag}"),
-                'value': "not in cwl"
+                'name': "Clash of Clans is under maintenance",
+                'value': "please try again later"
             }],
-            'player_obj': player_obj,
+            'player_obj': None,
+            'cwl_group_obj': None
+        }
+    except NotFound:
+        return {
+            'verified': False,
+            'field_dict_list': [{
+                'name': "CWL group not found",
+                'value': f"{player_obj.clan.name} {player_obj.clan.tag}"
+            }],
+            'player_obj': None,
+            'cwl_group_obj': None
+        }
+    except GatewayError:
+        return {
+            'verified': False,
+            'field_dict_list': [{
+                'name': "coc.py ran into a gateway error",
+                'value': "please try again later"
+            }],
+            'player_obj': None,
             'cwl_group_obj': None
         }
 
@@ -1313,13 +1398,21 @@ def cwl_lineup(cwl_group):
     return message
 
 
-# returns each member's CWL standing
-def cwl_clan_standing(cwl_group, clan_tag, header):
-    class ScoredMember(object):
-        def __init__(self, tag, name, war_count, score):
+def cwl_clan_standing(cwl_group, clan_tag):
+    class ScoredCWLMember(object):
+        """
+            ScoredWarMember
+                Instance Attributes
+                    tag (str): WarMember's player tag
+                    name (str): WarMember's player name
+                    wars (int): rounds participated
+                    score (int): WarMember's war score
+        """
+
+        def __init__(self, tag, name, wars, score):
             self.tag = tag
             self.name = name
-            self.war_count = war_count
+            self.wars = wars
             self.score = score
 
     if not cwl_group:
@@ -1329,13 +1422,7 @@ def cwl_clan_standing(cwl_group, clan_tag, header):
         }]
 
     # get a list of all CWLWar objects
-    cwl_wars = []
-    for cwl_round in cwl_group.rounds:
-        cwl_war = cwl_group.find_specified_war(
-            clan_tag, cwl_group.rounds.index(cwl_round), header)
-        if not cwl_war == '#0':
-            if cwl_war.state == 'warEnded':
-                cwl_wars.append(cwl_war)
+    cwl_wars = cwl_group.get_wars_for_clan(clan_tag)
 
     if len(cwl_wars) < 2:
         return [{
@@ -1343,30 +1430,36 @@ def cwl_clan_standing(cwl_group, clan_tag, header):
             'value': "please wait till round two has ended to score members"
         }]
 
-    # get a list of all CWLWarMembers their scores
-    cwl_war_members = []
-    # find your clan
+    # get the cwl clan
     for clan in cwl_group.clans:
         if clan.tag == clan_tag:
-            # for each member in the CWLWarClan
-            for member in clan.members:
-                scored_member = ScoredMember(member.tag, member.name, 0, 0)
-                # for each war getting that war score and war count
-                for war in cwl_wars:
-                    for war_member in war.clan.members:
-                        if war_member.tag == member.tag:
-                            scored_member.war_count += 1
-                            scored_member.score += war_member.score
-                            break
-                if scored_member.war_count != 0:
-                    avg_score = scored_member.score / scored_member.war_count
-                    participation_multiplier = math.log(
-                        scored_member.war_count, len(cwl_wars))
-                    scored_member.score = avg_score * participation_multiplier
-                    cwl_war_members.append(scored_member)
+            cwl_clan = clan
+            break
+
+    cwl_war_members = []
+
+    for member in cwl_clan.members:
+        scored_member = clash_responder.cwl_member_score(cwl_wars, member)
+        if scored_member.wars != 0:
+            cwl_war_members.append(scored_member)
+
+    # get a list of all CWLWarMembers their scores
+    scored_members = []
+
+    for member in cwl_group:
+        total_member_score = 0
+        for war in cwl_wars:
+            if war.war_tag == "#0":
+                continue
+            if war.status != "warEnded":
+                continue
+            if war.get_member(member.tag) is not None:
+
+                scored_members.append(
+                    clash_responder.member_score(member, war))
 
     sorted_cwl_war_members = sorted(
-        cwl_war_members, key=lambda member: member.score, reverse=True)
+        scored_members, key=lambda member: member.score, reverse=True)
     field_dict_list = []
     for member in sorted_cwl_war_members:
         field_dict_list.append({
@@ -1376,7 +1469,6 @@ def cwl_clan_standing(cwl_group, clan_tag, header):
     return field_dict_list
 
 
-# returns each specified member's CWL War score
 def cwl_member_standing(player_obj, cwl_group, clan_tag, header):
     if not cwl_group:
         return [{
@@ -1466,7 +1558,7 @@ def cwl_member_standing(player_obj, cwl_group, clan_tag, header):
 
 # CWL WAR
 
-def cwl_war_verification(db_player_obj, user_obj, coc_client):
+async def cwl_war_verification(db_player_obj, user_obj, coc_client):
     """
         verifying a cwl war
         and returning verification payload
@@ -1488,11 +1580,51 @@ def cwl_war_verification(db_player_obj, user_obj, coc_client):
     player_obj = cwl_group_verification_payload['player_obj']
     cwl_group_obj = cwl_group_verification_payload['cwl_group_obj']
 
-    cwl_war_obj = cwl_group_obj.find_current_war(
-        player_obj.clan.tag, header)
+    try:
+        cwl_war_obj = await coc_client.find_current_war(player_obj.clan.tag)
+    except Maintenance:
+        return {
+            'verified': False,
+            'field_dict_list': [{
+                'name': "Clash of Clans is under maintenance",
+                'value': "please try again later"
+            }],
+            'player_obj': None,
+            'cwl_war_obj': None
+        }
+    except NotFound:
+        return {
+            'verified': False,
+            'field_dict_list': [{
+                'name': "CWL war not found",
+                'value': f"{player_obj.clan.name} {player_obj.clan.tag}"
+            }],
+            'player_obj': None,
+            'cwl_war_obj': None
+        }
+    except PrivateWarLog:
+        return {
+            'verified': False,
+            'field_dict_list': [{
+                'name': f"{player_obj.clan.name} {player_obj.clan.tag}",
+                'value': "war log is private"
+            }],
+            'player_obj': None,
+            'cwl_war_obj': None
+        }
+    except GatewayError:
+        return {
+            'verified': False,
+            'field_dict_list': [{
+                'name': "coc.py ran into a gateway error",
+                'value': "please try again later"
+            }],
+            'player_obj': None,
+            'cwl_group_obj': None
+        }
 
+    # clan is not in cwl war
     if not cwl_war_obj:
-        # clan is not in cwl war
         return {
             'verified': False,
             'field_dict_list': [{
@@ -1513,7 +1645,7 @@ def cwl_war_verification(db_player_obj, user_obj, coc_client):
     return verification_payload
 
 
-def cwl_war_leadership_verification(db_player_obj, user_obj, coc_client):
+async def cwl_war_leadership_verification(db_player_obj, user_obj, coc_client):
     """
         verifying a cwl war through cwl_group_leadership_verification
         and returning verification payload
@@ -1536,11 +1668,51 @@ def cwl_war_leadership_verification(db_player_obj, user_obj, coc_client):
     player_obj = cwl_group_leadership_verification_payload['player_obj']
     cwl_group_obj = cwl_group_leadership_verification_payload['cwl_group_obj']
 
-    cwl_war_obj = cwl_group_obj.find_current_war(
-        player_obj.clan.tag, header)
+    try:
+        cwl_war_obj = await coc_client.find_current_war(player_obj.clan.tag)
+    except Maintenance:
+        return {
+            'verified': False,
+            'field_dict_list': [{
+                'name': "Clash of Clans is under maintenance",
+                'value': "please try again later"
+            }],
+            'player_obj': None,
+            'cwl_war_obj': None
+        }
+    except NotFound:
+        return {
+            'verified': False,
+            'field_dict_list': [{
+                'name': "CWL war not found",
+                'value': f"{player_obj.clan.name} {player_obj.clan.tag}"
+            }],
+            'player_obj': None,
+            'cwl_war_obj': None
+        }
+    except PrivateWarLog:
+        return {
+            'verified': False,
+            'field_dict_list': [{
+                'name': f"{player_obj.clan.name} {player_obj.clan.tag}",
+                'value': "war log is private"
+            }],
+            'player_obj': None,
+            'cwl_war_obj': None
+        }
+    except GatewayError:
+        return {
+            'verified': False,
+            'field_dict_list': [{
+                'name': "coc.py ran into a gateway error",
+                'value': "please try again later"
+            }],
+            'player_obj': None,
+            'cwl_group_obj': None
+        }
 
+    # clan is not in cwl war
     if not cwl_war_obj:
-        # clan is not in cwl war
         return {
             'verified': False,
             'field_dict_list': [{
