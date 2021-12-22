@@ -1180,12 +1180,13 @@ def war_member_lineup(war_obj):
     field_dict_list = []
 
     for clan_member in war_obj.clan.members:
+        # subtract 1 for indexing purposes
         opp_member_obj = war_obj.opponent.members[clan_member.map_position-1]
         field_dict_list.append({
             "name": clan_member.map_position,
             "value": (
-                f"{clan_member.th_lvl} | {clan_member.name}\n"
-                f"{opp_member_obj.th_lvl} | {opp_member_obj.name}\n"
+                f"{clan_member.town_hall} | {clan_member.name}\n"
+                f"{opp_member_obj.town_hall} | {opp_member_obj.name}\n"
             ),
             "inline": False
         })

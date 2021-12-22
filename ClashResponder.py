@@ -469,7 +469,7 @@ def war_clan_lineup(war_clan_obj):
     clan_lineup_dict = th_lineup_dict.copy()
 
     for member in war_clan_obj.members:
-        clan_lineup_dict[member.th_lvl] += 1
+        clan_lineup_dict[member.town_hall] += 1
 
     return clan_lineup_dict
 
