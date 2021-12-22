@@ -474,6 +474,17 @@ def war_clan_lineup(war_clan_obj):
     return clan_lineup_dict
 
 
+def war_no_attack(war_obj):
+    """
+        Returns a list of members that have missed an attack.
+    """
+    no_attack_members = []
+    for member_obj in war_obj.clan.members:
+        if len(member_obj.attacks) != war_obj.attacks_per_member:
+            no_attack_members.append(member_obj)
+    return no_attack_members
+
+
 def war_no_attack_members(clan_tag, header):
     "returns a list of players that haven't attacked"
     war = War.get(clan_tag, header)
@@ -579,7 +590,7 @@ def string_scoreboard(war_obj):
     """
         Returns a string of the war score.
     """
-    if (war_obj.state == 'warEnded'
+    if (war_obj.state == 'preparation'
             or war_obj.state == 'notInWar'):
         return None
 
@@ -605,3 +616,58 @@ def string_scoreboard(war_obj):
     # tied score
     else:
         return "tied"
+
+
+def find_defender(war_clan_obj, defender_tag):
+    """
+        Takes in a defender tag and returns 
+        a WarMember object. 
+        If it is not found then it will return None.
+    """
+    for defender_member_obj in war_clan_obj.members:
+        if defender_tag == defender_member_obj.tag:
+            return defender_member_obj
+    return None
+
+
+def string_attack_times(member_attack_list):
+    """
+        Returns 'time' or 'times' based on the number of attacks.
+    """
+    if len(member_attack_list) == 1:
+        return 'time'
+    else:
+        return 'times'
+
+
+def string_member_stars(war_star_count):
+    """
+        returns 'star' or 'stars' based on the number of stars
+    """
+    if war_star_count == 1:
+        return 'star'
+    else:
+        return 'stars'
+
+
+def th_multiplier(th_difference):
+    """
+        TH multiplier matrix.
+    """
+    if th_difference < -2:
+        th_mult = 35
+    elif th_difference == -2:
+        th_mult = 50
+    elif th_difference == -1:
+        th_mult = 80
+    elif th_difference == 0:
+        th_mult = 100
+    elif th_difference == 1:
+        th_mult = 140
+    elif th_difference == 2:
+        th_mult = 155
+    elif th_difference > 2:
+        th_mult = 200
+    else:
+        th_mult = 100
+    return th_mult

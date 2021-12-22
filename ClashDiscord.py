@@ -1158,11 +1158,11 @@ async def findclanusers(ctx):
 # todo warmember gets a war overview for a specific war member
 
 @client.command(
-    aliases=['war'],
+    aliases=['waroverview'],
     brief='war',
-    description='Returns an overview of the current war'
+    description='returns an overview of the current war'
 )
-async def waroverview(ctx):
+async def war(ctx):
     async with ctx.typing():
         db_player_obj = db_responder.read_player_active(ctx.author.id)
 
@@ -1221,7 +1221,7 @@ async def wartime(ctx):
     async with ctx.typing():
         db_player_obj = db_responder.read_player_active(ctx.author.id)
 
-    verification_payload = discord_responder.war_verification(
+    verification_payload = await discord_responder.war_verification(
         db_player_obj, ctx.author, coc_client)
     if not verification_payload['verified']:
         embed_list = discord_responder.embed_message(
@@ -1279,7 +1279,7 @@ async def warnoattack(ctx):
     async with ctx.typing():
         db_player_obj = db_responder.read_player_active(ctx.author.id)
 
-    verification_payload = discord_responder.war_verification(
+    verification_payload = await discord_responder.war_verification(
         db_player_obj, ctx.author, coc_client)
     if not verification_payload['verified']:
         embed_list = discord_responder.embed_message(
@@ -1337,7 +1337,7 @@ async def warclanstars(ctx):
     async with ctx.typing():
         db_player_obj = db_responder.read_player_active(ctx.author.id)
 
-    verification_payload = discord_responder.war_leadership_verification(
+    verification_payload = await discord_responder.war_leadership_verification(
         db_player_obj, ctx.author, coc_client)
     if not verification_payload['verified']:
         embed_list = discord_responder.embed_message(
@@ -1395,7 +1395,7 @@ async def warallattacks(ctx):
     async with ctx.typing():
         db_player_obj = db_responder.read_player_active(ctx.author.id)
 
-    verification_payload = discord_responder.war_leadership_verification(
+    verification_payload = await discord_responder.war_leadership_verification(
         db_player_obj, ctx.author, coc_client)
     if not verification_payload['verified']:
         embed_list = discord_responder.embed_message(
