@@ -503,7 +503,6 @@ def war_no_attack_members(clan_tag, header):
         return []
 
 
-# todo update all for if not in CWL logic
 # CWL Group
 
 async def get_cwl_group(clan_tag, coc_client):
