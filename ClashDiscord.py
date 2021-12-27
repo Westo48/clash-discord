@@ -1386,7 +1386,7 @@ async def warclanstars(ctx):
 @client.command(
     aliases=['warallatk'],
     brief='war',
-    description='showing all attacks for every member',
+    description='shows all attacks for every member',
     hidden=True
 )
 async def warallattacks(ctx):
@@ -1443,7 +1443,64 @@ async def warallattacks(ctx):
 
 @client.command(
     brief='war',
-    description='showing the requested member score'
+    description='shows your member score'
+)
+async def warscore(ctx):
+    async with ctx.typing():
+        db_player_obj = db_responder.read_player_active(ctx.author.id)
+
+    verification_payload = await discord_responder.war_verification(
+        db_player_obj, ctx.author, coc_client)
+    if not verification_payload['verified']:
+        embed_list = discord_responder.embed_message(
+            Embed=discord.Embed,
+            color=discord.Color(client_data.embed_color),
+            icon_url=(ctx.bot.user.avatar_url.BASE +
+                      ctx.bot.user.avatar_url._url),
+            title=None,
+            description=None,
+            bot_prefix=ctx.prefix,
+            bot_user_name=ctx.bot.user.name,
+            thumbnail=None,
+            field_list=verification_payload['field_dict_list'],
+            image_url=None,
+            author_display_name=ctx.author.display_name,
+            author_avatar_url=(ctx.author.avatar_url.BASE +
+                               ctx.author.avatar_url._url)
+        )
+        for embed in embed_list:
+            await ctx.send(embed=embed)
+        return
+
+    player_obj = verification_payload['player_obj']
+    war_obj = verification_payload['war_obj']
+
+    field_dict_list = discord_responder.war_member_standing(
+        war_obj, player_obj)
+    embed_list = discord_responder.embed_message(
+        Embed=discord.Embed,
+        color=discord.Color(client_data.embed_color),
+        icon_url=(ctx.bot.user.avatar_url.BASE +
+                  ctx.bot.user.avatar_url._url),
+        title=f"{player_obj.name} war score",
+        description=None,
+        bot_prefix=ctx.prefix,
+        bot_user_name=ctx.bot.user.name,
+        thumbnail=player_obj.clan.badge,
+        field_list=field_dict_list,
+        image_url=None,
+        author_display_name=ctx.author.display_name,
+        author_avatar_url=(ctx.author.avatar_url.BASE +
+                           ctx.author.avatar_url._url)
+    )
+
+    for embed in embed_list:
+        await ctx.send(embed=embed)
+
+
+@client.command(
+    brief='war',
+    description='shows the requested member score'
 )
 async def warmemberscore(ctx):
     # user has not been mentioned
@@ -1506,64 +1563,7 @@ async def warmemberscore(ctx):
 
 @client.command(
     brief='war',
-    description='showing your member score'
-)
-async def warscore(ctx):
-    async with ctx.typing():
-        db_player_obj = db_responder.read_player_active(ctx.author.id)
-
-    verification_payload = await discord_responder.war_verification(
-        db_player_obj, ctx.author, coc_client)
-    if not verification_payload['verified']:
-        embed_list = discord_responder.embed_message(
-            Embed=discord.Embed,
-            color=discord.Color(client_data.embed_color),
-            icon_url=(ctx.bot.user.avatar_url.BASE +
-                      ctx.bot.user.avatar_url._url),
-            title=None,
-            description=None,
-            bot_prefix=ctx.prefix,
-            bot_user_name=ctx.bot.user.name,
-            thumbnail=None,
-            field_list=verification_payload['field_dict_list'],
-            image_url=None,
-            author_display_name=ctx.author.display_name,
-            author_avatar_url=(ctx.author.avatar_url.BASE +
-                               ctx.author.avatar_url._url)
-        )
-        for embed in embed_list:
-            await ctx.send(embed=embed)
-        return
-
-    player_obj = verification_payload['player_obj']
-    war_obj = verification_payload['war_obj']
-
-    field_dict_list = discord_responder.war_member_standing(
-        war_obj, player_obj)
-    embed_list = discord_responder.embed_message(
-        Embed=discord.Embed,
-        color=discord.Color(client_data.embed_color),
-        icon_url=(ctx.bot.user.avatar_url.BASE +
-                  ctx.bot.user.avatar_url._url),
-        title=f"{player_obj.name} war score",
-        description=None,
-        bot_prefix=ctx.prefix,
-        bot_user_name=ctx.bot.user.name,
-        thumbnail=player_obj.clan.badge,
-        field_list=field_dict_list,
-        image_url=None,
-        author_display_name=ctx.author.display_name,
-        author_avatar_url=(ctx.author.avatar_url.BASE +
-                           ctx.author.avatar_url._url)
-    )
-
-    for embed in embed_list:
-        await ctx.send(embed=embed)
-
-
-@client.command(
-    brief='war',
-    description='showing every member score',
+    description='shows every member score',
     hidden=True
 )
 async def warclanscore(ctx):
