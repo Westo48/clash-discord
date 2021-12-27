@@ -520,6 +520,31 @@ def read_clan_role_list(discord_role_id_list):
     return clan_role_list
 
 
+def read_guild_clan_role(discord_guild_id):
+    """
+        finds clan_role in db from guild id, 
+        if no clan_role is not found returns empty list
+
+        Args:
+            discord_guild_id (int): discord id for guild
+
+        Returns:
+            list
+                obj: clan role object
+                    (discord_guild_id, discord_role_id, clan_tag)
+    """
+    clan_role_data = clan_role.select_clan_role_from_guild(discord_guild_id)
+
+    clan_role_list = []
+    for role in clan_role_data:
+        # add each role object to clan_role_list
+        discord_guild_id, discord_role_id, clan_tag = role
+        clan_role_list.append(clan_role.ClanRole(
+            discord_guild_id, discord_role_id, clan_tag))
+
+    return clan_role_list
+
+
 def read_clan_role_from_tag(discord_guild_id, clan_tag):
     """
         finds clan_role in db, if clan_role is not found returns None
@@ -650,6 +675,33 @@ def read_rank_role(discord_role_id):
 
     else:
         return None
+
+
+def read_guild_rank_role(discord_guild_id):
+    """
+        finds rank_role in db, 
+        if no rank_role is not found returns empty list
+
+        Args:
+            discord_guild_id (int): discord id for guild
+
+        Returns:
+            list
+                obj: rank role object 
+                    (discord_guild_id, discord_role_id, 
+                    model_name, clash_name)
+    """
+    rank_role_data = rank_role.select_guild_rank_role(discord_guild_id)
+
+    rank_role_list = []
+    for role in rank_role_data:
+        # add each role object to rank_role_list
+        (discord_guild_role, discord_role_id,
+         model_name, clash_name) = role
+        rank_role_list.append(rank_role.RankRole(
+            discord_guild_role, discord_role_id, model_name, clash_name))
+
+    return rank_role_list
 
 
 def read_rank_role_list(discord_role_id):

@@ -125,13 +125,15 @@ ClashDiscord is largely **command** focused, meaning it doesn't do anything that
       - removes the claimed clan from your guild
     - showclanclaim
       - shows all claimed clans for the guild
+  - ### Role
+    - showroleclaim
+      - shows all claimed roles for the guild
   - ### Clan Role
     - claimclanrole `clantag rolemention`
       - links the mentioned role to a claimed clan
     - removeclaimclanrole `rolemention`
       - unclaims the mentioned clan role
   - ### Rank Role
-
     - claimrankrole `rank rolemention`
       - claims the mentioned role as a specific clan rank
       - list of ranks

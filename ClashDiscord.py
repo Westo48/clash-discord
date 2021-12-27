@@ -3543,6 +3543,114 @@ async def deleteclan(ctx, clan_tag):
     await ctx.send(f"{clan_obj.name} has been deleted from {ctx.guild.name}")
 
 
+# client roles
+@client.command(
+    aliases=['showroles', 'showclaimedroles'],
+    brief='client',
+    description=(
+        'shows roles claimed by a discord guild'),
+    hidden=True
+)
+async def showroleclaim(ctx):
+    async with ctx.typing():
+        db_guild_obj = db_responder.read_guild(ctx.guild.id)
+
+    # guild not found
+    if not db_guild_obj:
+        await ctx.send(f"{ctx.guild.name} has not been claimed")
+        return
+
+    field_dict_list = []
+
+    db_clan_role_list = db_responder.read_guild_clan_role(ctx.guild.id)
+
+    # guild has no claimed clan roles
+    if len(db_clan_role_list) == 0:
+        field_dict_list.append({
+            'name': f"server has no claimed clan roles",
+            'value': f"use `claimclanrole` to claim a clan role"
+        })
+
+    else:
+        for db_role in db_clan_role_list:
+            discord_role = discord.utils.get(
+                ctx.guild.roles, id=db_role.discord_role_id)
+
+            # discord role is claimed, but not found in server
+            if not discord_role:
+                deleted_db_role = db_responder.delete_clan_role(
+                    db_role.discord_role_id)
+
+                field_dict_list.append({
+                    'name': f"clan tag {db_role.clan_tag}",
+                    'value': f"role {db_role.discord_role_id} *deleted*"
+                })
+                continue
+
+            clan = await clash_responder.get_clan(db_role.clan_tag, coc_client)
+
+            if not clan:
+                field_dict_list.append({
+                    'name': f"clan tag {db_role.clan_tag}",
+                    'value': f"role {discord_role.mention}"
+                })
+                continue
+
+            field_dict_list.append({
+                'name': f"clan {clan.name} tag {db_role.clan_tag}",
+                'value': f"role {discord_role.mention}"
+            })
+
+    db_rank_role_list = db_responder.read_guild_rank_role(ctx.guild.id)
+
+    # guild has no claimed rank roles
+    if len(db_rank_role_list) == 0:
+        field_dict_list.append({
+            'name': f"server has no claimed rank roles",
+            'value': f"use `claimrankrole` to claim a rank role"
+        })
+
+    else:
+        for db_role in db_rank_role_list:
+            discord_role = discord.utils.get(
+                ctx.guild.roles, id=db_role.discord_role_id)
+
+            # discord role is claimed, but not found in server
+            if not discord_role:
+                deleted_db_role = db_responder.delete_rank_role(
+                    db_role.discord_role_id)
+
+                field_dict_list.append({
+                    'name': f"rank {db_role.model_name}",
+                    'value': f"role {db_role.discord_role_id} *deleted*"
+                })
+                continue
+
+            field_dict_list.append({
+                'name': f"rank {db_role.model_name}",
+                'value': f"role {discord_role.mention}"
+            })
+
+    embed_list = discord_responder.embed_message(
+        Embed=discord.Embed,
+        color=discord.Color(client_data.embed_color),
+        icon_url=(ctx.bot.user.avatar_url.BASE +
+                  ctx.bot.user.avatar_url._url),
+        title=f"{ctx.guild.name} claimed roles",
+        description=None,
+        bot_prefix=ctx.prefix,
+        bot_user_name=ctx.bot.user.name,
+        thumbnail=None,
+        field_list=field_dict_list,
+        image_url=None,
+        author_display_name=ctx.author.display_name,
+        author_avatar_url=(ctx.author.avatar_url.BASE +
+                           ctx.author.avatar_url._url)
+    )
+    for embed in embed_list:
+        await ctx.send(embed=embed)
+
+
 # client clan role
 @client.command(
     aliases=['clanroleclaim'],
@@ -3966,6 +4074,36 @@ async def on_reaction_add(reaction, user):
     else:
         for emoji in emoji_list:
             await reaction.message.add_reaction(emoji)
+
+
+@client.event
+async def on_guild_role_delete(role):
+    # check if deleted role is a claimed role
+
+    # clan role
+    clan_role = db_responder.read_clan_role(role.id)
+    # clan role found
+    if clan_role:
+        deleted_role = db_responder.delete_clan_role(role.id)
+        return
+
+    # rank role
+    rank_role = db_responder.read_rank_role(role.id)
+    # rank role found
+    if rank_role:
+        deleted_role = db_responder.delete_rank_role(role.id)
+        return
+
+
+@client.event
+async def on_guild_remove(guild):
+    # check if removed guild is a claimed guild
+    db_guild = db_responder.read_guild(guild.id)
+
+    # guild was claimed
+    if db_guild:
+        deleted_guild = db_responder.delete_guild(guild.id)
+        return
 
 
 @client.event

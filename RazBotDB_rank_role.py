@@ -75,6 +75,40 @@ def select_rank_role(discord_role_id):
     return data
 
 
+def select_guild_rank_role(discord_guild_id):
+    """
+        Takes discord_guild_id and returns
+        list rank_role db discord_role_id, model_name and clash_name
+
+        Args:
+            list
+                discord_guild_id (int): guild id in discord
+
+        Returns:
+            list
+                discord_guild_id: guild id in discord
+                discord_role_id: role id in discord
+                model_name: db rank role model name
+                clash_name: role name from clash API
+    """
+
+    # find the rank_role_model based on discord guild id
+    query = (
+        f"SELECT guild.guild_id as discord_guild_id, "
+        f"rank_role.discord_role_id as discord_role_id, "
+        f"rank_role_model.name as rank_model_name, "
+        f"rank_role_model.clash_name as clash_name "
+        f"FROM rank_role "
+        f"INNER JOIN rank_role_model ON rank_role.model_id = rank_role_model.id "
+        f"INNER JOIN guild ON rank_role.guild_id = guild.id "
+        f"WHERE guild.guild_id = {discord_guild_id};"
+    )
+
+    # execute and return query
+    data = preset.select_list(query)
+    return data
+
+
 def select_rank_role_from_list(discord_role_id_list):
     """
         Takes in list of discord_role_id and returns
