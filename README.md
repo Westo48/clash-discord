@@ -272,10 +272,8 @@ There aren't many required packages, but here are the few that are required and 
   - 2.24.0
 - PyMySQL
   - 1.0.2
-- pytz
-  - 2021.1
-- [Clash Frame](https://github.com/Westo48/Clash-Frame)
-  - Version 1.0.0
+- [coc.py](https://github.com/mathsman5133/coc.py)
+  - Version 2.0.0
 
 # <a id="links-and-contact"></a>Links and Contact
 

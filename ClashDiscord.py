@@ -2,18 +2,16 @@ import discord
 import coc
 from asyncio.tasks import sleep
 from discord.ext import commands
-import RazBot_Data
 import ClashDiscord_Client_Data
 import ClashResponder as clash_responder
 import DiscordResponder as discord_responder
 import RazBotDB_Responder as db_responder
 
-razbot_data = RazBot_Data.RazBot_Data()
 client_data = ClashDiscord_Client_Data.ClashDiscord_Data()
 
 coc_client = coc.login(
-    email=razbot_data.coc_dev_email,
-    password=razbot_data.coc_dev_password
+    email=discord_responder.get_client_email(),
+    password=discord_responder.get_client_password()
 )
 
 intents = discord.Intents.all()
@@ -1800,7 +1798,7 @@ async def cwlclanscore(ctx):
         color=discord.Color(client_data.embed_color),
         icon_url=(ctx.bot.user.avatar_url.BASE +
                   ctx.bot.user.avatar_url._url),
-        title=f"{player_obj.clan_name} CWL scores",
+        title=f"{player_obj.clan.name} CWL scores",
         description=None,
         bot_prefix=ctx.prefix,
         bot_user_name=ctx.bot.user.name,
@@ -2282,7 +2280,7 @@ async def role(ctx):
         # clan not found
         if not db_clan_obj:
             field_dict_list = [{
-                "name": f"{player_obj.clan_name} {player_obj.clan.tag}",
+                "name": f"{player_obj.clan.name} {player_obj.clan.tag}",
                 "value": f"not claimed in {ctx.guild.name} server"
             }]
 
@@ -2311,7 +2309,7 @@ async def role(ctx):
         db_clan_role_obj = db_responder.read_clan_role_from_tag(
             ctx.guild.id, player_obj.clan.tag)
         db_rank_role_obj = (db_responder.read_rank_role_from_guild_and_clash(
-            ctx.guild.id, player_obj.role))
+            ctx.guild.id, player_obj.role.value))
 
         if not db_clan_role_obj and not db_rank_role_obj:
             field_dict_list = [{
@@ -2386,8 +2384,8 @@ async def role(ctx):
     for add_role_id in add_role_id_list:
         # returns None if role is not found
         add_role_obj = discord.utils.get(ctx.guild.roles, id=add_role_id)
+        # role was found in guild.roles
         if add_role_obj:
-            # role was found in guild.roles
             add_role_obj_list.append(add_role_obj)
         else:
             await ctx.send(
@@ -2513,7 +2511,7 @@ async def rolemember(ctx):
     # getting author's db player obj for leadership verification
     db_player_obj = db_responder.read_player_active(ctx.author.id)
 
-    verification_payload = discord_responder.player_leadership_verification(
+    verification_payload = await discord_responder.player_leadership_verification(
         db_player_obj, ctx.author, coc_client)
 
     if not verification_payload['verified']:
@@ -2591,7 +2589,7 @@ async def rolemember(ctx):
         # clan not found
         if not db_clan_obj:
             field_dict_list = [{
-                "name": f"{player_obj.clan_name} {player_obj.clan.tag}",
+                "name": f"{player_obj.clan.name} {player_obj.clan.tag}",
                 "value": f"not claimed in {ctx.guild.name} server"
             }]
 
@@ -2620,7 +2618,7 @@ async def rolemember(ctx):
         db_clan_role_obj = db_responder.read_clan_role_from_tag(
             ctx.guild.id, player_obj.clan.tag)
         db_rank_role_obj = (db_responder.read_rank_role_from_guild_and_clash(
-            ctx.guild.id, player_obj.role))
+            ctx.guild.id, player_obj.role.value))
 
         if not db_clan_role_obj and not db_rank_role_obj:
             field_dict_list = [{
@@ -2829,6 +2827,9 @@ async def roleall(ctx):
         return
 
     for discord_user_obj in ctx.guild.members:
+        if discord_user_obj.bot:
+            continue
+
         async with ctx.typing():
             db_player_obj_list = db_responder.read_player_list(
                 discord_user_obj.id)
@@ -2882,7 +2883,7 @@ async def roleall(ctx):
             # clan not found
             if not db_clan_obj:
                 field_dict_list = [{
-                    "name": f"{player_obj.clan_name} {player_obj.clan.tag}",
+                    "name": f"{player_obj.clan.name} {player_obj.clan.tag}",
                     "value": f"not claimed in {ctx.guild.name} server"
                 }]
 
@@ -2911,7 +2912,7 @@ async def roleall(ctx):
             db_clan_role_obj = db_responder.read_clan_role_from_tag(
                 ctx.guild.id, player_obj.clan.tag)
             db_rank_role_obj = (db_responder.read_rank_role_from_guild_and_clash(
-                ctx.guild.id, player_obj.role))
+                ctx.guild.id, player_obj.role.value))
 
             if not db_clan_role_obj and not db_rank_role_obj:
                 field_dict_list = [{
@@ -3124,8 +3125,9 @@ async def claimplayer(ctx, player_tag, *, api_key):
         # confirm valid player_tag
         player_obj = await clash_responder.get_player(
             player_tag, coc_client)
+
+    # player tag was not valid
     if not player_obj:
-        # player tag was not valid
         await ctx.send(f"player with tag {player_tag} was not found")
         return
 
@@ -3142,23 +3144,20 @@ async def claimplayer(ctx, player_tag, *, api_key):
 
     # confirm player has not been claimed
     db_player_obj = db_responder.read_player_from_tag(player_obj.tag)
+    # player has already been claimed
     if db_player_obj:
-        # player has already been claimed
         await ctx.send(f"{player_obj.name} {player_obj.tag} "
                        f"has already been claimed")
         return
 
     # authenticate player api key
-    player_verified = clash_responder.verify_token(
+    player_verified = await clash_responder.verify_token(
         api_key, player_obj.tag, coc_client)
+    # api key could not be verified
     if not player_verified:
-        # api key could not be verified
         await ctx.send(f"verification for "
                        f"player tag {player_obj.tag} has failed")
         return
-
-        # check if not claimed
-        db_player_obj = db_responder.read_player_from_tag(player_obj.tag)
 
     # user claimed
     # player is valid
@@ -3194,7 +3193,6 @@ async def showplayerclaim(ctx):
     if len(db_player_obj_list) == 0:
         await ctx.send(f"{ctx.author.mention} does not have any "
                        f"claimed players")
-
         return
 
     message = f"{ctx.author.mention} has claimed "
@@ -3379,7 +3377,6 @@ async def claimguild(ctx):
 
 # client clan
 # todo pull the clan tag from the db player to player tag to player.clan.tag
-# ? simplify this...
 @client.command(
     aliases=['clanclaim'],
     brief='client',
@@ -3390,7 +3387,7 @@ async def claimguild(ctx):
 )
 async def claimclan(ctx, clan_tag):
     async with ctx.typing():
-        clan_obj = clash_responder.get_clan(clan_tag, coc_client)
+        clan_obj = await clash_responder.get_clan(clan_tag, coc_client)
 
     # clan not found
     if not clan_obj:
@@ -3485,7 +3482,7 @@ async def showclanclaim(ctx):
 
     message = f"{ctx.guild.name} has claimed "
     for item in db_clan_obj_list:
-        clan = clash_responder.get_clan(
+        clan = await clash_responder.get_clan(
             item.clan_tag, coc_client)
         message += f"{clan.name} {clan.tag}, "
 
@@ -3505,7 +3502,7 @@ async def showclanclaim(ctx):
 )
 async def deleteclan(ctx, clan_tag):
     async with ctx.typing():
-        clan_obj = clash_responder.get_clan(clan_tag, coc_client)
+        clan_obj = await clash_responder.get_clan(clan_tag, coc_client)
 
     # clan not found
     if not clan_obj:
@@ -3564,7 +3561,7 @@ async def claimclanrole(ctx, clan_tag):
     role = ctx.message.role_mentions[0]
 
     async with ctx.typing():
-        clan_obj = clash_responder.get_clan(clan_tag, coc_client)
+        clan_obj = await clash_responder.get_clan(clan_tag, coc_client)
 
     # clan not found
     if not clan_obj:
@@ -3906,7 +3903,8 @@ async def on_reaction_add(reaction, user):
         return
 
     # if the author of the reacted message is not clash discord
-    if reaction.message.author.id != razbot_data.discord_id:
+    if (reaction.message.author.id !=
+            discord_responder.get_client_discord_id()):
         return
 
     # if there are no embedded messages
@@ -3989,4 +3987,4 @@ async def on_command_error(ctx, error):
         await ctx.send(f"there was an error that I have not accounted for, "
                        f"please let Razgriz know")
 
-client.run(razbot_data.token)
+client.run(discord_responder.get_client_token())

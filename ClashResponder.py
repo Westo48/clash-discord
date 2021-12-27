@@ -2,12 +2,6 @@ import re
 import datetime
 import math
 from coc.errors import Maintenance, NotFound, PrivateWarLog, GatewayError
-import Player
-import Clan
-import War
-import CWLGroup
-import CWLWar
-
 
 th_lineup_dict = {
     14: 0,
@@ -45,8 +39,20 @@ async def get_player(player_tag, coc_client):
     return player_obj
 
 
-def verify_token(api_key, player_tag, header):
-    return Player.verify_token(api_key, player_tag, header)
+async def verify_token(api_key, player_tag, coc_client):
+    try:
+        player_obj = await coc_client.verify_player_token(player_tag, api_key)
+
+    except Maintenance:
+        return None
+
+    except NotFound:
+        return None
+
+    except GatewayError:
+        return None
+
+    return player_obj
 
 
 def find_unit_name(unit_name, unit_list):
@@ -292,7 +298,7 @@ def player_active_super_troops(player_obj):
 
 
 # Clan
-# todo DOCSTRING
+
 async def get_clan(clan_tag, coc_client):
     try:
         clan_obj = await coc_client.get_clan(clan_tag)
@@ -319,8 +325,6 @@ async def clan_lineup(clan_obj, coc_client):
     return clan_lineup_dict
 
 
-# returns a string response of members that can donate the best of that unit
-# todo put this into the clan framework
 async def donation(clan_obj, unit_name, coc_client):
     """
         Takes in the unit name and clan tag, returns a list of players
@@ -437,16 +441,8 @@ async def active_super_troop_search(super_troop_obj, clan_obj, coc_client):
     return donor_list
 
 
-# returns a string of the member's role
-def response_member_role(player_name, clan_tag, header):
-    clan = Clan.get(clan_tag, header)
-    player_tag = clan.find_member(player_name)
-    player = Player.get(player_tag, header)
-    return player.role
-
-
 # War
-# todo DOCSTRING
+
 async def get_war(clan_tag, coc_client):
     try:
         war_obj = await coc_client.get_clan(clan_tag)
@@ -484,23 +480,6 @@ def war_no_attack(war_obj):
         if len(member_obj.attacks) != war_obj.attacks_per_member:
             no_attack_members.append(member_obj)
     return no_attack_members
-
-
-def war_no_attack_members(clan_tag, header):
-    "returns a list of players that haven't attacked"
-    war = War.get(clan_tag, header)
-
-    if war.state == 'preparation':
-        return []
-
-    elif war.state == 'inWar':
-        return war.no_attack()
-
-    elif war.state == 'warEnded':
-        return []
-
-    else:
-        return []
 
 
 # CWL Group
