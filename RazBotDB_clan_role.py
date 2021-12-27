@@ -123,6 +123,38 @@ def select_clan_role_from_list(discord_role_id_list):
     return data
 
 
+def select_clan_role_from_guild(discord_guild_id):
+    """
+        Takes in discord_guild_id and
+        returns clan_role db discord_role_id and clan db id
+
+        Args:
+            list
+                discord_guild_id (int): discord's guild id
+
+        Returns:
+            list
+                discord_guild_id: discord's guild id
+                discord_role_id: discord's role id
+                clan_tag: clan's tag
+    """
+
+    # find the clan_role based on discord_guild_id
+    query = (
+        f"SELECT guild.guild_id as discord_guild_id, "
+        f"clan_role.discord_role_id as discord_role_id, "
+        f"clan.clan_tag as clan_tag "
+        f"FROM clan_role "
+        f"INNER JOIN clan ON clan_role.clan_id = clan.id "
+        f"INNER JOIN guild ON clan.guild_id = guild.id "
+        f"WHERE guild.guild_id = {discord_guild_id};"
+    )
+
+    # execute and return query
+    data = preset.select_list(query)
+    return data
+
+
 def select_clan_role_from_tag(discord_guild_id, clan_tag):
     """
         finds clan role obj matching guild id and clan tag

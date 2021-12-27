@@ -55,9 +55,8 @@ class War(object):
 
     def string_date_time(self):
         """
-            Takes in a time zone and returns 
-            a string of the remaining time. 
-            If warEnded or notInWar, then variables will be None.
+            returns a string of the remaining time,
+            if warEnded or notInWar, then variables will be None
         """
         if (self.state == 'warEnded'
                 or self.state == 'notInWar'):
@@ -446,14 +445,13 @@ def clan_opp_status(war_json, clan_tag):
     return clan_status, opp_status
 
 
-def date_time_calculator(date_final):
+def date_time_calculator(date_time_final):
     """
-        Takes in a time zone and calculates the difference 
-        between now and final time.
+        calculates the difference between now and final time
     """
     date_time_format = '%Y%m%d%H%M%S'
     dt_now = datetime.utcnow()
-    date_final = time_string_changer(date_final)
+    date_final = time_string_changer(date_time_final)
     dt_string = dt_now.strftime(date_time_format)
     diff = (datetime.strptime(date_final, date_time_format)
             - datetime.strptime(dt_string, date_time_format))

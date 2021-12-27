@@ -125,13 +125,15 @@ ClashDiscord is largely **command** focused, meaning it doesn't do anything that
       - removes the claimed clan from your guild
     - showclanclaim
       - shows all claimed clans for the guild
+  - ### Role
+    - showroleclaim
+      - shows all claimed roles for the guild
   - ### Clan Role
     - claimclanrole `clantag rolemention`
       - links the mentioned role to a claimed clan
     - removeclaimclanrole `rolemention`
       - unclaims the mentioned clan role
   - ### Rank Role
-
     - claimrankrole `rank rolemention`
       - claims the mentioned role as a specific clan rank
       - list of ranks
@@ -181,6 +183,16 @@ ClashDiscord is largely **command** focused, meaning it doesn't do anything that
       - `!trooplvl hog rider`
       - `!trooplvl jump spell`
       - `!trooplvl archer queen`
+  - allunitlvl
+    - shows the level your units
+  - allherolvl
+    - shows the level your heroes
+  - allpetlvl
+    - shows the level your pets
+  - alltrooplvl
+    - shows the level your troops
+  - allspelllvl
+    - shows the level your spells
   - activesupertroop
     - shows the super troops you have active
 
@@ -220,8 +232,16 @@ ClashDiscord is largely **command** focused, meaning it doesn't do anything that
     - displays how much time is left in war
   - warnoattack
     - displays players that are missing attacks in war
+  - warclanstars
+    - overview of all members in war
+  - warallattacks
+    - shows all attacks for every member
+  - warscore
+    - shows your member score for war
+  - warmemberscore
+    - displays the requested member score for war
   - warclanscore
-    - displays every war member's score
+    - displays every war member's score for war
   - warlineup
     - displays a lineup for your clan and your opponent
   - warmemberlineup
@@ -262,10 +282,8 @@ There aren't many required packages, but here are the few that are required and 
   - 2.24.0
 - PyMySQL
   - 1.0.2
-- pytz
-  - 2021.1
-- [Clash Frame](https://github.com/Westo48/Clash-Frame)
-  - Version 1.0.0
+- [coc.py](https://github.com/mathsman5133/coc.py)
+  - Version 2.0.0
 
 # <a id="links-and-contact"></a>Links and Contact
 
