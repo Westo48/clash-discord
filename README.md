@@ -232,8 +232,16 @@ ClashDiscord is largely **command** focused, meaning it doesn't do anything that
     - displays how much time is left in war
   - warnoattack
     - displays players that are missing attacks in war
+  - warclanstars
+    - overview of all members in war
+  - warallattacks
+    - shows all attacks for every member
+  - warscore
+    - shows your member score for war
+  - warmemberscore
+    - displays the requested member score for war
   - warclanscore
-    - displays every war member's score
+    - displays every war member's score for war
   - warlineup
     - displays a lineup for your clan and your opponent
   - warmemberlineup
