@@ -3,7 +3,7 @@ from coc import NotFound, Maintenance, PrivateWarLog, GatewayError
 import RazBot_Data
 import ClashResponder as clash_responder
 import RazBotDB_Responder as db_responder
-from discord.utils import get
+from disnake.utils import get
 
 
 # CLIENT
@@ -31,6 +31,14 @@ def get_client_token():
     """
 
     return RazBot_Data.RazBot_Data().token
+
+
+def get_client_test_guilds():
+    """
+        returns RazBot_Data client test guilds
+    """
+
+    return RazBot_Data.RazBot_Data().test_guilds
 
 
 def get_client_email():

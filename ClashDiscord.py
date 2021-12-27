@@ -1,7 +1,7 @@
-import discord
+import disnake
 import coc
 from asyncio.tasks import sleep
-from discord.ext import commands
+from disnake.ext import commands
 import ClashDiscord_Client_Data
 import ClashResponder as clash_responder
 import DiscordResponder as discord_responder
@@ -14,26 +14,27 @@ coc_client = coc.login(
     password=discord_responder.get_client_password()
 )
 
-intents = discord.Intents.all()
+intents = disnake.Intents.all()
 
-client = commands.Bot(
+bot = commands.Bot(
     command_prefix=discord_responder.get_client_prefix(),
-    intents=intents)
-client.remove_command('help')
+    intents=intents,
+    test_guilds=discord_responder.get_client_test_guilds())
+bot.remove_command('help')
 
 # todo move entry validation to modules (setting # in front of player tags)
 # todo add client, admin, and super user bot categories
 # had emoji id as well
 
 
-@client.event
+@bot.event
 async def on_ready():
     print(f"RazBot is ready")
 
 
 # todo allow leader or co-leader
 # todo hide clan help if user is not in a clan
-@client.command(
+@bot.command(
     aliases=['helpme'],
     brief='discord',
     description='Returns the help text you see before you'
@@ -55,8 +56,8 @@ async def help(ctx):
     emoji_list = help_dict['emoji_list']
 
     embed_list = discord_responder.embed_message(
-        Embed=discord.Embed,
-        color=discord.Color(client_data.embed_color),
+        Embed=disnake.Embed,
+        color=disnake.Color(client_data.embed_color),
         icon_url=(ctx.bot.user.avatar_url.BASE +
                   ctx.bot.user.avatar_url._url),
         title=f"{ctx.bot.user.name} help menu",
@@ -78,14 +79,14 @@ async def help(ctx):
         await message.add_reaction(emoji)
 
 
-@client.command(
+@bot.command(
     brief='misc', description='Misc Command'
 )
 async def hellothere(ctx):
     await ctx.send(f'General Kenobi')
 
 
-@client.command(
+@bot.command(
     brief='misc'
 )
 async def ping(ctx):
@@ -100,7 +101,7 @@ async def ping(ctx):
 
 # Player
 
-@client.command(
+@bot.command(
     aliases=['searchplayer'],
     brief='player',
     description="get information about a specified player"
@@ -118,8 +119,8 @@ async def findplayer(ctx, *, player_tag):
     field_dict_list = discord_responder.player_info(player_obj)
 
     embed_list = discord_responder.embed_message(
-        Embed=discord.Embed,
-        color=discord.Color(client_data.embed_color),
+        Embed=disnake.Embed,
+        color=disnake.Color(client_data.embed_color),
         icon_url=(ctx.bot.user.avatar_url.BASE +
                   ctx.bot.user.avatar_url._url),
         title=f"{player_obj.name} {player_obj.tag}",
@@ -138,7 +139,7 @@ async def findplayer(ctx, *, player_tag):
         await ctx.send(embed=embed)
 
 
-@client.command(
+@bot.command(
     aliases=['showplayer', 'showactiveplayer', 'activeplayer'],
     brief='player',
     description="get information about your active player"
@@ -151,8 +152,8 @@ async def player(ctx):
         db_player_obj, ctx.author, coc_client)
     if not verification_payload['verified']:
         embed_list = discord_responder.embed_message(
-            Embed=discord.Embed,
-            color=discord.Color(client_data.embed_color),
+            Embed=disnake.Embed,
+            color=disnake.Color(client_data.embed_color),
             icon_url=(ctx.bot.user.avatar_url.BASE +
                       ctx.bot.user.avatar_url._url),
             title=None,
@@ -175,8 +176,8 @@ async def player(ctx):
     field_dict_list = discord_responder.player_info(player_obj)
 
     embed_list = discord_responder.embed_message(
-        Embed=discord.Embed,
-        color=discord.Color(client_data.embed_color),
+        Embed=disnake.Embed,
+        color=disnake.Color(client_data.embed_color),
         icon_url=(ctx.bot.user.avatar_url.BASE +
                   ctx.bot.user.avatar_url._url),
         title=f"{player_obj.name} {player_obj.tag}",
@@ -195,7 +196,7 @@ async def player(ctx):
         await ctx.send(embed=embed)
 
 
-@client.command(
+@bot.command(
     aliases=['showmemberplayer', 'showmemberactiveplayer', 'memberplayer'],
     brief='player',
     description="get information about a member's active player"
@@ -215,8 +216,8 @@ async def playermember(ctx):
         db_player_obj, discord_member, coc_client)
     if not verification_payload['verified']:
         embed_list = discord_responder.embed_message(
-            Embed=discord.Embed,
-            color=discord.Color(client_data.embed_color),
+            Embed=disnake.Embed,
+            color=disnake.Color(client_data.embed_color),
             icon_url=(ctx.bot.user.avatar_url.BASE +
                       ctx.bot.user.avatar_url._url),
             title=None,
@@ -239,8 +240,8 @@ async def playermember(ctx):
     field_dict_list = discord_responder.player_info(player_obj)
 
     embed_list = discord_responder.embed_message(
-        Embed=discord.Embed,
-        color=discord.Color(client_data.embed_color),
+        Embed=disnake.Embed,
+        color=disnake.Color(client_data.embed_color),
         icon_url=(ctx.bot.user.avatar_url.BASE +
                   ctx.bot.user.avatar_url._url),
         title=f"{player_obj.name} {player_obj.tag}",
@@ -259,7 +260,7 @@ async def playermember(ctx):
         await ctx.send(embed=embed)
 
 
-@client.command(
+@bot.command(
     aliases=['trooplvl'],
     brief='player',
     description='get level information for a specified unit'
@@ -272,8 +273,8 @@ async def unitlvl(ctx, *, unit_name):
         db_player_obj, ctx.author, coc_client)
     if not verification_payload['verified']:
         embed_list = discord_responder.embed_message(
-            Embed=discord.Embed,
-            color=discord.Color(client_data.embed_color),
+            Embed=disnake.Embed,
+            color=disnake.Color(client_data.embed_color),
             icon_url=(ctx.bot.user.avatar_url.BASE +
                       ctx.bot.user.avatar_url._url),
             title=None,
@@ -306,8 +307,8 @@ async def unitlvl(ctx, *, unit_name):
         title_string = f"{player_obj.name} {unit_obj.name}"
 
     embed_list = discord_responder.embed_message(
-        Embed=discord.Embed,
-        color=discord.Color(client_data.embed_color),
+        Embed=disnake.Embed,
+        color=disnake.Color(client_data.embed_color),
         icon_url=(ctx.bot.user.avatar_url.BASE +
                   ctx.bot.user.avatar_url._url),
         title=title_string,
@@ -325,7 +326,7 @@ async def unitlvl(ctx, *, unit_name):
         await ctx.send(embed=embed)
 
 
-@client.command(
+@bot.command(
     brief='player',
     description='get all your unit levels',
     hidden=True
@@ -338,8 +339,8 @@ async def allunitlvl(ctx):
         db_player_obj, ctx.author, coc_client)
     if not verification_payload['verified']:
         embed_list = discord_responder.embed_message(
-            Embed=discord.Embed,
-            color=discord.Color(client_data.embed_color),
+            Embed=disnake.Embed,
+            color=disnake.Color(client_data.embed_color),
             icon_url=(ctx.bot.user.avatar_url.BASE +
                       ctx.bot.user.avatar_url._url),
             title=None,
@@ -361,8 +362,8 @@ async def allunitlvl(ctx):
 
     field_dict_list = discord_responder.unit_lvl_all(player_obj)
     embed_list = discord_responder.embed_message(
-        Embed=discord.Embed,
-        color=discord.Color(client_data.embed_color),
+        Embed=disnake.Embed,
+        color=disnake.Color(client_data.embed_color),
         icon_url=(ctx.bot.user.avatar_url.BASE +
                   ctx.bot.user.avatar_url._url),
         title=f"{player_obj.name} units",
@@ -380,7 +381,7 @@ async def allunitlvl(ctx):
         await ctx.send(embed=embed)
 
 
-@client.command(
+@bot.command(
     brief='player',
     description='get all your hero levels',
     hidden=True
@@ -393,8 +394,8 @@ async def allherolvl(ctx):
         db_player_obj, ctx.author, coc_client)
     if not verification_payload['verified']:
         embed_list = discord_responder.embed_message(
-            Embed=discord.Embed,
-            color=discord.Color(client_data.embed_color),
+            Embed=disnake.Embed,
+            color=disnake.Color(client_data.embed_color),
             icon_url=(ctx.bot.user.avatar_url.BASE +
                       ctx.bot.user.avatar_url._url),
             title=None,
@@ -416,8 +417,8 @@ async def allherolvl(ctx):
 
     field_dict_list = discord_responder.hero_lvl_all(player_obj)
     embed_list = discord_responder.embed_message(
-        Embed=discord.Embed,
-        color=discord.Color(client_data.embed_color),
+        Embed=disnake.Embed,
+        color=disnake.Color(client_data.embed_color),
         icon_url=(ctx.bot.user.avatar_url.BASE +
                   ctx.bot.user.avatar_url._url),
         title=f"{player_obj.name} heroes",
@@ -435,7 +436,7 @@ async def allherolvl(ctx):
         await ctx.send(embed=embed)
 
 
-@client.command(
+@bot.command(
     brief='player',
     description='get all your pet levels',
     hidden=True
@@ -448,8 +449,8 @@ async def allpetlvl(ctx):
         db_player_obj, ctx.author, coc_client)
     if not verification_payload['verified']:
         embed_list = discord_responder.embed_message(
-            Embed=discord.Embed,
-            color=discord.Color(client_data.embed_color),
+            Embed=disnake.Embed,
+            color=disnake.Color(client_data.embed_color),
             icon_url=(ctx.bot.user.avatar_url.BASE +
                       ctx.bot.user.avatar_url._url),
             title=None,
@@ -471,8 +472,8 @@ async def allpetlvl(ctx):
 
     field_dict_list = discord_responder.pet_lvl_all(player_obj)
     embed_list = discord_responder.embed_message(
-        Embed=discord.Embed,
-        color=discord.Color(client_data.embed_color),
+        Embed=disnake.Embed,
+        color=disnake.Color(client_data.embed_color),
         icon_url=(ctx.bot.user.avatar_url.BASE +
                   ctx.bot.user.avatar_url._url),
         title=f"{player_obj.name} pets",
@@ -490,7 +491,7 @@ async def allpetlvl(ctx):
         await ctx.send(embed=embed)
 
 
-@client.command(
+@bot.command(
     brief='player',
     description='get all your troop levels',
     hidden=True
@@ -503,8 +504,8 @@ async def alltrooplvl(ctx):
         db_player_obj, ctx.author, coc_client)
     if not verification_payload['verified']:
         embed_list = discord_responder.embed_message(
-            Embed=discord.Embed,
-            color=discord.Color(client_data.embed_color),
+            Embed=disnake.Embed,
+            color=disnake.Color(client_data.embed_color),
             icon_url=(ctx.bot.user.avatar_url.BASE +
                       ctx.bot.user.avatar_url._url),
             title=None,
@@ -526,8 +527,8 @@ async def alltrooplvl(ctx):
 
     field_dict_list = discord_responder.troop_lvl_all(player_obj)
     embed_list = discord_responder.embed_message(
-        Embed=discord.Embed,
-        color=discord.Color(client_data.embed_color),
+        Embed=disnake.Embed,
+        color=disnake.Color(client_data.embed_color),
         icon_url=(ctx.bot.user.avatar_url.BASE +
                   ctx.bot.user.avatar_url._url),
         title=f"{player_obj.name} troops",
@@ -545,7 +546,7 @@ async def alltrooplvl(ctx):
         await ctx.send(embed=embed)
 
 
-@client.command(
+@bot.command(
     brief='player',
     description='get all your spell levels',
     hidden=True
@@ -558,8 +559,8 @@ async def allspelllvl(ctx):
         db_player_obj, ctx.author, coc_client)
     if not verification_payload['verified']:
         embed_list = discord_responder.embed_message(
-            Embed=discord.Embed,
-            color=discord.Color(client_data.embed_color),
+            Embed=disnake.Embed,
+            color=disnake.Color(client_data.embed_color),
             icon_url=(ctx.bot.user.avatar_url.BASE +
                       ctx.bot.user.avatar_url._url),
             title=None,
@@ -581,8 +582,8 @@ async def allspelllvl(ctx):
 
     field_dict_list = discord_responder.spell_lvl_all(player_obj)
     embed_list = discord_responder.embed_message(
-        Embed=discord.Embed,
-        color=discord.Color(client_data.embed_color),
+        Embed=disnake.Embed,
+        color=disnake.Color(client_data.embed_color),
         icon_url=(ctx.bot.user.avatar_url.BASE +
                   ctx.bot.user.avatar_url._url),
         title=f"{player_obj.name} spells",
@@ -600,7 +601,7 @@ async def allspelllvl(ctx):
         await ctx.send(embed=embed)
 
 
-@client.command(
+@bot.command(
     aliases=['activesupertroops', 'supertroop', 'supertroops'],
     brief='player',
     description='Check to see what super troops you have active.'
@@ -613,8 +614,8 @@ async def activesupertroop(ctx):
         db_player_obj, ctx.author, coc_client)
     if not verification_payload['verified']:
         embed_list = discord_responder.embed_message(
-            Embed=discord.Embed,
-            color=discord.Color(client_data.embed_color),
+            Embed=disnake.Embed,
+            color=disnake.Color(client_data.embed_color),
             icon_url=(ctx.bot.user.avatar_url.BASE +
                       ctx.bot.user.avatar_url._url),
             title=None,
@@ -640,8 +641,8 @@ async def activesupertroop(ctx):
     field_dict_list = discord_responder.active_super_troops(
         player_obj, active_super_troop_list)
     embed_list = discord_responder.embed_message(
-        Embed=discord.Embed,
-        color=discord.Color(client_data.embed_color),
+        Embed=disnake.Embed,
+        color=disnake.Color(client_data.embed_color),
         icon_url=(ctx.bot.user.avatar_url.BASE +
                   ctx.bot.user.avatar_url._url),
         title=f"{player_obj.name} super troops",
@@ -659,7 +660,7 @@ async def activesupertroop(ctx):
         await ctx.send(embed=embed)
 
 
-@client.command(
+@bot.command(
     aliases=['finduserfromplayer'],
     brief='player',
     description='returns the user linked to a requested player'
@@ -678,8 +679,8 @@ async def finduser(ctx, player_tag):
         player_obj, ctx.guild.members)]
 
     embed_list = discord_responder.embed_message(
-        Embed=discord.Embed,
-        color=discord.Color(client_data.embed_color),
+        Embed=disnake.Embed,
+        color=disnake.Color(client_data.embed_color),
         icon_url=(ctx.bot.user.avatar_url.BASE +
                   ctx.bot.user.avatar_url._url),
         title=None,
@@ -700,7 +701,7 @@ async def finduser(ctx, player_tag):
 # Clan
 
 
-@client.command(
+@bot.command(
     aliases=['clansearch'],
     brief='clan',
     description="Enter a clan's tag and get a clan's information"
@@ -717,8 +718,8 @@ async def findclan(ctx, *, clan_tag):
     field_dict_list = discord_responder.clan_info(clan_obj)
 
     embed_list = discord_responder.embed_message(
-        Embed=discord.Embed,
-        color=discord.Color(client_data.embed_color),
+        Embed=disnake.Embed,
+        color=disnake.Color(client_data.embed_color),
         icon_url=(ctx.bot.user.avatar_url.BASE +
                   ctx.bot.user.avatar_url._url),
         title=f"{clan_obj.name} {clan_obj.tag}",
@@ -736,7 +737,7 @@ async def findclan(ctx, *, clan_tag):
         await ctx.send(embed=embed)
 
 
-@client.command(
+@bot.command(
     aliases=['showclan', 'playerclan', 'showplayerclan'],
     brief='clan',
     description="Get information about your active player's clan"
@@ -749,8 +750,8 @@ async def clan(ctx):
         db_player_obj, ctx.author, coc_client)
     if not verification_payload['verified']:
         embed_list = discord_responder.embed_message(
-            Embed=discord.Embed,
-            color=discord.Color(client_data.embed_color),
+            Embed=disnake.Embed,
+            color=disnake.Color(client_data.embed_color),
             icon_url=(ctx.bot.user.avatar_url.BASE +
                       ctx.bot.user.avatar_url._url),
             title=None,
@@ -774,8 +775,8 @@ async def clan(ctx):
     field_dict_list = discord_responder.clan_info(clan_obj)
 
     embed_list = discord_responder.embed_message(
-        Embed=discord.Embed,
-        color=discord.Color(client_data.embed_color),
+        Embed=disnake.Embed,
+        color=disnake.Color(client_data.embed_color),
         icon_url=(ctx.bot.user.avatar_url.BASE +
                   ctx.bot.user.avatar_url._url),
         title=f"{clan_obj.name} {clan_obj.tag}",
@@ -793,7 +794,7 @@ async def clan(ctx):
         await ctx.send(embed=embed)
 
 
-@client.command(
+@bot.command(
     aliases=['showclanmention'],
     brief='clan',
     description="Get information about mentioned clan"
@@ -825,8 +826,8 @@ async def clanmention(ctx):
     field_dict_list = discord_responder.clan_info(clan_obj)
 
     embed_list = discord_responder.embed_message(
-        Embed=discord.Embed,
-        color=discord.Color(client_data.embed_color),
+        Embed=disnake.Embed,
+        color=disnake.Color(client_data.embed_color),
         icon_url=(ctx.bot.user.avatar_url.BASE +
                   ctx.bot.user.avatar_url._url),
         title=f"{clan_obj.name} {clan_obj.tag}",
@@ -844,7 +845,7 @@ async def clanmention(ctx):
         await ctx.send(embed=embed)
 
 
-@client.command(
+@bot.command(
     brief='clan',
     description="clan's TH lineup"
 )
@@ -856,8 +857,8 @@ async def clanlineup(ctx):
         db_player_obj, ctx.author, coc_client)
     if not verification_payload['verified']:
         embed_list = discord_responder.embed_message(
-            Embed=discord.Embed,
-            color=discord.Color(client_data.embed_color),
+            Embed=disnake.Embed,
+            color=disnake.Color(client_data.embed_color),
             icon_url=(ctx.bot.user.avatar_url.BASE +
                       ctx.bot.user.avatar_url._url),
             title=None,
@@ -882,8 +883,8 @@ async def clanlineup(ctx):
         clan_obj, coc_client)
 
     embed_list = discord_responder.embed_message(
-        Embed=discord.Embed,
-        color=discord.Color(client_data.embed_color),
+        Embed=disnake.Embed,
+        color=disnake.Color(client_data.embed_color),
         icon_url=(ctx.bot.user.avatar_url.BASE +
                   ctx.bot.user.avatar_url._url),
         title=f"{clan_obj.name} lineup",
@@ -901,7 +902,7 @@ async def clanlineup(ctx):
         await ctx.send(embed=embed)
 
 
-@client.command(
+@bot.command(
     aliases=['warpreference'],
     brief='clan',
     description="rundown of clan member's war preference"
@@ -914,8 +915,8 @@ async def clanwarpreference(ctx):
         db_player_obj, ctx.author, coc_client)
     if not verification_payload['verified']:
         embed_list = discord_responder.embed_message(
-            Embed=discord.Embed,
-            color=discord.Color(client_data.embed_color),
+            Embed=disnake.Embed,
+            color=disnake.Color(client_data.embed_color),
             icon_url=(ctx.bot.user.avatar_url.BASE +
                       ctx.bot.user.avatar_url._url),
             title=None,
@@ -940,8 +941,8 @@ async def clanwarpreference(ctx):
         clan_obj, coc_client)
 
     embed_list = discord_responder.embed_message(
-        Embed=discord.Embed,
-        color=discord.Color(client_data.embed_color),
+        Embed=disnake.Embed,
+        color=disnake.Color(client_data.embed_color),
         icon_url=(ctx.bot.user.avatar_url.BASE +
                   ctx.bot.user.avatar_url._url),
         title=f"{clan_obj.name} war preference",
@@ -959,7 +960,7 @@ async def clanwarpreference(ctx):
         await ctx.send(embed=embed)
 
 
-@client.command(
+@bot.command(
     aliases=['donate'],
     brief='clan',
     description='Enter a troop name to see who in the clan '
@@ -973,8 +974,8 @@ async def donation(ctx, *, unit_name):
         db_player_obj, ctx.author, coc_client)
     if not verification_payload['verified']:
         embed_list = discord_responder.embed_message(
-            Embed=discord.Embed,
-            color=discord.Color(client_data.embed_color),
+            Embed=disnake.Embed,
+            color=disnake.Color(client_data.embed_color),
             icon_url=(ctx.bot.user.avatar_url.BASE +
                       ctx.bot.user.avatar_url._url),
             title=None,
@@ -1002,8 +1003,8 @@ async def donation(ctx, *, unit_name):
         clan_obj, donator_list, unit_name)
 
     embed_list = discord_responder.embed_message(
-        Embed=discord.Embed,
-        color=discord.Color(client_data.embed_color),
+        Embed=disnake.Embed,
+        color=disnake.Color(client_data.embed_color),
         icon_url=(ctx.bot.user.avatar_url.BASE +
                   ctx.bot.user.avatar_url._url),
         title=f"{clan_obj.name} {clan_obj.tag}",
@@ -1021,7 +1022,7 @@ async def donation(ctx, *, unit_name):
         await ctx.send(embed=embed)
 
 
-@client.command(
+@bot.command(
     aliases=['searchsupertroop'],
     brief='clan',
     description='Search who in the clan has a requested super troop active.'
@@ -1034,8 +1035,8 @@ async def supertroopsearch(ctx, *, unit_name):
         db_player_obj, ctx.author, coc_client)
     if not verification_payload['verified']:
         embed_list = discord_responder.embed_message(
-            Embed=discord.Embed,
-            color=discord.Color(client_data.embed_color),
+            Embed=disnake.Embed,
+            color=disnake.Color(client_data.embed_color),
             icon_url=(ctx.bot.user.avatar_url.BASE +
                       ctx.bot.user.avatar_url._url),
             title=None,
@@ -1070,8 +1071,8 @@ async def supertroopsearch(ctx, *, unit_name):
         clan_obj, donor_list, super_troop_obj)
 
     embed_list = discord_responder.embed_message(
-        Embed=discord.Embed,
-        color=discord.Color(client_data.embed_color),
+        Embed=disnake.Embed,
+        color=disnake.Color(client_data.embed_color),
         icon_url=(ctx.bot.user.avatar_url.BASE +
                   ctx.bot.user.avatar_url._url),
         title=f"{clan_obj.name} {clan_obj.tag}",
@@ -1089,7 +1090,7 @@ async def supertroopsearch(ctx, *, unit_name):
         await ctx.send(embed=embed)
 
 
-@client.command(
+@bot.command(
     aliases=['findclanuser', 'findclanmemberusers'],
     brief='clan',
     description="returns the users linked to the active player's clan",
@@ -1104,8 +1105,8 @@ async def findclanusers(ctx):
         db_player_obj, ctx.author, coc_client)
     if not verification_payload['verified']:
         embed_list = discord_responder.embed_message(
-            Embed=discord.Embed,
-            color=discord.Color(client_data.embed_color),
+            Embed=disnake.Embed,
+            color=disnake.Color(client_data.embed_color),
             icon_url=(ctx.bot.user.avatar_url.BASE +
                       ctx.bot.user.avatar_url._url),
             title=None,
@@ -1133,8 +1134,8 @@ async def findclanusers(ctx):
             member_obj, ctx.guild.members))
 
     embed_list = discord_responder.embed_message(
-        Embed=discord.Embed,
-        color=discord.Color(client_data.embed_color),
+        Embed=disnake.Embed,
+        color=disnake.Color(client_data.embed_color),
         icon_url=(ctx.bot.user.avatar_url.BASE +
                   ctx.bot.user.avatar_url._url),
         title=f"{clan_obj.name} linked users",
@@ -1155,7 +1156,7 @@ async def findclanusers(ctx):
 # War
 # todo warmember gets a war overview for a specific war member
 
-@client.command(
+@bot.command(
     aliases=['waroverview'],
     brief='war',
     description='returns an overview of the current war'
@@ -1168,8 +1169,8 @@ async def war(ctx):
         db_player_obj, ctx.author, coc_client)
     if not verification_payload['verified']:
         embed_list = discord_responder.embed_message(
-            Embed=discord.Embed,
-            color=discord.Color(client_data.embed_color),
+            Embed=disnake.Embed,
+            color=disnake.Color(client_data.embed_color),
             icon_url=(ctx.bot.user.avatar_url.BASE +
                       ctx.bot.user.avatar_url._url),
             title=None,
@@ -1193,8 +1194,8 @@ async def war(ctx):
     field_dict_list = discord_responder.war_info(war_obj)
 
     embed_list = discord_responder.embed_message(
-        Embed=discord.Embed,
-        color=discord.Color(client_data.embed_color),
+        Embed=disnake.Embed,
+        color=disnake.Color(client_data.embed_color),
         icon_url=(ctx.bot.user.avatar_url.BASE +
                   ctx.bot.user.avatar_url._url),
         title=f"{war_obj.clan.name} vs. {war_obj.opponent.name}",
@@ -1212,7 +1213,7 @@ async def war(ctx):
         await ctx.send(embed=embed)
 
 
-@client.command(
+@bot.command(
     brief='war',
     description='Returns the time remaining in the current war')
 async def wartime(ctx):
@@ -1223,8 +1224,8 @@ async def wartime(ctx):
         db_player_obj, ctx.author, coc_client)
     if not verification_payload['verified']:
         embed_list = discord_responder.embed_message(
-            Embed=discord.Embed,
-            color=discord.Color(client_data.embed_color),
+            Embed=disnake.Embed,
+            color=disnake.Color(client_data.embed_color),
             icon_url=(ctx.bot.user.avatar_url.BASE +
                       ctx.bot.user.avatar_url._url),
             title=None,
@@ -1248,8 +1249,8 @@ async def wartime(ctx):
     field_dict_list = discord_responder.war_time(war_obj)
 
     embed_list = discord_responder.embed_message(
-        Embed=discord.Embed,
-        color=discord.Color(client_data.embed_color),
+        Embed=disnake.Embed,
+        color=disnake.Color(client_data.embed_color),
         icon_url=(ctx.bot.user.avatar_url.BASE +
                   ctx.bot.user.avatar_url._url),
         title=f"{war_obj.clan.name} vs. {war_obj.opponent.name}",
@@ -1267,7 +1268,7 @@ async def wartime(ctx):
         await ctx.send(embed=embed)
 
 
-@client.command(
+@bot.command(
     aliases=['warnoatk'],
     brief='war',
     description='Returns a list of players that have/did not use '
@@ -1281,8 +1282,8 @@ async def warnoattack(ctx):
         db_player_obj, ctx.author, coc_client)
     if not verification_payload['verified']:
         embed_list = discord_responder.embed_message(
-            Embed=discord.Embed,
-            color=discord.Color(client_data.embed_color),
+            Embed=disnake.Embed,
+            color=disnake.Color(client_data.embed_color),
             icon_url=(ctx.bot.user.avatar_url.BASE +
                       ctx.bot.user.avatar_url._url),
             title=None,
@@ -1306,8 +1307,8 @@ async def warnoattack(ctx):
     field_dict_list = discord_responder.war_no_attack(war_obj)
 
     embed_list = discord_responder.embed_message(
-        Embed=discord.Embed,
-        color=discord.Color(client_data.embed_color),
+        Embed=disnake.Embed,
+        color=disnake.Color(client_data.embed_color),
         icon_url=(ctx.bot.user.avatar_url.BASE +
                   ctx.bot.user.avatar_url._url),
         title=f"{war_obj.clan.name} vs. {war_obj.opponent.name}",
@@ -1325,7 +1326,7 @@ async def warnoattack(ctx):
         await ctx.send(embed=embed)
 
 
-@client.command(
+@bot.command(
     aliases=['warclan', 'warstars'],
     brief='war',
     description='overview of all members in war',
@@ -1339,8 +1340,8 @@ async def warclanstars(ctx):
         db_player_obj, ctx.author, coc_client)
     if not verification_payload['verified']:
         embed_list = discord_responder.embed_message(
-            Embed=discord.Embed,
-            color=discord.Color(client_data.embed_color),
+            Embed=disnake.Embed,
+            color=disnake.Color(client_data.embed_color),
             icon_url=(ctx.bot.user.avatar_url.BASE +
                       ctx.bot.user.avatar_url._url),
             title=None,
@@ -1364,8 +1365,8 @@ async def warclanstars(ctx):
     field_dict_list = discord_responder.war_members_overview(war_obj)
 
     embed_list = discord_responder.embed_message(
-        Embed=discord.Embed,
-        color=discord.Color(client_data.embed_color),
+        Embed=disnake.Embed,
+        color=disnake.Color(client_data.embed_color),
         icon_url=(ctx.bot.user.avatar_url.BASE +
                   ctx.bot.user.avatar_url._url),
         title=f"{war_obj.clan.name} vs. {war_obj.opponent.name}",
@@ -1383,7 +1384,7 @@ async def warclanstars(ctx):
         await ctx.send(embed=embed)
 
 
-@client.command(
+@bot.command(
     aliases=['warallatk'],
     brief='war',
     description='shows all attacks for every member',
@@ -1397,8 +1398,8 @@ async def warallattacks(ctx):
         db_player_obj, ctx.author, coc_client)
     if not verification_payload['verified']:
         embed_list = discord_responder.embed_message(
-            Embed=discord.Embed,
-            color=discord.Color(client_data.embed_color),
+            Embed=disnake.Embed,
+            color=disnake.Color(client_data.embed_color),
             icon_url=(ctx.bot.user.avatar_url.BASE +
                       ctx.bot.user.avatar_url._url),
             title=None,
@@ -1422,8 +1423,8 @@ async def warallattacks(ctx):
     field_dict_list = discord_responder.war_all_attacks(war_obj)
 
     embed_list = discord_responder.embed_message(
-        Embed=discord.Embed,
-        color=discord.Color(client_data.embed_color),
+        Embed=disnake.Embed,
+        color=disnake.Color(client_data.embed_color),
         icon_url=(ctx.bot.user.avatar_url.BASE +
                   ctx.bot.user.avatar_url._url),
         title=f"{war_obj.clan.name} vs. {war_obj.opponent.name}",
@@ -1441,7 +1442,7 @@ async def warallattacks(ctx):
         await ctx.send(embed=embed)
 
 
-@client.command(
+@bot.command(
     brief='war',
     description='shows your member score'
 )
@@ -1453,8 +1454,8 @@ async def warscore(ctx):
         db_player_obj, ctx.author, coc_client)
     if not verification_payload['verified']:
         embed_list = discord_responder.embed_message(
-            Embed=discord.Embed,
-            color=discord.Color(client_data.embed_color),
+            Embed=disnake.Embed,
+            color=disnake.Color(client_data.embed_color),
             icon_url=(ctx.bot.user.avatar_url.BASE +
                       ctx.bot.user.avatar_url._url),
             title=None,
@@ -1478,8 +1479,8 @@ async def warscore(ctx):
     field_dict_list = discord_responder.war_member_standing(
         war_obj, player_obj)
     embed_list = discord_responder.embed_message(
-        Embed=discord.Embed,
-        color=discord.Color(client_data.embed_color),
+        Embed=disnake.Embed,
+        color=disnake.Color(client_data.embed_color),
         icon_url=(ctx.bot.user.avatar_url.BASE +
                   ctx.bot.user.avatar_url._url),
         title=f"{player_obj.name} war score",
@@ -1498,7 +1499,7 @@ async def warscore(ctx):
         await ctx.send(embed=embed)
 
 
-@client.command(
+@bot.command(
     brief='war',
     description='shows the requested member score'
 )
@@ -1516,8 +1517,8 @@ async def warmemberscore(ctx):
         db_player_obj, ctx.author, coc_client)
     if not verification_payload['verified']:
         embed_list = discord_responder.embed_message(
-            Embed=discord.Embed,
-            color=discord.Color(client_data.embed_color),
+            Embed=disnake.Embed,
+            color=disnake.Color(client_data.embed_color),
             icon_url=(ctx.bot.user.avatar_url.BASE +
                       ctx.bot.user.avatar_url._url),
             title=None,
@@ -1541,8 +1542,8 @@ async def warmemberscore(ctx):
     field_dict_list = discord_responder.war_member_standing(
         war_obj, player_obj)
     embed_list = discord_responder.embed_message(
-        Embed=discord.Embed,
-        color=discord.Color(client_data.embed_color),
+        Embed=disnake.Embed,
+        color=disnake.Color(client_data.embed_color),
         icon_url=(ctx.bot.user.avatar_url.BASE +
                   ctx.bot.user.avatar_url._url),
         title=f"{player_obj.name} war score",
@@ -1561,7 +1562,7 @@ async def warmemberscore(ctx):
         await ctx.send(embed=embed)
 
 
-@client.command(
+@bot.command(
     brief='war',
     description='shows every member score',
     hidden=True
@@ -1574,8 +1575,8 @@ async def warclanscore(ctx):
         db_player_obj, ctx.author, coc_client)
     if not verification_payload['verified']:
         embed_list = discord_responder.embed_message(
-            Embed=discord.Embed,
-            color=discord.Color(client_data.embed_color),
+            Embed=disnake.Embed,
+            color=disnake.Color(client_data.embed_color),
             icon_url=(ctx.bot.user.avatar_url.BASE +
                       ctx.bot.user.avatar_url._url),
             title=None,
@@ -1599,8 +1600,8 @@ async def warclanscore(ctx):
     field_dict_list = discord_responder.war_all_member_standing(
         war_obj)
     embed_list = discord_responder.embed_message(
-        Embed=discord.Embed,
-        color=discord.Color(client_data.embed_color),
+        Embed=disnake.Embed,
+        color=disnake.Color(client_data.embed_color),
         icon_url=(ctx.bot.user.avatar_url.BASE +
                   ctx.bot.user.avatar_url._url),
         title=f"{war_obj.clan.name} vs. {war_obj.opponent.name}",
@@ -1619,7 +1620,7 @@ async def warclanscore(ctx):
         await ctx.send(embed=embed)
 
 
-@client.command(
+@bot.command(
     brief='war',
     description='town hall lineup for war'
 )
@@ -1631,8 +1632,8 @@ async def warlineup(ctx):
         db_player_obj, ctx.author, coc_client)
     if not verification_payload['verified']:
         embed_list = discord_responder.embed_message(
-            Embed=discord.Embed,
-            color=discord.Color(client_data.embed_color),
+            Embed=disnake.Embed,
+            color=disnake.Color(client_data.embed_color),
             icon_url=(ctx.bot.user.avatar_url.BASE +
                       ctx.bot.user.avatar_url._url),
             title=None,
@@ -1656,7 +1657,7 @@ async def warlineup(ctx):
     await ctx.send(discord_responder.war_lineup(war_obj))
 
 
-@client.command(
+@bot.command(
     brief='war',
     description='town hall lineup for each war member'
 )
@@ -1668,8 +1669,8 @@ async def warmemberlineup(ctx):
         db_player_obj, ctx.author, coc_client)
     if not verification_payload['verified']:
         embed_list = discord_responder.embed_message(
-            Embed=discord.Embed,
-            color=discord.Color(client_data.embed_color),
+            Embed=disnake.Embed,
+            color=disnake.Color(client_data.embed_color),
             icon_url=(ctx.bot.user.avatar_url.BASE +
                       ctx.bot.user.avatar_url._url),
             title=None,
@@ -1693,8 +1694,8 @@ async def warmemberlineup(ctx):
     field_dict_list = discord_responder.war_member_lineup(
         war_obj)
     embed_list = discord_responder.embed_message(
-        Embed=discord.Embed,
-        color=discord.Color(client_data.embed_color),
+        Embed=disnake.Embed,
+        color=disnake.Color(client_data.embed_color),
         icon_url=(ctx.bot.user.avatar_url.BASE +
                   ctx.bot.user.avatar_url._url),
         title=f"{war_obj.clan.name} vs. {war_obj.opponent.name}",
@@ -1716,7 +1717,7 @@ async def warmemberlineup(ctx):
 # CWL Group
 # todo cwl_group overview, scoreboard, cwl_clan_noatk
 
-@client.command(
+@bot.command(
     aliases=['cwlgroup'],
     brief='cwlgroup',
     description='Returns the CWL group lineup',
@@ -1730,8 +1731,8 @@ async def cwllineup(ctx):
         db_player_obj, ctx.author, coc_client)
     if not verification_payload['verified']:
         embed_list = discord_responder.embed_message(
-            Embed=discord.Embed,
-            color=discord.Color(client_data.embed_color),
+            Embed=disnake.Embed,
+            color=disnake.Color(client_data.embed_color),
             icon_url=(ctx.bot.user.avatar_url.BASE +
                       ctx.bot.user.avatar_url._url),
             title=None,
@@ -1755,7 +1756,7 @@ async def cwllineup(ctx):
     await ctx.send(discord_responder.cwl_lineup(cwl_group_obj))
 
 
-@client.command(
+@bot.command(
     brief='cwlgroup',
     description='Lists each member and their score in CWL',
     hidden=True
@@ -1769,8 +1770,8 @@ async def cwlclanscore(ctx):
             db_player_obj, ctx.author, coc_client))
     if not verification_payload['verified']:
         embed_list = discord_responder.embed_message(
-            Embed=discord.Embed,
-            color=discord.Color(client_data.embed_color),
+            Embed=disnake.Embed,
+            color=disnake.Color(client_data.embed_color),
             icon_url=(ctx.bot.user.avatar_url.BASE +
                       ctx.bot.user.avatar_url._url),
             title=None,
@@ -1794,8 +1795,8 @@ async def cwlclanscore(ctx):
     field_dict_list = discord_responder.cwl_clan_standing(
         cwl_group_obj, player_obj.clan.tag)
     embed_list = discord_responder.embed_message(
-        Embed=discord.Embed,
-        color=discord.Color(client_data.embed_color),
+        Embed=disnake.Embed,
+        color=disnake.Color(client_data.embed_color),
         icon_url=(ctx.bot.user.avatar_url.BASE +
                   ctx.bot.user.avatar_url._url),
         title=f"{player_obj.clan.name} CWL scores",
@@ -1814,7 +1815,7 @@ async def cwlclanscore(ctx):
         await ctx.send(embed=embed)
 
 
-@client.command(
+@bot.command(
     brief='cwlgroup',
     description='Lists each score you have in CWL'
 )
@@ -1826,8 +1827,8 @@ async def cwlscore(ctx):
         db_player_obj, ctx.author, coc_client)
     if not verification_payload['verified']:
         embed_list = discord_responder.embed_message(
-            Embed=discord.Embed,
-            color=discord.Color(client_data.embed_color),
+            Embed=disnake.Embed,
+            color=disnake.Color(client_data.embed_color),
             icon_url=(ctx.bot.user.avatar_url.BASE +
                       ctx.bot.user.avatar_url._url),
             title=None,
@@ -1851,8 +1852,8 @@ async def cwlscore(ctx):
     field_dict_list = discord_responder.cwl_member_standing(
         player_obj, cwl_group_obj, player_obj.clan.tag, coc_client)
     embed_list = discord_responder.embed_message(
-        Embed=discord.Embed,
-        color=discord.Color(client_data.embed_color),
+        Embed=disnake.Embed,
+        color=disnake.Color(client_data.embed_color),
         icon_url=(ctx.bot.user.avatar_url.BASE +
                   ctx.bot.user.avatar_url._url),
         title=f"{player_obj.name} CWL score",
@@ -1871,7 +1872,7 @@ async def cwlscore(ctx):
         await ctx.send(embed=embed)
 
 
-@client.command(
+@bot.command(
     aliases=['cwlclanmatescore'],
     brief='cwlgroup',
     description='Lists each score the specified member has in CWL'
@@ -1890,8 +1891,8 @@ async def cwlmemberscore(ctx):
         db_player_obj, discord_member, coc_client)
     if not verification_payload['verified']:
         embed_list = discord_responder.embed_message(
-            Embed=discord.Embed,
-            color=discord.Color(client_data.embed_color),
+            Embed=disnake.Embed,
+            color=disnake.Color(client_data.embed_color),
             icon_url=(ctx.bot.user.avatar_url.BASE +
                       ctx.bot.user.avatar_url._url),
             title=None,
@@ -1915,8 +1916,8 @@ async def cwlmemberscore(ctx):
     field_dict_list = discord_responder.cwl_member_standing(
         cwl_group_obj, player_obj.clan.tag)
     embed_list = discord_responder.embed_message(
-        Embed=discord.Embed,
-        color=discord.Color(client_data.embed_color),
+        Embed=disnake.Embed,
+        color=disnake.Color(client_data.embed_color),
         icon_url=(ctx.bot.user.avatar_url.BASE +
                   ctx.bot.user.avatar_url._url),
         title=f"{player_obj.name} CWL score",
@@ -1938,7 +1939,7 @@ async def cwlmemberscore(ctx):
 # CWL War
 # todo cwlwar war_time_prep, war_overview_prep, war_overview_round,
 
-@client.command(
+@bot.command(
     aliases=['cwlwar'],
     brief='cwlwar',
     description='Returns an overview of the current CWL war'
@@ -1951,8 +1952,8 @@ async def cwlwaroverview(ctx):
         db_player_obj, ctx.author, coc_client)
     if not verification_payload['verified']:
         embed_list = discord_responder.embed_message(
-            Embed=discord.Embed,
-            color=discord.Color(client_data.embed_color),
+            Embed=disnake.Embed,
+            color=disnake.Color(client_data.embed_color),
             icon_url=(ctx.bot.user.avatar_url.BASE +
                       ctx.bot.user.avatar_url._url),
             title=None,
@@ -1976,8 +1977,8 @@ async def cwlwaroverview(ctx):
     field_dict_list = discord_responder.war_info(
         cwl_war_obj)
     embed_list = discord_responder.embed_message(
-        Embed=discord.Embed,
-        color=discord.Color(client_data.embed_color),
+        Embed=disnake.Embed,
+        color=disnake.Color(client_data.embed_color),
         icon_url=(ctx.bot.user.avatar_url.BASE +
                   ctx.bot.user.avatar_url._url),
         title=f"{cwl_war_obj.clan.name} vs. {cwl_war_obj.opponent.name}",
@@ -1996,7 +1997,7 @@ async def cwlwaroverview(ctx):
         await ctx.send(embed=embed)
 
 
-@client.command(
+@bot.command(
     brief='cwlwar',
     description='Returns the time remaining in the current CWL war'
 )
@@ -2008,8 +2009,8 @@ async def cwlwartime(ctx):
         db_player_obj, ctx.author, coc_client)
     if not verification_payload['verified']:
         embed_list = discord_responder.embed_message(
-            Embed=discord.Embed,
-            color=discord.Color(client_data.embed_color),
+            Embed=disnake.Embed,
+            color=disnake.Color(client_data.embed_color),
             icon_url=(ctx.bot.user.avatar_url.BASE +
                       ctx.bot.user.avatar_url._url),
             title=None,
@@ -2033,8 +2034,8 @@ async def cwlwartime(ctx):
     field_dict_list = discord_responder.war_time(
         cwl_war_obj)
     embed_list = discord_responder.embed_message(
-        Embed=discord.Embed,
-        color=discord.Color(client_data.embed_color),
+        Embed=disnake.Embed,
+        color=disnake.Color(client_data.embed_color),
         icon_url=(ctx.bot.user.avatar_url.BASE +
                   ctx.bot.user.avatar_url._url),
         title=f"{cwl_war_obj.clan.name} vs. {cwl_war_obj.opponent.name}",
@@ -2053,7 +2054,7 @@ async def cwlwartime(ctx):
         await ctx.send(embed=embed)
 
 
-@client.command(
+@bot.command(
     aliases=['cwlwarnoatk'],
     brief='cwlwar',
     description='Returns a list of players that have/did not use '
@@ -2067,8 +2068,8 @@ async def cwlwarnoattack(ctx):
         db_player_obj, ctx.author, coc_client)
     if not verification_payload['verified']:
         embed_list = discord_responder.embed_message(
-            Embed=discord.Embed,
-            color=discord.Color(client_data.embed_color),
+            Embed=disnake.Embed,
+            color=disnake.Color(client_data.embed_color),
             icon_url=(ctx.bot.user.avatar_url.BASE +
                       ctx.bot.user.avatar_url._url),
             title=None,
@@ -2092,8 +2093,8 @@ async def cwlwarnoattack(ctx):
     field_dict_list = discord_responder.war_no_attack(
         cwl_war_obj)
     embed_list = discord_responder.embed_message(
-        Embed=discord.Embed,
-        color=discord.Color(client_data.embed_color),
+        Embed=disnake.Embed,
+        color=disnake.Color(client_data.embed_color),
         icon_url=(ctx.bot.user.avatar_url.BASE +
                   ctx.bot.user.avatar_url._url),
         title=f"{cwl_war_obj.clan.name} vs. {cwl_war_obj.opponent.name}",
@@ -2112,7 +2113,7 @@ async def cwlwarnoattack(ctx):
         await ctx.send(embed=embed)
 
 
-@client.command(
+@bot.command(
     aliases=['cwlwarallatk'],
     brief='cwlwar',
     description='showing all attacks for every member in the current war',
@@ -2127,8 +2128,8 @@ async def cwlwarallattack(ctx):
             db_player_obj, ctx.author, coc_client))
     if not verification_payload['verified']:
         embed_list = discord_responder.embed_message(
-            Embed=discord.Embed,
-            color=discord.Color(client_data.embed_color),
+            Embed=disnake.Embed,
+            color=disnake.Color(client_data.embed_color),
             icon_url=(ctx.bot.user.avatar_url.BASE +
                       ctx.bot.user.avatar_url._url),
             title=None,
@@ -2152,8 +2153,8 @@ async def cwlwarallattack(ctx):
     field_dict_list = discord_responder.war_all_attacks(
         cwl_war_obj)
     embed_list = discord_responder.embed_message(
-        Embed=discord.Embed,
-        color=discord.Color(client_data.embed_color),
+        Embed=disnake.Embed,
+        color=disnake.Color(client_data.embed_color),
         icon_url=(ctx.bot.user.avatar_url.BASE +
                   ctx.bot.user.avatar_url._url),
         title=f"{cwl_war_obj.clan.name} vs. {cwl_war_obj.opponent.name}",
@@ -2174,7 +2175,7 @@ async def cwlwarallattack(ctx):
 
 # Discord
 
-@client.command(
+@bot.command(
     aliases=['mentionraz'],
     brief='testing',
     description=('This will send a message to mention Razgriz'),
@@ -2183,8 +2184,8 @@ async def cwlwarallattack(ctx):
 async def mentionrazgriz(ctx):
     field_dict_list = []
     embed_list = discord_responder.embed_message(
-        Embed=discord.Embed,
-        color=discord.Color(client_data.embed_color),
+        Embed=disnake.Embed,
+        color=disnake.Color(client_data.embed_color),
         icon_url=(ctx.bot.user.avatar_url.BASE +
                   ctx.bot.user.avatar_url._url),
         title=f"mention testing",
@@ -2203,7 +2204,7 @@ async def mentionrazgriz(ctx):
         await ctx.send(embed=embed)
 
 
-@client.command(
+@bot.command(
     aliases=['emoji'],
     brief='testing',
     description=('emoji testing'),
@@ -2213,11 +2214,11 @@ async def emojitesting(ctx):
     await ctx.send(f"this is currently not in use, only for emoji testing")
 
 
-@client.command(
+@bot.command(
     aliases=['roleme'],
     brief='discord',
-    description=('This will give you your clan role '
-                 'here in Discord.')
+    description=('this will give you your clan role '
+                 'here in Discord')
 )
 async def role(ctx):
     async with ctx.typing():
@@ -2240,8 +2241,8 @@ async def role(ctx):
         }]
 
         embed_list = discord_responder.embed_message(
-            Embed=discord.Embed,
-            color=discord.Color(client_data.embed_color),
+            Embed=disnake.Embed,
+            color=disnake.Color(client_data.embed_color),
             icon_url=(ctx.bot.user.avatar_url.BASE +
                       ctx.bot.user.avatar_url._url),
             title=f"{discord_user_obj.display_name}",
@@ -2285,8 +2286,8 @@ async def role(ctx):
             }]
 
             embed_list = discord_responder.embed_message(
-                Embed=discord.Embed,
-                color=discord.Color(client_data.embed_color),
+                Embed=disnake.Embed,
+                color=disnake.Color(client_data.embed_color),
                 icon_url=(ctx.bot.user.avatar_url.BASE +
                           ctx.bot.user.avatar_url._url),
                 title=f"{discord_user_obj.display_name} {player_obj.name}",
@@ -2318,8 +2319,8 @@ async def role(ctx):
             }]
 
             embed_list = discord_responder.embed_message(
-                Embed=discord.Embed,
-                color=discord.Color(client_data.embed_color),
+                Embed=disnake.Embed,
+                color=disnake.Color(client_data.embed_color),
                 icon_url=(ctx.bot.user.avatar_url.BASE +
                           ctx.bot.user.avatar_url._url),
                 title=f"{discord_user_obj.display_name} {player_obj.name}",
@@ -2383,7 +2384,7 @@ async def role(ctx):
     add_role_obj_list = []
     for add_role_id in add_role_id_list:
         # returns None if role is not found
-        add_role_obj = discord.utils.get(ctx.guild.roles, id=add_role_id)
+        add_role_obj = disnake.utils.get(ctx.guild.roles, id=add_role_id)
         # role was found in guild.roles
         if add_role_obj:
             add_role_obj_list.append(add_role_obj)
@@ -2397,7 +2398,7 @@ async def role(ctx):
     remove_role_obj_list = []
     for remove_role_id in remove_role_id_list:
         # returns None if role is not found
-        remove_role_obj = discord.utils.get(
+        remove_role_obj = disnake.utils.get(
             ctx.guild.roles, id=remove_role_id)
         if remove_role_obj:
             # role was found in guild.roles
@@ -2424,8 +2425,8 @@ async def role(ctx):
         }]
 
         embed_list = discord_responder.embed_message(
-            Embed=discord.Embed,
-            color=discord.Color(client_data.embed_color),
+            Embed=disnake.Embed,
+            color=disnake.Color(client_data.embed_color),
             icon_url=(ctx.bot.user.avatar_url.BASE +
                       ctx.bot.user.avatar_url._url),
             title=f"{discord_user_obj.display_name}",
@@ -2468,8 +2469,8 @@ async def role(ctx):
             })
 
         embed_list = discord_responder.embed_message(
-            Embed=discord.Embed,
-            color=discord.Color(client_data.embed_color),
+            Embed=disnake.Embed,
+            color=disnake.Color(client_data.embed_color),
             icon_url=(ctx.bot.user.avatar_url.BASE +
                       ctx.bot.user.avatar_url._url),
             title=f"{discord_user_obj.display_name}",
@@ -2488,7 +2489,7 @@ async def role(ctx):
 
 
 # usable by leader and co leader
-@client.command(
+@bot.command(
     aliases=['roleplayer'],
     brief='discord',
     description=('this will role the mentioned user'),
@@ -2516,8 +2517,8 @@ async def rolemember(ctx):
 
     if not verification_payload['verified']:
         embed_list = discord_responder.embed_message(
-            Embed=discord.Embed,
-            color=discord.Color(client_data.embed_color),
+            Embed=disnake.Embed,
+            color=disnake.Color(client_data.embed_color),
             icon_url=(ctx.bot.user.avatar_url.BASE +
                       ctx.bot.user.avatar_url._url),
             title=None,
@@ -2549,8 +2550,8 @@ async def rolemember(ctx):
         }]
 
         embed_list = discord_responder.embed_message(
-            Embed=discord.Embed,
-            color=discord.Color(client_data.embed_color),
+            Embed=disnake.Embed,
+            color=disnake.Color(client_data.embed_color),
             icon_url=(ctx.bot.user.avatar_url.BASE +
                       ctx.bot.user.avatar_url._url),
             title=f"{discord_user_obj.display_name}",
@@ -2594,8 +2595,8 @@ async def rolemember(ctx):
             }]
 
             embed_list = discord_responder.embed_message(
-                Embed=discord.Embed,
-                color=discord.Color(client_data.embed_color),
+                Embed=disnake.Embed,
+                color=disnake.Color(client_data.embed_color),
                 icon_url=(ctx.bot.user.avatar_url.BASE +
                           ctx.bot.user.avatar_url._url),
                 title=f"{discord_user_obj.display_name} {player_obj.name}",
@@ -2627,8 +2628,8 @@ async def rolemember(ctx):
             }]
 
             embed_list = discord_responder.embed_message(
-                Embed=discord.Embed,
-                color=discord.Color(client_data.embed_color),
+                Embed=disnake.Embed,
+                color=disnake.Color(client_data.embed_color),
                 icon_url=(ctx.bot.user.avatar_url.BASE +
                           ctx.bot.user.avatar_url._url),
                 title=f"{discord_user_obj.display_name} {player_obj.name}",
@@ -2692,7 +2693,7 @@ async def rolemember(ctx):
     add_role_obj_list = []
     for add_role_id in add_role_id_list:
         # returns None if role is not found
-        add_role_obj = discord.utils.get(ctx.guild.roles, id=add_role_id)
+        add_role_obj = disnake.utils.get(ctx.guild.roles, id=add_role_id)
         if add_role_obj:
             # role was found in guild.roles
             add_role_obj_list.append(add_role_obj)
@@ -2706,7 +2707,7 @@ async def rolemember(ctx):
     remove_role_obj_list = []
     for remove_role_id in remove_role_id_list:
         # returns None if role is not found
-        remove_role_obj = discord.utils.get(
+        remove_role_obj = disnake.utils.get(
             ctx.guild.roles, id=remove_role_id)
         if remove_role_obj:
             # role was found in guild.roles
@@ -2733,8 +2734,8 @@ async def rolemember(ctx):
         }]
 
         embed_list = discord_responder.embed_message(
-            Embed=discord.Embed,
-            color=discord.Color(client_data.embed_color),
+            Embed=disnake.Embed,
+            color=disnake.Color(client_data.embed_color),
             icon_url=(ctx.bot.user.avatar_url.BASE +
                       ctx.bot.user.avatar_url._url),
             title=f"{discord_user_obj.display_name}",
@@ -2777,8 +2778,8 @@ async def rolemember(ctx):
             })
 
         embed_list = discord_responder.embed_message(
-            Embed=discord.Embed,
-            color=discord.Color(client_data.embed_color),
+            Embed=disnake.Embed,
+            color=disnake.Color(client_data.embed_color),
             icon_url=(ctx.bot.user.avatar_url.BASE +
                       ctx.bot.user.avatar_url._url),
             title=f"{discord_user_obj.display_name}",
@@ -2796,7 +2797,7 @@ async def rolemember(ctx):
             await ctx.send(embed=embed)
 
 
-@client.command(
+@bot.command(
     aliases=['roleguild'],
     brief='discord',
     description=('this will role all members in the guild'),
@@ -2842,8 +2843,8 @@ async def roleall(ctx):
             }]
 
             embed_list = discord_responder.embed_message(
-                Embed=discord.Embed,
-                color=discord.Color(client_data.embed_color),
+                Embed=disnake.Embed,
+                color=disnake.Color(client_data.embed_color),
                 icon_url=(ctx.bot.user.avatar_url.BASE +
                           ctx.bot.user.avatar_url._url),
                 title=f"{discord_user_obj.display_name}",
@@ -2888,8 +2889,8 @@ async def roleall(ctx):
                 }]
 
                 embed_list = discord_responder.embed_message(
-                    Embed=discord.Embed,
-                    color=discord.Color(client_data.embed_color),
+                    Embed=disnake.Embed,
+                    color=disnake.Color(client_data.embed_color),
                     icon_url=(ctx.bot.user.avatar_url.BASE +
                               ctx.bot.user.avatar_url._url),
                     title=f"{discord_user_obj.display_name} {player_obj.name}",
@@ -2921,8 +2922,8 @@ async def roleall(ctx):
                 }]
 
                 embed_list = discord_responder.embed_message(
-                    Embed=discord.Embed,
-                    color=discord.Color(client_data.embed_color),
+                    Embed=disnake.Embed,
+                    color=disnake.Color(client_data.embed_color),
                     icon_url=(ctx.bot.user.avatar_url.BASE +
                               ctx.bot.user.avatar_url._url),
                     title=f"{discord_user_obj.display_name} {player_obj.name}",
@@ -2986,7 +2987,7 @@ async def roleall(ctx):
         add_role_obj_list = []
         for add_role_id in add_role_id_list:
             # returns None if role is not found
-            add_role_obj = discord.utils.get(ctx.guild.roles, id=add_role_id)
+            add_role_obj = disnake.utils.get(ctx.guild.roles, id=add_role_id)
             if add_role_obj:
                 # role was found in guild.roles
                 add_role_obj_list.append(add_role_obj)
@@ -3000,7 +3001,7 @@ async def roleall(ctx):
         remove_role_obj_list = []
         for remove_role_id in remove_role_id_list:
             # returns None if role is not found
-            remove_role_obj = discord.utils.get(
+            remove_role_obj = disnake.utils.get(
                 ctx.guild.roles, id=remove_role_id)
             if remove_role_obj:
                 # role was found in guild.roles
@@ -3027,8 +3028,8 @@ async def roleall(ctx):
             }]
 
             embed_list = discord_responder.embed_message(
-                Embed=discord.Embed,
-                color=discord.Color(client_data.embed_color),
+                Embed=disnake.Embed,
+                color=disnake.Color(client_data.embed_color),
                 icon_url=(ctx.bot.user.avatar_url.BASE +
                           ctx.bot.user.avatar_url._url),
                 title=f"{discord_user_obj.display_name}",
@@ -3071,8 +3072,8 @@ async def roleall(ctx):
                 })
 
             embed_list = discord_responder.embed_message(
-                Embed=discord.Embed,
-                color=discord.Color(client_data.embed_color),
+                Embed=disnake.Embed,
+                color=disnake.Color(client_data.embed_color),
                 icon_url=(ctx.bot.user.avatar_url.BASE +
                           ctx.bot.user.avatar_url._url),
                 title=f"{discord_user_obj.display_name}",
@@ -3093,7 +3094,7 @@ async def roleall(ctx):
 # CLIENT
 
 # client user
-@client.command(
+@bot.command(
     aliases=['claim_user', 'userclaim'],
     brief='client',
     description=(
@@ -3111,7 +3112,7 @@ async def claimuser(ctx):
 
 
 # client player
-@client.command(
+@bot.command(
     aliases=['playerclaim'],
     brief='client',
     description=(
@@ -3178,7 +3179,7 @@ async def claimplayer(ctx, player_tag, *, api_key):
         )
 
 
-@client.command(
+@bot.command(
     aliases=['showplayers', 'showclaimedplayers',
              'showplayersclaim', 'showplayerlist'],
     brief='client',
@@ -3208,7 +3209,7 @@ async def showplayerclaim(ctx):
     await ctx.send(message)
 
 
-@client.command(
+@bot.command(
     aliases=['updateactiveplayer', 'updateplayer'],
     brief='client',
     description=(
@@ -3247,7 +3248,7 @@ async def updateplayeractive(ctx, player_tag):
         return
 
 
-@client.command(
+@bot.command(
     aliases=['removeplayer'],
     brief='client',
     description=(
@@ -3347,7 +3348,7 @@ async def deleteplayer(ctx, player_tag):
 
 
 # client guild
-@client.command(
+@bot.command(
     aliases=['claim_guild', 'guildclaim'],
     brief='client',
     description=(
@@ -3377,7 +3378,7 @@ async def claimguild(ctx):
 
 # client clan
 # todo pull the clan tag from the db player to player tag to player.clan.tag
-@client.command(
+@bot.command(
     aliases=['clanclaim'],
     brief='client',
     description=(
@@ -3456,7 +3457,7 @@ async def claimclan(ctx, clan_tag):
     await ctx.send(f"{clan_obj.name} has been claimed")
 
 
-@client.command(
+@bot.command(
     aliases=['showclaimclan', 'showclaimedclan',
              'showclaimedclans', 'showclansclaim', 'showclanlist'],
     brief='client',
@@ -3492,7 +3493,7 @@ async def showclanclaim(ctx):
     await ctx.send(message)
 
 
-@client.command(
+@bot.command(
     aliases=['removeclan', 'deleteclanclaim',
              'deleteclaimclan', 'deleteclaimedclan'],
     brief='client',
@@ -3544,7 +3545,7 @@ async def deleteclan(ctx, clan_tag):
 
 
 # client roles
-@client.command(
+@bot.command(
     aliases=['showroles', 'showclaimedroles'],
     brief='client',
     description=(
@@ -3573,7 +3574,7 @@ async def showroleclaim(ctx):
 
     else:
         for db_role in db_clan_role_list:
-            discord_role = discord.utils.get(
+            discord_role = disnake.utils.get(
                 ctx.guild.roles, id=db_role.discord_role_id)
 
             # discord role is claimed, but not found in server
@@ -3612,7 +3613,7 @@ async def showroleclaim(ctx):
 
     else:
         for db_role in db_rank_role_list:
-            discord_role = discord.utils.get(
+            discord_role = disnake.utils.get(
                 ctx.guild.roles, id=db_role.discord_role_id)
 
             # discord role is claimed, but not found in server
@@ -3632,8 +3633,8 @@ async def showroleclaim(ctx):
             })
 
     embed_list = discord_responder.embed_message(
-        Embed=discord.Embed,
-        color=discord.Color(client_data.embed_color),
+        Embed=disnake.Embed,
+        color=disnake.Color(client_data.embed_color),
         icon_url=(ctx.bot.user.avatar_url.BASE +
                   ctx.bot.user.avatar_url._url),
         title=f"{ctx.guild.name} claimed roles",
@@ -3652,7 +3653,7 @@ async def showroleclaim(ctx):
 
 
 # client clan role
-@client.command(
+@bot.command(
     aliases=['clanroleclaim'],
     brief='client',
     description=(
@@ -3730,12 +3731,12 @@ async def claimclanrole(ctx, clan_tag):
         f"{role.mention} has been claimed for clan {clan_obj.tag}")
 
 
-@client.command(
+@bot.command(
     aliases=['removeclanroleclaim'],
     brief='client',
     description=(
-        "This will remove the claimed clan's discord role, "
-        "the role will not be deleted from discord."),
+        "this will remove the claimed clan's discord role, "
+        "the role will not be deleted from discord"),
     hidden=True
 )
 async def removeclaimclanrole(ctx):
@@ -3784,7 +3785,7 @@ async def removeclaimclanrole(ctx):
 
 
 # client rank role
-@client.command(
+@bot.command(
     aliases=['rankroleclaim'],
     brief='client',
     description=(
@@ -3857,12 +3858,12 @@ async def claimrankrole(ctx, rank_role_name):
                    f"for rank {claimed_rank_role_obj.model_name}")
 
 
-@client.command(
+@bot.command(
     aliases=['removerankroleclaim'],
     brief='client',
     description=(
-        "This will remove the claimed rank's discord role, "
-        "the role will not be deleted from discord."),
+        "this will remove the claimed rank's discord role, "
+        "the role will not be deleted from discord"),
     hidden=True
 )
 async def removeclaimrankrole(ctx):
@@ -3913,7 +3914,7 @@ async def removeclaimrankrole(ctx):
 # client super user administration
 
 # super user client guild
-@client.command(
+@bot.command(
     aliases=['removeguild'],
     brief='clientsuperuser',
     description=("delete a claimed guild from id"),
@@ -3950,7 +3951,7 @@ async def removeguildclaim(ctx, guild_id):
 
 
 # super user client user
-@client.command(
+@bot.command(
     aliases=['removeuser'],
     brief='clientsuperuser',
     description=('delete a claimed user'),
@@ -3987,24 +3988,24 @@ async def removeuserclaim(ctx, user_id):
 
 
 # client events
-@client.event
+@bot.event
 async def on_member_join(ctx):
     # get uninitiated role from db
     db_role_obj = db_responder.read_rank_role_from_guild_and_clash(
         ctx.guild.id, 'uninitiated')
     if db_role_obj:
-        discord_role_obj = discord.utils.get(
+        discord_role_obj = disnake.utils.get(
             ctx.guild.roles, id=db_role_obj.discord_role_id)
         if discord_role_obj:
             await ctx.add_roles(discord_role_obj)
 
 
-@client.event
+@bot.event
 async def on_member_remove(member):
     print(f'{member} has left {member.guild.name} id {member.guild.id}')
 
 
-@client.event
+@bot.event
 async def on_reaction_add(reaction, user):
     # if the reactor is a bot
     if user.bot:
@@ -4023,7 +4024,7 @@ async def on_reaction_add(reaction, user):
     if 'help' not in reaction.message.embeds[0].title:
         return
 
-    ctx = await client.get_context(reaction.message)
+    ctx = await bot.get_context(reaction.message)
 
     db_guild_obj = db_responder.read_guild(ctx.guild.id)
     db_player_obj = db_responder.read_player_active(user.id)
@@ -4049,8 +4050,8 @@ async def on_reaction_add(reaction, user):
         embed_title = f"{ctx.bot.user.name} help menu"
 
     embed_list = discord_responder.embed_message(
-        Embed=discord.Embed,
-        color=discord.Color(client_data.embed_color),
+        Embed=disnake.Embed,
+        color=disnake.Color(client_data.embed_color),
         icon_url=(ctx.bot.user.avatar_url.BASE +
                   ctx.bot.user.avatar_url._url),
         title=embed_title,
@@ -4076,7 +4077,7 @@ async def on_reaction_add(reaction, user):
             await reaction.message.add_reaction(emoji)
 
 
-@client.event
+@bot.event
 async def on_guild_role_delete(role):
     # check if deleted role is a claimed role
 
@@ -4095,7 +4096,7 @@ async def on_guild_role_delete(role):
         return
 
 
-@client.event
+@bot.event
 async def on_guild_remove(guild):
     # check if removed guild is a claimed guild
     db_guild = db_responder.read_guild(guild.id)
@@ -4106,7 +4107,7 @@ async def on_guild_remove(guild):
         return
 
 
-@client.event
+@bot.event
 async def on_command_error(ctx, error):
     if isinstance(error, commands.CommandNotFound):
         await ctx.send(f"command '{ctx.invoked_with}' could not be found")
@@ -4125,4 +4126,4 @@ async def on_command_error(ctx, error):
         await ctx.send(f"there was an error that I have not accounted for, "
                        f"please let Razgriz know")
 
-client.run(discord_responder.get_client_token())
+bot.run(discord_responder.get_client_token())
