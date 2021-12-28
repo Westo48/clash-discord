@@ -110,7 +110,7 @@ async def ping(inter):
 )
 async def findplayer(inter, player_tag: str):
     """
-        get information about a specified player
+        get information about a requested player
 
         Parameters
         ----------
@@ -801,18 +801,41 @@ async def finduser(inter, player_tag: str):
 # Clan
 
 
-@bot.command(
-    aliases=['clansearch'],
+@bot.slash_command(
     brief='clan',
     description="Enter a clan's tag and get a clan's information"
 )
-async def findclan(ctx, *, clan_tag):
-    async with ctx.typing():
-        clan_obj = await clash_responder.get_clan(clan_tag, coc_client)
+async def findclan(inter, clan_tag: str):
+    """
+        get information about a requested clan
 
-    if not clan_obj:
-        # clan with given tag not found
-        await ctx.send(f"could not find clan with tag {clan_tag}")
+        Parameters
+        ----------
+        clan_tag: clan tag to search
+    """
+
+    await inter.response.defer()
+
+    clan_obj = await clash_responder.get_clan(clan_tag, coc_client)
+
+    # clan with given tag not found
+    if clan_obj is None:
+        embed_list = discord_responder.embed_message(
+            Embed=disnake.Embed,
+            color=disnake.Color(client_data.embed_color),
+            icon_url=inter.bot.user.avatar.url,
+            title=None,
+            description=f"could not find clan with tag {clan_tag}",
+            bot_prefix=inter.bot.command_prefix,
+            bot_user_name=inter.bot.user.name,
+            thumbnail=None,
+            field_list=[],
+            image_url=None,
+            author_display_name=inter.author.display_name,
+            author_avatar_url=inter.author.avatar.url
+        )
+
+        await inter.edit_original_message(embeds=embed_list)
         return
 
     field_dict_list = discord_responder.clan_info(clan_obj)
@@ -820,49 +843,53 @@ async def findclan(ctx, *, clan_tag):
     embed_list = discord_responder.embed_message(
         Embed=disnake.Embed,
         color=disnake.Color(client_data.embed_color),
-        icon_url=ctx.bot.user.avatar.url,
+        icon_url=inter.bot.user.avatar.url,
         title=f"{clan_obj.name} {clan_obj.tag}",
         description=None,
-        bot_prefix=ctx.prefix,
-        bot_user_name=ctx.bot.user.name,
+        bot_prefix=inter.bot.command_prefix,
+        bot_user_name=inter.bot.user.name,
         thumbnail=clan_obj.badge,
         field_list=field_dict_list,
         image_url=None,
-        author_display_name=ctx.author.display_name,
-        author_avatar_url=ctx.author.avatar.url
+        author_display_name=inter.author.display_name,
+        author_avatar_url=inter.author.avatar.url
     )
-    for embed in embed_list:
-        await ctx.send(embed=embed)
+
+    await inter.edit_original_message(embeds=embed_list)
 
 
-@bot.command(
-    aliases=['showclan', 'playerclan', 'showplayerclan'],
+@bot.slash_command(
     brief='clan',
-    description="Get information about your active player's clan"
+    description="get information about your active player's clan"
 )
-async def clan(ctx):
-    async with ctx.typing():
-        db_player_obj = db_responder.read_player_active(ctx.author.id)
+async def clan(inter):
+    """
+        get information about your active player's clan
+    """
+
+    await inter.response.defer()
+
+    db_player_obj = db_responder.read_player_active(inter.author.id)
 
     verification_payload = await discord_responder.clan_verification(
-        db_player_obj, ctx.author, coc_client)
+        db_player_obj, inter.author, coc_client)
     if not verification_payload['verified']:
         embed_list = discord_responder.embed_message(
             Embed=disnake.Embed,
             color=disnake.Color(client_data.embed_color),
-            icon_url=ctx.bot.user.avatar.url,
+            icon_url=inter.bot.user.avatar.url,
             title=None,
             description=None,
-            bot_prefix=ctx.prefix,
-            bot_user_name=ctx.bot.user.name,
+            bot_prefix=inter.bot.command_prefix,
+            bot_user_name=inter.bot.user.name,
             thumbnail=None,
             field_list=verification_payload['field_dict_list'],
             image_url=None,
-            author_display_name=ctx.author.display_name,
-            author_avatar_url=ctx.author.avatar.url
+            author_display_name=inter.author.display_name,
+            author_avatar_url=inter.author.avatar.url
         )
-        for embed in embed_list:
-            await ctx.send(embed=embed)
+
+        await inter.edit_original_message(embeds=embed_list)
         return
 
     player_obj = verification_payload['player_obj']
@@ -873,19 +900,19 @@ async def clan(ctx):
     embed_list = discord_responder.embed_message(
         Embed=disnake.Embed,
         color=disnake.Color(client_data.embed_color),
-        icon_url=ctx.bot.user.avatar.url,
+        icon_url=inter.bot.user.avatar.url,
         title=f"{clan_obj.name} {clan_obj.tag}",
         description=None,
-        bot_prefix=ctx.prefix,
-        bot_user_name=ctx.bot.user.name,
+        bot_prefix=inter.bot.command_prefix,
+        bot_user_name=inter.bot.user.name,
         thumbnail=clan_obj.badge,
         field_list=field_dict_list,
         image_url=None,
-        author_display_name=ctx.author.display_name,
-        author_avatar_url=ctx.author.avatar.url
+        author_display_name=inter.author.display_name,
+        author_avatar_url=inter.author.avatar.url
     )
-    for embed in embed_list:
-        await ctx.send(embed=embed)
+
+    await inter.edit_original_message(embeds=embed_list)
 
 
 @bot.command(
