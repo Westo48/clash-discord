@@ -161,7 +161,7 @@ ClashDiscord is largely **command** focused, meaning it doesn't do anything that
   - finduser `player_tag`
     - returns the user linked to a requested player
     - example
-      - `!finduser #RGQ8RGU9`
+      - `/finduser #RGQ8RGU9`
   - findclanusers
     - returns the users linked to the active player's clan
 
@@ -170,8 +170,8 @@ ClashDiscord is largely **command** focused, meaning it doesn't do anything that
   - findplayer `playertag`
     - displays player information for requested player tag
     - example
-      - `!player #RGQ8RGU9`
-      - `!player RGQ8RGU9`
+      - `/player #RGQ8RGU9`
+      - `/player RGQ8RGU9`
   - player
     - shows player information based on your active player
   - memberplayer `mentionuser`
@@ -180,9 +180,9 @@ ClashDiscord is largely **command** focused, meaning it doesn't do anything that
     - shows the level of the requested unit, what the max for your town hall is, as well as the overall max
     - you can search troops, spells, and heroes
     - example
-      - `!trooplvl hog rider`
-      - `!trooplvl jump spell`
-      - `!trooplvl archer queen`
+      - `/trooplvl hog rider`
+      - `/trooplvl jump spell`
+      - `/trooplvl archer queen`
   - allunitlvl
     - shows the level your units
   - allherolvl
@@ -193,6 +193,8 @@ ClashDiscord is largely **command** focused, meaning it doesn't do anything that
     - shows the level your troops
   - allspelllvl
     - shows the level your spells
+  - allsiegelvl
+    - shows the level your sieges
   - activesupertroop
     - shows the super troops you have active
 
