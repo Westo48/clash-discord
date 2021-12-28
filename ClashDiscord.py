@@ -220,10 +220,7 @@ async def player(inter):
     brief='player',
     description="get information about a member's active player"
 )
-async def playermember(
-    inter,
-    user: disnake.User
-):
+async def playermember(inter, user: disnake.User):
     """
         get information about a specified player
 
@@ -915,33 +912,66 @@ async def clan(inter):
     await inter.edit_original_message(embeds=embed_list)
 
 
-@bot.command(
-    aliases=['showclanmention'],
+@bot.slash_command(
     brief='clan',
-    description="Get information about mentioned clan"
+    description="get information about mentioned clan"
 )
-async def clanmention(ctx):
-    if len(ctx.message.role_mentions) == 0:
-        # user has not been mentioned
-        await ctx.send(f"you have to mention a clan role")
-        return
+async def clanmention(inter, role: disnake.Role):
+    """
+        get information about mentioned clan
+
+        Parameters
+        ----------
+        role: role to search for linked clan
+    """
+
+    await inter.response.defer()
 
     # role has been mentioned
     # get clan tag from clan role
-    async with ctx.typing():
-        db_clan_role = db_responder.read_clan_role(
-            ctx.message.role_mentions[0].id)
+    db_clan_role = db_responder.read_clan_role(role.id)
 
-    if not db_clan_role:
-        # role mentioned was not a linked clan role
-        await ctx.send(f"role mentioned is not linked to a clan")
+    # role mentioned was not a linked clan role
+    if db_clan_role is None:
+        embed_list = discord_responder.embed_message(
+            Embed=disnake.Embed,
+            color=disnake.Color(client_data.embed_color),
+            icon_url=inter.bot.user.avatar.url,
+            title=None,
+            description=f"role mentioned is not linked to a clan",
+            bot_prefix=inter.bot.command_prefix,
+            bot_user_name=inter.bot.user.name,
+            thumbnail=None,
+            field_list=[],
+            image_url=None,
+            author_display_name=inter.author.display_name,
+            author_avatar_url=inter.author.avatar.url
+        )
+
+        await inter.edit_original_message(embeds=embed_list)
         return
 
     clan_obj = await clash_responder.get_clan(
         db_clan_role.clan_tag, coc_client)
-    if not clan_obj:
-        # clan with tag from db clan role not found
-        await ctx.send(f"could not find clan with tag {db_clan_role.clan_tag}")
+
+    # clan with tag from db clan role not found
+    if clan_obj is None:
+        embed_list = discord_responder.embed_message(
+            Embed=disnake.Embed,
+            color=disnake.Color(client_data.embed_color),
+            icon_url=inter.bot.user.avatar.url,
+            title=None,
+            description=f"could not find clan with tag {db_clan_role.clan_tag}",
+            bot_prefix=inter.bot.command_prefix,
+            bot_user_name=inter.bot.user.name,
+            thumbnail=None,
+            field_list=[],
+            image_url=None,
+            author_display_name=inter.author.display_name,
+            author_avatar_url=inter.author.avatar.url
+        )
+
+        await inter.edit_original_message(embeds=embed_list)
         return
 
     field_dict_list = discord_responder.clan_info(clan_obj)
@@ -949,19 +979,19 @@ async def clanmention(ctx):
     embed_list = discord_responder.embed_message(
         Embed=disnake.Embed,
         color=disnake.Color(client_data.embed_color),
-        icon_url=ctx.bot.user.avatar.url,
+        icon_url=inter.bot.user.avatar.url,
         title=f"{clan_obj.name} {clan_obj.tag}",
         description=None,
-        bot_prefix=ctx.prefix,
-        bot_user_name=ctx.bot.user.name,
+        bot_prefix=inter.bot.command_prefix,
+        bot_user_name=inter.bot.user.name,
         thumbnail=clan_obj.badge,
         field_list=field_dict_list,
         image_url=None,
-        author_display_name=ctx.author.display_name,
-        author_avatar_url=ctx.author.avatar.url
+        author_display_name=inter.author.display_name,
+        author_avatar_url=inter.author.avatar.url
     )
-    for embed in embed_list:
-        await ctx.send(embed=embed)
+
+    await inter.edit_original_message(embeds=embed_list)
 
 
 @bot.command(
