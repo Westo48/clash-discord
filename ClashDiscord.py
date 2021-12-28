@@ -994,57 +994,61 @@ async def clanmention(inter, role: disnake.Role):
     await inter.edit_original_message(embeds=embed_list)
 
 
-@bot.command(
+@bot.slash_command(
     brief='clan',
     description="clan's TH lineup"
 )
-async def clanlineup(ctx):
-    async with ctx.typing():
-        db_player_obj = db_responder.read_player_active(ctx.author.id)
+async def clanlineup(inter):
+    """
+        get information about mentioned clan
+    """
+
+    await inter.response.defer()
+
+    db_player_obj = db_responder.read_player_active(inter.author.id)
 
     verification_payload = await discord_responder.clan_leadership_verification(
-        db_player_obj, ctx.author, coc_client)
+        db_player_obj, inter.author, coc_client)
     if not verification_payload['verified']:
         embed_list = discord_responder.embed_message(
             Embed=disnake.Embed,
             color=disnake.Color(client_data.embed_color),
-            icon_url=ctx.bot.user.avatar.url,
+            icon_url=inter.bot.user.avatar.url,
             title=None,
             description=None,
-            bot_prefix=ctx.prefix,
-            bot_user_name=ctx.bot.user.name,
+            bot_prefix=inter.bot.command_prefix,
+            bot_user_name=inter.bot.user.name,
             thumbnail=None,
             field_list=verification_payload['field_dict_list'],
             image_url=None,
-            author_display_name=ctx.author.display_name,
-            author_avatar_url=ctx.author.avatar.url
+            author_display_name=inter.author.display_name,
+            author_avatar_url=inter.author.avatar.url
         )
-        for embed in embed_list:
-            await ctx.send(embed=embed)
+
+        await inter.edit_original_message(embeds=embed_list)
         return
 
     player_obj = verification_payload['player_obj']
     clan_obj = verification_payload['clan_obj']
 
-    field_dict_list = await discord_responder.clan_lineup(
-        clan_obj, coc_client)
+    field_dict_list = await discord_responder.clan_lineup(clan_obj, coc_client)
 
     embed_list = discord_responder.embed_message(
         Embed=disnake.Embed,
         color=disnake.Color(client_data.embed_color),
-        icon_url=ctx.bot.user.avatar.url,
+        icon_url=inter.bot.user.avatar.url,
         title=f"{clan_obj.name} lineup",
         description=None,
-        bot_prefix=ctx.prefix,
-        bot_user_name=ctx.bot.user.name,
+        bot_prefix=inter.bot.command_prefix,
+        bot_user_name=inter.bot.user.name,
         thumbnail=clan_obj.badge,
         field_list=field_dict_list,
         image_url=None,
-        author_display_name=ctx.author.display_name,
-        author_avatar_url=ctx.author.avatar.url
+        author_display_name=inter.author.display_name,
+        author_avatar_url=inter.author.avatar.url
     )
-    for embed in embed_list:
-        await ctx.send(embed=embed)
+
+    await inter.edit_original_message(embeds=embed_list)
 
 
 @bot.command(
@@ -4065,7 +4069,7 @@ async def on_reaction_add(reaction, user):
 
     help_dict = discord_responder.help_switch(
         db_guild_obj, db_player_obj, player_obj, user.id, reaction.emoji,
-        bot_category, client_data.bot_categories, ctx.bot.all_commands)
+        bot_category, client_data.bot_categories, ctx.bot.all_slash_commands)
     field_dict_list = help_dict['field_dict_list']
     emoji_list = help_dict['emoji_list']
 
@@ -4086,8 +4090,7 @@ async def on_reaction_add(reaction, user):
         field_list=field_dict_list,
         image_url=None,
         author_display_name=user.display_name,
-        author_avatar_url=(user.avatar.url +
-                           user.avatar_url._url)
+        author_avatar_url=user.avatar.url
     )
 
     for embed in embed_list:
