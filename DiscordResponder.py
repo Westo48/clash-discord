@@ -462,6 +462,30 @@ def troop_lvl_all(player_obj):
         if troop_obj.is_super_troop:
             continue
 
+        # troop is a siege
+        if troop_obj.is_siege_machine:
+            continue
+
+        field_dict_list.append(unit_lvl(
+            player_obj, troop_obj, troop_obj.name))
+    return field_dict_list
+
+
+def siege_lvl_all(player_obj):
+    field_dict_list = []
+    for troop_obj in player_obj.home_troops:
+        # troop isn't a home base troop
+        if not troop_obj.is_home_base:
+            continue
+
+        # troop is a super troop
+        if troop_obj.is_super_troop:
+            continue
+
+        # troop is NOT a siege
+        if not troop_obj.is_siege_machine:
+            continue
+
         field_dict_list.append(unit_lvl(
             player_obj, troop_obj, troop_obj.name))
     return field_dict_list
