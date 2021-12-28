@@ -1135,7 +1135,7 @@ async def warpreference(inter):
     brief='clan',
     description='shows who can donate the best requested troop'
 )
-async def donation(inter, unit_name: str):
+async def donate(inter, unit_name: str):
     """
         get information about mentioned clan
 
@@ -1200,7 +1200,7 @@ async def donation(inter, unit_name: str):
     brief='clan',
     description="shows who in your clan has a specified super troop active"
 )
-async def supertroopsearch(inter, unit_name: str):
+async def supertroop(inter, unit_name: str):
     """
         shows who in your clan has a specified super troop active
 
@@ -1346,36 +1346,51 @@ async def findusers(inter):
 
 
 # War
-# todo warmember gets a war overview for a specific war member
 
-@bot.command(
-    aliases=['waroverview'],
+@bot.slash_command(
     brief='war',
-    description='returns an overview of the current war'
+    description="parent for war commands"
 )
-async def war(ctx):
-    async with ctx.typing():
-        db_player_obj = db_responder.read_player_active(ctx.author.id)
+async def war(inter):
+    """
+        parent for war commands
+    """
+
+    pass
+
+
+@war.sub_command(
+    brief='war',
+    description="overview of the current war"
+)
+async def info(inter):
+    """
+        overview of the current war
+    """
+
+    await inter.response.defer()
+
+    db_player_obj = db_responder.read_player_active(inter.author.id)
 
     verification_payload = await discord_responder.war_verification(
-        db_player_obj, ctx.author, coc_client)
+        db_player_obj, inter.author, coc_client)
     if not verification_payload['verified']:
         embed_list = discord_responder.embed_message(
             Embed=disnake.Embed,
             color=disnake.Color(client_data.embed_color),
-            icon_url=ctx.bot.user.avatar.url,
+            icon_url=inter.bot.user.avatar.url,
             title=None,
             description=None,
-            bot_prefix=ctx.prefix,
-            bot_user_name=ctx.bot.user.name,
+            bot_prefix=inter.bot.command_prefix,
+            bot_user_name=inter.bot.user.name,
             thumbnail=None,
             field_list=verification_payload['field_dict_list'],
             image_url=None,
-            author_display_name=ctx.author.display_name,
-            author_avatar_url=ctx.author.avatar.url
+            author_display_name=inter.author.display_name,
+            author_avatar_url=inter.author.avatar.url
         )
-        for embed in embed_list:
-            await ctx.send(embed=embed)
+
+        await inter.edit_original_message(embeds=embed_list)
         return
 
     player_obj = verification_payload['player_obj']
@@ -1386,47 +1401,52 @@ async def war(ctx):
     embed_list = discord_responder.embed_message(
         Embed=disnake.Embed,
         color=disnake.Color(client_data.embed_color),
-        icon_url=ctx.bot.user.avatar.url,
+        icon_url=inter.bot.user.avatar.url,
         title=f"{war_obj.clan.name} vs. {war_obj.opponent.name}",
         description=None,
-        bot_prefix=ctx.prefix,
-        bot_user_name=ctx.bot.user.name,
+        bot_prefix=inter.bot.command_prefix,
+        bot_user_name=inter.bot.user.name,
         thumbnail=player_obj.clan.badge,
         field_list=field_dict_list,
         image_url=None,
-        author_display_name=ctx.author.display_name,
-        author_avatar_url=ctx.author.avatar.url
+        author_display_name=inter.author.display_name,
+        author_avatar_url=inter.author.avatar.url
     )
-    for embed in embed_list:
-        await ctx.send(embed=embed)
+
+    await inter.edit_original_message(embeds=embed_list)
 
 
-@bot.command(
+@war.sub_command(
     brief='war',
-    description='Returns the time remaining in the current war')
-async def wartime(ctx):
-    async with ctx.typing():
-        db_player_obj = db_responder.read_player_active(ctx.author.id)
+    description="time remaining in the current war")
+async def time(inter):
+    """
+        time remaining in the current war
+    """
+
+    await inter.response.defer()
+
+    db_player_obj = db_responder.read_player_active(inter.author.id)
 
     verification_payload = await discord_responder.war_verification(
-        db_player_obj, ctx.author, coc_client)
+        db_player_obj, inter.author, coc_client)
     if not verification_payload['verified']:
         embed_list = discord_responder.embed_message(
             Embed=disnake.Embed,
             color=disnake.Color(client_data.embed_color),
-            icon_url=ctx.bot.user.avatar.url,
+            icon_url=inter.bot.user.avatar.url,
             title=None,
             description=None,
-            bot_prefix=ctx.prefix,
-            bot_user_name=ctx.bot.user.name,
+            bot_prefix=inter.bot.command_prefix,
+            bot_user_name=inter.bot.user.name,
             thumbnail=None,
             field_list=verification_payload['field_dict_list'],
             image_url=None,
-            author_display_name=ctx.author.display_name,
-            author_avatar_url=ctx.author.avatar.url
+            author_display_name=inter.author.display_name,
+            author_avatar_url=inter.author.avatar.url
         )
-        for embed in embed_list:
-            await ctx.send(embed=embed)
+
+        await inter.edit_original_message(embeds=embed_list)
         return
 
     player_obj = verification_payload['player_obj']
@@ -1437,50 +1457,53 @@ async def wartime(ctx):
     embed_list = discord_responder.embed_message(
         Embed=disnake.Embed,
         color=disnake.Color(client_data.embed_color),
-        icon_url=ctx.bot.user.avatar.url,
+        icon_url=inter.bot.user.avatar.url,
         title=f"{war_obj.clan.name} vs. {war_obj.opponent.name}",
         description=None,
-        bot_prefix=ctx.prefix,
-        bot_user_name=ctx.bot.user.name,
+        bot_prefix=inter.bot.command_prefix,
+        bot_user_name=inter.bot.user.name,
         thumbnail=player_obj.clan.badge,
         field_list=field_dict_list,
         image_url=None,
-        author_display_name=ctx.author.display_name,
-        author_avatar_url=ctx.author.avatar.url
+        author_display_name=inter.author.display_name,
+        author_avatar_url=inter.author.avatar.url
     )
-    for embed in embed_list:
-        await ctx.send(embed=embed)
+
+    await inter.edit_original_message(embeds=embed_list)
 
 
-@bot.command(
-    aliases=['warnoatk'],
+@war.sub_command(
     brief='war',
-    description='Returns a list of players that have/did not use '
-                'all possible attacks in the current war'
+    description="list of players that missed attacks in the current war"
 )
-async def warnoattack(ctx):
-    async with ctx.typing():
-        db_player_obj = db_responder.read_player_active(ctx.author.id)
+async def noattack(inter):
+    """
+        list of players that missed attacks in the current war
+    """
+
+    await inter.response.defer()
+
+    db_player_obj = db_responder.read_player_active(inter.author.id)
 
     verification_payload = await discord_responder.war_verification(
-        db_player_obj, ctx.author, coc_client)
+        db_player_obj, inter.author, coc_client)
     if not verification_payload['verified']:
         embed_list = discord_responder.embed_message(
             Embed=disnake.Embed,
             color=disnake.Color(client_data.embed_color),
-            icon_url=ctx.bot.user.avatar.url,
+            icon_url=inter.bot.user.avatar.url,
             title=None,
             description=None,
-            bot_prefix=ctx.prefix,
-            bot_user_name=ctx.bot.user.name,
+            bot_prefix=inter.bot.command_prefix,
+            bot_user_name=inter.bot.user.name,
             thumbnail=None,
             field_list=verification_payload['field_dict_list'],
             image_url=None,
-            author_display_name=ctx.author.display_name,
-            author_avatar_url=ctx.author.avatar.url
+            author_display_name=inter.author.display_name,
+            author_avatar_url=inter.author.avatar.url
         )
-        for embed in embed_list:
-            await ctx.send(embed=embed)
+
+        await inter.edit_original_message(embeds=embed_list)
         return
 
     player_obj = verification_payload['player_obj']
@@ -1491,50 +1514,53 @@ async def warnoattack(ctx):
     embed_list = discord_responder.embed_message(
         Embed=disnake.Embed,
         color=disnake.Color(client_data.embed_color),
-        icon_url=ctx.bot.user.avatar.url,
+        icon_url=inter.bot.user.avatar.url,
         title=f"{war_obj.clan.name} vs. {war_obj.opponent.name}",
         description=None,
-        bot_prefix=ctx.prefix,
-        bot_user_name=ctx.bot.user.name,
+        bot_prefix=inter.bot.command_prefix,
+        bot_user_name=inter.bot.user.name,
         thumbnail=player_obj.clan.badge,
         field_list=field_dict_list,
         image_url=None,
-        author_display_name=ctx.author.display_name,
-        author_avatar_url=ctx.author.avatar.url
+        author_display_name=inter.author.display_name,
+        author_avatar_url=inter.author.avatar.url
     )
-    for embed in embed_list:
-        await ctx.send(embed=embed)
+
+    await inter.edit_original_message(embeds=embed_list)
 
 
-@bot.command(
-    aliases=['warclan', 'warstars'],
+@war.sub_command(
     brief='war',
-    description='overview of all members in war',
-    hidden=True
+    description="overview of all members in war"
 )
-async def warclanstars(ctx):
-    async with ctx.typing():
-        db_player_obj = db_responder.read_player_active(ctx.author.id)
+async def clanstars(inter):
+    """
+        overview of all members in war
+    """
+
+    await inter.response.defer()
+
+    db_player_obj = db_responder.read_player_active(inter.author.id)
 
     verification_payload = await discord_responder.war_leadership_verification(
-        db_player_obj, ctx.author, coc_client)
+        db_player_obj, inter.author, coc_client)
     if not verification_payload['verified']:
         embed_list = discord_responder.embed_message(
             Embed=disnake.Embed,
             color=disnake.Color(client_data.embed_color),
-            icon_url=ctx.bot.user.avatar.url,
+            icon_url=inter.bot.user.avatar.url,
             title=None,
             description=None,
-            bot_prefix=ctx.prefix,
-            bot_user_name=ctx.bot.user.name,
+            bot_prefix=inter.bot.command_prefix,
+            bot_user_name=inter.bot.user.name,
             thumbnail=None,
             field_list=verification_payload['field_dict_list'],
             image_url=None,
-            author_display_name=ctx.author.display_name,
-            author_avatar_url=ctx.author.avatar.url
+            author_display_name=inter.author.display_name,
+            author_avatar_url=inter.author.avatar.url
         )
-        for embed in embed_list:
-            await ctx.send(embed=embed)
+
+        await inter.edit_original_message(embeds=embed_list)
         return
 
     player_obj = verification_payload['player_obj']
@@ -1545,50 +1571,53 @@ async def warclanstars(ctx):
     embed_list = discord_responder.embed_message(
         Embed=disnake.Embed,
         color=disnake.Color(client_data.embed_color),
-        icon_url=ctx.bot.user.avatar.url,
+        icon_url=inter.bot.user.avatar.url,
         title=f"{war_obj.clan.name} vs. {war_obj.opponent.name}",
         description=None,
-        bot_prefix=ctx.prefix,
-        bot_user_name=ctx.bot.user.name,
+        bot_prefix=inter.bot.command_prefix,
+        bot_user_name=inter.bot.user.name,
         thumbnail=player_obj.clan.badge,
         field_list=field_dict_list,
         image_url=None,
-        author_display_name=ctx.author.display_name,
-        author_avatar_url=ctx.author.avatar.url
+        author_display_name=inter.author.display_name,
+        author_avatar_url=inter.author.avatar.url
     )
-    for embed in embed_list:
-        await ctx.send(embed=embed)
+
+    await inter.edit_original_message(embeds=embed_list)
 
 
-@bot.command(
-    aliases=['warallatk'],
+@war.sub_command(
     brief='war',
-    description='shows all attacks for every member',
-    hidden=True
+    description="all attacks for every war member"
 )
-async def warallattacks(ctx):
-    async with ctx.typing():
-        db_player_obj = db_responder.read_player_active(ctx.author.id)
+async def allattacks(inter):
+    """
+        all attacks for every war member
+    """
+
+    await inter.response.defer()
+
+    db_player_obj = db_responder.read_player_active(inter.author.id)
 
     verification_payload = await discord_responder.war_leadership_verification(
-        db_player_obj, ctx.author, coc_client)
+        db_player_obj, inter.author, coc_client)
     if not verification_payload['verified']:
         embed_list = discord_responder.embed_message(
             Embed=disnake.Embed,
             color=disnake.Color(client_data.embed_color),
-            icon_url=ctx.bot.user.avatar.url,
+            icon_url=inter.bot.user.avatar.url,
             title=None,
             description=None,
-            bot_prefix=ctx.prefix,
-            bot_user_name=ctx.bot.user.name,
+            bot_prefix=inter.bot.command_prefix,
+            bot_user_name=inter.bot.user.name,
             thumbnail=None,
             field_list=verification_payload['field_dict_list'],
             image_url=None,
-            author_display_name=ctx.author.display_name,
-            author_avatar_url=ctx.author.avatar.url
+            author_display_name=inter.author.display_name,
+            author_avatar_url=inter.author.avatar.url
         )
-        for embed in embed_list:
-            await ctx.send(embed=embed)
+
+        await inter.edit_original_message(embeds=embed_list)
         return
 
     player_obj = verification_payload['player_obj']
@@ -1599,48 +1628,53 @@ async def warallattacks(ctx):
     embed_list = discord_responder.embed_message(
         Embed=disnake.Embed,
         color=disnake.Color(client_data.embed_color),
-        icon_url=ctx.bot.user.avatar.url,
+        icon_url=inter.bot.user.avatar.url,
         title=f"{war_obj.clan.name} vs. {war_obj.opponent.name}",
         description=None,
-        bot_prefix=ctx.prefix,
-        bot_user_name=ctx.bot.user.name,
+        bot_prefix=inter.bot.command_prefix,
+        bot_user_name=inter.bot.user.name,
         thumbnail=player_obj.clan.badge,
         field_list=field_dict_list,
         image_url=None,
-        author_display_name=ctx.author.display_name,
-        author_avatar_url=ctx.author.avatar.url
+        author_display_name=inter.author.display_name,
+        author_avatar_url=inter.author.avatar.url
     )
-    for embed in embed_list:
-        await ctx.send(embed=embed)
+
+    await inter.edit_original_message(embeds=embed_list)
 
 
-@bot.command(
+@war.sub_command(
     brief='war',
-    description='shows your member score'
+    description="your war member score"
 )
-async def warscore(ctx):
-    async with ctx.typing():
-        db_player_obj = db_responder.read_player_active(ctx.author.id)
+async def score(inter):
+    """
+        your war member score
+    """
+
+    await inter.response.defer()
+
+    db_player_obj = db_responder.read_player_active(inter.author.id)
 
     verification_payload = await discord_responder.war_verification(
-        db_player_obj, ctx.author, coc_client)
+        db_player_obj, inter.author, coc_client)
     if not verification_payload['verified']:
         embed_list = discord_responder.embed_message(
             Embed=disnake.Embed,
             color=disnake.Color(client_data.embed_color),
-            icon_url=ctx.bot.user.avatar.url,
+            icon_url=inter.bot.user.avatar.url,
             title=None,
             description=None,
-            bot_prefix=ctx.prefix,
-            bot_user_name=ctx.bot.user.name,
+            bot_prefix=inter.bot.command_prefix,
+            bot_user_name=inter.bot.user.name,
             thumbnail=None,
             field_list=verification_payload['field_dict_list'],
             image_url=None,
-            author_display_name=ctx.author.display_name,
-            author_avatar_url=ctx.author.avatar.url
+            author_display_name=inter.author.display_name,
+            author_avatar_url=inter.author.avatar.url
         )
-        for embed in embed_list:
-            await ctx.send(embed=embed)
+
+        await inter.edit_original_message(embeds=embed_list)
         return
 
     player_obj = verification_payload['player_obj']
@@ -1651,55 +1685,57 @@ async def warscore(ctx):
     embed_list = discord_responder.embed_message(
         Embed=disnake.Embed,
         color=disnake.Color(client_data.embed_color),
-        icon_url=ctx.bot.user.avatar.url,
+        icon_url=inter.bot.user.avatar.url,
         title=f"{player_obj.name} war score",
         description=None,
-        bot_prefix=ctx.prefix,
-        bot_user_name=ctx.bot.user.name,
+        bot_prefix=inter.bot.command_prefix,
+        bot_user_name=inter.bot.user.name,
         thumbnail=player_obj.clan.badge,
         field_list=field_dict_list,
         image_url=None,
-        author_display_name=ctx.author.display_name,
-        author_avatar_url=ctx.author.avatar.url
+        author_display_name=inter.author.display_name,
+        author_avatar_url=inter.author.avatar.url
     )
 
-    for embed in embed_list:
-        await ctx.send(embed=embed)
+    await inter.edit_original_message(embeds=embed_list)
 
 
-@bot.command(
+@war.sub_command(
     brief='war',
-    description='shows the requested member score'
+    description="requested war member's score"
 )
-async def warmemberscore(ctx):
-    # user has not been mentioned
-    if len(ctx.message.mentions) == 0:
-        await ctx.send(f"you have to mention a member")
-        return
+async def memberscore(inter, user: disnake.User):
+    """
+        requested war member's score
 
-    discord_member = ctx.message.mentions[0]
-    async with ctx.typing():
-        db_player_obj = db_responder.read_player_active(discord_member.id)
+        Parameters
+        ----------
+        user: user to search for active player's war member score
+    """
+
+    await inter.response.defer()
+
+    db_player_obj = db_responder.read_player_active(user.author.id)
 
     verification_payload = await discord_responder.war_verification(
-        db_player_obj, ctx.author, coc_client)
+        db_player_obj, user, coc_client)
     if not verification_payload['verified']:
         embed_list = discord_responder.embed_message(
             Embed=disnake.Embed,
             color=disnake.Color(client_data.embed_color),
-            icon_url=ctx.bot.user.avatar.url,
+            icon_url=inter.bot.user.avatar.url,
             title=None,
             description=None,
-            bot_prefix=ctx.prefix,
-            bot_user_name=ctx.bot.user.name,
+            bot_prefix=inter.bot.command_prefix,
+            bot_user_name=inter.bot.user.name,
             thumbnail=None,
             field_list=verification_payload['field_dict_list'],
             image_url=None,
-            author_display_name=ctx.author.display_name,
-            author_avatar_url=ctx.author.avatar.url
+            author_display_name=inter.author.display_name,
+            author_avatar_url=inter.author.avatar.url
         )
-        for embed in embed_list:
-            await ctx.send(embed=embed)
+
+        await inter.edit_original_message(embeds=embed_list)
         return
 
     player_obj = verification_payload['player_obj']
@@ -1710,50 +1746,53 @@ async def warmemberscore(ctx):
     embed_list = discord_responder.embed_message(
         Embed=disnake.Embed,
         color=disnake.Color(client_data.embed_color),
-        icon_url=ctx.bot.user.avatar.url,
+        icon_url=inter.bot.user.avatar.url,
         title=f"{player_obj.name} war score",
         description=None,
-        bot_prefix=ctx.prefix,
-        bot_user_name=ctx.bot.user.name,
+        bot_prefix=inter.bot.command_prefix,
+        bot_user_name=inter.bot.user.name,
         thumbnail=player_obj.clan.badge,
         field_list=field_dict_list,
         image_url=None,
-        author_display_name=ctx.author.display_name,
-        author_avatar_url=ctx.author.avatar.url
+        author_display_name=inter.author.display_name,
+        author_avatar_url=inter.author.avatar.url
     )
 
-    for embed in embed_list:
-        await ctx.send(embed=embed)
+    await inter.edit_original_message(embeds=embed_list)
 
 
-@bot.command(
+@war.sub_command(
     brief='war',
-    description='shows every member score',
-    hidden=True
+    description="every clanmate's war member score"
 )
-async def warclanscore(ctx):
-    async with ctx.typing():
-        db_player_obj = db_responder.read_player_active(ctx.author.id)
+async def clanscore(inter):
+    """
+        every clanmate's war member score
+    """
+
+    await inter.response.defer()
+
+    db_player_obj = db_responder.read_player_active(inter.author.id)
 
     verification_payload = await discord_responder.war_leadership_verification(
-        db_player_obj, ctx.author, coc_client)
+        db_player_obj, inter.author, coc_client)
     if not verification_payload['verified']:
         embed_list = discord_responder.embed_message(
             Embed=disnake.Embed,
             color=disnake.Color(client_data.embed_color),
-            icon_url=ctx.bot.user.avatar.url,
+            icon_url=inter.bot.user.avatar.url,
             title=None,
             description=None,
-            bot_prefix=ctx.prefix,
-            bot_user_name=ctx.bot.user.name,
+            bot_prefix=inter.bot.command_prefix,
+            bot_user_name=inter.bot.user.name,
             thumbnail=None,
             field_list=verification_payload['field_dict_list'],
             image_url=None,
-            author_display_name=ctx.author.display_name,
-            author_avatar_url=ctx.author.avatar.url
+            author_display_name=inter.author.display_name,
+            author_avatar_url=inter.author.avatar.url
         )
-        for embed in embed_list:
-            await ctx.send(embed=embed)
+
+        await inter.edit_original_message(embeds=embed_list)
         return
 
     player_obj = verification_payload['player_obj']
@@ -1764,84 +1803,93 @@ async def warclanscore(ctx):
     embed_list = discord_responder.embed_message(
         Embed=disnake.Embed,
         color=disnake.Color(client_data.embed_color),
-        icon_url=ctx.bot.user.avatar.url,
+        icon_url=inter.bot.user.avatar.url,
         title=f"{war_obj.clan.name} vs. {war_obj.opponent.name}",
         description=None,
-        bot_prefix=ctx.prefix,
-        bot_user_name=ctx.bot.user.name,
+        bot_prefix=inter.bot.command_prefix,
+        bot_user_name=inter.bot.user.name,
         thumbnail=player_obj.clan.badge,
         field_list=field_dict_list,
         image_url=None,
-        author_display_name=ctx.author.display_name,
-        author_avatar_url=ctx.author.avatar.url
+        author_display_name=inter.author.display_name,
+        author_avatar_url=inter.author.avatar.url
     )
 
-    for embed in embed_list:
-        await ctx.send(embed=embed)
+    await inter.edit_original_message(embeds=embed_list)
 
 
-@bot.command(
+@war.sub_command(
     brief='war',
-    description='town hall lineup for war'
+    description="town hall lineup for war"
 )
-async def warlineup(ctx):
-    async with ctx.typing():
-        db_player_obj = db_responder.read_player_active(ctx.author.id)
+async def lineup(inter):
+    """
+        town hall lineup for war
+    """
+
+    await inter.response.defer()
+
+    db_player_obj = db_responder.read_player_active(inter.author.id)
 
     verification_payload = await discord_responder.war_verification(
-        db_player_obj, ctx.author, coc_client)
+        db_player_obj, inter.author, coc_client)
     if not verification_payload['verified']:
         embed_list = discord_responder.embed_message(
             Embed=disnake.Embed,
             color=disnake.Color(client_data.embed_color),
-            icon_url=ctx.bot.user.avatar.url,
+            icon_url=inter.bot.user.avatar.url,
             title=None,
             description=None,
-            bot_prefix=ctx.prefix,
-            bot_user_name=ctx.bot.user.name,
+            bot_prefix=inter.bot.command_prefix,
+            bot_user_name=inter.bot.user.name,
             thumbnail=None,
             field_list=verification_payload['field_dict_list'],
             image_url=None,
-            author_display_name=ctx.author.display_name,
-            author_avatar_url=ctx.author.avatar.url
+            author_display_name=inter.author.display_name,
+            author_avatar_url=inter.author.avatar.url
         )
-        for embed in embed_list:
-            await ctx.send(embed=embed)
+
+        await inter.edit_original_message(embeds=embed_list)
         return
 
     player_obj = verification_payload['player_obj']
     war_obj = verification_payload['war_obj']
 
-    await ctx.send(discord_responder.war_lineup(war_obj))
+    await inter.edit_original_message(content=discord_responder.war_lineup(war_obj))
 
 
-@bot.command(
+@war.sub_command(
     brief='war',
-    description='town hall lineup for each war member'
+    description="town hall lineup for each war member"
 )
-async def warmemberlineup(ctx):
-    async with ctx.typing():
-        db_player_obj = db_responder.read_player_active(ctx.author.id)
+async def memberlineup(inter):
+    """
+        town hall lineup for each war member
+    """
+
+    await inter.response.defer()
+
+    db_player_obj = db_responder.read_player_active(inter.author.id)
 
     verification_payload = await discord_responder.war_verification(
-        db_player_obj, ctx.author, coc_client)
+        db_player_obj, inter.author, coc_client)
     if not verification_payload['verified']:
         embed_list = discord_responder.embed_message(
             Embed=disnake.Embed,
             color=disnake.Color(client_data.embed_color),
-            icon_url=ctx.bot.user.avatar.url,
+            icon_url=inter.bot.user.avatar.url,
             title=None,
             description=None,
-            bot_prefix=ctx.prefix,
-            bot_user_name=ctx.bot.user.name,
+            bot_prefix=inter.bot.command_prefix,
+            bot_user_name=inter.bot.user.name,
             thumbnail=None,
             field_list=verification_payload['field_dict_list'],
             image_url=None,
-            author_display_name=ctx.author.display_name,
-            author_avatar_url=ctx.author.avatar.url
+            author_display_name=inter.author.display_name,
+            author_avatar_url=inter.author.avatar.url
         )
-        for embed in embed_list:
-            await ctx.send(embed=embed)
+
+        await inter.edit_original_message(embeds=embed_list)
         return
 
     player_obj = verification_payload['player_obj']
@@ -1852,28 +1900,26 @@ async def warmemberlineup(ctx):
     embed_list = discord_responder.embed_message(
         Embed=disnake.Embed,
         color=disnake.Color(client_data.embed_color),
-        icon_url=ctx.bot.user.avatar.url,
+        icon_url=inter.bot.user.avatar.url,
         title=f"{war_obj.clan.name} vs. {war_obj.opponent.name}",
         description=None,
-        bot_prefix=ctx.prefix,
-        bot_user_name=ctx.bot.user.name,
+        bot_prefix=inter.bot.command_prefix,
+        bot_user_name=inter.bot.user.name,
         thumbnail=player_obj.clan.badge,
         field_list=field_dict_list,
         image_url=None,
-        author_display_name=ctx.author.display_name,
-        author_avatar_url=ctx.author.avatar.url
+        author_display_name=inter.author.display_name,
+        author_avatar_url=inter.author.avatar.url
     )
 
-    for embed in embed_list:
-        await ctx.send(embed=embed)
+    await inter.edit_original_message(embeds=embed_list)
 
 
 # CWL Group
 # todo cwl_group overview, scoreboard, cwl_clan_noatk
 
 @bot.command(
-    aliases=['cwlgroup'],
-    brief='cwlgroup',
+    brief='cwl',
     description='Returns the CWL group lineup',
     hidden=False
 )
@@ -1909,62 +1955,7 @@ async def cwllineup(ctx):
 
 
 @bot.command(
-    brief='cwlgroup',
-    description='Lists each member and their score in CWL',
-    hidden=True
-)
-async def cwlclanscore(ctx):
-    async with ctx.typing():
-        db_player_obj = db_responder.read_player_active(ctx.author.id)
-
-    verification_payload = (
-        await discord_responder.cwl_group_leadership_verification(
-            db_player_obj, ctx.author, coc_client))
-    if not verification_payload['verified']:
-        embed_list = discord_responder.embed_message(
-            Embed=disnake.Embed,
-            color=disnake.Color(client_data.embed_color),
-            icon_url=ctx.bot.user.avatar.url,
-            title=None,
-            description=None,
-            bot_prefix=ctx.prefix,
-            bot_user_name=ctx.bot.user.name,
-            thumbnail=None,
-            field_list=verification_payload['field_dict_list'],
-            image_url=None,
-            author_display_name=ctx.author.display_name,
-            author_avatar_url=ctx.author.avatar.url
-        )
-        for embed in embed_list:
-            await ctx.send(embed=embed)
-        return
-
-    player_obj = verification_payload['player_obj']
-    cwl_group_obj = verification_payload['cwl_group_obj']
-
-    field_dict_list = discord_responder.cwl_clan_standing(
-        cwl_group_obj, player_obj.clan.tag)
-    embed_list = discord_responder.embed_message(
-        Embed=disnake.Embed,
-        color=disnake.Color(client_data.embed_color),
-        icon_url=ctx.bot.user.avatar.url,
-        title=f"{player_obj.clan.name} CWL scores",
-        description=None,
-        bot_prefix=ctx.prefix,
-        bot_user_name=ctx.bot.user.name,
-        thumbnail=player_obj.clan.badge,
-        field_list=field_dict_list,
-        image_url=None,
-        author_display_name=ctx.author.display_name,
-        author_avatar_url=ctx.author.avatar.url
-    )
-
-    for embed in embed_list:
-        await ctx.send(embed=embed)
-
-
-@bot.command(
-    brief='cwlgroup',
+    brief='cwl',
     description='Lists each score you have in CWL'
 )
 async def cwlscore(ctx):
@@ -2018,7 +2009,7 @@ async def cwlscore(ctx):
 
 @bot.command(
     aliases=['cwlclanmatescore'],
-    brief='cwlgroup',
+    brief='cwl',
     description='Lists each score the specified member has in CWL'
 )
 async def cwlmemberscore(ctx):
@@ -2066,6 +2057,61 @@ async def cwlmemberscore(ctx):
         bot_prefix=ctx.prefix,
         bot_user_name=ctx.bot.user.name,
         thumbnail=player_obj.league.icon,
+        field_list=field_dict_list,
+        image_url=None,
+        author_display_name=ctx.author.display_name,
+        author_avatar_url=ctx.author.avatar.url
+    )
+
+    for embed in embed_list:
+        await ctx.send(embed=embed)
+
+
+@bot.command(
+    brief='cwl',
+    description='Lists each member and their score in CWL',
+    hidden=True
+)
+async def cwlclanscore(ctx):
+    async with ctx.typing():
+        db_player_obj = db_responder.read_player_active(ctx.author.id)
+
+    verification_payload = (
+        await discord_responder.cwl_group_leadership_verification(
+            db_player_obj, ctx.author, coc_client))
+    if not verification_payload['verified']:
+        embed_list = discord_responder.embed_message(
+            Embed=disnake.Embed,
+            color=disnake.Color(client_data.embed_color),
+            icon_url=ctx.bot.user.avatar.url,
+            title=None,
+            description=None,
+            bot_prefix=ctx.prefix,
+            bot_user_name=ctx.bot.user.name,
+            thumbnail=None,
+            field_list=verification_payload['field_dict_list'],
+            image_url=None,
+            author_display_name=ctx.author.display_name,
+            author_avatar_url=ctx.author.avatar.url
+        )
+        for embed in embed_list:
+            await ctx.send(embed=embed)
+        return
+
+    player_obj = verification_payload['player_obj']
+    cwl_group_obj = verification_payload['cwl_group_obj']
+
+    field_dict_list = discord_responder.cwl_clan_standing(
+        cwl_group_obj, player_obj.clan.tag)
+    embed_list = discord_responder.embed_message(
+        Embed=disnake.Embed,
+        color=disnake.Color(client_data.embed_color),
+        icon_url=ctx.bot.user.avatar.url,
+        title=f"{player_obj.clan.name} CWL scores",
+        description=None,
+        bot_prefix=ctx.prefix,
+        bot_user_name=ctx.bot.user.name,
+        thumbnail=player_obj.clan.badge,
         field_list=field_dict_list,
         image_url=None,
         author_display_name=ctx.author.display_name,
@@ -2600,7 +2646,6 @@ async def role(ctx):
             await ctx.send(embed=embed)
 
 
-# usable by leader and co leader
 @bot.command(
     aliases=['roleplayer'],
     brief='discord',
