@@ -28,48 +28,6 @@ async def on_ready():
     print(f"RazBot is ready")
 
 
-@bot.command(
-    brief='discord',
-    description='returns help menu'
-)
-async def help(ctx):
-    async with ctx.typing():
-        db_guild_obj = db_responder.read_guild(ctx.guild.id)
-        db_player_obj = db_responder.read_player_active(ctx.author.id)
-
-    if db_player_obj:
-        player_obj = await clash_responder.get_player(
-            db_player_obj.player_tag, coc_client)
-    else:
-        player_obj = None
-
-    help_dict = discord_responder.help_main(
-        db_guild_obj, ctx.author.id, player_obj, client_data.bot_categories)
-    field_dict_list = help_dict['field_dict_list']
-    emoji_list = help_dict['emoji_list']
-
-    embed_list = discord_responder.embed_message(
-        Embed=disnake.Embed,
-        color=disnake.Color(client_data.embed_color),
-        icon_url=ctx.bot.user.avatar.url,
-        title=f"{ctx.bot.user.name} help menu",
-        description=None,
-        bot_prefix=ctx.prefix,
-        bot_user_name=ctx.bot.user.name,
-        thumbnail=None,
-        field_list=field_dict_list,
-        image_url=None,
-        author_display_name=ctx.author.display_name,
-        author_avatar_url=ctx.author.avatar.url
-    )
-
-    for embed in embed_list:
-        message = await ctx.send(embed=embed)
-
-    for emoji in emoji_list:
-        await message.add_reaction(emoji)
-
-
 @bot.slash_command(
     description="misc parent")
 async def misc(inter):
@@ -80,7 +38,7 @@ async def misc(inter):
     brief='misc', description='misc command'
 )
 async def hellothere(inter):
-    await inter.response.send_message(f'General Kenobi')
+    await inter.response.send_message(content=f'General Kenobi')
 
 
 @misc.sub_command(
@@ -2406,6 +2364,54 @@ async def discord(inter):
 
 @discord.sub_command(
     brief='discord',
+    description="returns help menu"
+)
+async def help(inter):
+    """
+        returns help menu
+    """
+
+    await inter.response.defer()
+
+    db_guild_obj = db_responder.read_guild(inter.guild.id)
+    db_player_obj = db_responder.read_player_active(inter.author.id)
+
+    if db_player_obj:
+        player_obj = await clash_responder.get_player(
+            db_player_obj.player_tag, coc_client)
+    else:
+        player_obj = None
+
+    help_dict = discord_responder.help_main(
+        db_guild_obj, inter.author.id, player_obj, client_data.bot_categories)
+    field_dict_list = help_dict['field_dict_list']
+    emoji_list = help_dict['emoji_list']
+
+    embed_list = discord_responder.embed_message(
+        Embed=disnake.Embed,
+        color=disnake.Color(client_data.embed_color),
+        icon_url=inter.bot.user.avatar.url,
+        title=f"{inter.bot.user.name} help menu",
+        description=None,
+        bot_prefix=inter.bot.command_prefix,
+        bot_user_name=inter.bot.user.name,
+        thumbnail=None,
+        field_list=field_dict_list,
+        image_url=None,
+        author_display_name=inter.author.display_name,
+        author_avatar_url=inter.author.avatar.url
+    )
+
+    await inter.edit_original_message(embeds=embed_list)
+
+    original_message = await inter.original_message()
+
+    for emoji in emoji_list:
+        await original_message.add_reaction(emoji)
+
+
+@discord.sub_command(
+    brief='discord',
     description="update your roles"
 )
 async def role(inter):
@@ -2457,13 +2463,14 @@ async def role(inter):
     for db_obj in db_player_obj_list:
         player_obj = await clash_responder.get_player(
             db_obj.player_tag, coc_client)
-        if player_obj:
-            player_obj_list.append(player_obj)
+
         # player was not found from tag
-        else:
-            await inter.edit_original_message(
+        if player_obj is None:
+            await inter.send(
                 content=f"couldn't find player from tag {db_obj.player_tag}")
-            return
+            continue
+
+        player_obj_list.append(player_obj)
 
     # get needed roles
     needed_role_list = []
@@ -2482,7 +2489,8 @@ async def role(inter):
                 Embed=disnake.Embed,
                 color=disnake.Color(client_data.embed_color),
                 icon_url=inter.bot.user.avatar.url,
-                title=f"{discord_user_obj.display_name} {player_obj.name}",
+                title=(f"{discord_user_obj.display_name} "
+                       f"{player_obj.name} {player_obj.tag}"),
                 description=None,
                 bot_prefix=inter.bot.command_prefix,
                 bot_user_name=inter.bot.user.name,
@@ -2493,7 +2501,7 @@ async def role(inter):
                 author_avatar_url=inter.author.avatar.url
             )
 
-            await inter.edit_original_message(embeds=embed_list)
+            await inter.send(embeds=embed_list)
             continue
 
         # get discord clan and rank roles
@@ -2523,7 +2531,7 @@ async def role(inter):
                 author_avatar_url=inter.author.avatar.url
             )
 
-            await inter.edit_original_message(embeds=embed_list)
+            await inter.send(embeds=embed_list)
             continue
 
         # add clan role if found
@@ -2572,14 +2580,14 @@ async def role(inter):
     for add_role_id in add_role_id_list:
         # returns None if role is not found
         add_role_obj = disnake.utils.get(inter.guild.roles, id=add_role_id)
-        # role was found in guild.roles
-        if add_role_obj:
-            add_role_obj_list.append(add_role_obj)
-        else:
-            await inter.edit_original_message(
-                content=(f"could not find role for id {add_role_id}, "
-                         f"please ensure claimed roles and discord roles match")
-            )
+        # role not found in guild.roles
+        if add_role_obj is None:
+            await inter.send(content=(
+                f"could not find role for id {add_role_id}, "
+                f"please ensure claimed roles and discord roles match"))
+            continue
+
+        add_role_obj_list.append(add_role_obj)
 
     # get objects of roles to remove from id's
     remove_role_obj_list = []
@@ -2587,14 +2595,14 @@ async def role(inter):
         # returns None if role is not found
         remove_role_obj = disnake.utils.get(
             inter.guild.roles, id=remove_role_id)
-        if remove_role_obj:
-            # role was found in guild.roles
-            remove_role_obj_list.append(remove_role_obj)
-        else:
-            await inter.edit_original_message(
-                content=(f"could not find role for id {remove_role_id}, "
-                         f"please ensure claimed roles and discord roles match")
-            )
+        # role not found in guild.roles
+        if remove_role_obj is None:
+            await inter.send(content=(
+                f"could not find role for id {remove_role_id}, "
+                f"please ensure claimed roles and discord roles match"))
+            continue
+
+        remove_role_obj_list.append(remove_role_obj)
 
     # add roles
     for add_role_obj in add_role_obj_list:
@@ -2626,7 +2634,7 @@ async def role(inter):
             author_avatar_url=inter.author.avatar.url
         )
 
-        await inter.edit_original_message(embeds=embed_list)
+        await inter.send(embeds=embed_list)
 
     # roles have been added or removed
     else:
@@ -2668,7 +2676,7 @@ async def role(inter):
             author_avatar_url=inter.author.avatar.url
         )
 
-        await inter.edit_original_message(embeds=embed_list)
+        await inter.send(embeds=embed_list)
 
 
 @discord.sub_command(
@@ -2752,13 +2760,14 @@ async def rolemember(inter, user: disnake.User):
     for db_obj in db_player_obj_list:
         player_obj = await clash_responder.get_player(
             db_obj.player_tag, coc_client)
-        if player_obj:
-            player_obj_list.append(player_obj)
+
         # player was not found from tag
-        else:
-            await inter.edit_original_message(
+        if player_obj is None:
+            await inter.send(
                 content=f"couldn't find player from tag {db_obj.player_tag}")
-            return
+            continue
+
+        player_obj_list.append(player_obj)
 
     # get needed roles
     needed_role_list = []
@@ -2777,7 +2786,8 @@ async def rolemember(inter, user: disnake.User):
                 Embed=disnake.Embed,
                 color=disnake.Color(client_data.embed_color),
                 icon_url=inter.bot.user.avatar.url,
-                title=f"{user.display_name} {player_obj.name}",
+                title=(f"{user.display_name} "
+                       f"{player_obj.name} {player_obj.tag}"),
                 description=None,
                 bot_prefix=inter.bot.command_prefix,
                 bot_user_name=inter.bot.user.name,
@@ -2788,7 +2798,7 @@ async def rolemember(inter, user: disnake.User):
                 author_avatar_url=inter.author.avatar.url
             )
 
-            await inter.edit_original_message(embeds=embed_list)
+            await inter.send(embeds=embed_list)
             continue
 
         # get discord clan and rank roles
@@ -2818,7 +2828,7 @@ async def rolemember(inter, user: disnake.User):
                 author_avatar_url=inter.author.avatar.url
             )
 
-            await inter.edit_original_message(embeds=embed_list)
+            await inter.send(embeds=embed_list)
             continue
 
         # add clan role if found
@@ -2867,14 +2877,14 @@ async def rolemember(inter, user: disnake.User):
     for add_role_id in add_role_id_list:
         # returns None if role is not found
         add_role_obj = disnake.utils.get(inter.guild.roles, id=add_role_id)
-        if add_role_obj:
-            # role was found in guild.roles
-            add_role_obj_list.append(add_role_obj)
-        else:
-            await inter.edit_original_message(
-                content=(f"could not find role for id {add_role_id}, "
-                         f"please ensure claimed roles and discord roles match")
-            )
+        # role not found in guild.roles
+        if add_role_obj is None:
+            await inter.send(content=(
+                f"could not find role for id {add_role_id}, "
+                f"please ensure claimed roles and discord roles match"))
+            continue
+
+        add_role_obj_list.append(add_role_obj)
 
     # get objects of roles to remove from id's
     remove_role_obj_list = []
@@ -2882,14 +2892,14 @@ async def rolemember(inter, user: disnake.User):
         # returns None if role is not found
         remove_role_obj = disnake.utils.get(
             inter.guild.roles, id=remove_role_id)
-        if remove_role_obj:
-            # role was found in guild.roles
-            remove_role_obj_list.append(remove_role_obj)
-        else:
-            await inter.edit_original_message(
-                content=(f"could not find role for id {remove_role_id}, "
-                         f"please ensure claimed roles and discord roles match")
-            )
+        # role not found in guild.roles
+        if remove_role_obj is None:
+            await inter.send(content=(
+                f"could not find role for id {remove_role_id}, "
+                f"please ensure claimed roles and discord roles match"))
+            continue
+
+        remove_role_obj_list.append(remove_role_obj)
 
     # add roles
     for add_role_obj in add_role_obj_list:
@@ -2921,7 +2931,7 @@ async def rolemember(inter, user: disnake.User):
             author_avatar_url=inter.author.avatar.url
         )
 
-        await inter.edit_original_message(embeds=embed_list)
+        await inter.send(embeds=embed_list)
 
     # roles have been added or removed
     else:
@@ -2963,7 +2973,7 @@ async def rolemember(inter, user: disnake.User):
             author_avatar_url=inter.author.avatar.url
         )
 
-        await inter.edit_original_message(embeds=embed_list)
+        await inter.send(embeds=embed_list)
 
 
 @discord.sub_command(
@@ -3017,7 +3027,7 @@ async def roleall(inter):
         author_avatar_url=inter.author.avatar.url
     )
 
-    await inter.edit_original_message(embeds=embed_list)
+    await inter.send(embeds=embed_list)
 
     for discord_user_obj in inter.guild.members:
         if discord_user_obj.bot:
@@ -3082,7 +3092,8 @@ async def roleall(inter):
                     Embed=disnake.Embed,
                     color=disnake.Color(client_data.embed_color),
                     icon_url=inter.bot.user.avatar.url,
-                    title=f"{discord_user_obj.display_name} {player_obj.name}",
+                    title=(f"{discord_user_obj.display_name} "
+                           f"{player_obj.name} {player_obj.tag}"),
                     description=None,
                     bot_prefix=inter.bot.command_prefix,
                     bot_user_name=inter.bot.user.name,
@@ -3173,14 +3184,14 @@ async def roleall(inter):
             # returns None if role is not found
             add_role_obj = disnake.utils.get(
                 inter.guild.roles, id=add_role_id)
-            if add_role_obj:
-                # role was found in guild.roles
-                add_role_obj_list.append(add_role_obj)
-            else:
-                await inter.send(
-                    content=(f"could not find role for id {add_role_id}, "
-                             f"please ensure claimed roles and discord roles match")
-                )
+            # role not found in guild.roles
+            if add_role_obj is None:
+                await inter.send(content=(
+                    f"could not find role for id {add_role_id}, "
+                    f"please ensure claimed roles and discord roles match"))
+                continue
+
+            add_role_obj_list.append(add_role_obj)
 
         # get objects of roles to remove from id's
         remove_role_obj_list = []
@@ -3188,14 +3199,14 @@ async def roleall(inter):
             # returns None if role is not found
             remove_role_obj = disnake.utils.get(
                 inter.guild.roles, id=remove_role_id)
-            if remove_role_obj:
-                # role was found in guild.roles
-                remove_role_obj_list.append(remove_role_obj)
-            else:
-                await inter.send(
-                    content=(f"could not find role for id {remove_role_id}, "
-                             f"please ensure claimed roles and discord roles match")
-                )
+            # role not found in guild.roles
+            if remove_role_obj is None:
+                await inter.send(content=(
+                    f"could not find role for id {remove_role_id}, "
+                    f"please ensure claimed roles and discord roles match"))
+                continue
+
+            remove_role_obj_list.append(remove_role_obj)
 
         # add roles
         for add_role_obj in add_role_obj_list:
@@ -3292,62 +3303,92 @@ async def roleall(inter):
 
 # CLIENT
 
-# client user
-@bot.command(
-    aliases=['claim_user', 'userclaim'],
+@bot.slash_command(
     brief='client',
-    description=(
-        'This will claim a discord user')
+    description="parent for client commands"
 )
-async def claimuser(ctx):
-    async with ctx.typing():
-        user = db_responder.claim_user(ctx.author.id)
+async def client(inter):
+    """
+        parent for client commands
+    """
+
+    pass
+
+
+# client user
+@client.sub_command(
+    brief='client',
+    description="claim your discord user"
+)
+async def claimuser(inter):
+    """
+        claim your discord user
+    """
+
+    await inter.response.defer()
+
+    user = db_responder.claim_user(inter.author.id)
     # if user wasn't claimed and now is
     if user:
-        await ctx.send(f"{ctx.author.mention} is now claimed")
+        await inter.edit_original_message(
+            content=f"{inter.author.mention} is now claimed")
     # if user was already claimed
     else:
-        await ctx.send(f"{ctx.author.mention} has already been claimed")
+        await inter.edit_original_message(
+            content=f"{inter.author.mention} has already been claimed")
 
 
 # client player
-@bot.command(
-    aliases=['playerclaim'],
+@client.sub_command(
     brief='client',
     description=(
-        "This will verify and claim a player, "
+        "verify and claim a player, "
         "a player must be claimed to view and run "
         "many of ClashDiscord commands"
     )
 )
-async def claimplayer(ctx, player_tag, *, api_key):
-    async with ctx.typing():
-        # confirm valid player_tag
-        player_obj = await clash_responder.get_player(
-            player_tag, coc_client)
+async def claimplayer(inter, player_tag: str, api_key: str):
+    """
+        verify and claim a player, 
+        a player must be claimed to view and run 
+        many of ClashDiscord commands
+
+        Parameters
+        ----------
+        player_tag: player tag to search
+        api_key: api key provide from in game
+    """
+
+    await inter.response.defer()
+
+    # confirm valid player_tag
+    player_obj = await clash_responder.get_player(
+        player_tag, coc_client)
 
     # player tag was not valid
     if not player_obj:
-        await ctx.send(f"player with tag {player_tag} was not found")
+        await inter.edit_original_message(
+            content=f"player with tag {player_tag} was not found")
         return
 
     # confirm user has been claimed
-    db_user_obj = db_responder.read_user(ctx.author.id)
+    db_user_obj = db_responder.read_user(inter.author.id)
     if not db_user_obj:
         # user has not been claimed
-        db_user_obj = db_responder.claim_user(ctx.author.id)
+        db_user_obj = db_responder.claim_user(inter.author.id)
         if not db_user_obj:
             # user could not be claimed
-            await ctx.send(f"{ctx.author.mention} "
-                           f"user couldn't be claimed")
+            await inter.edit_original_message(
+                content=f"{inter.author.mention} user couldn't be claimed")
             return
 
     # confirm player has not been claimed
     db_player_obj = db_responder.read_player_from_tag(player_obj.tag)
     # player has already been claimed
     if db_player_obj:
-        await ctx.send(f"{player_obj.name} {player_obj.tag} "
-                       f"has already been claimed")
+        await inter.edit_original_message(
+            content=(f"{player_obj.name} {player_obj.tag} "
+                     f"has already been claimed"))
         return
 
     # authenticate player api key
@@ -3355,8 +3396,9 @@ async def claimplayer(ctx, player_tag, *, api_key):
         api_key, player_obj.tag, coc_client)
     # api key could not be verified
     if not player_verified:
-        await ctx.send(f"verification for "
-                       f"player tag {player_obj.tag} has failed")
+        await inter.edit_original_message(
+            content=(f"verification for "
+                     f"player tag {player_obj.tag} has failed"))
         return
 
     # user claimed
@@ -3364,38 +3406,41 @@ async def claimplayer(ctx, player_tag, *, api_key):
     # player hasn't been claimed
     # player is authenticated
     db_player_obj = db_responder.claim_player(
-        ctx.author.id, player_obj.tag)
+        inter.author.id, player_obj.tag)
 
     if db_player_obj:
         # if succesfully claimed
-        await ctx.send(f"{player_obj.name} {player_obj.tag} "
-                       f"is now claimed by {ctx.author.mention}")
+        await inter.edit_original_message(
+            content=(f"{player_obj.name} {player_obj.tag} "
+                     f"is now claimed by {inter.author.mention}"))
     else:
         # if failed to claim
-        await ctx.send(
-            f"Could not claim {player_obj.name} "
-            f"{player_obj.tag} for {ctx.author.mention}"
-        )
+        await inter.edit_original_message(
+            content=(f"Could not claim {player_obj.name} "
+                     f"{player_obj.tag} for {inter.author.mention}"))
 
 
-@bot.command(
-    aliases=['showplayers', 'showclaimedplayers',
-             'showplayersclaim', 'showplayerlist'],
+@client.sub_command(
     brief='client',
-    description=(
-        'Shows players claimed by a discord user')
+    description="shows players claimed by your discord user"
 )
-async def showplayerclaim(ctx):
-    async with ctx.typing():
-        db_player_obj_list = db_responder.read_player_list(ctx.author.id)
+async def showplayers(inter):
+    """
+        shows players claimed by your discord user
+    """
+
+    await inter.response.defer()
+
+    db_player_obj_list = db_responder.read_player_list(inter.author.id)
 
     # user has no claimed players
     if len(db_player_obj_list) == 0:
-        await ctx.send(f"{ctx.author.mention} does not have any "
-                       f"claimed players")
+        await inter.edit_original_message(
+            content=(f"{inter.author.mention} does not have any "
+                     f"claimed players"))
         return
 
-    message = f"{ctx.author.mention} has claimed "
+    message = f"{inter.author.mention} has claimed "
     for db_player_obj in db_player_obj_list:
         player_obj = await clash_responder.get_player(
             db_player_obj.player_tag, coc_client)
@@ -3405,118 +3450,147 @@ async def showplayerclaim(ctx):
             message += f"{player_obj.name} {player_obj.tag}, "
     # cuts the last two characters from the string ', '
     message = message[:-2]
-    await ctx.send(message)
+    await inter.edit_original_message(content=message)
 
 
-@bot.command(
-    aliases=['updateactiveplayer', 'updateplayer'],
+@client.sub_command(
     brief='client',
-    description=(
-        "updates the user's active player")
+    description="updates your active player"
 )
-async def updateplayeractive(ctx, player_tag):
-    async with ctx.typing():
-        player_obj = await clash_responder.get_player(player_tag, coc_client)
+async def updateplayer(inter, player_tag: str):
+    """
+        updates author's active player
+
+        Parameters
+        ----------
+        player_tag: player tag to set as active
+    """
+
+    await inter.response.defer()
+
+    player_obj = await clash_responder.get_player(player_tag, coc_client)
 
     # if player with tag not found
     if not player_obj:
-        await ctx.send(f"player with tag {player_tag} not found")
+        await inter.edit_original_message(
+            content=f"player with tag {player_tag} not found")
         return
 
-    db_player_obj = db_responder.read_player(ctx.author.id, player_obj.tag)
+    db_player_obj = db_responder.read_player(inter.author.id, player_obj.tag)
 
     # if requested player is not claimed
     if not db_player_obj:
-        await ctx.send(f"{ctx.author.mention} "
-                       f"has not claimed "
-                       f"{player_obj.name} {player_obj.tag}")
+        await inter.edit_original_message(
+            content=(
+                f"{inter.author.mention} "
+                f"has not claimed "
+                f"{player_obj.name} {player_obj.tag}"
+            ))
         return
 
     # if requested player is the active player
     if db_player_obj.active:
-        await ctx.send(f"{player_obj.name} {player_obj.tag} "
-                       f"is already your active player "
-                       f"{ctx.author.mention}")
+        await inter.edit_original_message(
+            content=(
+                f"{player_obj.name} {player_obj.tag} "
+                f"is already your active player "
+                f"{inter.author.mention}"
+            ))
         return
 
     else:
         db_player_obj = db_responder.update_player_active(
-            ctx.author.id, player_obj.tag)
-        await ctx.send(f"{player_obj.name} {player_obj.tag} is now "
-                       f"your active player {ctx.author.mention}")
+            inter.author.id, player_obj.tag)
+        await inter.edit_original_message(
+            content=(
+                f"{player_obj.name} {player_obj.tag} is now "
+                f"your active player {inter.author.mention}"
+            ))
         return
 
 
-@bot.command(
-    aliases=['removeplayer'],
+@client.sub_command(
     brief='client',
-    description=(
-        "deletes the user's requested player claim")
+    description="deletes the user's requested player claim"
 )
-async def deleteplayer(ctx, player_tag):
-    async with ctx.typing():
-        player_obj = await clash_responder.get_player(
-            player_tag, coc_client)
+async def removeplayer(inter, player_tag: str):
+    """
+        updates author's active player
+
+        Parameters
+        ----------
+        player_tag: player tag to remove
+    """
+
+    await inter.response.defer()
+
+    player_obj = await clash_responder.get_player(player_tag, coc_client)
 
     # player not found
     if not player_obj:
-        await ctx.send(f"player with tag {player_tag} not found")
+        await inter.edit_original_message(
+            content=f"player with tag {player_tag} not found")
         return
 
-    db_player_obj = db_responder.read_player(ctx.author.id, player_obj.tag)
+    db_player_obj = db_responder.read_player(inter.author.id, player_obj.tag)
 
     # db player not found
     if not db_player_obj:
-        await ctx.send(f"{player_obj.name} {player_obj.tag} "
-                       f"is not claimed by {ctx.author.mention}")
+        await inter.edit_original_message(
+            content=(f"{player_obj.name} {player_obj.tag} "
+                     f"is not claimed by {inter.author.mention}"))
         return
 
     db_del_player_obj = db_responder.delete_player(
-        ctx.author.id, player_obj.tag)
+        inter.author.id, player_obj.tag)
 
     # player was not deleted
     if db_del_player_obj:
-        await ctx.send(f"{player_obj.name} {player_obj.tag} "
-                       f"could not be deleted "
-                       f"from {ctx.author.mention} player list")
+        await inter.edit_original_message(content=(
+            f"{player_obj.name} {player_obj.tag} "
+            f"could not be deleted "
+            f"from {inter.author.mention} player list"
+        ))
         return
 
-    db_active_player_obj = db_responder.read_player_active(ctx.author.id)
+    db_active_player_obj = db_responder.read_player_active(inter.author.id)
 
     # active player found
     # no need to change the active player
     if db_active_player_obj:
-        await ctx.send(f"{player_obj.name} {player_obj.tag} "
-                       f"has been deleted "
-                       f"from {ctx.author.mention} player list")
+        await inter.edit_original_message(content=(
+            f"{player_obj.name} {player_obj.tag} "
+            f"has been deleted "
+            f"from {inter.author.mention} player list"
+        ))
         return
 
     # no active player found
     # check if there are any other players
     db_player_obj_list = db_responder.read_player_list(
-        ctx.author.id)
+        inter.author.id)
 
     # no additional players claimed
     if len(db_player_obj_list) == 0:
-        await ctx.send(
+        await inter.edit_original_message(content=(
             f"{player_obj.name} {player_obj.tag} "
             f"has been deleted, "
-            f"{ctx.author.mention} has no more claimed players"
-        )
+            f"{inter.author.mention} has no more claimed players"
+        ))
         return
 
     # additional players claimed by user
     # update the first as the new active
     db_updated_player_obj = db_responder.update_player_active(
-        ctx.author.id, db_player_obj_list[0].player_tag)
+        inter.author.id, db_player_obj_list[0].player_tag)
 
     # update not successful
     if not db_updated_player_obj:
-        await ctx.send(
+        await inter.edit_original_message(content=(
             f"{player_obj.name} {player_obj.tag} "
             f"has been deleted, could not update active player, "
-            f"{ctx.author.mention} has no active players"
-        )
+            f"{inter.author.mention} has no active players"
+        ))
         return
 
     # update was successful
@@ -3525,108 +3599,135 @@ async def deleteplayer(ctx, player_tag):
 
     # clash player not found
     if not clash_updated_player_obj:
-        await ctx.send(
+        await inter.edit_original_message(content=(
             f"{player_obj.name} {player_obj.tag} "
             f"has been deleted, "
-            f"{ctx.author.mention} active is now set to "
+            f"{inter.author.mention} active is now set to "
             f"{db_updated_player_obj.player_tag}, "
             f"could not find player in clash of clans"
-        )
+        ))
         return
 
     # player deleted
     # active player updated
     # clash player found
-    await ctx.send(
+    await inter.edit_original_message(content=(
         f"{player_obj.name} {player_obj.tag} "
         f"has been deleted, "
-        f"{ctx.author.mention} active is now set to "
+        f"{inter.author.mention} active is now set to "
         f"{clash_updated_player_obj.name} "
         f"{clash_updated_player_obj.tag}"
-    )
+    ))
 
 
 # client guild
-@bot.command(
-    aliases=['claim_guild', 'guildclaim'],
+@client.sub_command(
     brief='client',
-    description=(
-        'This will claim a discord guild'),
-    hidden=True
+    description=("claim a discord guild and set yourself "
+                 "as the guild admin for ClashDiscord")
 )
-async def claimguild(ctx):
-    async with ctx.typing():
-        # getting db user object
-        db_user_obj = db_responder.read_user(ctx.author.id)
+async def claimguild(inter):
+    """
+        claim a discord guild and set yourself
+        as the guild admin for ClashDiscord
+    """
+
+    await inter.response.defer()
+
+    # getting db user object
+    db_user_obj = db_responder.read_user(inter.author.id)
 
     # user not found
     if not db_user_obj:
-        await ctx.send(f"{ctx.author.mention} has not been claimed")
+        await inter.edit_original_message(
+            content=f"{inter.author.mention} has not been claimed")
         return
 
-    db_guild_obj = db_responder.claim_guild(ctx.author.id, ctx.guild.id)
+    db_guild_obj = db_responder.read_guild(inter.guild.id)
+
+    # guild already claimed
+    if db_guild_obj:
+        await inter.edit_original_message(
+            content=f"{inter.guild.name} has already been claimed")
+        return
+
+    db_claimed_guild = db_responder.claim_guild(
+        inter.author.id, inter.guild.id)
 
     # guild already claimed or could not be claimed
-    if not db_guild_obj:
-        await ctx.send(f"{ctx.guild.name} has already been claimed")
+    if not db_claimed_guild:
+        await inter.edit_original_message(
+            content=f"{inter.guild.name} could not be claimed")
         return
 
-    await ctx.send(f"{ctx.guild.name} is now claimed "
-                   f"by admin user {ctx.author.mention}")
+    await inter.edit_original_message(
+        content=(f"{inter.guild.name} is now claimed "
+                 f"by admin user {inter.author.mention}")
+    )
 
 
 # client clan
-# todo pull the clan tag from the db player to player tag to player.clan.tag
-@bot.command(
-    aliases=['clanclaim'],
+@client.sub_command(
     brief='client',
-    description=(
-        'This will claim the clan your '
-        'active player is currently a member of'),
-    hidden=True
+    description="claim the requested clan"
 )
-async def claimclan(ctx, clan_tag):
-    async with ctx.typing():
-        clan_obj = await clash_responder.get_clan(clan_tag, coc_client)
+async def claimclan(inter, clan_tag: str):
+    """
+        claim the requested clan
+
+        Parameters
+        ----------
+        clan_tag: clan tag to claim
+    """
+
+    await inter.response.defer()
+
+    clan_obj = await clash_responder.get_clan(clan_tag, coc_client)
 
     # clan not found
     if not clan_obj:
-        await ctx.send(f"couldn't find clan {clan_tag}")
+        await inter.edit_original_message(
+            content=f"couldn't find clan {clan_tag}")
         return
 
-    claimed_clan_obj = db_responder.read_clan(ctx.guild.id, clan_obj.tag)
+    claimed_clan_obj = db_responder.read_clan(inter.guild.id, clan_obj.tag)
 
     # already claimed
     if claimed_clan_obj:
-        await ctx.send(f"{clan_obj.name} has already been claimed for "
-                       f"{ctx.guild.name}")
+        await inter.edit_original_message(content=(
+            f"{clan_obj.name} has already been claimed for "
+            f"{inter.guild.name}"))
         return
 
-    db_user_obj = db_responder.read_user(ctx.author.id)
+    db_user_obj = db_responder.read_user(inter.author.id)
 
     # user not claimed
     if not db_user_obj:
-        await ctx.send(f"{ctx.author.mention} has not been claimed")
+        await inter.edit_original_message(
+            content=f"{inter.author.mention} has not been claimed")
         return
 
-    db_guild_obj = db_responder.read_guild(ctx.guild.id)
+    db_guild_obj = db_responder.read_guild(inter.guild.id)
 
     # guild not claimed
     if not db_guild_obj:
-        await ctx.send(f"{ctx.guild.name} has not been claimed")
+        await inter.edit_original_message(
+            content=f"{inter.guild.name} has not been claimed")
         return
 
     # user is not guild admin and is not super user
-    if (not db_guild_obj.admin_user_id == ctx.author.id
+    if (not db_guild_obj.admin_user_id == inter.author.id
             and not db_user_obj.super_user):
-        await ctx.send(f"{ctx.author.mention} is not guild's admin")
+        await inter.edit_original_message(
+            content=f"{inter.author.mention} is not guild's admin")
         return
 
-    db_player_obj_list = db_responder.read_player_list(ctx.author.id)
+    db_player_obj_list = db_responder.read_player_list(inter.author.id)
 
     # no claimed player
     if len(db_player_obj_list) == 0:
-        await ctx.send(f"{ctx.author.mention} has no claimed players")
+        await inter.edit_original_message(
+            content=f"{inter.author.mention} has no claimed players")
         return
 
     user_in_clan = False
@@ -3643,44 +3744,55 @@ async def claimclan(ctx, clan_tag):
 
     # player not in requested clan
     if not user_in_clan:
-        await ctx.send(f"{ctx.author.mention} is not in {clan_obj.name}")
+        await inter.edit_original_message(
+            content=f"{inter.author.mention} is not in {clan_obj.name}")
         return
 
-    db_clan_obj = db_responder.claim_clan(ctx.guild.id, clan_obj.tag)
+    db_clan_obj = db_responder.claim_clan(inter.guild.id, clan_obj.tag)
 
     # clan not claimed
     if not db_clan_obj:
-        await ctx.send(f"couldn't claim {clan_obj.name}")
+        await inter.edit_original_message(
+            content=f"couldn't claim {clan_obj.name}")
         return
 
-    await ctx.send(f"{clan_obj.name} has been claimed")
+    await inter.edit_original_message(
+        content=f"{clan_obj.name} has been claimed")
 
 
-@bot.command(
-    aliases=['showclaimclan', 'showclaimedclan',
-             'showclaimedclans', 'showclansclaim', 'showclanlist'],
+@client.sub_command(
     brief='client',
-    description=(
-        'Shows clans claimed by a discord guild'),
+    description="clans claimed by a discord guild",
     hidden=True
 )
-async def showclanclaim(ctx):
-    async with ctx.typing():
-        db_guild_obj = db_responder.read_guild(ctx.guild.id)
+async def showclans(inter):
+    """
+        clans claimed by a discord guild
+
+        Parameters
+        ----------
+        clan_tag: clan tag to claim
+    """
+
+    await inter.response.defer()
+
+    db_guild_obj = db_responder.read_guild(inter.guild.id)
 
     # guild not found
     if not db_guild_obj:
-        await ctx.send(f"{ctx.guild.name} has not been claimed")
+        await inter.edit_original_message(
+            content=f"{inter.guild.name} has not been claimed")
         return
 
-    db_clan_obj_list = db_responder.read_clan_list_from_guild(ctx.guild.id)
+    db_clan_obj_list = db_responder.read_clan_list_from_guild(inter.guild.id)
 
     # guild has no claimed clans
     if len(db_clan_obj_list) == 0:
-        await ctx.send(f"{ctx.guild.name} does not have any claimed clans")
+        await inter.edit_original_message(
+            content=f"{inter.guild.name} does not have any claimed clans")
         return
 
-    message = f"{ctx.guild.name} has claimed "
+    message = f"{inter.guild.name} has claimed "
     for item in db_clan_obj_list:
         clan = await clash_responder.get_clan(
             item.clan_tag, coc_client)
@@ -3689,92 +3801,107 @@ async def showclanclaim(ctx):
     # cuts the last two characters from the string ', '
     message = message[:-2]
 
-    await ctx.send(message)
+    await inter.edit_original_message(content=message)
 
 
-@bot.command(
-    aliases=['removeclan', 'deleteclanclaim',
-             'deleteclaimclan', 'deleteclaimedclan'],
+@client.sub_command(
     brief='client',
-    description=(
-        "deletes the requested clan claim"),
-    hidden=True
+    description="deletes the requested clan claim"
 )
-async def deleteclan(ctx, clan_tag):
-    async with ctx.typing():
-        clan_obj = await clash_responder.get_clan(clan_tag, coc_client)
+async def removeclan(inter, clan_tag: str):
+    """
+        deletes the requested clan claim
+
+        Parameters
+        ----------
+        clan_tag: clan tag to delete from client
+    """
+
+    await inter.response.defer()
+
+    clan_obj = await clash_responder.get_clan(clan_tag, coc_client)
 
     # clan not found
     if not clan_obj:
-        await ctx.send(f"couldn't find clan {clan_tag}")
+        await inter.edit_original_message(
+            content=f"couldn't find clan {clan_tag}")
         return
 
-    db_user_obj = db_responder.read_user(ctx.author.id)
+    db_user_obj = db_responder.read_user(inter.author.id)
     # user not claimed
     if not db_user_obj:
-        await ctx.send(f"{ctx.author.mention} has not been claimed")
+        await inter.edit_original_message(
+            content=f"{inter.author.mention} has not been claimed")
         return
 
-    db_guild_obj = db_responder.read_guild(ctx.guild.id)
+    db_guild_obj = db_responder.read_guild(inter.guild.id)
     # guild not claimed
     if not db_guild_obj:
-        await ctx.send(f"{ctx.guild.name} has not been claimed")
+        await inter.edit_original_message(
+            content=f"{inter.guild.name} has not been claimed")
         return
 
     # user is not guild admin and is not super user
-    if (not db_guild_obj.admin_user_id == ctx.author.id
+    if (not db_guild_obj.admin_user_id == inter.author.id
             and not db_user_obj.super_user):
-        await ctx.send(f"{ctx.author.mention} is not guild's admin")
+        await inter.edit_original_message(
+            content=f"{inter.author.mention} is not guild's admin")
         return
 
-    db_clan_obj = db_responder.read_clan(ctx.guild.id, clan_obj.tag)
+    db_clan_obj = db_responder.read_clan(inter.guild.id, clan_obj.tag)
     # clan not claimed by guild
     if not db_clan_obj:
-        await ctx.send(f"{clan_obj.name} has not been claimed "
-                       f"by {ctx.guild.name}")
+        await inter.edit_original_message(
+            content=f"{clan_obj.name} has not been claimed "
+            f"by {inter.guild.name}")
         return
 
-    db_clan_deletion = db_responder.delete_clan(ctx.guild.id, clan_obj.tag)
+    db_clan_deletion = db_responder.delete_clan(inter.guild.id, clan_obj.tag)
     # clan was found after deletion
     if db_clan_deletion:
-        await ctx.send(f"{clan_obj.name} could not be deleted")
+        await inter.edit_original_message(
+            content=f"{clan_obj.name} could not be deleted")
         return
 
-    await ctx.send(f"{clan_obj.name} has been deleted from {ctx.guild.name}")
+    await inter.edit_original_message(
+        content=(f"{clan_obj.name} has been deleted "
+                 f"from {inter.guild.name}"))
 
 
 # client roles
-@bot.command(
-    aliases=['showroles', 'showclaimedroles'],
+@client.sub_command(
     brief='client',
-    description=(
-        'shows roles claimed by a discord guild'),
-    hidden=True
+    description="shows roles claimed by a discord guild"
 )
-async def showroleclaim(ctx):
-    async with ctx.typing():
-        db_guild_obj = db_responder.read_guild(ctx.guild.id)
+async def showroles(inter):
+    """
+        deletes the requested clan claim
+
+        Parameters
+        ----------
+        clan_tag: clan tag to delete from client
+    """
+
+    await inter.response.defer()
+
+    db_guild_obj = db_responder.read_guild(inter.guild.id)
 
     # guild not found
     if not db_guild_obj:
-        await ctx.send(f"{ctx.guild.name} has not been claimed")
+        await inter.edit_original_message(
+            content=f"{inter.guild.name} has not been claimed")
         return
 
     field_dict_list = []
 
-    db_clan_role_list = db_responder.read_guild_clan_role(ctx.guild.id)
+    db_clan_role_list = db_responder.read_guild_clan_role(inter.guild.id)
 
-    # guild has no claimed clan roles
-    if len(db_clan_role_list) == 0:
-        field_dict_list.append({
-            'name': f"server has no claimed clan roles",
-            'value': f"use `claimclanrole` to claim a clan role"
-        })
+    db_rank_role_list = db_responder.read_guild_rank_role(inter.guild.id)
 
-    else:
+    if len(db_clan_role_list) != 0:
         for db_role in db_clan_role_list:
             discord_role = disnake.utils.get(
-                ctx.guild.roles, id=db_role.discord_role_id)
+                inter.guild.roles, id=db_role.discord_role_id)
 
             # discord role is claimed, but not found in server
             if not discord_role:
@@ -3787,7 +3914,8 @@ async def showroleclaim(ctx):
                 })
                 continue
 
-            clan = await clash_responder.get_clan(db_role.clan_tag, coc_client)
+            clan = await clash_responder.get_clan(
+                db_role.clan_tag, coc_client)
 
             if not clan:
                 field_dict_list.append({
@@ -3801,19 +3929,10 @@ async def showroleclaim(ctx):
                 'value': f"role {discord_role.mention}"
             })
 
-    db_rank_role_list = db_responder.read_guild_rank_role(ctx.guild.id)
-
-    # guild has no claimed rank roles
-    if len(db_rank_role_list) == 0:
-        field_dict_list.append({
-            'name': f"server has no claimed rank roles",
-            'value': f"use `claimrankrole` to claim a rank role"
-        })
-
-    else:
+    if len(db_rank_role_list) != 0:
         for db_role in db_rank_role_list:
             discord_role = disnake.utils.get(
-                ctx.guild.roles, id=db_role.discord_role_id)
+                inter.guild.roles, id=db_role.discord_role_id)
 
             # discord role is claimed, but not found in server
             if not discord_role:
@@ -3831,357 +3950,394 @@ async def showroleclaim(ctx):
                 'value': f"role {discord_role.mention}"
             })
 
+    # guild has no claimed rank roles
+    if (len(db_clan_role_list) == 0 and
+            len(db_rank_role_list) == 0):
+        field_dict_list.append({
+            'name': f"server has no claimed roles",
+            'value': f"please claim a clan or rank role"
+        })
+
     embed_list = discord_responder.embed_message(
         Embed=disnake.Embed,
         color=disnake.Color(client_data.embed_color),
-        icon_url=ctx.bot.user.avatar.url,
-        title=f"{ctx.guild.name} claimed roles",
+        icon_url=inter.bot.user.avatar.url,
+        title=f"{inter.guild.name} claimed roles",
         description=None,
-        bot_prefix=ctx.prefix,
-        bot_user_name=ctx.bot.user.name,
+        bot_prefix=inter.bot.command_prefix,
+        bot_user_name=inter.bot.user.name,
         thumbnail=None,
         field_list=field_dict_list,
         image_url=None,
-        author_display_name=ctx.author.display_name,
-        author_avatar_url=ctx.author.avatar.url
+        author_display_name=inter.author.display_name,
+        author_avatar_url=inter.author.avatar.url
     )
-    for embed in embed_list:
-        await ctx.send(embed=embed)
+
+    await inter.edit_original_message(embeds=embed_list)
 
 
-# client clan role
-@bot.command(
-    aliases=['clanroleclaim'],
+@client.sub_command(
     brief='client',
-    description=(
-        "This will claim a clan's discord role"),
-    hidden=True
+    description=("remove the claimed discord role, "
+                 "the role will not be deleted from discord")
 )
-async def claimclanrole(ctx, clan_tag):
-    # role was not mentioned or more than one role mentioned
-    if (len(ctx.message.role_mentions) == 0
-            or len(ctx.message.role_mentions) > 1):
-        await ctx.send(f"one role must be mentioned")
-        return
+async def removeroleclaim(inter, role: disnake.Role):
+    """
+        remove the claimed discord role,
+        the role will not be deleted from discord
 
-    role = ctx.message.role_mentions[0]
+        Parameters
+        ----------
+        role: role object to remove claim
+    """
 
-    async with ctx.typing():
-        clan_obj = await clash_responder.get_clan(clan_tag, coc_client)
+    await inter.response.defer()
 
-    # clan not found
-    if not clan_obj:
-        await ctx.send(f"couldn't find clan {clan_tag}")
-        return
+    db_user_obj = db_responder.read_user(inter.author.id)
 
-    db_user_obj = db_responder.read_user(ctx.author.id)
     # user not claimed
     if not db_user_obj:
-        await ctx.send(f"{ctx.author.mention} has not been claimed")
+        await inter.edit_original_message(
+            content=f"{inter.author.mention} has not been claimed")
         return
 
-    db_guild_obj = db_responder.read_guild(ctx.guild.id)
+    db_guild_obj = db_responder.read_guild(inter.guild.id)
     # guild not claimed
     if not db_guild_obj:
-        await ctx.send(f"{ctx.guild.name} has not been claimed")
+        await inter.edit_original_message(
+            content=f"{inter.guild.name} has not been claimed")
         return
 
     # user is not guild admin and is not super user
-    if (not db_guild_obj.admin_user_id == ctx.author.id
+    if (not db_guild_obj.admin_user_id == inter.author.id
             and not db_user_obj.super_user):
-        await ctx.send(f"{ctx.author.mention} is not guild's admin")
+        await inter.edit_original_message(
+            content=f"{inter.author.mention} is not guild's admin")
         return
 
-    db_clan_obj = db_responder.read_clan(ctx.guild.id, clan_obj.tag)
+    db_clan_role_obj = db_responder.read_clan_role(role.id)
+
+    # claimed role is clan role
+    if db_clan_role_obj:
+        # delete clan role
+        db_clan_role_deletion = db_responder.delete_clan_role(role.id)
+        # clan role found after deletion
+        if db_clan_role_deletion:
+            await inter.edit_original_message(
+                content=f"{role.mention} claim could not be removed")
+            return
+
+        # clan role deleted
+        await inter.edit_original_message(
+            content=f"{role.mention} claim was removed")
+        return
+
+    db_rank_role_obj = db_responder.read_rank_role(role.id)
+
+    # claimed role is rank role
+    if db_rank_role_obj:
+        # delete rank role
+        db_rank_role_deletion = db_responder.delete_rank_role(role.id)
+        # rank role found after deletion
+        if db_rank_role_deletion:
+            await inter.edit_original_message(
+                content=f"{role.mention} claim could not be removed")
+            return
+
+        # rank role deleted
+        await inter.edit_original_message(
+            content=f"{role.mention} claim was removed")
+        return
+
+    await inter.edit_original_message(
+        content=f"{role.mention} is not claimed")
+
+
+# client clan role
+@client.sub_command(
+    brief='client',
+    description="claim a clan's discord role"
+)
+async def claimclanrole(inter, role: disnake.Role, clan_tag: str):
+    """
+        claim a clan's discord role
+
+        Parameters
+        ----------
+        role: role object to claim and link to claimed clan
+        clan_tag: clan tag to link to role
+    """
+
+    await inter.response.defer()
+
+    clan_obj = await clash_responder.get_clan(clan_tag, coc_client)
+
+    # clan not found
+    if not clan_obj:
+        await inter.edit_original_message(
+            content=f"couldn't find clan {clan_tag}")
+        return
+
+    db_user_obj = db_responder.read_user(inter.author.id)
+
+    # user not claimed
+    if not db_user_obj:
+        await inter.edit_original_message(
+            content=f"{inter.author.mention} has not been claimed")
+        return
+
+    db_guild_obj = db_responder.read_guild(inter.guild.id)
+
+    # guild not claimed
+    if not db_guild_obj:
+        await inter.edit_original_message(
+            content=f"{inter.guild.name} has not been claimed")
+        return
+
+    # user is not guild admin and is not super user
+    if (not db_guild_obj.admin_user_id == inter.author.id
+            and not db_user_obj.super_user):
+        await inter.edit_original_message(
+            content=f"{inter.author.mention} is not guild's admin")
+        return
+
+    db_clan_obj = db_responder.read_clan(inter.guild.id, clan_obj.tag)
+
     # clan not claimed by guild
     if not db_clan_obj:
-        await ctx.send(f"{clan_obj.name} has not been claimed "
-                       f"by {ctx.guild.name}")
+        await inter.edit_original_message(
+            content=(f"{clan_obj.name} has not been claimed "
+                     f"by {inter.guild.name}"))
         return
 
     # confirm clan role has not been claimed
     db_clan_role_obj = db_responder.read_clan_role(role.id)
+
     # clan role has been claimed
     if db_clan_role_obj:
-        await ctx.send(f"{role.mention} has already been claimed "
-                       f"for clan {db_clan_role_obj.clan_tag}")
+        await inter.edit_original_message(
+            content=(f"{role.mention} has already been claimed "
+                     f"for clan {db_clan_role_obj.clan_tag}"))
         return
 
     # confirm rank role has not been claimed
     db_rank_role_obj = db_responder.read_rank_role(role.id)
+
     # rank role has been claimed
     if db_rank_role_obj:
-        await ctx.send(f"{role.mention} has already been claimed "
-                       f"for rank {db_rank_role_obj.model_name}")
+        await inter.edit_original_message(
+            content=(f"{role.mention} has already been claimed "
+                     f"for rank {db_rank_role_obj.model_name}"))
         return
 
     # claim clan role
     claimed_clan_role_obj = db_responder.claim_clan_role(
-        role.id, ctx.guild.id, clan_obj.tag)
+        role.id, inter.guild.id, clan_obj.tag)
+
     # clan role could not be claimed
     if not claimed_clan_role_obj:
-        await ctx.send(f"could not claim {role.mention} "
-                       f"for clan {clan_obj.tag}")
+        await inter.edit_original_message(
+            content=(f"could not claim {role.mention} "
+                     f"for clan {clan_obj.tag}"))
         return
 
-    await ctx.send(
-        f"{role.mention} has been claimed for clan {clan_obj.tag}")
-
-
-@bot.command(
-    aliases=['removeclanroleclaim'],
-    brief='client',
-    description=(
-        "this will remove the claimed clan's discord role, "
-        "the role will not be deleted from discord"),
-    hidden=True
-)
-async def removeclaimclanrole(ctx):
-    # role was not mentioned or more than one role mentioned
-    if (len(ctx.message.role_mentions) == 0
-            or len(ctx.message.role_mentions) > 1):
-        await ctx.send(f"one role must be mentioned")
-        return
-
-    role = ctx.message.role_mentions[0]
-
-    async with ctx.typing():
-        db_user_obj = db_responder.read_user(ctx.author.id)
-
-    # user not claimed
-    if not db_user_obj:
-        await ctx.send(f"{ctx.author.mention} has not been claimed")
-        return
-
-    db_guild_obj = db_responder.read_guild(ctx.guild.id)
-    # guild not claimed
-    if not db_guild_obj:
-        await ctx.send(f"{ctx.guild.name} has not been claimed")
-        return
-
-    # user is not guild admin and is not super user
-    if (not db_guild_obj.admin_user_id == ctx.author.id
-            and not db_user_obj.super_user):
-        await ctx.send(f"{ctx.author.mention} is not guild's admin")
-        return
-
-    db_clan_role_obj = db_responder.read_clan_role(role.id)
-    # clan role not claimed
-    if not db_clan_role_obj:
-        await ctx.send(f"{role.mention} is not claimed")
-        return
-
-    # delete clan role
-    db_clan_role_deletion = db_responder.delete_clan_role(role.id)
-    # clan role found after deletion
-    if db_clan_role_deletion:
-        await ctx.send(f"{role.mention} claim could not be removed")
-        return
-
-    await ctx.send(f"{role.mention} claim was removed")
+    await inter.edit_original_message(
+        content=f"{role.mention} has been claimed for clan {clan_obj.tag}")
 
 
 # client rank role
-@bot.command(
-    aliases=['rankroleclaim'],
+@client.sub_command(
     brief='client',
-    description=(
-        "This will claim a rank's discord role"),
-    hidden=True
+    description="claim a rank's discord role"
 )
-async def claimrankrole(ctx, rank_role_name):
-    # role was not mentioned or more than one role mentioned
-    if (len(ctx.message.role_mentions) == 0
-            or len(ctx.message.role_mentions) > 1):
-        await ctx.send(f"one role must be mentioned")
-        return
+async def claimrankrole(inter,
+                        role: disnake.Role,
+                        rank_name: str = commands.Param(choices=[
+        "leader", "co-leader", "elder", "member", "uninitiated"])):
+    """
+        claim a rank's discord role
 
-    role = ctx.message.role_mentions[0]
+        Parameters
+        ----------
+        role: role object to claim and link to client rank
+        rank_name: requested rank to link to role
+    """
 
-    async with ctx.typing():
-        # validate given role name with model
-        rank_role_model_obj = db_responder.read_rank_role_model(
-            rank_role_name)
+    await inter.response.defer()
+
+    # validate given role name with model
+    rank_role_model_obj = db_responder.read_rank_role_model(rank_name)
 
     # rank role name invalid
     if not rank_role_model_obj:
-        await ctx.send(f"{rank_role_name} is not a valid rank")
+        await inter.edit_original_message(
+            content=f"{rank_name} is not a valid rank")
         return
 
-    db_user_obj = db_responder.read_user(ctx.author.id)
+    db_user_obj = db_responder.read_user(inter.author.id)
     # user not claimed
     if not db_user_obj:
-        await ctx.send(f"{ctx.author.mention} has not been claimed")
+        await inter.edit_original_message(
+            content=f"{inter.author.mention} has not been claimed")
         return
 
-    db_guild_obj = db_responder.read_guild(ctx.guild.id)
+    db_guild_obj = db_responder.read_guild(inter.guild.id)
     # guild not claimed
     if not db_guild_obj:
-        await ctx.send(f"{ctx.guild.name} has not been claimed")
+        await inter.edit_original_message(
+            content=f"{inter.guild.name} has not been claimed")
         return
 
     # user is not guild admin and is not super user
-    if (not db_guild_obj.admin_user_id == ctx.author.id
+    if (not db_guild_obj.admin_user_id == inter.author.id
             and not db_user_obj.super_user):
-        await ctx.send(f"{ctx.author.mention} is not guild's admin")
+        await inter.edit_original_message(
+            content=f"{inter.author.mention} is not guild's admin")
         return
 
     # confirm clan role has not been claimed
     db_clan_role_obj = db_responder.read_clan_role(role.id)
     # clan role has been claimed
     if db_clan_role_obj:
-        await ctx.send(f"{role.mention} has already been claimed "
-                       f"for clan {db_clan_role_obj.clan_tag}")
+        await inter.edit_original_message(
+            content=(f"{role.mention} has already been claimed for clan "
+                     f"{db_clan_role_obj.clan_tag}"))
         return
 
     # confirm rank role has not been claimed
     db_rank_role_obj = db_responder.read_rank_role(role.id)
     # rank role has been claimed
     if db_rank_role_obj:
-        await ctx.send(f"{role.mention} has already been claimed "
-                       f"for rank {db_rank_role_obj.model_name}")
+        await inter.edit_original_message(
+            content=(f"{role.mention} has already been claimed for rank "
+                     f"{db_rank_role_obj.model_name}"))
         return
 
     # claim rank role
     claimed_rank_role_obj = db_responder.claim_rank_role(
-        role.id, ctx.guild.id, rank_role_name)
+        role.id, inter.guild.id, rank_name)
     # rank role could not be claimed
     if not claimed_rank_role_obj:
-        await ctx.send(f"could not claim {role.mention} "
-                       f"for rank {db_rank_role_obj.model_name}")
+        await inter.edit_original_message(
+            content=(f"could not claim {role.mention} for rank "
+                     f"{db_rank_role_obj.model_name}"))
         return
 
-    await ctx.send(f"{role.mention} has been claimed "
-                   f"for rank {claimed_rank_role_obj.model_name}")
-
-
-@bot.command(
-    aliases=['removerankroleclaim'],
-    brief='client',
-    description=(
-        "this will remove the claimed rank's discord role, "
-        "the role will not be deleted from discord"),
-    hidden=True
-)
-async def removeclaimrankrole(ctx):
-    # role was not mentioned or more than one role mentioned
-    if (len(ctx.message.role_mentions) == 0
-            or len(ctx.message.role_mentions) > 1):
-        await ctx.send(f"one role must be mentioned")
-        return
-
-    role = ctx.message.role_mentions[0]
-
-    async with ctx.typing():
-        db_user_obj = db_responder.read_user(ctx.author.id)
-
-    # user not claimed
-    if not db_user_obj:
-        await ctx.send(f"{ctx.author.mention} has not been claimed")
-        return
-
-    db_guild_obj = db_responder.read_guild(ctx.guild.id)
-    # guild not claimed
-    if not db_guild_obj:
-        await ctx.send(f"{ctx.guild.name} has not been claimed")
-        return
-
-    # user is not guild admin and is not super user
-    if (not db_guild_obj.admin_user_id == ctx.author.id
-            and not db_user_obj.super_user):
-        await ctx.send(f"{ctx.author.mention} is not guild's admin")
-        return
-
-    db_rank_role_obj = db_responder.read_rank_role(role.id)
-    # rank role not claimed
-    if not db_rank_role_obj:
-        await ctx.send(f"{role.mention} is not claimed")
-        return
-
-    # delete rank role
-    db_rank_role_deletion = db_responder.delete_rank_role(role.id)
-    # rank role found after deletion
-    if db_rank_role_deletion:
-        await ctx.send(f"{role.mention} claim could not be removed")
-        return
-
-    await ctx.send(f"{role.mention} claim was removed")
+    await inter.edit_original_message(
+        content=(f"{role.mention} has been claimed for rank "
+                 f"{claimed_rank_role_obj.model_name}"))
 
 
 # client super user administration
 
-# super user client guild
-@bot.command(
-    aliases=['removeguild'],
+@bot.slash_command(
     brief='clientsuperuser',
-    description=("delete a claimed guild from id"),
-    hidden=True
+    description="parent for client super user commands"
 )
-async def removeguildclaim(ctx, guild_id):
+async def clientsuperuser(inter):
+    """
+        parent for client super user commands
+    """
 
-    db_author_obj = db_responder.read_user(ctx.author.id)
+    pass
+
+
+# super user client guild
+@clientsuperuser.sub_command(
+    brief='clientsuperuser',
+    description="delete a claimed guild from id"
+)
+async def removeguildclaim(inter, guild_id: str):
+    """
+        claim a clan's discord role
+
+        Parameters
+        ----------
+        guild_id: id for guild to remove claim
+    """
+
+    await inter.response.defer()
+
+    db_author_obj = db_responder.read_user(inter.author.id)
     # author is not claimed
     if not db_author_obj:
-        await ctx.send(f"{ctx.author.mention} is not claimed")
+        await inter.edit_original_message(
+            content=f"{inter.author.mention} is not claimed")
         return
 
     # author is not super user
     if not db_author_obj.super_user:
-        await ctx.send(f"{ctx.author.mention} is not super user")
+        await inter.edit_original_message(
+            content=f"{inter.author.mention} is not super user")
         return
 
     # confirm guild is claimed
     db_guild_obj = db_responder.read_guild(guild_id)
     # guild isn't claimed
     if not db_guild_obj:
-        await ctx.send(f"guild with id {guild_id} is not claimed")
+        await inter.edit_original_message(
+            content=f"guild with id {guild_id} is not claimed")
         return
 
     deleted_guild_obj = db_responder.delete_guild(guild_id)
     # guild could not be deleted
     if deleted_guild_obj:
-        await ctx.send(f"guild with id {guild_id} could not be deleted")
+        await inter.edit_original_message(
+            content=f"guild with id {guild_id} could not be deleted")
         return
 
     # guild was deleted properly
-    await ctx.send(f"guild with id {guild_id} was deleted")
+    await inter.edit_original_message(
+        content=f"guild with id {guild_id} was deleted")
 
 
 # super user client user
-@bot.command(
-    aliases=['removeuser'],
+@clientsuperuser.sub_command(
     brief='clientsuperuser',
-    description=('delete a claimed user'),
-    hidden=True
+    description="delete a claimed user from id"
 )
-async def removeuserclaim(ctx, user_id):
+async def removeuserclaim(inter, user_id: str):
+    """
+        claim a clan's discord role
 
-    db_author_obj = db_responder.read_user(ctx.author.id)
+        Parameters
+        ----------
+        user: id for user to remove claim
+    """
+
+    await inter.response.defer()
+
+    db_author_obj = db_responder.read_user(inter.author.id)
     # author is not claimed
     if not db_author_obj:
-        await ctx.send(f"{ctx.author.mention} is not claimed")
+        await inter.edit_original_message(
+            content=f"{inter.author.mention} is not claimed")
         return
 
     # author is not super user
     if not db_author_obj.super_user:
-        await ctx.send(f"{ctx.author.mention} is not super user")
+        await inter.edit_original_message(
+            content=f"{inter.author.mention} is not super user")
         return
 
     # confirm user is claimed
     db_user_obj = db_responder.read_user(user_id)
     # user isn't claimed
     if not db_user_obj:
-        await ctx.send(f"user with id {user_id} is not claimed")
+        await inter.edit_original_message(
+            content=f"user with id {user_id} is not claimed")
         return
 
     deleted_user_obj = db_responder.delete_user(user_id)
     # user could not be deleted
     if deleted_user_obj:
-        await ctx.send(f"user with id {user_id} could not be deleted")
+        await inter.edit_original_message(
+            content=f"user with id {user_id} could not be deleted")
         return
 
     # user was deleted properly
-    await ctx.send(f"user with id {user_id} was deleted")
+    await inter.edit_original_message(
+        content=f"user with id {user_id} was deleted")
 
 
 # client events

@@ -98,43 +98,43 @@ ClashDiscord is largely **command** focused, meaning it doesn't do anything that
 - ## <a id="command-list-clashdiscord"></a>ClashDiscord
 
   - ### User
-    - claimuser
+    - client claimuser
       - claims the user by discord user id within ClashDiscord
   - ### Player
-    - claimplayer `playertag apikey`
+    - client claimplayer `playertag apikey`
       - links a player to your claimed user
       - if there are no other claimed players for your user, then sets this claimed player as active for you
-    - deleteplayer `playertag`
-      - removes the claimed player from your user
-    - showplayerclaim
+    - client showplayers
       - shows all claimed players for your user and which is set as active
-    - updateplayeractive `playertag`
+    - client updateplayer `playertag`
       - sets the requested player as your active player
+    - client removeplayer `playertag`
+      - removes the claimed player from your user
   - ### Guild
-    - claimguild
+    - client claimguild
       - claims the guild by discord guild id within ClashDiscord
       - sets the user who called the command as the guild admin within ClashDiscord
   - ### Clan
-    - claimclan `clantag`
+    - client claimclan `clantag`
       - claims the clan and links it to the claimed guild
       - user _must_ be guild admin
       - user's active player _must_ be in the clan
       - claimed guilds can claim multiple different clans
       - multiple guilds can claim the same clan
-    - deleteclan `clantag`
-      - removes the claimed clan from your guild
-    - showclanclaim
+    - client showclans
       - shows all claimed clans for the guild
+    - client removeclan `clantag`
+      - removes the claimed clan from your guild
   - ### Role
-    - showroleclaim
+    - client showroles
       - shows all claimed roles for the guild
+    - client removeroleclaim `rolemention`
+      - removes claim on the mentioned role
   - ### Clan Role
-    - claimclanrole `clantag rolemention`
+    - client claimclanrole `clantag rolemention`
       - links the mentioned role to a claimed clan
-    - removeclaimclanrole `rolemention`
-      - unclaims the mentioned clan role
   - ### Rank Role
-    - claimrankrole `rank rolemention`
+    - client claimrankrole `rank rolemention`
       - claims the mentioned role as a specific clan rank
       - list of ranks
         - leader
@@ -143,8 +143,6 @@ ClashDiscord is largely **command** focused, meaning it doesn't do anything that
         - member
         - uninitiated
           - _this means they aren't verified or they aren't in a claimed clan_
-    - removeclaimrankrole `rolemention`
-      - unclaims the mentioned rank role
 
 - ## <a id="command-list-discord"></a>Discord
 
