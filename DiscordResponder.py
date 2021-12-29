@@ -2287,6 +2287,226 @@ def find_user_from_tag(player_obj, member_list):
 
 # roles
 
+async def update_roles(user, guild, coc_client):
+    """
+        update roles and return embed dict list
+
+        Args:
+            user ([disnake.User]): [object for user getting roled]
+            guild ([disnake.Guild]): [guild command was called]
+            coc_client ([coc.py client]): [coc.py client]
+
+        Returns:
+            [embed_dict_list]: [list]
+                embed_dict:
+                    title [str]: embed title or None
+                    field_dict_list [list]: list of field dicts
+                    thumbnail [obj]: coc.py thumbnail object or None
+    """
+    embed_dict_list = []
+
+    db_player_obj_list = db_responder.read_player_list(user.id)
+    # player is not claimed
+    if len(db_player_obj_list) == 0:
+        embed_dict_list.append({
+            "title": user.display_name,
+            "field_dict_list": [{
+                "name": f"no claimed players",
+                "value": user.mention
+            }],
+            "thumbnail": None
+        })
+        return embed_dict_list
+
+    # getting a list of all claimed players
+    player_obj_list = []
+    for db_obj in db_player_obj_list:
+        player_obj = await clash_responder.get_player(
+            db_obj.player_tag, coc_client)
+
+        # player was not found from tag
+        if player_obj is None:
+            embed_dict_list.append({
+                "title": None,
+                "field_dict_list": [{
+                    "name": db_obj.player_tag,
+                    "value": "couldn't find player from tag"
+                }],
+                "thumbnail": None
+            })
+            continue
+
+        player_obj_list.append(player_obj)
+
+    # get needed roles
+    needed_role_list = []
+    for player_obj in player_obj_list:
+        # claimed clan validation
+        db_clan_obj = db_responder.read_clan(
+            guild.id, player_obj.clan.tag)
+        # clan not found
+        if not db_clan_obj:
+            embed_dict_list.append({
+                "title": (f"{user.display_name} "
+                          f"{player_obj.name} {player_obj.tag}"),
+                "field_dict_list": [{
+                    "name": f"{player_obj.clan.name} {player_obj.clan.tag}",
+                    "value": f"not claimed in {guild.name} server"
+                }],
+                "thumbnail": player_obj.league.icon
+            })
+            continue
+
+        # get discord clan and rank roles
+        db_clan_role_obj = db_responder.read_clan_role_from_tag(
+            guild.id, player_obj.clan.tag)
+        db_rank_role_obj = (db_responder.read_rank_role_from_guild_and_clash(
+            guild.id, player_obj.role.value))
+
+        if not db_clan_role_obj and not db_rank_role_obj:
+            embed_dict_list.append({
+                "title": None,
+                "field_dict_list": [{
+                    "name": (f"role for clan {player_obj.clan.name} "
+                             f"{player_obj.clan.tag}"),
+                    "value": f"not claimed"
+                }],
+                "thumbnail": player_obj.clan.badge
+            })
+            continue
+
+        # add clan role if found
+        if db_clan_role_obj:
+            needed_role_list.append(db_clan_role_obj.discord_role_id)
+        # add rank role if found
+        if db_rank_role_obj:
+            needed_role_list.append(db_rank_role_obj.discord_role_id)
+
+    # if the user has no needed roles
+    if len(needed_role_list) == 0:
+        uninitiated_role = db_responder.read_rank_role_from_guild_and_clash(
+            guild.id, "uninitiated"
+        )
+        if uninitiated_role:
+            needed_role_list.append(uninitiated_role.discord_role_id)
+
+    # get rid of duplicates
+    needed_role_list = list(dict.fromkeys(needed_role_list))
+
+    # get current roles
+    current_discord_role_list = []
+    for current_role in user.roles:
+        current_discord_role_list.append(current_role.id)
+
+    # get current roles that match db roles
+    current_db_rank_role_list = db_responder.read_rank_role_list(
+        current_discord_role_list)
+
+    current_db_clan_role_list = db_responder.read_clan_role_list(
+        current_discord_role_list
+    )
+
+    # getting the list of role id's
+    current_role_list = []
+    for rank_role in current_db_rank_role_list:
+        current_role_list.append(rank_role.discord_role_id)
+    for clan_role in current_db_clan_role_list:
+        current_role_list.append(clan_role.discord_role_id)
+
+    add_role_id_list, remove_role_id_list = role_add_remove_list(
+        needed_role_list, current_role_list)
+
+    # get objects of roles to add from id's
+    add_role_obj_list = []
+    for add_role_id in add_role_id_list:
+        # returns None if role is not found
+        add_role_obj = get(guild.roles, id=add_role_id)
+        # role not found in guild.roles
+        if add_role_obj is None:
+            embed_dict_list.append({
+                "title": None,
+                "field_dict_list": [{
+                    "name": f"role with id {add_role_id}",
+                    "value": f"not found"
+                }],
+                "thumbnail": None
+            })
+            continue
+
+        add_role_obj_list.append(add_role_obj)
+
+    # get objects of roles to remove from id's
+    remove_role_obj_list = []
+    for remove_role_id in remove_role_id_list:
+        # returns None if role is not found
+        remove_role_obj = get(
+            guild.roles, id=remove_role_id)
+        # role not found in guild.roles
+        if remove_role_obj is None:
+            embed_dict_list.append({
+                "title": None,
+                "field_dict_list": [{
+                    "name": f"role for id {remove_role_id}",
+                    "value": f"please ensure claimed roles and discord roles match"
+                }],
+                "thumbnail": None
+            })
+            continue
+
+        remove_role_obj_list.append(remove_role_obj)
+
+    # add roles
+    for add_role_obj in add_role_obj_list:
+        await user.add_roles(add_role_obj)
+
+    # remove roles
+    for remove_role_obj in remove_role_obj_list:
+        await user.remove_roles(remove_role_obj)
+
+    # no roles added or removed
+    if len(add_role_obj_list) == 0 and len(remove_role_obj_list) == 0:
+        embed_dict_list.append({
+            "title": user.display_name,
+            "field_dict_list": [{
+                "name": f"no roles changed",
+                "value": user.mention
+            }],
+            "thumbnail": None
+        })
+
+    # roles have been added or removed
+    else:
+        field_dict_list = []
+
+        # adding makeshift title
+        field_dict_list.append({
+            "name": f"roles changed",
+            "value": user.mention,
+            "inline": True
+        })
+
+        # adding added roles to field dict list
+        for role in add_role_obj_list:
+            field_dict_list.append({
+                "name": f"added role",
+                "value": role.name
+            })
+
+        # adding removed roles to field dict list
+        for role in remove_role_obj_list:
+            field_dict_list.append({
+                "name": f"removed role",
+                "value": role.name
+            })
+
+        embed_dict_list.append({
+            "title": user.display_name,
+            "field_dict_list": field_dict_list,
+            "thumbnail": None
+        })
+
+    return embed_dict_list
+
 
 def role_add_remove_list(needed_role_list, current_role_list):
     """

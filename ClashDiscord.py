@@ -2429,248 +2429,21 @@ async def role(inter):
             content=f"{inter.guild.name} has not been claimed")
         return
 
-    # setting disord_user_obj to author
-    discord_user_obj = inter.author
+    embed_dict_list = await discord_responder.update_roles(
+        inter.author, inter.guild, coc_client)
 
-    db_player_obj_list = db_responder.read_player_list(discord_user_obj.id)
-    # if player is not claimed
-    if len(db_player_obj_list) == 0:
-        field_dict_list = [{
-            "name": f"no claimed players",
-            "value": f"{discord_user_obj.mention}"
-        }]
+    for embed_dict in embed_dict_list:
 
         embed_list = discord_responder.embed_message(
             Embed=disnake.Embed,
             color=disnake.Color(client_data.embed_color),
             icon_url=inter.bot.user.avatar.url,
-            title=f"{discord_user_obj.display_name}",
+            title=embed_dict["title"],
             description=None,
             bot_prefix=inter.bot.command_prefix,
             bot_user_name=inter.bot.user.name,
-            thumbnail=None,
-            field_list=field_dict_list,
-            image_url=None,
-            author_display_name=inter.author.display_name,
-            author_avatar_url=inter.author.avatar.url
-        )
-
-        await inter.edit_original_message(embeds=embed_list)
-        return
-
-    # getting a list of all claimed players
-    player_obj_list = []
-    for db_obj in db_player_obj_list:
-        player_obj = await clash_responder.get_player(
-            db_obj.player_tag, coc_client)
-
-        # player was not found from tag
-        if player_obj is None:
-            await inter.send(
-                content=f"couldn't find player from tag {db_obj.player_tag}")
-            continue
-
-        player_obj_list.append(player_obj)
-
-    # get needed roles
-    needed_role_list = []
-    for player_obj in player_obj_list:
-        # claimed clan validation
-        db_clan_obj = db_responder.read_clan(
-            inter.guild.id, player_obj.clan.tag)
-        # clan not found
-        if not db_clan_obj:
-            field_dict_list = [{
-                "name": f"{player_obj.clan.name} {player_obj.clan.tag}",
-                "value": f"not claimed in {inter.guild.name} server"
-            }]
-
-            embed_list = discord_responder.embed_message(
-                Embed=disnake.Embed,
-                color=disnake.Color(client_data.embed_color),
-                icon_url=inter.bot.user.avatar.url,
-                title=(f"{discord_user_obj.display_name} "
-                       f"{player_obj.name} {player_obj.tag}"),
-                description=None,
-                bot_prefix=inter.bot.command_prefix,
-                bot_user_name=inter.bot.user.name,
-                thumbnail=player_obj.league.icon,
-                field_list=field_dict_list,
-                image_url=None,
-                author_display_name=inter.author.display_name,
-                author_avatar_url=inter.author.avatar.url
-            )
-
-            await inter.send(embeds=embed_list)
-            continue
-
-        # get discord clan and rank roles
-        db_clan_role_obj = db_responder.read_clan_role_from_tag(
-            inter.guild.id, player_obj.clan.tag)
-        db_rank_role_obj = (db_responder.read_rank_role_from_guild_and_clash(
-            inter.guild.id, player_obj.role.value))
-
-        if not db_clan_role_obj and not db_rank_role_obj:
-            field_dict_list = [{
-                "name": f"clan and rank roles not claimed",
-                "value": f"please claim proper roles"
-            }]
-
-            embed_list = discord_responder.embed_message(
-                Embed=disnake.Embed,
-                color=disnake.Color(client_data.embed_color),
-                icon_url=inter.bot.user.avatar.url,
-                title=f"{discord_user_obj.display_name} {player_obj.name}",
-                description=None,
-                bot_prefix=inter.bot.command_prefix,
-                bot_user_name=inter.bot.user.name,
-                thumbnail=player_obj.league.icon,
-                field_list=field_dict_list,
-                image_url=None,
-                author_display_name=inter.author.display_name,
-                author_avatar_url=inter.author.avatar.url
-            )
-
-            await inter.send(embeds=embed_list)
-            continue
-
-        # add clan role if found
-        if db_clan_role_obj:
-            needed_role_list.append(db_clan_role_obj.discord_role_id)
-        # add rank role if found
-        if db_rank_role_obj:
-            needed_role_list.append(db_rank_role_obj.discord_role_id)
-
-    # if the user has no needed roles
-    if len(needed_role_list) == 0:
-        uninitiated_role = db_responder.read_rank_role_from_guild_and_clash(
-            inter.guild.id, "uninitiated"
-        )
-        if uninitiated_role:
-            needed_role_list.append(uninitiated_role.discord_role_id)
-
-    # get rid of duplicates
-    needed_role_list = list(dict.fromkeys(needed_role_list))
-
-    # get current roles
-    current_discord_role_list = []
-    for current_role in discord_user_obj.roles:
-        current_discord_role_list.append(current_role.id)
-
-    # get current roles that match db roles
-    current_db_rank_role_list = db_responder.read_rank_role_list(
-        current_discord_role_list)
-
-    current_db_clan_role_list = db_responder.read_clan_role_list(
-        current_discord_role_list
-    )
-
-    # getting the list of role id's
-    current_role_list = []
-    for rank_role in current_db_rank_role_list:
-        current_role_list.append(rank_role.discord_role_id)
-    for clan_role in current_db_clan_role_list:
-        current_role_list.append(clan_role.discord_role_id)
-
-    add_role_id_list, remove_role_id_list = discord_responder.role_add_remove_list(
-        needed_role_list, current_role_list)
-
-    # get objects of roles to add from id's
-    add_role_obj_list = []
-    for add_role_id in add_role_id_list:
-        # returns None if role is not found
-        add_role_obj = disnake.utils.get(inter.guild.roles, id=add_role_id)
-        # role not found in guild.roles
-        if add_role_obj is None:
-            await inter.send(content=(
-                f"could not find role for id {add_role_id}, "
-                f"please ensure claimed roles and discord roles match"))
-            continue
-
-        add_role_obj_list.append(add_role_obj)
-
-    # get objects of roles to remove from id's
-    remove_role_obj_list = []
-    for remove_role_id in remove_role_id_list:
-        # returns None if role is not found
-        remove_role_obj = disnake.utils.get(
-            inter.guild.roles, id=remove_role_id)
-        # role not found in guild.roles
-        if remove_role_obj is None:
-            await inter.send(content=(
-                f"could not find role for id {remove_role_id}, "
-                f"please ensure claimed roles and discord roles match"))
-            continue
-
-        remove_role_obj_list.append(remove_role_obj)
-
-    # add roles
-    for add_role_obj in add_role_obj_list:
-        await discord_user_obj.add_roles(add_role_obj)
-
-    # remove roles
-    for remove_role_obj in remove_role_obj_list:
-        await discord_user_obj.remove_roles(remove_role_obj)
-
-    # no roles added or removed
-    if len(add_role_obj_list) == 0 and len(remove_role_obj_list) == 0:
-        field_dict_list = [{
-            "name": f"no roles changed",
-            "value": f"{discord_user_obj.mention}"
-        }]
-
-        embed_list = discord_responder.embed_message(
-            Embed=disnake.Embed,
-            color=disnake.Color(client_data.embed_color),
-            icon_url=inter.bot.user.avatar.url,
-            title=f"{discord_user_obj.display_name}",
-            description=None,
-            bot_prefix=inter.bot.command_prefix,
-            bot_user_name=inter.bot.user.name,
-            thumbnail=None,
-            field_list=field_dict_list,
-            image_url=None,
-            author_display_name=inter.author.display_name,
-            author_avatar_url=inter.author.avatar.url
-        )
-
-        await inter.send(embeds=embed_list)
-
-    # roles have been added or removed
-    else:
-        field_dict_list = []
-
-        # adding makeshift title
-        field_dict_list.append({
-            "name": f"roles changed",
-            "value": discord_user_obj.mention,
-            "inline": True
-        })
-
-        # adding added roles to field dict list
-        for role in add_role_obj_list:
-            field_dict_list.append({
-                "name": f"added role",
-                "value": role.name
-            })
-
-        # adding removed roles to field dict list
-        for role in remove_role_obj_list:
-            field_dict_list.append({
-                "name": f"removed role",
-                "value": role.name
-            })
-
-        embed_list = discord_responder.embed_message(
-            Embed=disnake.Embed,
-            color=disnake.Color(client_data.embed_color),
-            icon_url=inter.bot.user.avatar.url,
-            title=f"{discord_user_obj.display_name}",
-            description=None,
-            bot_prefix=inter.bot.command_prefix,
-            bot_user_name=inter.bot.user.name,
-            thumbnail=None,
-            field_list=field_dict_list,
+            thumbnail=embed_dict["thumbnail"],
+            field_list=embed_dict["field_dict_list"],
             image_url=None,
             author_display_name=inter.author.display_name,
             author_avatar_url=inter.author.avatar.url
@@ -2727,247 +2500,21 @@ async def rolemember(inter, user: disnake.User):
         await inter.edit_original_message(embeds=embed_list)
         return
 
-    player_obj = verification_payload['player_obj']
+    embed_dict_list = await discord_responder.update_roles(
+        user, inter.guild, coc_client)
 
-    db_player_obj_list = db_responder.read_player_list(user.id)
-    # if player is not claimed
-    if len(db_player_obj_list) == 0:
-        field_dict_list = [{
-            "name": f"no claimed players",
-            "value": f"{user.mention}"
-        }]
+    for embed_dict in embed_dict_list:
 
         embed_list = discord_responder.embed_message(
             Embed=disnake.Embed,
             color=disnake.Color(client_data.embed_color),
             icon_url=inter.bot.user.avatar.url,
-            title=f"{user.display_name}",
+            title=embed_dict["title"],
             description=None,
             bot_prefix=inter.bot.command_prefix,
             bot_user_name=inter.bot.user.name,
-            thumbnail=None,
-            field_list=field_dict_list,
-            image_url=None,
-            author_display_name=inter.author.display_name,
-            author_avatar_url=inter.author.avatar.url
-        )
-
-        await inter.edit_original_message(embeds=embed_list)
-        return
-
-    # getting a list of all claimed players
-    player_obj_list = []
-    for db_obj in db_player_obj_list:
-        player_obj = await clash_responder.get_player(
-            db_obj.player_tag, coc_client)
-
-        # player was not found from tag
-        if player_obj is None:
-            await inter.send(
-                content=f"couldn't find player from tag {db_obj.player_tag}")
-            continue
-
-        player_obj_list.append(player_obj)
-
-    # get needed roles
-    needed_role_list = []
-    for player_obj in player_obj_list:
-        # claimed clan validation
-        db_clan_obj = db_responder.read_clan(
-            inter.guild.id, player_obj.clan.tag)
-        # clan not found
-        if not db_clan_obj:
-            field_dict_list = [{
-                "name": f"{player_obj.clan.name} {player_obj.clan.tag}",
-                "value": f"not claimed in {inter.guild.name} server"
-            }]
-
-            embed_list = discord_responder.embed_message(
-                Embed=disnake.Embed,
-                color=disnake.Color(client_data.embed_color),
-                icon_url=inter.bot.user.avatar.url,
-                title=(f"{user.display_name} "
-                       f"{player_obj.name} {player_obj.tag}"),
-                description=None,
-                bot_prefix=inter.bot.command_prefix,
-                bot_user_name=inter.bot.user.name,
-                thumbnail=player_obj.league.icon,
-                field_list=field_dict_list,
-                image_url=None,
-                author_display_name=inter.author.display_name,
-                author_avatar_url=inter.author.avatar.url
-            )
-
-            await inter.send(embeds=embed_list)
-            continue
-
-        # get discord clan and rank roles
-        db_clan_role_obj = db_responder.read_clan_role_from_tag(
-            inter.guild.id, player_obj.clan.tag)
-        db_rank_role_obj = (db_responder.read_rank_role_from_guild_and_clash(
-            inter.guild.id, player_obj.role.value))
-
-        if not db_clan_role_obj and not db_rank_role_obj:
-            field_dict_list = [{
-                "name": f"clan and rank roles not claimed",
-                "value": f"please claim proper roles"
-            }]
-
-            embed_list = discord_responder.embed_message(
-                Embed=disnake.Embed,
-                color=disnake.Color(client_data.embed_color),
-                icon_url=inter.bot.user.avatar.url,
-                title=f"{user.display_name} {player_obj.name}",
-                description=None,
-                bot_prefix=inter.bot.command_prefix,
-                bot_user_name=inter.bot.user.name,
-                thumbnail=player_obj.league.icon,
-                field_list=field_dict_list,
-                image_url=None,
-                author_display_name=inter.author.display_name,
-                author_avatar_url=inter.author.avatar.url
-            )
-
-            await inter.send(embeds=embed_list)
-            continue
-
-        # add clan role if found
-        if db_clan_role_obj:
-            needed_role_list.append(db_clan_role_obj.discord_role_id)
-        # add rank role if found
-        if db_rank_role_obj:
-            needed_role_list.append(db_rank_role_obj.discord_role_id)
-
-    # if the user has no needed roles
-    if len(needed_role_list) == 0:
-        uninitiated_role = db_responder.read_rank_role_from_guild_and_clash(
-            inter.guild.id, "uninitiated"
-        )
-        if uninitiated_role:
-            needed_role_list.append(uninitiated_role.discord_role_id)
-
-    # get rid of duplicates
-    needed_role_list = list(dict.fromkeys(needed_role_list))
-
-    # get current roles
-    current_discord_role_list = []
-    for current_role in user.roles:
-        current_discord_role_list.append(current_role.id)
-
-    # get current roles that match db roles
-    current_db_rank_role_list = db_responder.read_rank_role_list(
-        current_discord_role_list)
-
-    current_db_clan_role_list = db_responder.read_clan_role_list(
-        current_discord_role_list
-    )
-
-    # getting the list of role id's
-    current_role_list = []
-    for rank_role in current_db_rank_role_list:
-        current_role_list.append(rank_role.discord_role_id)
-    for clan_role in current_db_clan_role_list:
-        current_role_list.append(clan_role.discord_role_id)
-
-    add_role_id_list, remove_role_id_list = discord_responder.role_add_remove_list(
-        needed_role_list, current_role_list)
-
-    # get objects of roles to add from id's
-    add_role_obj_list = []
-    for add_role_id in add_role_id_list:
-        # returns None if role is not found
-        add_role_obj = disnake.utils.get(inter.guild.roles, id=add_role_id)
-        # role not found in guild.roles
-        if add_role_obj is None:
-            await inter.send(content=(
-                f"could not find role for id {add_role_id}, "
-                f"please ensure claimed roles and discord roles match"))
-            continue
-
-        add_role_obj_list.append(add_role_obj)
-
-    # get objects of roles to remove from id's
-    remove_role_obj_list = []
-    for remove_role_id in remove_role_id_list:
-        # returns None if role is not found
-        remove_role_obj = disnake.utils.get(
-            inter.guild.roles, id=remove_role_id)
-        # role not found in guild.roles
-        if remove_role_obj is None:
-            await inter.send(content=(
-                f"could not find role for id {remove_role_id}, "
-                f"please ensure claimed roles and discord roles match"))
-            continue
-
-        remove_role_obj_list.append(remove_role_obj)
-
-    # add roles
-    for add_role_obj in add_role_obj_list:
-        await user.add_roles(add_role_obj)
-
-    # remove roles
-    for remove_role_obj in remove_role_obj_list:
-        await user.remove_roles(remove_role_obj)
-
-    # no roles added or removed
-    if len(add_role_obj_list) == 0 and len(remove_role_obj_list) == 0:
-        field_dict_list = [{
-            "name": f"no roles changed",
-            "value": f"{user.mention}"
-        }]
-
-        embed_list = discord_responder.embed_message(
-            Embed=disnake.Embed,
-            color=disnake.Color(client_data.embed_color),
-            icon_url=inter.bot.user.avatar.url,
-            title=f"{user.display_name}",
-            description=None,
-            bot_prefix=inter.bot.command_prefix,
-            bot_user_name=inter.bot.user.name,
-            thumbnail=None,
-            field_list=field_dict_list,
-            image_url=None,
-            author_display_name=inter.author.display_name,
-            author_avatar_url=inter.author.avatar.url
-        )
-
-        await inter.send(embeds=embed_list)
-
-    # roles have been added or removed
-    else:
-        field_dict_list = []
-
-        # adding makeshift title
-        field_dict_list.append({
-            "name": f"roles changed",
-            "value": user.mention,
-            "inline": True
-        })
-
-        # adding added roles to field dict list
-        for role in add_role_obj_list:
-            field_dict_list.append({
-                "name": f"added role",
-                "value": role.name
-            })
-
-        # adding removed roles to field dict list
-        for role in remove_role_obj_list:
-            field_dict_list.append({
-                "name": f"removed role",
-                "value": role.name
-            })
-
-        embed_list = discord_responder.embed_message(
-            Embed=disnake.Embed,
-            color=disnake.Color(client_data.embed_color),
-            icon_url=inter.bot.user.avatar.url,
-            title=f"{user.display_name}",
-            description=None,
-            bot_prefix=inter.bot.command_prefix,
-            bot_user_name=inter.bot.user.name,
-            thumbnail=None,
-            field_list=field_dict_list,
+            thumbnail=embed_dict["thumbnail"],
+            field_list=embed_dict["field_dict_list"],
             image_url=None,
             author_display_name=inter.author.display_name,
             author_avatar_url=inter.author.avatar.url
@@ -3029,252 +2576,25 @@ async def roleall(inter):
 
     await inter.send(embeds=embed_list)
 
-    for discord_user_obj in inter.guild.members:
-        if discord_user_obj.bot:
+    for user in inter.guild.members:
+        if user.bot:
             continue
 
-        db_player_obj_list = db_responder.read_player_list(
-            discord_user_obj.id)
+        embed_dict_list = await discord_responder.update_roles(
+            user, inter.guild, coc_client)
 
-        # player is not claimed
-        if len(db_player_obj_list) == 0:
-            field_dict_list = [{
-                "name": f"no claimed players",
-                "value": f"{discord_user_obj.mention}"
-            }]
+        for embed_dict in embed_dict_list:
 
             embed_list = discord_responder.embed_message(
                 Embed=disnake.Embed,
                 color=disnake.Color(client_data.embed_color),
                 icon_url=inter.bot.user.avatar.url,
-                title=f"{discord_user_obj.display_name}",
+                title=embed_dict["title"],
                 description=None,
                 bot_prefix=inter.bot.command_prefix,
                 bot_user_name=inter.bot.user.name,
-                thumbnail=None,
-                field_list=field_dict_list,
-                image_url=None,
-                author_display_name=inter.author.display_name,
-                author_avatar_url=inter.author.avatar.url
-            )
-
-            await inter.send(embeds=embed_list)
-            continue
-
-        # getting a list of all claimed players
-        player_obj_list = []
-        for db_obj in db_player_obj_list:
-            player_obj = await clash_responder.get_player(
-                db_obj.player_tag, coc_client)
-            if player_obj:
-                player_obj_list.append(player_obj)
-            # player was not found from tag
-            else:
-                await inter.send(
-                    content=(f"couldn't find player from tag "
-                             f"{db_obj.player_tag}"))
-                continue
-
-        # get needed roles
-        needed_role_list = []
-        for player_obj in player_obj_list:
-            # claimed clan validation
-            db_clan_obj = db_responder.read_clan(
-                inter.guild.id, player_obj.clan.tag)
-            # clan not found
-            if not db_clan_obj:
-                field_dict_list = [{
-                    "name": f"{player_obj.clan.name} {player_obj.clan.tag}",
-                    "value": f"not claimed in {inter.guild.name} server"
-                }]
-
-                embed_list = discord_responder.embed_message(
-                    Embed=disnake.Embed,
-                    color=disnake.Color(client_data.embed_color),
-                    icon_url=inter.bot.user.avatar.url,
-                    title=(f"{discord_user_obj.display_name} "
-                           f"{player_obj.name} {player_obj.tag}"),
-                    description=None,
-                    bot_prefix=inter.bot.command_prefix,
-                    bot_user_name=inter.bot.user.name,
-                    thumbnail=player_obj.league.icon,
-                    field_list=field_dict_list,
-                    image_url=None,
-                    author_display_name=inter.author.display_name,
-                    author_avatar_url=inter.author.avatar.url
-                )
-
-                await inter.send(embeds=embed_list)
-                continue
-
-            # get discord clan and rank roles
-            db_clan_role_obj = db_responder.read_clan_role_from_tag(
-                inter.guild.id, player_obj.clan.tag)
-            db_rank_role_obj = (db_responder.read_rank_role_from_guild_and_clash(
-                inter.guild.id, player_obj.role.value))
-
-            if not db_clan_role_obj and not db_rank_role_obj:
-                field_dict_list = [{
-                    "name": f"clan and rank roles not claimed",
-                    "value": f"please claim proper roles"
-                }]
-
-                embed_list = discord_responder.embed_message(
-                    Embed=disnake.Embed,
-                    color=disnake.Color(client_data.embed_color),
-                    icon_url=inter.bot.user.avatar.url,
-                    title=f"{discord_user_obj.display_name} {player_obj.name}",
-                    description=None,
-                    bot_prefix=inter.bot.command_prefix,
-                    bot_user_name=inter.bot.user.name,
-                    thumbnail=player_obj.league.icon,
-                    field_list=field_dict_list,
-                    image_url=None,
-                    author_display_name=inter.author.display_name,
-                    author_avatar_url=inter.author.avatar.url
-                )
-
-                await inter.send(embeds=embed_list)
-                continue
-
-            # add clan role if found
-            if db_clan_role_obj:
-                needed_role_list.append(db_clan_role_obj.discord_role_id)
-            # add rank role if found
-            if db_rank_role_obj:
-                needed_role_list.append(db_rank_role_obj.discord_role_id)
-
-        # if the user has no needed roles
-        if len(needed_role_list) == 0:
-            uninitiated_role = db_responder.read_rank_role_from_guild_and_clash(
-                inter.guild.id, "uninitiated"
-            )
-            if uninitiated_role:
-                needed_role_list.append(uninitiated_role.discord_role_id)
-
-        # get rid of duplicates
-        needed_role_list = list(dict.fromkeys(needed_role_list))
-
-        # get current roles
-        current_discord_role_list = []
-        for current_role in discord_user_obj.roles:
-            current_discord_role_list.append(current_role.id)
-
-        # get current roles that match db roles
-        current_db_rank_role_list = db_responder.read_rank_role_list(
-            current_discord_role_list)
-
-        current_db_clan_role_list = db_responder.read_clan_role_list(
-            current_discord_role_list
-        )
-
-        # getting the list of role id's
-        current_role_list = []
-        for rank_role in current_db_rank_role_list:
-            current_role_list.append(rank_role.discord_role_id)
-        for clan_role in current_db_clan_role_list:
-            current_role_list.append(clan_role.discord_role_id)
-
-        add_role_id_list, remove_role_id_list = discord_responder.role_add_remove_list(
-            needed_role_list, current_role_list)
-
-        # get objects of roles to add from id's
-        add_role_obj_list = []
-        for add_role_id in add_role_id_list:
-            # returns None if role is not found
-            add_role_obj = disnake.utils.get(
-                inter.guild.roles, id=add_role_id)
-            # role not found in guild.roles
-            if add_role_obj is None:
-                await inter.send(content=(
-                    f"could not find role for id {add_role_id}, "
-                    f"please ensure claimed roles and discord roles match"))
-                continue
-
-            add_role_obj_list.append(add_role_obj)
-
-        # get objects of roles to remove from id's
-        remove_role_obj_list = []
-        for remove_role_id in remove_role_id_list:
-            # returns None if role is not found
-            remove_role_obj = disnake.utils.get(
-                inter.guild.roles, id=remove_role_id)
-            # role not found in guild.roles
-            if remove_role_obj is None:
-                await inter.send(content=(
-                    f"could not find role for id {remove_role_id}, "
-                    f"please ensure claimed roles and discord roles match"))
-                continue
-
-            remove_role_obj_list.append(remove_role_obj)
-
-        # add roles
-        for add_role_obj in add_role_obj_list:
-            await discord_user_obj.add_roles(add_role_obj)
-
-        # remove roles
-        for remove_role_obj in remove_role_obj_list:
-            await discord_user_obj.remove_roles(remove_role_obj)
-
-        # no roles added or removed
-        if len(add_role_obj_list) == 0 and len(remove_role_obj_list) == 0:
-            field_dict_list = [{
-                "name": f"no roles changed",
-                "value": f"{discord_user_obj.mention}"
-            }]
-
-            embed_list = discord_responder.embed_message(
-                Embed=disnake.Embed,
-                color=disnake.Color(client_data.embed_color),
-                icon_url=inter.bot.user.avatar.url,
-                title=f"{discord_user_obj.display_name}",
-                description=None,
-                bot_prefix=inter.bot.command_prefix,
-                bot_user_name=inter.bot.user.name,
-                thumbnail=None,
-                field_list=field_dict_list,
-                image_url=None,
-                author_display_name=inter.author.display_name,
-                author_avatar_url=inter.author.avatar.url
-            )
-
-            await inter.send(embeds=embed_list)
-
-        # roles have been added or removed
-        else:
-            field_dict_list = []
-
-            # adding makeshift title
-            field_dict_list.append({
-                "name": f"roles changed",
-                "value": discord_user_obj.mention,
-                "inline": True
-            })
-
-            # adding added roles to field dict list
-            for role in add_role_obj_list:
-                field_dict_list.append({
-                    "name": f"added role",
-                    "value": role.name
-                })
-
-            # adding removed roles to field dict list
-            for role in remove_role_obj_list:
-                field_dict_list.append({
-                    "name": f"removed role",
-                    "value": role.name
-                })
-
-            embed_list = discord_responder.embed_message(
-                Embed=disnake.Embed,
-                color=disnake.Color(client_data.embed_color),
-                icon_url=inter.bot.user.avatar.url,
-                title=f"{discord_user_obj.display_name}",
-                description=None,
-                bot_prefix=inter.bot.command_prefix,
-                bot_user_name=inter.bot.user.name,
-                thumbnail=None,
-                field_list=field_dict_list,
+                thumbnail=embed_dict["thumbnail"],
+                field_list=embed_dict["field_dict_list"],
                 image_url=None,
                 author_display_name=inter.author.display_name,
                 author_avatar_url=inter.author.avatar.url
@@ -3690,13 +3010,12 @@ async def claimclan(inter, clan_tag: str):
             content=f"couldn't find clan {clan_tag}")
         return
 
-    claimed_clan_obj = db_responder.read_clan(inter.guild.id, clan_obj.tag)
+    db_guild_obj = db_responder.read_guild(inter.guild.id)
 
-    # already claimed
-    if claimed_clan_obj:
-        await inter.edit_original_message(content=(
-            f"{clan_obj.name} has already been claimed for "
-            f"{inter.guild.name}"))
+    # guild not claimed
+    if not db_guild_obj:
+        await inter.edit_original_message(
+            content=f"{inter.guild.name} has not been claimed")
         return
 
     db_user_obj = db_responder.read_user(inter.author.id)
@@ -3707,19 +3026,20 @@ async def claimclan(inter, clan_tag: str):
             content=f"{inter.author.mention} has not been claimed")
         return
 
-    db_guild_obj = db_responder.read_guild(inter.guild.id)
-
-    # guild not claimed
-    if not db_guild_obj:
-        await inter.edit_original_message(
-            content=f"{inter.guild.name} has not been claimed")
-        return
-
     # user is not guild admin and is not super user
     if (not db_guild_obj.admin_user_id == inter.author.id
             and not db_user_obj.super_user):
         await inter.edit_original_message(
             content=f"{inter.author.mention} is not guild's admin")
+        return
+
+    claimed_clan_obj = db_responder.read_clan(inter.guild.id, clan_obj.tag)
+
+    # already claimed
+    if claimed_clan_obj:
+        await inter.edit_original_message(content=(
+            f"{clan_obj.name} has already been claimed for "
+            f"{inter.guild.name}"))
         return
 
     db_player_obj_list = db_responder.read_player_list(inter.author.id)
@@ -3827,18 +3147,18 @@ async def removeclan(inter, clan_tag: str):
             content=f"couldn't find clan {clan_tag}")
         return
 
-    db_user_obj = db_responder.read_user(inter.author.id)
-    # user not claimed
-    if not db_user_obj:
-        await inter.edit_original_message(
-            content=f"{inter.author.mention} has not been claimed")
-        return
-
     db_guild_obj = db_responder.read_guild(inter.guild.id)
     # guild not claimed
     if not db_guild_obj:
         await inter.edit_original_message(
             content=f"{inter.guild.name} has not been claimed")
+        return
+
+    db_user_obj = db_responder.read_user(inter.author.id)
+    # user not claimed
+    if not db_user_obj:
+        await inter.edit_original_message(
+            content=f"{inter.author.mention} has not been claimed")
         return
 
     # user is not guild admin and is not super user
@@ -3995,17 +3315,17 @@ async def removeroleclaim(inter, role: disnake.Role):
 
     db_user_obj = db_responder.read_user(inter.author.id)
 
-    # user not claimed
-    if not db_user_obj:
-        await inter.edit_original_message(
-            content=f"{inter.author.mention} has not been claimed")
-        return
-
     db_guild_obj = db_responder.read_guild(inter.guild.id)
     # guild not claimed
     if not db_guild_obj:
         await inter.edit_original_message(
             content=f"{inter.guild.name} has not been claimed")
+        return
+
+    # user not claimed
+    if not db_user_obj:
+        await inter.edit_original_message(
+            content=f"{inter.author.mention} has not been claimed")
         return
 
     # user is not guild admin and is not super user
@@ -4078,20 +3398,20 @@ async def claimclanrole(inter, role: disnake.Role, clan_tag: str):
             content=f"couldn't find clan {clan_tag}")
         return
 
-    db_user_obj = db_responder.read_user(inter.author.id)
-
-    # user not claimed
-    if not db_user_obj:
-        await inter.edit_original_message(
-            content=f"{inter.author.mention} has not been claimed")
-        return
-
     db_guild_obj = db_responder.read_guild(inter.guild.id)
 
     # guild not claimed
     if not db_guild_obj:
         await inter.edit_original_message(
             content=f"{inter.guild.name} has not been claimed")
+        return
+
+    db_user_obj = db_responder.read_user(inter.author.id)
+
+    # user not claimed
+    if not db_user_obj:
+        await inter.edit_original_message(
+            content=f"{inter.author.mention} has not been claimed")
         return
 
     # user is not guild admin and is not super user
@@ -4150,10 +3470,10 @@ async def claimclanrole(inter, role: disnake.Role, clan_tag: str):
     brief='client',
     description="claim a rank's discord role"
 )
-async def claimrankrole(inter,
-                        role: disnake.Role,
+async def claimrankrole(inter, role: disnake.Role,
                         rank_name: str = commands.Param(choices=[
-        "leader", "co-leader", "elder", "member", "uninitiated"])):
+        "leader", "co-leader", "elder", "member", "uninitiated"])
+):
     """
         claim a rank's discord role
 
@@ -4174,18 +3494,18 @@ async def claimrankrole(inter,
             content=f"{rank_name} is not a valid rank")
         return
 
-    db_user_obj = db_responder.read_user(inter.author.id)
-    # user not claimed
-    if not db_user_obj:
-        await inter.edit_original_message(
-            content=f"{inter.author.mention} has not been claimed")
-        return
-
     db_guild_obj = db_responder.read_guild(inter.guild.id)
     # guild not claimed
     if not db_guild_obj:
         await inter.edit_original_message(
             content=f"{inter.guild.name} has not been claimed")
+        return
+
+    db_user_obj = db_responder.read_user(inter.author.id)
+    # user not claimed
+    if not db_user_obj:
+        await inter.edit_original_message(
+            content=f"{inter.author.mention} has not been claimed")
         return
 
     # user is not guild admin and is not super user
@@ -4408,7 +3728,7 @@ async def on_reaction_add(reaction, user):
         icon_url=ctx.bot.user.avatar.url,
         title=embed_title,
         description=None,
-        bot_prefix=ctx.prefix,
+        bot_prefix=ctx.bot.command_prefix,
         bot_user_name=ctx.bot.user.name,
         thumbnail=None,
         field_list=field_dict_list,
