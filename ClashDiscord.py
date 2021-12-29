@@ -2419,7 +2419,8 @@ async def role(inter):
 
     # if guild is not claimed
     if not db_guild_obj:
-        await inter.edit_original_message(f"{inter.guild.name} has not been claimed")
+        await inter.edit_original_message(
+            content=f"{inter.guild.name} has not been claimed")
         return
 
     # setting disord_user_obj to author
@@ -2460,8 +2461,8 @@ async def role(inter):
             player_obj_list.append(player_obj)
         # player was not found from tag
         else:
-            await inter.edit_original_message(f"couldn't find player from tag "
-                                              f"{db_obj.player_tag}")
+            await inter.edit_original_message(
+                content=f"couldn't find player from tag {db_obj.player_tag}")
             return
 
     # get needed roles
@@ -2576,8 +2577,8 @@ async def role(inter):
             add_role_obj_list.append(add_role_obj)
         else:
             await inter.edit_original_message(
-                f"could not find role for id {add_role_id}, "
-                f"please ensure claimed roles and discord roles match"
+                content=(f"could not find role for id {add_role_id}, "
+                         f"please ensure claimed roles and discord roles match")
             )
 
     # get objects of roles to remove from id's
@@ -2591,8 +2592,8 @@ async def role(inter):
             remove_role_obj_list.append(remove_role_obj)
         else:
             await inter.edit_original_message(
-                f"could not find role for id {remove_role_id}, "
-                f"please ensure claimed roles and discord roles match"
+                content=(f"could not find role for id {remove_role_id}, "
+                         f"please ensure claimed roles and discord roles match")
             )
 
     # add roles
@@ -2689,7 +2690,8 @@ async def rolemember(inter, user: disnake.User):
 
     # if guild is not claimed
     if not db_guild_obj:
-        await inter.edit_original_message(f"{inter.guild.name} has not been claimed")
+        await inter.edit_original_message(
+            content=f"{inter.guild.name} has not been claimed")
         return
 
     # getting author's db player obj for leadership verification
@@ -2755,7 +2757,7 @@ async def rolemember(inter, user: disnake.User):
         # player was not found from tag
         else:
             await inter.edit_original_message(
-                f"couldn't find player from tag {db_obj.player_tag}")
+                content=f"couldn't find player from tag {db_obj.player_tag}")
             return
 
     # get needed roles
@@ -2870,8 +2872,8 @@ async def rolemember(inter, user: disnake.User):
             add_role_obj_list.append(add_role_obj)
         else:
             await inter.edit_original_message(
-                f"could not find role for id {add_role_id}, "
-                f"please ensure claimed roles and discord roles match"
+                content=(f"could not find role for id {add_role_id}, "
+                         f"please ensure claimed roles and discord roles match")
             )
 
     # get objects of roles to remove from id's
@@ -2885,8 +2887,8 @@ async def rolemember(inter, user: disnake.User):
             remove_role_obj_list.append(remove_role_obj)
         else:
             await inter.edit_original_message(
-                f"could not find role for id {remove_role_id}, "
-                f"please ensure claimed roles and discord roles match"
+                content=(f"could not find role for id {remove_role_id}, "
+                         f"please ensure claimed roles and discord roles match")
             )
 
     # add roles
@@ -2979,21 +2981,24 @@ async def roleall(inter):
 
     if not db_guild_obj:
         # if guild is not claimed
-        await inter.edit_original_message(f"{inter.guild.name} has not been claimed")
+        await inter.edit_original_message(
+            content=f"{inter.guild.name} has not been claimed")
         return
 
     db_user_obj = db_responder.read_user(inter.author.id)
 
     # if user is not claimed
     if not db_user_obj:
-        await inter.edit_original_message(f"{inter.author.mention} has not been claimed")
+        await inter.edit_original_message(
+            content=f"{inter.author.mention} has not been claimed")
         return
 
     # if author is not guild admin and is not super user
     if (not db_guild_obj.admin_user_id == inter.author.id
             and not db_user_obj.super_user):
 
-        await inter.edit_original_message(f"{inter.author.mention} is not guild's admin")
+        await inter.edit_original_message(
+            content=f"{inter.author.mention} is not guild's admin")
         return
 
     # telling the user that the bot is updating roles
@@ -3055,8 +3060,9 @@ async def roleall(inter):
                 player_obj_list.append(player_obj)
             # player was not found from tag
             else:
-                await inter.send(f"couldn't find player from tag "
-                                 f"{db_obj.player_tag}")
+                await inter.send(
+                    content=(f"couldn't find player from tag "
+                             f"{db_obj.player_tag}"))
                 continue
 
         # get needed roles
@@ -3165,14 +3171,15 @@ async def roleall(inter):
         add_role_obj_list = []
         for add_role_id in add_role_id_list:
             # returns None if role is not found
-            add_role_obj = disnake.utils.get(inter.guild.roles, id=add_role_id)
+            add_role_obj = disnake.utils.get(
+                inter.guild.roles, id=add_role_id)
             if add_role_obj:
                 # role was found in guild.roles
                 add_role_obj_list.append(add_role_obj)
             else:
                 await inter.send(
-                    f"could not find role for id {add_role_id}, "
-                    f"please ensure claimed roles and discord roles match"
+                    content=(f"could not find role for id {add_role_id}, "
+                             f"please ensure claimed roles and discord roles match")
                 )
 
         # get objects of roles to remove from id's
@@ -3186,8 +3193,8 @@ async def roleall(inter):
                 remove_role_obj_list.append(remove_role_obj)
             else:
                 await inter.send(
-                    f"could not find role for id {remove_role_id}, "
-                    f"please ensure claimed roles and discord roles match"
+                    content=(f"could not find role for id {remove_role_id}, "
+                             f"please ensure claimed roles and discord roles match")
                 )
 
         # add roles
