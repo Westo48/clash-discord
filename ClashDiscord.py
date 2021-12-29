@@ -2389,43 +2389,6 @@ async def allattack(inter):
 # Discord
 
 @bot.command(
-    aliases=['mentionraz'],
-    brief='testing',
-    description=('This will send a message to mention Razgriz'),
-    hidden=True
-)
-async def mentionrazgriz(ctx):
-    field_dict_list = []
-    embed_list = discord_responder.embed_message(
-        Embed=disnake.Embed,
-        color=disnake.Color(client_data.embed_color),
-        icon_url=ctx.bot.user.avatar.url,
-        title=f"mention testing",
-        description=None,
-        bot_prefix=ctx.prefix,
-        bot_user_name=ctx.bot.user.name,
-        thumbnail={'small': "https://i.imgur.com/JBt2Kwt.gif"},
-        field_list=field_dict_list,
-        image_url=None,
-        author_display_name=ctx.author.display_name,
-        author_avatar_url=ctx.author.avatar.url
-    )
-
-    for embed in embed_list:
-        await ctx.send(embed=embed)
-
-
-@bot.command(
-    aliases=['emoji'],
-    brief='testing',
-    description=('emoji testing'),
-    hidden=True
-)
-async def emojitesting(ctx):
-    await ctx.send(f"this is currently not in use, only for emoji testing")
-
-
-@bot.command(
     aliases=['roleme'],
     brief='discord',
     description=('this will give you your clan role '
