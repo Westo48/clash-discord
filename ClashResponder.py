@@ -285,6 +285,24 @@ def find_unit(player_obj, unit_name):
     return None
 
 
+def home_unit_names(coc):
+    """
+        returns a list of all home unit names
+
+        Args:
+            coc (obj): coc.py object
+
+        Returns:
+            home_unit_names: list of all unit names
+    """
+    return (
+        coc.HERO_ORDER +
+        coc.HERO_PETS_ORDER +
+        coc.HOME_TROOP_ORDER +
+        coc.SPELL_ORDER
+    )
+
+
 def player_active_super_troops(player_obj):
     """
         Returns a list of active super troops,
