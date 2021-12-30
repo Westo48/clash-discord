@@ -38,7 +38,13 @@ def get_client_test_guilds():
         returns RazBot_Data client test guilds
     """
 
-    return RazBot_Data.RazBot_Data().test_guilds
+    test_guilds = RazBot_Data.RazBot_Data().test_guilds
+
+    if len(test_guilds) > 0:
+        return test_guilds
+
+    else:
+        return None
 
 
 def get_client_email():
