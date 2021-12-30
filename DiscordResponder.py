@@ -426,6 +426,8 @@ def unit_lvl_all(player_obj):
         field_dict_list.append(field_dict)
     for field_dict in spell_lvl_all(player_obj):
         field_dict_list.append(field_dict)
+    for field_dict in siege_lvl_all(player_obj):
+        field_dict_list.append(field_dict)
     return field_dict_list
 
 

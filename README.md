@@ -32,30 +32,30 @@ Getting ClashDiscord set up in your discord server can be somewhat confusing, bu
 
 1. invite ClashDiscord to your discord server
 
-   - [invite link](https://discord.com/api/oauth2/authorize?client_id=649107156989378571&permissions=2214947905&scope=bot%20applications.commands)
+   - [invite link](https://discord.com/api/oauth2/authorize?client_id=649107156989378571&permissions=1239433964608&scope=bot%20applications.commands)
 
 2. claim your user in ClashDiscord
 
-   - /claimuser
+   - /client claimuser
      - this will claim you as a user
      - _this can be done in any claimed guild_
 
 3. claim your discord server
 
-   - /claimguild
+   - client claimguild
      - this will claim your discord server and add you as the guild admin within ClashDiscord
      - guild is what the discord API calls a server
 
 4. link a player to your user
 
-   - /claimplayer `playertag apikey`
+   - client claimplayer `playertag apikey`
      - claims the requested player and links it to your discord user
      - _this can be done in any claimed guild_
      - getting your api key is annoying, but for everyone’s security this is necessary
 
 5. link a clan to your guild
 
-   - /claimclan `clantag`
+   - client claimclan `clantag`
      - claims a clan and links it to the claimed guild
      - your active player **must** be in the clan
      - _this is also for security_
@@ -63,13 +63,13 @@ Getting ClashDiscord set up in your discord server can be somewhat confusing, bu
 6. link existing roles to your server
 
    - claim clan roles
-     - /claimclanrole `clantag mentionrole`
+     - client claimclanrole `clantag mentionrole`
        - links the clan role to a claimed clan
        - _mentionrole means you have to @mention the role_
 
    B. claim rank roles
 
-   - /claimrankrole `rank mentionrole`
+   - client claimrankrole `rank mentionrole`
      - links the rank role to a discord role
        - leader
        - co-leader

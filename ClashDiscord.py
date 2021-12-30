@@ -202,8 +202,6 @@ async def memberinfo(inter, user: disnake.User):
 
     db_player_obj = db_responder.read_player_active(user.id)
 
-    player_obj = await clash_responder.get_player(db_player_obj.player_tag, coc_client)
-
     verification_payload = await discord_responder.player_verification(
         db_player_obj, user, coc_client)
     if not verification_payload['verified']:
@@ -3781,7 +3779,7 @@ async def on_guild_remove(guild):
 @bot.event
 async def on_command_error(ctx, error):
     if isinstance(error, commands.CommandNotFound):
-        await ctx.send(f"command '{ctx.invoked_with}' could not be found")
+        await ctx.send(f"slash command not used, please use slash commands")
     elif isinstance(error, commands.MissingRequiredArgument):
         await ctx.send(f"command '{ctx.invoked_with}' "
                        f"requires more information")
