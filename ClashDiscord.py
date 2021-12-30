@@ -2498,6 +2498,129 @@ async def announce(inter, channel: disnake.TextChannel, message: str):
 @discord.sub_command(
     description=("*leadership* "
                  "announces message to specified channel, "
+                 "pings user with the specified player tag")
+)
+async def announceplayer(
+    inter, channel: disnake.TextChannel, 
+    player_tag: str, message: str
+):
+    """
+        *leadership*
+        announces message to specified channel,
+        pings user with the specified player tag
+
+        Parameters
+        ----------
+        channel: channel to announce the message
+        player_tag: player tag to find and ping user
+        message: message to send the specified channel
+    """
+
+    await inter.response.defer(ephemeral=True)
+
+    db_player_obj = db_responder.read_player_active(inter.author.id)
+
+    verification_payload = (
+        await discord_responder.player_leadership_verification(
+            db_player_obj, inter.author, coc_client))
+    if not verification_payload['verified']:
+        embed_list = discord_responder.embed_message(
+            Embed=disnake.Embed,
+            color=disnake.Color(client_data.embed_color),
+            icon_url=inter.bot.user.avatar.url,
+            title=None,
+            description=None,
+            bot_prefix=inter.bot.command_prefix,
+            bot_user_name=inter.bot.user.name,
+            thumbnail=None,
+            field_list=verification_payload['field_dict_list'],
+            image_url=None,
+            author_display_name=inter.author.display_name,
+            author_avatar_url=inter.author.avatar.url
+        )
+
+        await inter.edit_original_message(embeds=embed_list)
+        return
+
+    player = await clash_responder.get_player(player_tag, coc_client)
+
+    if player is None:
+        field_dict_list = [{
+            "name": f"player with tag {player_tag} not found",
+            "value": f"please check the tag and try again"
+        }]
+        embed_list = discord_responder.embed_message(
+            Embed=disnake.Embed,
+            color=disnake.Color(client_data.embed_color),
+            icon_url=inter.bot.user.avatar.url,
+            title=None,
+            description=None,
+            bot_prefix=inter.bot.command_prefix,
+            bot_user_name=inter.bot.user.name,
+            thumbnail=None,
+            field_list=field_dict_list,
+            image_url=None,
+            author_display_name=inter.author.display_name,
+            author_avatar_url=inter.author.avatar.url
+        )
+        await inter.edit_original_message(embeds=embed_list)
+        return
+        
+    message += "\n\n"
+
+    message += discord_responder.user_player_ping(
+        player, inter.guild.members)
+
+    try:
+        await channel.send(content=message)
+    except:
+        field_dict_list = [{
+            "name": "message could not be sent",
+            "value": f"please ensure bot is in channel {channel.mention}"
+        }]
+        embed_list = discord_responder.embed_message(
+            Embed=disnake.Embed,
+            color=disnake.Color(client_data.embed_color),
+            icon_url=inter.bot.user.avatar.url,
+            title=None,
+            description=None,
+            bot_prefix=inter.bot.command_prefix,
+            bot_user_name=inter.bot.user.name,
+            thumbnail=None,
+            field_list=field_dict_list,
+            image_url=None,
+            author_display_name=inter.author.display_name,
+            author_avatar_url=inter.author.avatar.url
+        )
+        await inter.send(embeds=embed_list)
+
+        return
+
+    field_dict_list = [{
+        "name": "message sent",
+        "value": f"channel {channel.mention}"
+    }]
+    embed_list = discord_responder.embed_message(
+        Embed=disnake.Embed,
+        color=disnake.Color(client_data.embed_color),
+        icon_url=inter.bot.user.avatar.url,
+        title=None,
+        description=None,
+        bot_prefix=inter.bot.command_prefix,
+        bot_user_name=inter.bot.user.name,
+        thumbnail=None,
+        field_list=field_dict_list,
+        image_url=None,
+        author_display_name=inter.author.display_name,
+        author_avatar_url=inter.author.avatar.url
+    )
+    await inter.send(embeds=embed_list)
+
+
+
+@discord.sub_command(
+    description=("*leadership* "
+                 "announces message to specified channel, "
                  "pings all in current war")
 )
 async def announcewar(inter, channel: disnake.TextChannel, message: str):

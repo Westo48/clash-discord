@@ -2319,8 +2319,8 @@ def user_player_ping(player, member_list):
 
     return f"{user.mention} ({player.name} {player.tag})"
 
-# roles
 
+# roles
 
 async def update_roles(user, guild, coc_client):
     """
