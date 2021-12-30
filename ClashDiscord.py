@@ -3780,17 +3780,25 @@ async def on_guild_remove(guild):
 async def on_command_error(ctx, error):
     if isinstance(error, commands.CommandNotFound):
         await ctx.send(f"slash command not used, please use slash commands")
+
     elif isinstance(error, commands.MissingRequiredArgument):
-        await ctx.send(f"command '{ctx.invoked_with}' "
-                       f"requires more information")
+        if hasattr(ctx, "invoked_with"):
+            await ctx.send(f"command '{ctx.invoked_with}' "
+                           f"requires more information")
+
+        else:
+            await ctx.send(f"command requires more information")
+
     elif hasattr(error.original, "text"):
         await ctx.send(f"there was an error that I have not accounted for, "
                        f"please let Razgriz know.\n\n"
                        f"error text: `{error.original.text}`")
+
     elif hasattr(error.original, "args"):
         await ctx.send(f"there was an error that I have not accounted for, "
                        f"please let Razgriz know.\n\n"
                        f"error text: `{error.original.args[0]}`")
+
     else:
         await ctx.send(f"there was an error that I have not accounted for, "
                        f"please let Razgriz know")
@@ -3799,20 +3807,34 @@ async def on_command_error(ctx, error):
 @bot.event
 async def on_slash_command_error(inter, exception):
     if isinstance(exception, commands.CommandNotFound):
-        await inter.send(f"command '{inter.invoked_with}' could not be found")
+        await inter.send(
+            content=f"command '{inter.invoked_with}' could not be found")
+
     elif isinstance(exception, commands.MissingRequiredArgument):
-        await inter.send(f"command '{inter.invoked_with}' "
-                         f"requires more information")
+        if hasattr(inter, "invoked_with"):
+            await inter.send(
+                content=(f"command '{inter.invoked_with}' "
+                         f"requires more information"))
+
+        else:
+            await inter.send(
+                content=f"command requires more information")
+
     elif hasattr(exception.original, "text"):
-        await inter.send(f"there was an error that I have not accounted for, "
-                         f"please let Razgriz know.\n\n"
-                         f"error text: `{exception.original.text}`")
+        await inter.send(
+            content=(f"there was an error that I have not accounted for, "
+                     f"please let Razgriz know.\n\n"
+                     f"error text: `{exception.original.text}`"))
+
     elif hasattr(exception.original, "args"):
-        await inter.send(f"there was an error that I have not accounted for, "
-                         f"please let Razgriz know.\n\n"
-                         f"error text: `{exception.original.args[0]}`")
+        await inter.send(
+            content=(f"there was an error that I have not accounted for, "
+                     f"please let Razgriz know.\n\n"
+                     f"error text: `{exception.original.args[0]}`"))
+
     else:
-        await inter.send(f"there was an error that I have not accounted for, "
-                         f"please let Razgriz know")
+        await inter.send(
+            content=(f"there was an error that I have not accounted for, "
+                     f"please let Razgriz know"))
 
 bot.run(discord_responder.get_client_token())
