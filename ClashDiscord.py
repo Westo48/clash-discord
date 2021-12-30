@@ -1,7 +1,6 @@
 import disnake
 import coc
 from asyncio.tasks import sleep
-from disnake.errors import DiscordServerError
 from disnake.ext import commands
 import ClashDiscord_Client_Data
 import ClashResponder as clash_responder
