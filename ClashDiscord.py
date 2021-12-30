@@ -1,6 +1,7 @@
 import disnake
 import coc
 from asyncio.tasks import sleep
+from disnake.errors import DiscordServerError
 from disnake.ext import commands
 import ClashDiscord_Client_Data
 import ClashResponder as clash_responder
@@ -2406,6 +2407,90 @@ async def help(inter):
 
     for emoji in emoji_list:
         await original_message.add_reaction(emoji)
+
+
+@discord.sub_command(
+    description="announces the given message to the specified channel"
+)
+async def announce(inter, channel: disnake.TextChannel, message: str):
+    """
+        *leadership* announces the given message to the specified channel
+
+        Parameters
+        ----------
+        channel: channel to announce the message
+    """
+
+    await inter.response.defer(ephemeral=True)
+
+    db_player_obj = db_responder.read_player_active(inter.author.id)
+
+    verification_payload = (
+        await discord_responder.player_leadership_verification(
+            db_player_obj, inter.author, coc_client))
+    if not verification_payload['verified']:
+        embed_list = discord_responder.embed_message(
+            Embed=disnake.Embed,
+            color=disnake.Color(client_data.embed_color),
+            icon_url=inter.bot.user.avatar.url,
+            title=None,
+            description=None,
+            bot_prefix=inter.bot.command_prefix,
+            bot_user_name=inter.bot.user.name,
+            thumbnail=None,
+            field_list=verification_payload['field_dict_list'],
+            image_url=None,
+            author_display_name=inter.author.display_name,
+            author_avatar_url=inter.author.avatar.url
+        )
+
+        await inter.edit_original_message(embeds=embed_list)
+        return
+
+    try:
+        await channel.send(content=message)
+    except:
+        field_dict_list = [{
+            "name": "message could not be sent",
+            "value": f"please ensure bot is in channel {channel.mention}"
+        }]
+        embed_list = discord_responder.embed_message(
+            Embed=disnake.Embed,
+            color=disnake.Color(client_data.embed_color),
+            icon_url=inter.bot.user.avatar.url,
+            title=None,
+            description=None,
+            bot_prefix=inter.bot.command_prefix,
+            bot_user_name=inter.bot.user.name,
+            thumbnail=None,
+            field_list=field_dict_list,
+            image_url=None,
+            author_display_name=inter.author.display_name,
+            author_avatar_url=inter.author.avatar.url
+        )
+        await inter.send(embeds=embed_list)
+
+        return
+
+    field_dict_list = [{
+        "name": "message sent",
+        "value": f"channel {channel.mention}"
+    }]
+    embed_list = discord_responder.embed_message(
+        Embed=disnake.Embed,
+        color=disnake.Color(client_data.embed_color),
+        icon_url=inter.bot.user.avatar.url,
+        title=None,
+        description=None,
+        bot_prefix=inter.bot.command_prefix,
+        bot_user_name=inter.bot.user.name,
+        thumbnail=None,
+        field_list=field_dict_list,
+        image_url=None,
+        author_display_name=inter.author.display_name,
+        author_avatar_url=inter.author.avatar.url
+    )
+    await inter.send(embeds=embed_list)
 
 
 @discord.sub_command(
