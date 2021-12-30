@@ -156,12 +156,15 @@ ClashDiscord is largely **command** focused, meaning it doesn't do anything that
   - roleall
     - adds and removes necessary roles in discord based on claimed players clan and role in that clan for all users in guild
     - restricted to leaders and co-leaders
-  - finduser `player_tag`
-    - returns the user linked to a requested player
-    - example
-      - `/finduser #RGQ8RGU9`
-  - findclanusers
-    - returns the users linked to the active player's clan
+  - discord announce `channel` `message`
+    - announces message to specified channel
+    - restricted to leaders and co-leaders
+  - discord announcewar `channel` `message`
+    - announces message to specified channel, pings all in current war
+    - restricted to leaders and co-leaders
+  - discord announcewarnoatk `channel` `message`
+    - announces message to channel, pings all in war missing attacks
+    - restricted to leaders and co-leaders
 
 - ## <a id="command-list-player"></a>Player
 
@@ -195,8 +198,10 @@ ClashDiscord is largely **command** focused, meaning it doesn't do anything that
     - shows the level your sieges
   - player supertroop
     - shows the super troops you have active
-  - player finduser
-    - finds the user linked to a requested player
+  - player finduser `player_tag`
+    - returns the user linked to a requested player
+    - example
+      - `/player finduser #RGQ8RGU9`
 
 - ## <a id="command-list-clan"></a>Clan
 
