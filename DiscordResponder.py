@@ -1149,12 +1149,13 @@ def war_all_attacks(war_obj):
     elif war_obj.state == 'inWar' or war_obj.state == "warEnded":
         field_dict_list = []
 
+        # no atk response
         for member_obj in war_obj.clan.members:
-            # no atk response
             if len(member_obj.attacks) == 0:
                 if war_obj.state == "inWar":
                     field_dict_list.append({
-                        'name': f"{member_obj.map_position}. {member_obj.name}",
+                        'name': (f"{member_obj.map_position}. {member_obj.name} "
+                                 f"TH {member_obj.town_hall}"),
                         'value': f"has not attacked"
                     })
                 else:
@@ -2293,7 +2294,33 @@ def find_user_from_tag(player_obj, member_list):
     }
 
 
+def user_player_ping(player, member_list):
+    """
+        turning a player into a user ping
+
+        Args:
+            player (obj): clash player object
+                requires player.name and player.tag
+            member_list (list): list of members in guild
+
+        Returns:
+            string: returns user ping if possible and player info
+    """
+
+    db_user = db_responder.read_user_from_tag(player.tag)
+
+    if db_user is None:
+        return f"{player.name} {player.tag}"
+
+    user = get(member_list, id=db_user.discord_id)
+
+    if user is None:
+        return f"{player.name} {player.tag}"
+
+    return f"{user.mention} ({player.name} {player.tag})"
+
 # roles
+
 
 async def update_roles(user, guild, coc_client):
     """
