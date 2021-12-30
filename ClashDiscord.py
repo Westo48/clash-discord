@@ -2617,7 +2617,6 @@ async def announceplayer(
     await inter.send(embeds=embed_list)
 
 
-
 @discord.sub_command(
     description=("*leadership* "
                  "announces message to specified channel, "
