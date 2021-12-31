@@ -2501,7 +2501,7 @@ async def announce(inter, channel: disnake.TextChannel, message: str):
                  "pings user with the specified player tag")
 )
 async def announceplayer(
-    inter, channel: disnake.TextChannel, 
+    inter, channel: disnake.TextChannel,
     player_tag: str, message: str
 ):
     """
@@ -2565,7 +2565,7 @@ async def announceplayer(
         )
         await inter.edit_original_message(embeds=embed_list)
         return
-        
+
     message += "\n\n"
 
     message += discord_responder.user_player_ping(
@@ -2770,6 +2770,212 @@ async def announcewarnoatk(inter, channel: disnake.TextChannel, message: str):
     for war_member in war_member_no_attack_list:
         member_message = discord_responder.user_player_ping(
             war_member, inter.guild.members)
+        message += (f"{member_message}, ")
+
+    # cuts the last two characters from the string ', '
+    message = message[:-2]
+
+    try:
+        await channel.send(content=message)
+    except:
+        field_dict_list = [{
+            "name": "message could not be sent",
+            "value": f"please ensure bot is in channel {channel.mention}"
+        }]
+        embed_list = discord_responder.embed_message(
+            Embed=disnake.Embed,
+            color=disnake.Color(client_data.embed_color),
+            icon_url=inter.bot.user.avatar.url,
+            title=None,
+            description=None,
+            bot_prefix=inter.bot.command_prefix,
+            bot_user_name=inter.bot.user.name,
+            thumbnail=None,
+            field_list=field_dict_list,
+            image_url=None,
+            author_display_name=inter.author.display_name,
+            author_avatar_url=inter.author.avatar.url
+        )
+        await inter.send(embeds=embed_list)
+
+        return
+
+    field_dict_list = [{
+        "name": "message sent",
+        "value": f"channel {channel.mention}"
+    }]
+    embed_list = discord_responder.embed_message(
+        Embed=disnake.Embed,
+        color=disnake.Color(client_data.embed_color),
+        icon_url=inter.bot.user.avatar.url,
+        title=None,
+        description=None,
+        bot_prefix=inter.bot.command_prefix,
+        bot_user_name=inter.bot.user.name,
+        thumbnail=None,
+        field_list=field_dict_list,
+        image_url=None,
+        author_display_name=inter.author.display_name,
+        author_avatar_url=inter.author.avatar.url
+    )
+    await inter.send(embeds=embed_list)
+
+
+@discord.sub_command(
+    description=("*leadership* "
+                 "announces message to specified channel, "
+                 "pings all in current cwl war")
+)
+async def announcecwlwar(inter, channel: disnake.TextChannel, message: str):
+    """
+        *leadership*
+        announces message to specified channel,
+        pings all in current cwl war
+
+        Parameters
+        ----------
+        channel: channel to announce the message
+        message: message to send the specified channel
+    """
+
+    await inter.response.defer(ephemeral=True)
+
+    db_player_obj = db_responder.read_player_active(inter.author.id)
+
+    verification_payload = (
+        await discord_responder.cwl_war_leadership_verification(
+            db_player_obj, inter.author, coc_client))
+    if not verification_payload['verified']:
+        embed_list = discord_responder.embed_message(
+            Embed=disnake.Embed,
+            color=disnake.Color(client_data.embed_color),
+            icon_url=inter.bot.user.avatar.url,
+            title=None,
+            description=None,
+            bot_prefix=inter.bot.command_prefix,
+            bot_user_name=inter.bot.user.name,
+            thumbnail=None,
+            field_list=verification_payload['field_dict_list'],
+            image_url=None,
+            author_display_name=inter.author.display_name,
+            author_avatar_url=inter.author.avatar.url
+        )
+
+        await inter.edit_original_message(embeds=embed_list)
+        return
+
+    cwl_war = verification_payload['cwl_war_obj']
+
+    message += "\n\n"
+
+    for war_member in cwl_war.clan.members:
+        member_message = discord_responder.user_player_ping(
+            war_member, inter.guild.members)
+        message += (f"{member_message}, ")
+
+    # cuts the last two characters from the string ', '
+    message = message[:-2]
+
+    try:
+        await channel.send(content=message)
+    except:
+        field_dict_list = [{
+            "name": "message could not be sent",
+            "value": f"please ensure bot is in channel {channel.mention}"
+        }]
+        embed_list = discord_responder.embed_message(
+            Embed=disnake.Embed,
+            color=disnake.Color(client_data.embed_color),
+            icon_url=inter.bot.user.avatar.url,
+            title=None,
+            description=None,
+            bot_prefix=inter.bot.command_prefix,
+            bot_user_name=inter.bot.user.name,
+            thumbnail=None,
+            field_list=field_dict_list,
+            image_url=None,
+            author_display_name=inter.author.display_name,
+            author_avatar_url=inter.author.avatar.url
+        )
+        await inter.send(embeds=embed_list)
+
+        return
+
+    field_dict_list = [{
+        "name": "message sent",
+        "value": f"channel {channel.mention}"
+    }]
+    embed_list = discord_responder.embed_message(
+        Embed=disnake.Embed,
+        color=disnake.Color(client_data.embed_color),
+        icon_url=inter.bot.user.avatar.url,
+        title=None,
+        description=None,
+        bot_prefix=inter.bot.command_prefix,
+        bot_user_name=inter.bot.user.name,
+        thumbnail=None,
+        field_list=field_dict_list,
+        image_url=None,
+        author_display_name=inter.author.display_name,
+        author_avatar_url=inter.author.avatar.url
+    )
+    await inter.send(embeds=embed_list)
+
+
+@discord.sub_command(
+    description=("*leadership* "
+                 "announces message to channel, "
+                 "pings all in cwl war missing attacks")
+)
+async def announcecwlwarnoatk(
+    inter, channel: disnake.TextChannel, message: str
+):
+    """
+        *leadership*
+        announces message to channel,
+        pings all in cwl war missing attacks
+
+        Parameters
+        ----------
+        channel: channel to announce the message
+        message: message to send the specified channel
+    """
+
+    await inter.response.defer(ephemeral=True)
+
+    db_player_obj = db_responder.read_player_active(inter.author.id)
+
+    verification_payload = (
+        await discord_responder.cwl_war_leadership_verification(
+            db_player_obj, inter.author, coc_client))
+    if not verification_payload['verified']:
+        embed_list = discord_responder.embed_message(
+            Embed=disnake.Embed,
+            color=disnake.Color(client_data.embed_color),
+            icon_url=inter.bot.user.avatar.url,
+            title=None,
+            description=None,
+            bot_prefix=inter.bot.command_prefix,
+            bot_user_name=inter.bot.user.name,
+            thumbnail=None,
+            field_list=verification_payload['field_dict_list'],
+            image_url=None,
+            author_display_name=inter.author.display_name,
+            author_avatar_url=inter.author.avatar.url
+        )
+
+        await inter.edit_original_message(embeds=embed_list)
+        return
+
+    cwl_war = verification_payload['cwl_war_obj']
+
+    message += "\n\n"
+
+    cwl_war_member_no_attack_list = clash_responder.war_no_attack(cwl_war)
+
+    for cwl_war_member in cwl_war_member_no_attack_list:
+        member_message = discord_responder.user_player_ping(
+            cwl_war_member, inter.guild.members)
         message += (f"{member_message}, ")
 
     # cuts the last two characters from the string ', '
