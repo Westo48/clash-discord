@@ -1671,7 +1671,7 @@ async def memberscore(inter, user: disnake.User):
 
     await inter.response.defer()
 
-    db_player_obj = db_responder.read_player_active(user.author.id)
+    db_player_obj = db_responder.read_player_active(user.id)
 
     verification_payload = await discord_responder.war_verification(
         db_player_obj, user, coc_client)
@@ -2089,250 +2089,6 @@ async def clanscore(inter):
         color=disnake.Color(client_data.embed_color),
         icon_url=inter.bot.user.avatar.url,
         title=f"{player_obj.clan.name} CWL scores",
-        description=None,
-        bot_prefix=inter.bot.command_prefix,
-        bot_user_name=inter.bot.user.name,
-        thumbnail=player_obj.clan.badge,
-        field_list=field_dict_list,
-        image_url=None,
-        author_display_name=inter.author.display_name,
-        author_avatar_url=inter.author.avatar.url
-    )
-
-    await inter.edit_original_message(embeds=embed_list)
-
-
-# CWL War
-
-@bot.slash_command(
-    brief='cwlwar',
-    description="parent for cwlwar commands"
-)
-async def cwlwar(inter):
-    """
-        parent for cwlwar commands
-    """
-
-    pass
-
-
-@cwlwar.sub_command(
-    aliases=['cwlwar'],
-    brief='cwlwar',
-    description="overview of the current CWL war"
-)
-async def info(inter):
-    """
-        overview of the current CWL war
-    """
-
-    await inter.response.defer()
-
-    db_player_obj = db_responder.read_player_active(inter.author.id)
-
-    verification_payload = await discord_responder.cwl_war_verification(
-        db_player_obj, inter.author, coc_client)
-    if not verification_payload['verified']:
-        embed_list = discord_responder.embed_message(
-            Embed=disnake.Embed,
-            color=disnake.Color(client_data.embed_color),
-            icon_url=inter.bot.user.avatar.url,
-            title=None,
-            description=None,
-            bot_prefix=inter.bot.command_prefix,
-            bot_user_name=inter.bot.user.name,
-            thumbnail=None,
-            field_list=verification_payload['field_dict_list'],
-            image_url=None,
-            author_display_name=inter.author.display_name,
-            author_avatar_url=inter.author.avatar.url
-        )
-
-        await inter.edit_original_message(embeds=embed_list)
-        return
-
-    player_obj = verification_payload['player_obj']
-    cwl_war_obj = verification_payload['cwl_war_obj']
-
-    field_dict_list = discord_responder.war_info(
-        cwl_war_obj)
-    embed_list = discord_responder.embed_message(
-        Embed=disnake.Embed,
-        color=disnake.Color(client_data.embed_color),
-        icon_url=inter.bot.user.avatar.url,
-        title=f"{cwl_war_obj.clan.name} vs. {cwl_war_obj.opponent.name}",
-        description=None,
-        bot_prefix=inter.bot.command_prefix,
-        bot_user_name=inter.bot.user.name,
-        thumbnail=player_obj.clan.badge,
-        field_list=field_dict_list,
-        image_url=None,
-        author_display_name=inter.author.display_name,
-        author_avatar_url=inter.author.avatar.url
-    )
-
-    await inter.edit_original_message(embeds=embed_list)
-
-
-@cwlwar.sub_command(
-    brief='cwlwar',
-    description="time remaining in the current CWL war"
-)
-async def time(inter):
-    """
-        returns the CWL group lineup
-    """
-
-    await inter.response.defer()
-
-    db_player_obj = db_responder.read_player_active(inter.author.id)
-
-    verification_payload = await discord_responder.cwl_war_verification(
-        db_player_obj, inter.author, coc_client)
-    if not verification_payload['verified']:
-        embed_list = discord_responder.embed_message(
-            Embed=disnake.Embed,
-            color=disnake.Color(client_data.embed_color),
-            icon_url=inter.bot.user.avatar.url,
-            title=None,
-            description=None,
-            bot_prefix=inter.bot.command_prefix,
-            bot_user_name=inter.bot.user.name,
-            thumbnail=None,
-            field_list=verification_payload['field_dict_list'],
-            image_url=None,
-            author_display_name=inter.author.display_name,
-            author_avatar_url=inter.author.avatar.url
-        )
-
-        await inter.edit_original_message(embeds=embed_list)
-        return
-
-    player_obj = verification_payload['player_obj']
-    cwl_war_obj = verification_payload['cwl_war_obj']
-
-    field_dict_list = discord_responder.war_time(
-        cwl_war_obj)
-    embed_list = discord_responder.embed_message(
-        Embed=disnake.Embed,
-        color=disnake.Color(client_data.embed_color),
-        icon_url=inter.bot.user.avatar.url,
-        title=f"{cwl_war_obj.clan.name} vs. {cwl_war_obj.opponent.name}",
-        description=None,
-        bot_prefix=inter.bot.command_prefix,
-        bot_user_name=inter.bot.user.name,
-        thumbnail=player_obj.clan.badge,
-        field_list=field_dict_list,
-        image_url=None,
-        author_display_name=inter.author.display_name,
-        author_avatar_url=inter.author.avatar.url
-    )
-
-    await inter.edit_original_message(embeds=embed_list)
-
-
-@cwlwar.sub_command(
-    brief='cwlwar',
-    description="list of players that missed attacks in the current cwl war"
-)
-async def noattack(inter):
-    """
-        list of players that missed attacks in the current cwl war
-    """
-
-    await inter.response.defer()
-
-    db_player_obj = db_responder.read_player_active(inter.author.id)
-
-    verification_payload = await discord_responder.cwl_war_verification(
-        db_player_obj, inter.author, coc_client)
-    if not verification_payload['verified']:
-        embed_list = discord_responder.embed_message(
-            Embed=disnake.Embed,
-            color=disnake.Color(client_data.embed_color),
-            icon_url=inter.bot.user.avatar.url,
-            title=None,
-            description=None,
-            bot_prefix=inter.bot.command_prefix,
-            bot_user_name=inter.bot.user.name,
-            thumbnail=None,
-            field_list=verification_payload['field_dict_list'],
-            image_url=None,
-            author_display_name=inter.author.display_name,
-            author_avatar_url=inter.author.avatar.url
-        )
-
-        await inter.edit_original_message(embeds=embed_list)
-        return
-
-    player_obj = verification_payload['player_obj']
-    cwl_war_obj = verification_payload['cwl_war_obj']
-
-    field_dict_list = discord_responder.war_no_attack(
-        cwl_war_obj)
-    embed_list = discord_responder.embed_message(
-        Embed=disnake.Embed,
-        color=disnake.Color(client_data.embed_color),
-        icon_url=inter.bot.user.avatar.url,
-        title=f"{cwl_war_obj.clan.name} vs. {cwl_war_obj.opponent.name}",
-        description=None,
-        bot_prefix=inter.bot.command_prefix,
-        bot_user_name=inter.bot.user.name,
-        thumbnail=player_obj.clan.badge,
-        field_list=field_dict_list,
-        image_url=None,
-        author_display_name=inter.author.display_name,
-        author_avatar_url=inter.author.avatar.url
-    )
-
-    await inter.edit_original_message(embeds=embed_list)
-
-
-@cwlwar.sub_command(
-    brief='cwlwar',
-    description="all attacks for every member in the current war"
-)
-async def allattack(inter):
-    """
-        all attacks for every member in the current war
-    """
-
-    await inter.response.defer()
-
-    db_player_obj = db_responder.read_player_active(inter.author.id)
-
-    verification_payload = (
-        await discord_responder.cwl_war_leadership_verification(
-            db_player_obj, inter.author, coc_client))
-    if not verification_payload['verified']:
-        embed_list = discord_responder.embed_message(
-            Embed=disnake.Embed,
-            color=disnake.Color(client_data.embed_color),
-            icon_url=inter.bot.user.avatar.url,
-            title=None,
-            description=None,
-            bot_prefix=inter.bot.command_prefix,
-            bot_user_name=inter.bot.user.name,
-            thumbnail=None,
-            field_list=verification_payload['field_dict_list'],
-            image_url=None,
-            author_display_name=inter.author.display_name,
-            author_avatar_url=inter.author.avatar.url
-        )
-
-        await inter.edit_original_message(embeds=embed_list)
-        return
-
-    player_obj = verification_payload['player_obj']
-    cwl_war_obj = verification_payload['cwl_war_obj']
-
-    field_dict_list = discord_responder.war_all_attacks(
-        cwl_war_obj)
-    embed_list = discord_responder.embed_message(
-        Embed=disnake.Embed,
-        color=disnake.Color(client_data.embed_color),
-        icon_url=inter.bot.user.avatar.url,
-        title=f"{cwl_war_obj.clan.name} vs. {cwl_war_obj.opponent.name}",
         description=None,
         bot_prefix=inter.bot.command_prefix,
         bot_user_name=inter.bot.user.name,
@@ -2770,212 +2526,6 @@ async def announcewarnoatk(inter, channel: disnake.TextChannel, message: str):
     for war_member in war_member_no_attack_list:
         member_message = discord_responder.user_player_ping(
             war_member, inter.guild.members)
-        message += (f"{member_message}, ")
-
-    # cuts the last two characters from the string ', '
-    message = message[:-2]
-
-    try:
-        await channel.send(content=message)
-    except:
-        field_dict_list = [{
-            "name": "message could not be sent",
-            "value": f"please ensure bot is in channel {channel.mention}"
-        }]
-        embed_list = discord_responder.embed_message(
-            Embed=disnake.Embed,
-            color=disnake.Color(client_data.embed_color),
-            icon_url=inter.bot.user.avatar.url,
-            title=None,
-            description=None,
-            bot_prefix=inter.bot.command_prefix,
-            bot_user_name=inter.bot.user.name,
-            thumbnail=None,
-            field_list=field_dict_list,
-            image_url=None,
-            author_display_name=inter.author.display_name,
-            author_avatar_url=inter.author.avatar.url
-        )
-        await inter.send(embeds=embed_list)
-
-        return
-
-    field_dict_list = [{
-        "name": "message sent",
-        "value": f"channel {channel.mention}"
-    }]
-    embed_list = discord_responder.embed_message(
-        Embed=disnake.Embed,
-        color=disnake.Color(client_data.embed_color),
-        icon_url=inter.bot.user.avatar.url,
-        title=None,
-        description=None,
-        bot_prefix=inter.bot.command_prefix,
-        bot_user_name=inter.bot.user.name,
-        thumbnail=None,
-        field_list=field_dict_list,
-        image_url=None,
-        author_display_name=inter.author.display_name,
-        author_avatar_url=inter.author.avatar.url
-    )
-    await inter.send(embeds=embed_list)
-
-
-@discord.sub_command(
-    description=("*leadership* "
-                 "announces message to specified channel, "
-                 "pings all in current cwl war")
-)
-async def announcecwlwar(inter, channel: disnake.TextChannel, message: str):
-    """
-        *leadership*
-        announces message to specified channel,
-        pings all in current cwl war
-
-        Parameters
-        ----------
-        channel: channel to announce the message
-        message: message to send the specified channel
-    """
-
-    await inter.response.defer(ephemeral=True)
-
-    db_player_obj = db_responder.read_player_active(inter.author.id)
-
-    verification_payload = (
-        await discord_responder.cwl_war_leadership_verification(
-            db_player_obj, inter.author, coc_client))
-    if not verification_payload['verified']:
-        embed_list = discord_responder.embed_message(
-            Embed=disnake.Embed,
-            color=disnake.Color(client_data.embed_color),
-            icon_url=inter.bot.user.avatar.url,
-            title=None,
-            description=None,
-            bot_prefix=inter.bot.command_prefix,
-            bot_user_name=inter.bot.user.name,
-            thumbnail=None,
-            field_list=verification_payload['field_dict_list'],
-            image_url=None,
-            author_display_name=inter.author.display_name,
-            author_avatar_url=inter.author.avatar.url
-        )
-
-        await inter.edit_original_message(embeds=embed_list)
-        return
-
-    cwl_war = verification_payload['cwl_war_obj']
-
-    message += "\n\n"
-
-    for war_member in cwl_war.clan.members:
-        member_message = discord_responder.user_player_ping(
-            war_member, inter.guild.members)
-        message += (f"{member_message}, ")
-
-    # cuts the last two characters from the string ', '
-    message = message[:-2]
-
-    try:
-        await channel.send(content=message)
-    except:
-        field_dict_list = [{
-            "name": "message could not be sent",
-            "value": f"please ensure bot is in channel {channel.mention}"
-        }]
-        embed_list = discord_responder.embed_message(
-            Embed=disnake.Embed,
-            color=disnake.Color(client_data.embed_color),
-            icon_url=inter.bot.user.avatar.url,
-            title=None,
-            description=None,
-            bot_prefix=inter.bot.command_prefix,
-            bot_user_name=inter.bot.user.name,
-            thumbnail=None,
-            field_list=field_dict_list,
-            image_url=None,
-            author_display_name=inter.author.display_name,
-            author_avatar_url=inter.author.avatar.url
-        )
-        await inter.send(embeds=embed_list)
-
-        return
-
-    field_dict_list = [{
-        "name": "message sent",
-        "value": f"channel {channel.mention}"
-    }]
-    embed_list = discord_responder.embed_message(
-        Embed=disnake.Embed,
-        color=disnake.Color(client_data.embed_color),
-        icon_url=inter.bot.user.avatar.url,
-        title=None,
-        description=None,
-        bot_prefix=inter.bot.command_prefix,
-        bot_user_name=inter.bot.user.name,
-        thumbnail=None,
-        field_list=field_dict_list,
-        image_url=None,
-        author_display_name=inter.author.display_name,
-        author_avatar_url=inter.author.avatar.url
-    )
-    await inter.send(embeds=embed_list)
-
-
-@discord.sub_command(
-    description=("*leadership* "
-                 "announces message to channel, "
-                 "pings all in cwl war missing attacks")
-)
-async def announcecwlwarnoatk(
-    inter, channel: disnake.TextChannel, message: str
-):
-    """
-        *leadership*
-        announces message to channel,
-        pings all in cwl war missing attacks
-
-        Parameters
-        ----------
-        channel: channel to announce the message
-        message: message to send the specified channel
-    """
-
-    await inter.response.defer(ephemeral=True)
-
-    db_player_obj = db_responder.read_player_active(inter.author.id)
-
-    verification_payload = (
-        await discord_responder.cwl_war_leadership_verification(
-            db_player_obj, inter.author, coc_client))
-    if not verification_payload['verified']:
-        embed_list = discord_responder.embed_message(
-            Embed=disnake.Embed,
-            color=disnake.Color(client_data.embed_color),
-            icon_url=inter.bot.user.avatar.url,
-            title=None,
-            description=None,
-            bot_prefix=inter.bot.command_prefix,
-            bot_user_name=inter.bot.user.name,
-            thumbnail=None,
-            field_list=verification_payload['field_dict_list'],
-            image_url=None,
-            author_display_name=inter.author.display_name,
-            author_avatar_url=inter.author.avatar.url
-        )
-
-        await inter.edit_original_message(embeds=embed_list)
-        return
-
-    cwl_war = verification_payload['cwl_war_obj']
-
-    message += "\n\n"
-
-    cwl_war_member_no_attack_list = clash_responder.war_no_attack(cwl_war)
-
-    for cwl_war_member in cwl_war_member_no_attack_list:
-        member_message = discord_responder.user_player_ping(
-            cwl_war_member, inter.guild.members)
         message += (f"{member_message}, ")
 
     # cuts the last two characters from the string ', '
@@ -3808,25 +3358,35 @@ async def removeclan(inter, clan_tag: str):
 # client roles
 @client.sub_command(
     brief='client',
-    description="shows roles claimed by a discord guild"
+    description="shows all roles claimed by a discord guild"
 )
 async def showroles(inter):
     """
-        deletes the requested clan claim
-
-        Parameters
-        ----------
-        clan_tag: clan tag to delete from client
+        shows all roles claimed by a discord guild
     """
 
     await inter.response.defer()
 
-    db_guild_obj = db_responder.read_guild(inter.guild.id)
+    db_user_obj = db_responder.read_user(inter.author.id)
 
-    # guild not found
+    db_guild_obj = db_responder.read_guild(inter.guild.id)
+    # guild not claimed
     if not db_guild_obj:
         await inter.edit_original_message(
             content=f"{inter.guild.name} has not been claimed")
+        return
+
+    # user not claimed
+    if not db_user_obj:
+        await inter.edit_original_message(
+            content=f"{inter.author.mention} has not been claimed")
+        return
+
+    # user is not guild admin and is not super user
+    if (not db_guild_obj.admin_user_id == inter.author.id
+            and not db_user_obj.super_user):
+        await inter.edit_original_message(
+            content=f"{inter.author.mention} is not guild's admin")
         return
 
     field_dict_list = []
