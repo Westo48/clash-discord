@@ -159,11 +159,20 @@ ClashDiscord is largely **command** focused, meaning it doesn't do anything that
   - discord announce `channel` `message`
     - announces message to specified channel
     - restricted to leaders and co-leaders
+  - discord announceplayer `channel` `player tag` `message`
+    - announces message to specified channel
+    - restricted to leaders and co-leaders
   - discord announcewar `channel` `message`
     - announces message to specified channel, pings all in current war
     - restricted to leaders and co-leaders
   - discord announcewarnoatk `channel` `message`
     - announces message to channel, pings all in war missing attacks
+    - restricted to leaders and co-leaders
+  - discord announcecwlwar `channel` `message`
+    - announces message to specified channel, pings all in current cwl war
+    - restricted to leaders and co-leaders
+  - discord announcecwlwarnoatk `channel` `message`
+    - announces message to channel, pings all in cwl war missing attacks
     - restricted to leaders and co-leaders
 
 - ## <a id="command-list-player"></a>Player
