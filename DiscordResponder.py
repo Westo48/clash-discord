@@ -785,7 +785,7 @@ async def war_verification(db_player_obj, user_obj, coc_client):
     player_obj = player_clan_verification_payload['player_obj']
 
     try:
-        war_obj = await coc_client.get_clan_war(player_obj.clan.tag)
+        war_obj = await coc_client.get_current_war(player_obj.clan.tag)
     except Maintenance:
         return {
             'verified': False,
@@ -821,6 +821,16 @@ async def war_verification(db_player_obj, user_obj, coc_client):
             'verified': False,
             'field_dict_list': [{
                 'name': "coc.py ran into a gateway error",
+                'value': "please try again later"
+            }],
+            'player_obj': None,
+            'war_obj': None
+        }
+    except TypeError:
+        return {
+            'verified': False,
+            'field_dict_list': [{
+                'name': "ClashDiscord ran into a type error",
                 'value': "please try again later"
             }],
             'player_obj': None,
@@ -886,7 +896,7 @@ async def war_leadership_verification(db_player_obj, user_obj, coc_client):
     player_obj = player_leadership_verification_payload['player_obj']
 
     try:
-        war_obj = await coc_client.get_clan_war(player_obj.clan.tag)
+        war_obj = await coc_client.get_current_war(player_obj.clan.tag)
     except Maintenance:
         return {
             'verified': False,
@@ -922,6 +932,16 @@ async def war_leadership_verification(db_player_obj, user_obj, coc_client):
             'verified': False,
             'field_dict_list': [{
                 'name': "coc.py ran into a gateway error",
+                'value': "please try again later"
+            }],
+            'player_obj': None,
+            'war_obj': None
+        }
+    except TypeError:
+        return {
+            'verified': False,
+            'field_dict_list': [{
+                'name': "ClashDiscord ran into a type error",
                 'value': "please try again later"
             }],
             'player_obj': None,
