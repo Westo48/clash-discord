@@ -2015,9 +2015,7 @@ def help_switch(db_guild_obj, db_player_obj, player_obj, user_id, emoji,
     if bot_category.brief == "war":
         return help_war(player_obj, bot_category, all_commands)
     if bot_category.brief == "cwl":
-        return help_cwlgroup(player_obj, bot_category, all_commands)
-    if bot_category.brief == "cwlwar":
-        return help_cwlwar(player_obj, bot_category, all_commands)
+        return help_cwl(player_obj, bot_category, all_commands)
     return help_main(db_guild_obj, user_id, player_obj, bot_categories)
 
 
@@ -2216,37 +2214,7 @@ def help_war(player_obj, bot_category, all_commands):
     return help_dict
 
 
-def help_cwlgroup(player_obj, bot_category, all_commands):
-    help_dict = {
-        'field_dict_list': [],
-        'emoji_list': []
-    }
-
-    for command_name in all_commands:
-        # command is not in the correct category
-        if not bot_category.brief == command_name:
-            continue
-
-        # player not found
-        if not player_obj:
-            continue
-
-        # repeating for each child
-        for item in all_commands[command_name].children:
-            child = all_commands[command_name].children[item]
-
-            field_name = f"{child.qualified_name}"
-            for param in child.docstring["params"]:
-                field_name += f" <{param}>"
-            help_dict["field_dict_list"].append({
-                'name': field_name,
-                'value': child.docstring["description"]
-            })
-
-    return help_dict
-
-
-def help_cwlwar(player_obj, bot_category, all_commands):
+def help_cwl(player_obj, bot_category, all_commands):
     help_dict = {
         'field_dict_list': [],
         'emoji_list': []
