@@ -1671,7 +1671,7 @@ async def memberscore(inter, user: disnake.User):
 
     await inter.response.defer()
 
-    db_player_obj = db_responder.read_player_active(user.author.id)
+    db_player_obj = db_responder.read_player_active(user.id)
 
     verification_payload = await discord_responder.war_verification(
         db_player_obj, user, coc_client)
@@ -3808,25 +3808,35 @@ async def removeclan(inter, clan_tag: str):
 # client roles
 @client.sub_command(
     brief='client',
-    description="shows roles claimed by a discord guild"
+    description="shows all roles claimed by a discord guild"
 )
 async def showroles(inter):
     """
-        deletes the requested clan claim
-
-        Parameters
-        ----------
-        clan_tag: clan tag to delete from client
+        shows all roles claimed by a discord guild
     """
 
     await inter.response.defer()
 
-    db_guild_obj = db_responder.read_guild(inter.guild.id)
+    db_user_obj = db_responder.read_user(inter.author.id)
 
-    # guild not found
+    db_guild_obj = db_responder.read_guild(inter.guild.id)
+    # guild not claimed
     if not db_guild_obj:
         await inter.edit_original_message(
             content=f"{inter.guild.name} has not been claimed")
+        return
+
+    # user not claimed
+    if not db_user_obj:
+        await inter.edit_original_message(
+            content=f"{inter.author.mention} has not been claimed")
+        return
+
+    # user is not guild admin and is not super user
+    if (not db_guild_obj.admin_user_id == inter.author.id
+            and not db_user_obj.super_user):
+        await inter.edit_original_message(
+            content=f"{inter.author.mention} is not guild's admin")
         return
 
     field_dict_list = []
