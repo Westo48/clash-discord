@@ -2186,7 +2186,7 @@ async def war(inter, channel: disnake.TextChannel, message: str):
                  "announces message to channel, "
                  "pings all in war missing attacks")
 )
-async def warnoatk(inter, channel: disnake.TextChannel, message: str):
+async def warnoattack(inter, channel: disnake.TextChannel, message: str):
     """
         *leadership*
         announces message to channel,
