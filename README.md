@@ -146,8 +146,20 @@ ClashDiscord is largely **command** focused, meaning it doesn't do anything that
 
 - ## <a id="command-list-discord"></a>Discord
 
-  - help
+  - discord help info
     - displays relevant help-text regarding what commands can be run
+  - discord announce message `channel` `message`
+    - announces message to specified channel
+    - restricted to leaders and co-leaders
+  - discord announce player `channel` `player tag` `message`
+    - announces message to specified channel
+    - restricted to leaders and co-leaders
+  - discord announce war `channel` `message`
+    - announces message to specified channel, pings all in current war
+    - restricted to leaders and co-leaders
+  - discord announce warnoatk `channel` `message`
+    - announces message to channel, pings all in war missing attacks
+    - restricted to leaders and co-leaders
   - role
     - adds and removes necessary roles in discord based on claimed players clan and role in that clan
   - rolemember `membermention`
@@ -155,24 +167,6 @@ ClashDiscord is largely **command** focused, meaning it doesn't do anything that
     - restricted to leaders and co-leaders
   - roleall
     - adds and removes necessary roles in discord based on claimed players clan and role in that clan for all users in guild
-    - restricted to leaders and co-leaders
-  - discord announce `channel` `message`
-    - announces message to specified channel
-    - restricted to leaders and co-leaders
-  - discord announceplayer `channel` `player tag` `message`
-    - announces message to specified channel
-    - restricted to leaders and co-leaders
-  - discord announcewar `channel` `message`
-    - announces message to specified channel, pings all in current war
-    - restricted to leaders and co-leaders
-  - discord announcewarnoatk `channel` `message`
-    - announces message to channel, pings all in war missing attacks
-    - restricted to leaders and co-leaders
-  - discord announcecwlwar `channel` `message`
-    - announces message to specified channel, pings all in current cwl war
-    - restricted to leaders and co-leaders
-  - discord announcecwlwarnoatk `channel` `message`
-    - announces message to channel, pings all in cwl war missing attacks
     - restricted to leaders and co-leaders
 
 - ## <a id="command-list-player"></a>Player

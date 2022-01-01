@@ -2116,16 +2116,28 @@ async def discord(inter):
     pass
 
 
-@discord.sub_command(
-    brief='discord',
-    description="returns help menu"
+# discord help
+@discord.sub_command_group(
+    brief='client',
+    description="group for discord help commands"
 )
 async def help(inter):
     """
-        returns help menu
+        group for discord help commands
     """
 
+    # defer for every command
     await inter.response.defer()
+
+
+@help.sub_command(
+    brief='discord',
+    description="returns help menu"
+)
+async def info(inter):
+    """
+        returns help menu
+    """
 
     db_guild_obj = db_responder.read_guild(inter.guild.id)
     db_player_obj = db_responder.read_player_active(inter.author.id)
@@ -2164,11 +2176,24 @@ async def help(inter):
         await original_message.add_reaction(emoji)
 
 
-@discord.sub_command(
+# discord announce
+@discord.sub_command_group(
+    brief='client',
+    description="group for discord announce commands"
+)
+async def announce(inter):
+    """
+        group for discord announce commands
+    """
+
+    await inter.response.defer(ephemeral=True)
+
+
+@announce.sub_command(
     description=("*leadership* "
                  "announces message to specified channel")
 )
-async def announce(inter, channel: disnake.TextChannel, message: str):
+async def message(inter, channel: disnake.TextChannel, message: str):
     """
         *leadership*
         announces message to specified channel
@@ -2178,8 +2203,6 @@ async def announce(inter, channel: disnake.TextChannel, message: str):
         channel: channel to announce the message
         message: message to send the specified channel
     """
-
-    await inter.response.defer(ephemeral=True)
 
     db_player_obj = db_responder.read_player_active(inter.author.id)
 
@@ -2251,12 +2274,12 @@ async def announce(inter, channel: disnake.TextChannel, message: str):
     await inter.send(embeds=embed_list)
 
 
-@discord.sub_command(
+@announce.sub_command(
     description=("*leadership* "
                  "announces message to specified channel, "
                  "pings user with the specified player tag")
 )
-async def announceplayer(
+async def player(
     inter, channel: disnake.TextChannel,
     player_tag: str, message: str
 ):
@@ -2271,8 +2294,6 @@ async def announceplayer(
         player_tag: player tag to find and ping user
         message: message to send the specified channel
     """
-
-    await inter.response.defer(ephemeral=True)
 
     db_player_obj = db_responder.read_player_active(inter.author.id)
 
@@ -2373,12 +2394,12 @@ async def announceplayer(
     await inter.send(embeds=embed_list)
 
 
-@discord.sub_command(
+@announce.sub_command(
     description=("*leadership* "
                  "announces message to specified channel, "
                  "pings all in current war")
 )
-async def announcewar(inter, channel: disnake.TextChannel, message: str):
+async def war(inter, channel: disnake.TextChannel, message: str):
     """
         *leadership*
         announces message to specified channel,
@@ -2389,8 +2410,6 @@ async def announcewar(inter, channel: disnake.TextChannel, message: str):
         channel: channel to announce the message
         message: message to send the specified channel
     """
-
-    await inter.response.defer(ephemeral=True)
 
     db_player_obj = db_responder.read_player_active(inter.author.id)
 
@@ -2474,12 +2493,12 @@ async def announcewar(inter, channel: disnake.TextChannel, message: str):
     await inter.send(embeds=embed_list)
 
 
-@discord.sub_command(
+@announce.sub_command(
     description=("*leadership* "
                  "announces message to channel, "
                  "pings all in war missing attacks")
 )
-async def announcewarnoatk(inter, channel: disnake.TextChannel, message: str):
+async def warnoatk(inter, channel: disnake.TextChannel, message: str):
     """
         *leadership*
         announces message to channel,
@@ -2490,8 +2509,6 @@ async def announcewarnoatk(inter, channel: disnake.TextChannel, message: str):
         channel: channel to announce the message
         message: message to send the specified channel
     """
-
-    await inter.response.defer(ephemeral=True)
 
     db_player_obj = db_responder.read_player_active(inter.author.id)
 
@@ -2577,16 +2594,27 @@ async def announcewarnoatk(inter, channel: disnake.TextChannel, message: str):
     await inter.send(embeds=embed_list)
 
 
-@discord.sub_command(
-    brief='discord',
-    description="update your roles"
+# discord role
+@discord.sub_command_group(
+    brief='client',
+    description="group for discord role commands"
 )
 async def role(inter):
     """
-        update your roles
+        group for discord role commands
     """
 
     await inter.response.defer()
+
+
+@role.sub_command(
+    brief='discord',
+    description="update your roles"
+)
+async def self(inter):
+    """
+        update your roles
+    """
 
     db_guild_obj = db_responder.read_guild(inter.guild.id)
 
@@ -2619,20 +2647,19 @@ async def role(inter):
         await inter.send(embeds=embed_list)
 
 
-@discord.sub_command(
+@role.sub_command(
     brief='discord',
-    description="update mentioned user's roles"
+    description="*leadership* update mentioned user's roles"
 )
-async def rolemember(inter, user: disnake.User):
+async def member(inter, user: disnake.User):
     """
+        *leadership*
         update mentioned user's roles
 
         Parameters
         ----------
         user: user to update roles
     """
-
-    await inter.response.defer()
 
     db_guild_obj = db_responder.read_guild(inter.guild.id)
 
@@ -2690,16 +2717,15 @@ async def rolemember(inter, user: disnake.User):
         await inter.send(embeds=embed_list)
 
 
-@discord.sub_command(
+@role.sub_command(
     brief='discord',
-    description="update roles of every member in the server"
+    description="*admin* roles every member in the server"
 )
-async def roleall(inter):
+async def all(inter):
     """
-        update roles of every member in the server
+        *admin*
+        update roles every member in the server
     """
-
-    await inter.response.defer()
 
     db_guild_obj = db_responder.read_guild(inter.guild.id)
 
@@ -3193,10 +3219,11 @@ async def clan(inter):
 
 @clan.sub_command(
     brief='client',
-    description="claim the requested clan"
+    description="*admin* claim the requested clan"
 )
 async def claim(inter, clan_tag: str):
     """
+        *admin*
         claim the requested clan
 
         Parameters
@@ -3284,11 +3311,12 @@ async def claim(inter, clan_tag: str):
 
 @clan.sub_command(
     brief='client',
-    description="clans claimed by a discord guild",
+    description="*admin* clans claimed by a discord guild",
     hidden=True
 )
 async def show(inter):
     """
+        *admin*
         clans claimed by a discord guild
 
         Parameters
@@ -3341,10 +3369,11 @@ async def show(inter):
 
 @clan.sub_command(
     brief='client',
-    description="deletes the requested clan claim"
+    description="*admin* deletes the requested clan claim"
 )
 async def remove(inter, clan_tag: str):
     """
+        *admin*
         deletes the requested clan claim
 
         Parameters
@@ -3418,10 +3447,11 @@ async def role(inter):
 
 @role.sub_command(
     brief='client',
-    description="shows all roles claimed by a discord guild"
+    description="*admin* shows all roles claimed by a discord guild"
 )
 async def show(inter):
     """
+        *admin*
         shows all roles claimed by a discord guild
     """
 
@@ -3533,11 +3563,12 @@ async def show(inter):
 
 @role.sub_command(
     brief='client',
-    description=("remove the claimed discord role, "
+    description=("*admin* remove the claimed discord role, "
                  "the role will not be deleted from discord")
 )
 async def remove(inter, role: disnake.Role):
     """
+        *admin*
         remove the claimed discord role,
         the role will not be deleted from discord
 
@@ -3621,10 +3652,11 @@ async def clanrole(inter):
 
 @clanrole.sub_command(
     brief='client',
-    description="claim a clan's discord role"
+    description="*admin* claim a clan's discord role"
 )
 async def claim(inter, role: disnake.Role, clan_tag: str):
     """
+        *admin*
         claim a clan's discord role
 
         Parameters
@@ -3723,13 +3755,14 @@ async def rankrole(inter):
 
 @rankrole.sub_command(
     brief='client',
-    description="claim a rank's discord role"
+    description="*admin* claim a rank's discord role"
 )
 async def claim(inter, role: disnake.Role,
                 rank_name: str = commands.Param(choices=[
         "leader", "co-leader", "elder", "member", "uninitiated"])
 ):
     """
+        *admin*
         claim a rank's discord role
 
         Parameters

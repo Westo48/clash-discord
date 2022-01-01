@@ -2084,26 +2084,13 @@ def help_discord(player_obj, bot_category, all_commands):
         'emoji_list': []
     }
 
-    for command_name in all_commands:
+    for parent in all_commands.values():
         # command is not in the correct category
-        if not bot_category.brief == command_name:
+        if not bot_category.brief == parent.name:
             continue
 
-        # player not found
-        if not player_obj:
-            continue
-
-        # repeating for each child
-        for item in all_commands[command_name].children:
-            child = all_commands[command_name].children[item]
-
-            field_name = f"{child.qualified_name}"
-            for param in child.docstring["params"]:
-                field_name += f" <{param}>"
-            help_dict["field_dict_list"].append({
-                'name': field_name,
-                'value': child.docstring["description"]
-            })
+        field_dict_list = help_command_dict_list(parent)
+        help_dict["field_dict_list"] = field_dict_list
 
     return help_dict
 
