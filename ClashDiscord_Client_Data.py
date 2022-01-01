@@ -27,7 +27,7 @@ class ClashDiscord_Data(object):
                 bot_categories (list): list of Bot_Category objects
     """
 
-    version = '1.2.0'
+    version = '2.1.1'
     embed_color = 1752220
     back_emoji = '◀️'
     bot_categories = [
@@ -43,9 +43,7 @@ class ClashDiscord_Data(object):
         ClashDiscord_Category(
             'Clan', 'clan', 'Clan based commands', '🏠'),
         ClashDiscord_Category(
-            'War', 'war', 'War based commands', '🗡️'),
+            'War', 'war', 'War based commands', '⚔️'),
         ClashDiscord_Category(
-            'CWL Group', 'cwl', 'CWL Group based commands', '🔱'),
-        ClashDiscord_Category(
-            'CWL War', 'cwlwar', 'CWL War based commands', '⚔️')
+            'CWL', 'cwl', 'CWL based commands', '🔱')
     ]

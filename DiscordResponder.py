@@ -785,7 +785,7 @@ async def war_verification(db_player_obj, user_obj, coc_client):
     player_obj = player_clan_verification_payload['player_obj']
 
     try:
-        war_obj = await coc_client.get_clan_war(player_obj.clan.tag)
+        war_obj = await coc_client.get_current_war(player_obj.clan.tag)
     except Maintenance:
         return {
             'verified': False,
@@ -821,6 +821,16 @@ async def war_verification(db_player_obj, user_obj, coc_client):
             'verified': False,
             'field_dict_list': [{
                 'name': "coc.py ran into a gateway error",
+                'value': "please try again later"
+            }],
+            'player_obj': None,
+            'war_obj': None
+        }
+    except TypeError:
+        return {
+            'verified': False,
+            'field_dict_list': [{
+                'name': "ClashDiscord ran into a type error",
                 'value': "please try again later"
             }],
             'player_obj': None,
@@ -886,7 +896,7 @@ async def war_leadership_verification(db_player_obj, user_obj, coc_client):
     player_obj = player_leadership_verification_payload['player_obj']
 
     try:
-        war_obj = await coc_client.get_clan_war(player_obj.clan.tag)
+        war_obj = await coc_client.get_current_war(player_obj.clan.tag)
     except Maintenance:
         return {
             'verified': False,
@@ -922,6 +932,16 @@ async def war_leadership_verification(db_player_obj, user_obj, coc_client):
             'verified': False,
             'field_dict_list': [{
                 'name': "coc.py ran into a gateway error",
+                'value': "please try again later"
+            }],
+            'player_obj': None,
+            'war_obj': None
+        }
+    except TypeError:
+        return {
+            'verified': False,
+            'field_dict_list': [{
+                'name': "ClashDiscord ran into a type error",
                 'value': "please try again later"
             }],
             'player_obj': None,
@@ -1149,12 +1169,13 @@ def war_all_attacks(war_obj):
     elif war_obj.state == 'inWar' or war_obj.state == "warEnded":
         field_dict_list = []
 
+        # no atk response
         for member_obj in war_obj.clan.members:
-            # no atk response
             if len(member_obj.attacks) == 0:
                 if war_obj.state == "inWar":
                     field_dict_list.append({
-                        'name': f"{member_obj.map_position}. {member_obj.name}",
+                        'name': (f"{member_obj.map_position}. {member_obj.name} "
+                                 f"TH {member_obj.town_hall}"),
                         'value': f"has not attacked"
                     })
                 else:
@@ -1337,7 +1358,7 @@ def war_member_lineup(war_obj):
     return field_dict_list
 
 
-# CWL GROUP
+# CWL
 
 async def cwl_group_verification(db_player_obj, user_obj, coc_client):
     """
@@ -1470,7 +1491,7 @@ async def cwl_group_leadership_verification(db_player_obj, user_obj, coc_client)
 def cwl_lineup(cwl_group):
     message = (
         "```\n"
-        "CWL Group Lineup\n"
+        "CWL Lineup\n"
         "14 | 13 | 12 | 11 | 10 | 9  | 8\n"
         "-------------------------------\n"
     )
@@ -1989,14 +2010,10 @@ def help_switch(db_guild_obj, db_player_obj, player_obj, user_id, emoji,
         return help_discord(player_obj, bot_category, all_commands)
     if bot_category.brief == "player":
         return help_player(player_obj, bot_category, all_commands)
-    if bot_category.brief == "clan":
+    if (bot_category.brief == "clan" or
+        bot_category.brief == "war" or
+            bot_category.brief == "cwl"):
         return help_clan(player_obj, bot_category, all_commands)
-    if bot_category.brief == "war":
-        return help_war(player_obj, bot_category, all_commands)
-    if bot_category.brief == "cwl":
-        return help_cwlgroup(player_obj, bot_category, all_commands)
-    if bot_category.brief == "cwlwar":
-        return help_cwlwar(player_obj, bot_category, all_commands)
     return help_main(db_guild_obj, user_id, player_obj, bot_categories)
 
 
@@ -2016,22 +2033,13 @@ def help_client_super_user(db_guild_obj, user_id, bot_category, all_commands):
         })
         return help_dict
 
-    for command_name in all_commands:
+    for parent in all_commands.values():
         # command is not in the correct category
-        if not bot_category.brief == command_name:
+        if not bot_category.brief == parent.name:
             continue
 
-        # repeating for each child
-        for item in all_commands[command_name].children:
-            child = all_commands[command_name].children[item]
-
-            field_name = f"{command_name} {child.name}"
-            for param in child.docstring["params"]:
-                field_name += f" <{param}>"
-            help_dict["field_dict_list"].append({
-                'name': field_name,
-                'value': child.docstring["description"]
-            })
+        field_dict_list = help_command_dict_list(parent)
+        help_dict["field_dict_list"] = field_dict_list
     return help_dict
 
 
@@ -2041,36 +2049,29 @@ def help_client(db_guild_obj, user_id, bot_category, all_commands):
         'emoji_list': []
     }
 
-    for command_name in all_commands:
+    # guild not claimed
+    if db_guild_obj is None:
+        help_dict['field_dict_list'].append({
+            'name': "guild not claimed",
+            'value': "please claim guild using `client guild claim`"
+        })
+        return help_dict
+
+    for parent in all_commands.values():
         # command is not in the correct category
-        if not bot_category.brief == command_name:
+        if not bot_category.brief == parent.name:
             continue
 
-        # guild not claimed
-        if db_guild_obj is None:
-            help_dict['field_dict_list'].append({
-                'name': "guild not claimed",
-                'value': "please claim guild using `client claim guild`"
-            })
-            return
+        field_dict_list = help_command_dict_list(parent)
 
-        # repeating for each child
-        for item in all_commands[command_name].children:
-            child = all_commands[command_name].children[item]
-
-            field_name = f"{command_name} {child.name}"
-            for param in child.docstring["params"]:
-                field_name += f" <{param}>"
+        if len(field_dict_list) == 0:
             help_dict["field_dict_list"].append({
-                'name': field_name,
-                'value': child.docstring["description"]
-            })
-
-        if len(help_dict['field_dict_list']) == 0:
-            help_dict['field_dict_list'].append({
                 'name': "guild not claimed",
                 'value': "please claim guild using `client claim guild`"
             })
+            return help_dict
+
+        help_dict["field_dict_list"] = field_dict_list
 
     return help_dict
 
@@ -2081,26 +2082,13 @@ def help_discord(player_obj, bot_category, all_commands):
         'emoji_list': []
     }
 
-    for command_name in all_commands:
+    for parent in all_commands.values():
         # command is not in the correct category
-        if not bot_category.brief == command_name:
+        if not bot_category.brief == parent.name:
             continue
 
-        # player not found
-        if not player_obj:
-            continue
-
-        # repeating for each child
-        for item in all_commands[command_name].children:
-            child = all_commands[command_name].children[item]
-
-            field_name = f"{child.qualified_name}"
-            for param in child.docstring["params"]:
-                field_name += f" <{param}>"
-            help_dict["field_dict_list"].append({
-                'name': field_name,
-                'value': child.docstring["description"]
-            })
+        field_dict_list = help_command_dict_list(parent)
+        help_dict["field_dict_list"] = field_dict_list
 
     return help_dict
 
@@ -2111,26 +2099,21 @@ def help_player(player_obj, bot_category, all_commands):
         'emoji_list': []
     }
 
-    for command_name in all_commands:
+    for parent in all_commands.values():
         # command is not in the correct category
-        if not bot_category.brief == command_name:
+        if not bot_category.brief == parent.name:
             continue
 
         # player not found
-        if not player_obj:
-            continue
-
-        # repeating for each child
-        for item in all_commands[command_name].children:
-            child = all_commands[command_name].children[item]
-
-            field_name = f"{child.qualified_name}"
-            for param in child.docstring["params"]:
-                field_name += f" <{param}>"
-            help_dict["field_dict_list"].append({
-                'name': field_name,
-                'value': child.docstring["description"]
+        if player_obj is None:
+            help_dict['field_dict_list'].append({
+                'name': "player not found",
+                'value': "please claim player using `client player claim`"
             })
+            return help_dict
+
+        field_dict_list = help_command_dict_list(parent)
+        help_dict["field_dict_list"] = field_dict_list
 
     return help_dict
 
@@ -2141,118 +2124,49 @@ def help_clan(player_obj, bot_category, all_commands):
         'emoji_list': []
     }
 
-    for command_name in all_commands:
+    for parent in all_commands.values():
         # command is not in the correct category
-        if not bot_category.brief == command_name:
+        if not bot_category.brief == parent.name:
             continue
 
         # player not found
-        if not player_obj:
-            continue
-
-        # repeating for each child
-        for item in all_commands[command_name].children:
-            child = all_commands[command_name].children[item]
-
-            field_name = f"{child.qualified_name}"
-            for param in child.docstring["params"]:
-                field_name += f" <{param}>"
-            help_dict["field_dict_list"].append({
-                'name': field_name,
-                'value': child.docstring["description"]
+        if player_obj is None:
+            help_dict['field_dict_list'].append({
+                'name': "player not found",
+                'value': "please claim player using `client player claim`"
             })
+            return help_dict
+
+        # player not in a clan
+        if player_obj.clan is None:
+            help_dict['field_dict_list'].append({
+                'name': "player not in a clan",
+                'value': "player must be in a clan to use clan based commands"
+            })
+            return help_dict
+
+        field_dict_list = help_command_dict_list(parent)
+        help_dict["field_dict_list"] = field_dict_list
 
     return help_dict
 
 
-def help_war(player_obj, bot_category, all_commands):
-    help_dict = {
-        'field_dict_list': [],
-        'emoji_list': []
-    }
+def help_command_dict_list(parent):
+    field_dict_list = []
 
-    for command_name in all_commands:
-        # command is not in the correct category
-        if not bot_category.brief == command_name:
-            continue
+    # repeating for each child
+    for group in parent.children.values():
 
-        # player not found
-        if not player_obj:
-            continue
+        for child in group.children.values():
 
-        # repeating for each child
-        for item in all_commands[command_name].children:
-            child = all_commands[command_name].children[item]
-
-            field_name = f"{child.qualified_name}"
+            field_name = child.qualified_name
             for param in child.docstring["params"]:
                 field_name += f" <{param}>"
-            help_dict["field_dict_list"].append({
+            field_dict_list.append({
                 'name': field_name,
                 'value': child.docstring["description"]
             })
-
-    return help_dict
-
-
-def help_cwlgroup(player_obj, bot_category, all_commands):
-    help_dict = {
-        'field_dict_list': [],
-        'emoji_list': []
-    }
-
-    for command_name in all_commands:
-        # command is not in the correct category
-        if not bot_category.brief == command_name:
-            continue
-
-        # player not found
-        if not player_obj:
-            continue
-
-        # repeating for each child
-        for item in all_commands[command_name].children:
-            child = all_commands[command_name].children[item]
-
-            field_name = f"{child.qualified_name}"
-            for param in child.docstring["params"]:
-                field_name += f" <{param}>"
-            help_dict["field_dict_list"].append({
-                'name': field_name,
-                'value': child.docstring["description"]
-            })
-
-    return help_dict
-
-
-def help_cwlwar(player_obj, bot_category, all_commands):
-    help_dict = {
-        'field_dict_list': [],
-        'emoji_list': []
-    }
-
-    for command_name in all_commands:
-        # command is not in the correct category
-        if not bot_category.brief == command_name:
-            continue
-
-        # player not found
-        if not player_obj:
-            continue
-
-        # repeating for each child
-        for item in all_commands[command_name].children:
-            child = all_commands[command_name].children[item]
-
-            field_name = f"{child.qualified_name}"
-            for param in child.docstring["params"]:
-                field_name += f" <{param}>"
-            help_dict["field_dict_list"].append({
-                'name': field_name,
-                'value': child.docstring["description"]
-            })
-
-    return help_dict
+    return field_dict_list
 
 
 # user
@@ -2291,6 +2205,32 @@ def find_user_from_tag(player_obj, member_list):
         "name": f"{player_obj.name} {player_obj.tag}",
         "value": f"claimed by {user_obj.mention}"
     }
+
+
+def user_player_ping(player, member_list):
+    """
+        turning a player into a user ping
+
+        Args:
+            player (obj): clash player object
+                requires player.name and player.tag
+            member_list (list): list of members in guild
+
+        Returns:
+            string: returns user ping if possible and player info
+    """
+
+    db_user = db_responder.read_user_from_tag(player.tag)
+
+    if db_user is None:
+        return f"{player.name} {player.tag}"
+
+    user = get(member_list, id=db_user.discord_id)
+
+    if user is None:
+        return f"{player.name} {player.tag}"
+
+    return f"{user.mention} ({player.name} {player.tag})"
 
 
 # roles

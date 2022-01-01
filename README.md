@@ -36,26 +36,26 @@ Getting ClashDiscord set up in your discord server can be somewhat confusing, bu
 
 2. claim your user in ClashDiscord
 
-   - /client claimuser
+   - `client user claim`
      - this will claim you as a user
      - _this can be done in any claimed guild_
 
 3. claim your discord server
 
-   - client claimguild
+   - `client guild claim`
      - this will claim your discord server and add you as the guild admin within ClashDiscord
      - guild is what the discord API calls a server
 
 4. link a player to your user
 
-   - client claimplayer `playertag apikey`
+   - `client player claim` `player tag` `api key`
      - claims the requested player and links it to your discord user
      - _this can be done in any claimed guild_
      - getting your api key is annoying, but for everyone’s security this is necessary
 
 5. link a clan to your guild
 
-   - client claimclan `clantag`
+   - `client clan claim` `clan tag`
      - claims a clan and links it to the claimed guild
      - your active player **must** be in the clan
      - _this is also for security_
@@ -63,13 +63,13 @@ Getting ClashDiscord set up in your discord server can be somewhat confusing, bu
 6. link existing roles to your server
 
    - claim clan roles
-     - client claimclanrole `clantag mentionrole`
+     - `client clanrole claim` `clan tag` `role mention`
        - links the clan role to a claimed clan
        - _mentionrole means you have to @mention the role_
 
    B. claim rank roles
 
-   - client claimrankrole `rank mentionrole`
+   - `client rankrole claim` `rank` `role mention`
      - links the rank role to a discord role
        - leader
        - co-leader
@@ -91,50 +91,52 @@ Getting ClashDiscord set up in your discord server can be somewhat confusing, bu
 
 # <a id="usage"></a>Usage
 
-ClashDiscord is largely **command** focused, meaning it doesn't do anything that it is not told to do. The only exception to this is when a member joins. If a server has claimed an uninitiated role, then they will be given that role, otherwise nothing will happen. Once setup is complete you will be able to interact with ClashDiscord using the prefix `/` and run the commands as desired.
+ClashDiscord is largely **command** focused, meaning it doesn't do anything that it is not told to do. The only exception to this is when a member joins. If a server has claimed an uninitiated role, then they will be given that role, otherwise nothing will happen. The other action ClashDiscord will take is if it detects a role being deleted from discord it will delete the database instance of that role.
+
+Once setup is complete you will be able to interact with ClashDiscord using the prefix `/` and run the commands as desired.
 
 # <a id="command-list"></a>Command List
 
 - ## <a id="command-list-clashdiscord"></a>ClashDiscord
 
   - ### User
-    - client claimuser
+    - client user claim
       - claims the user by discord user id within ClashDiscord
   - ### Player
-    - client claimplayer `playertag apikey`
+    - client player claim `player tag` `api key`
       - links a player to your claimed user
       - if there are no other claimed players for your user, then sets this claimed player as active for you
-    - client showplayers
+    - client player show
       - shows all claimed players for your user and which is set as active
-    - client updateplayer `playertag`
+    - client player update `player tag`
       - sets the requested player as your active player
-    - client removeplayer `playertag`
+    - client player remove `player tag`
       - removes the claimed player from your user
   - ### Guild
-    - client claimguild
+    - client guild claim
       - claims the guild by discord guild id within ClashDiscord
       - sets the user who called the command as the guild admin within ClashDiscord
   - ### Clan
-    - client claimclan `clantag`
+    - client clan claim `clan tag`
       - claims the clan and links it to the claimed guild
       - user _must_ be guild admin
       - user's active player _must_ be in the clan
       - claimed guilds can claim multiple different clans
       - multiple guilds can claim the same clan
-    - client showclans
+    - client clans show
       - shows all claimed clans for the guild
-    - client removeclan `clantag`
+    - client removeclan `clan tag`
       - removes the claimed clan from your guild
   - ### Role
-    - client showroles
+    - client role show
       - shows all claimed roles for the guild
-    - client removeroleclaim `rolemention`
+    - client role remove `role mention`
       - removes claim on the mentioned role
   - ### Clan Role
-    - client claimclanrole `clantag rolemention`
+    - client clanrole claim `clan tag` `role mention`
       - links the mentioned role to a claimed clan
   - ### Rank Role
-    - client claimrankrole `rank rolemention`
+    - client rankrole claim `rank` `role mention`
       - claims the mentioned role as a specific clan rank
       - list of ranks
         - leader
@@ -146,133 +148,118 @@ ClashDiscord is largely **command** focused, meaning it doesn't do anything that
 
 - ## <a id="command-list-discord"></a>Discord
 
-  - help
+  - discord help info
     - displays relevant help-text regarding what commands can be run
-  - role
+  - discord announce message `channel` `message`
+    - announces message to specified channel
+    - restricted to leaders and co-leaders
+  - discord announce player `channel` `player tag` `message`
+    - announces message to specified channel
+    - restricted to leaders and co-leaders
+  - discord announce war `channel` `message`
+    - announces message to specified channel, pings all in current war
+    - restricted to leaders and co-leaders
+  - discord announce warnoatk `channel` `message`
+    - announces message to channel, pings all in war missing attacks
+    - restricted to leaders and co-leaders
+  - discord role 
     - adds and removes necessary roles in discord based on claimed players clan and role in that clan
-  - rolemember `membermention`
+  - discord role member `membermention`
     - adds and removes necessary roles in discord based on claimed players clan and role in that clan for mentioned discord user
     - restricted to leaders and co-leaders
-  - roleall
+  - discord role all
     - adds and removes necessary roles in discord based on claimed players clan and role in that clan for all users in guild
     - restricted to leaders and co-leaders
-  - finduser `player_tag`
+  - discord user player `player tag`
     - returns the user linked to a requested player
     - example
-      - `/finduser #RGQ8RGU9`
-  - findclanusers
-    - returns the users linked to the active player's clan
+      - `/player user find #RGQ8RGU9`
+  - discord user clan
+    - finds the users linked to the active player's clan
 
 - ## <a id="command-list-player"></a>Player
 
-  - player find `player tag`
+  - player info self
+    - shows player information based on your active player
+  - player info find `player tag`
     - displays player information for requested player tag
     - example
-      - `/player find #RGQ8RGU9`
-      - `/player find RGQ8RGU9`
-  - player info
-    - shows player information based on your active player
-  - player memberinfo `user`
+      - `/player info find #RGQ8RGU9`
+      - `/player info find RGQ8RGU9`
+  - player info member `user`
     - shows player information based on the mentioned user's active player
-  - player unitlvl `unit name`
+  - player unit level `unit name`
     - shows the level of the requested unit, what the max for your town hall is, as well as the overall max
     - you can search troops, spells, and heroes
     - example
-      - `/player unitlvl hog rider`
-      - `/player unitlvl jump spell`
-      - `/player unitlvl archer queen`
-  - player allunitlvl
-    - shows the level your units
-  - player allherolvl
-    - shows the level your heroes
-  - player allpetlvl
-    - shows the level your pets
-  - player alltrooplvl
-    - shows the level your troops
-  - player allspelllvl
-    - shows the level your spells
-  - player allsiegelvl
-    - shows the level your sieges
-  - player supertroop
+      - `/player unit level hog rider`
+      - `/player unit level jump spell`
+      - `/player unit level archer queen`
+  - player all `unit type`
+    - shows the level your units based on the specified type
+  - player supertroop active
     - shows the super troops you have active
-  - player finduser
-    - finds the user linked to a requested player
 
 - ## <a id="command-list-clan"></a>Clan
 
-  - clan find `clan tag`
+  - clan info self
+    - displays clan information for clan active player is in
+  - clan info find `clan tag`
     - displays clan information for requested clan tag
     - example
-      - `/clan find #JJRJGVR0`
-      - `/clan find JJRJGVR0`
-  - clan info
-    - displays clan information for clan active player is in
-  - clan mentioninfo `clan role`
+      - `/clan info find #JJRJGVR0`
+      - `/clan info find JJRJGVR0`
+  - clan info mention `clan role`
     - displays clan information for clan linked to the clan role mentioned
-  - clan lineup
+  - clan member lineup
     - displays clan's town hall lineup
     - restricted to leaders and co-leaders
-  - clan warpreference
+  - clan member warpreference
     - displays rundown of clan member's war preference
     - restricted to leaders and co-leaders
-  - clan donate `unit name`
+  - clan unit donate `unit name`
     - shows who can donate the best of a specified unit
     - uses active player's clan for all clan commands
     - example
       - `/clan donate hog rider`
       - `/clan donate freeze spell`
-  - clan supertroop `super troop name`
+  - clan supertroop donate `super troop name`
     - shows players in your clan that have a specified super troop activated
-      - `/clan supertroop sneaky goblin`
-  - clan findusers
-    - finds the users linked to the active player's clan
+      - `/clan supertroop donate sneaky goblin`
 
 - ## <a id="command-list-war"></a>War
 
-  - war info
+  - war info overview
     - displays war information
     - uses active player's clan for all war commands
-  - war time
-    - displays how much time is left in war
-  - war noattack
+  - war clan noattack
     - displays players that are missing attacks in war
-  - war clanstars
+  - war clan stars
     - overview of all members in war
-  - war allattacks
+  - war clan attacks
     - shows all attacks for every member
-  - war score
+  - war score self
     - shows your member score for war
-  - war memberscore `user`
+  - war score member `user mention`
     - displays the requested member score for war
-  - war clanscore
+  - war score clan
     - displays every war member's score for war
-  - war lineup
+  - war lineup clan
     - displays a lineup for your clan and your opponent
-  - war memberlineup
+  - war lineup member
     - displays a lineup for each member in your clan and your opponent
 
 - ## <a id="command-list-cwl-group"></a>CWL Group
 
-  - cwl lineup
+  - cwl lineup overview
     - displays a lineup for clans in your cwl group
     - uses active player's clan for all cwlgroup and cwlwar commands
-  - cwl score
+  - cwl score self
     - lists your player's score for each war in cwl
-  - cwl memberscore `mention user`
+  - cwl member score `mention user`
     - lists user's active player's score for each war in cwl
-  - cwl clanscore
+  - cwl clan score
     - displays every cwl member's score
-
-- ## <a id="command-list-cwl-war"></a>CWL War
-
-  - cwlwar info
-    - displays cwlwar information
-  - cwlwar time
-    - displays how much time is left in current war
-  - cwlwar noattack
-    - displays players that are missing attacks in current war
-  - cwlwar allattacks
-    - shows all attacks for every member in current war
 
 # <a id="contributing"></a>Contributing
 
@@ -284,12 +271,12 @@ There aren't many required packages, but here are the few that are required and 
 
 - [disnake](https://github.com/DisnakeDev/disnake)
   - 2.0.0
+- [coc.py](https://github.com/mathsman5133/coc.py)
+  - Version 2.0.0
 - requests
   - 2.24.0
 - PyMySQL
   - 1.0.2
-- [coc.py](https://github.com/mathsman5133/coc.py)
-  - Version 2.0.0
 
 # <a id="links-and-contact"></a>Links and Contact
 

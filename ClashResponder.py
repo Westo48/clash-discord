@@ -463,7 +463,7 @@ async def active_super_troop_search(super_troop_obj, clan_obj, coc_client):
 
 async def get_war(clan_tag, coc_client):
     try:
-        war_obj = await coc_client.get_clan(clan_tag)
+        war_obj = await coc_client.get_current_war(clan_tag)
 
     except Maintenance:
         return None
