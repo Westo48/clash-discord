@@ -45,5 +45,5 @@ class ClashDiscord_Data(object):
         ClashDiscord_Category(
             'War', 'war', 'War based commands', '⚔️'),
         ClashDiscord_Category(
-            'CWL Group', 'cwl', 'CWL Group based commands', '🔱')
+            'CWL', 'cwl', 'CWL based commands', '🔱')
     ]
