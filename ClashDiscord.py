@@ -3736,25 +3736,10 @@ async def clientsuperuser(inter):
         parent for client super user commands
     """
 
-    pass
-
-
-# super user client guild
-@clientsuperuser.sub_command(
-    brief='clientsuperuser',
-    description="delete a claimed guild from id"
-)
-async def removeguildclaim(inter, guild_id: str):
-    """
-        claim a clan's discord role
-
-        Parameters
-        ----------
-        guild_id: id for guild to remove claim
-    """
-
+    # defer for every command
     await inter.response.defer()
 
+    # check for super user for every super user command
     db_author_obj = db_responder.read_user(inter.author.id)
     # author is not claimed
     if not db_author_obj:
@@ -3767,6 +3752,33 @@ async def removeguildclaim(inter, guild_id: str):
         await inter.edit_original_message(
             content=f"{inter.author.mention} is not super user")
         return
+
+
+@clientsuperuser.sub_command_group(
+    brief='clientsuperuser',
+    description="group for guild commands"
+)
+async def guild(inter):
+    """
+        group for guild commands
+    """
+
+    pass
+
+
+# super user client guild
+@guild.sub_command(
+    brief='clientsuperuser',
+    description="delete a claimed guild from id"
+)
+async def removeclaim(inter, guild_id: str):
+    """
+        claim a clan's discord role
+
+        Parameters
+        ----------
+        guild_id: id for guild to remove claim
+    """
 
     # confirm guild is claimed
     db_guild_obj = db_responder.read_guild(guild_id)
@@ -3788,12 +3800,24 @@ async def removeguildclaim(inter, guild_id: str):
         content=f"guild with id {guild_id} was deleted")
 
 
+@clientsuperuser.sub_command_group(
+    brief='clientsuperuser',
+    description="group for user commands"
+)
+async def user(inter):
+    """
+        group for user commands
+    """
+
+    pass
+
+
 # super user client user
-@clientsuperuser.sub_command(
+@user.sub_command(
     brief='clientsuperuser',
     description="delete a claimed user from id"
 )
-async def removeuserclaim(inter, user_id: str):
+async def removeclaim(inter, user_id: str):
     """
         claim a clan's discord role
 
@@ -3801,21 +3825,6 @@ async def removeuserclaim(inter, user_id: str):
         ----------
         user: id for user to remove claim
     """
-
-    await inter.response.defer()
-
-    db_author_obj = db_responder.read_user(inter.author.id)
-    # author is not claimed
-    if not db_author_obj:
-        await inter.edit_original_message(
-            content=f"{inter.author.mention} is not claimed")
-        return
-
-    # author is not super user
-    if not db_author_obj.super_user:
-        await inter.edit_original_message(
-            content=f"{inter.author.mention} is not super user")
-        return
 
     # confirm user is claimed
     db_user_obj = db_responder.read_user(user_id)
