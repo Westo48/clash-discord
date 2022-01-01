@@ -70,19 +70,31 @@ async def player(inter):
         parent for player commands
     """
 
-    pass
+    # defer for every command
+    await inter.response.defer()
 
 
-@player.sub_command(
+# player info
+@player.sub_command_group(
     brief='player',
-    description="get information about your active player"
+    description="group for player info commands"
 )
 async def info(inter):
     """
-        get information about your active player
+        group for player info commands
     """
 
-    await inter.response.defer()
+    pass
+
+
+@info.sub_command(
+    brief='player',
+    description="get information about your active player"
+)
+async def self(inter):
+    """
+        get information about your active player
+    """
 
     db_player_obj = db_responder.read_player_active(inter.author.id)
 
@@ -129,7 +141,7 @@ async def info(inter):
     await inter.edit_original_message(embeds=embed_list)
 
 
-@player.sub_command(
+@info.sub_command(
     brief='player',
     description="get information about a specified player"
 )
@@ -141,8 +153,6 @@ async def find(inter, player_tag: str):
         ----------
         player_tag: player tag to search
     """
-
-    await inter.response.defer()
 
     player_obj = await clash_responder.get_player(player_tag, coc_client)
 
@@ -185,11 +195,11 @@ async def find(inter, player_tag: str):
     await inter.edit_original_message(embeds=embed_list)
 
 
-@player.sub_command(
+@info.sub_command(
     brief='player',
     description="get information about a member's active player"
 )
-async def memberinfo(inter, user: disnake.User):
+async def member(inter, user: disnake.User):
     """
         get information about a specified player
 
@@ -197,8 +207,6 @@ async def memberinfo(inter, user: disnake.User):
         ----------
         user: user to search for active player
     """
-
-    await inter.response.defer()
 
     db_player_obj = db_responder.read_player_active(user.id)
 
@@ -245,11 +253,24 @@ async def memberinfo(inter, user: disnake.User):
     await inter.edit_original_message(embeds=embed_list)
 
 
-@player.sub_command(
+# player unit
+@player.sub_command_group(
+    brief='player',
+    description="group for player unit commands"
+)
+async def unit(inter):
+    """
+        group for player unit commands
+    """
+
+    pass
+
+
+@unit.sub_command(
     brief='player',
     description='get level information for a specified unit'
 )
-async def unitlvl(inter, unit_name: str):
+async def find(inter, unit_name: str):
     """
         get information about a specified player
 
@@ -257,8 +278,6 @@ async def unitlvl(inter, unit_name: str):
         ----------
         unit_name: name of the unit you would like information on
     """
-
-    await inter.response.defer()
 
     db_player_obj = db_responder.read_player_active(inter.author.id)
 
@@ -315,16 +334,16 @@ async def unitlvl(inter, unit_name: str):
     await inter.edit_original_message(embeds=embed_list)
 
 
-@player.sub_command(
+@unit.sub_command(
     brief='player',
     description='get all your unit levels'
 )
-async def allunitlvl(inter):
+async def all(inter,
+              unit_type: str = commands.Param(choices=[
+        "unit", "hero", "pet", "troop", "spell", "siege"])):
     """
         get all your unit levels
     """
-
-    await inter.response.defer()
 
     db_player_obj = db_responder.read_player_active(inter.author.id)
 
@@ -351,7 +370,19 @@ async def allunitlvl(inter):
 
     player_obj = verification_payload['player_obj']
 
-    field_dict_list = discord_responder.unit_lvl_all(player_obj)
+    if unit_type == "unit":
+        field_dict_list = discord_responder.unit_lvl_all(player_obj)
+    elif unit_type == "hero":
+        field_dict_list = discord_responder.hero_lvl_all(player_obj)
+    elif unit_type == "pet":
+        field_dict_list = discord_responder.pet_lvl_all(player_obj)
+    elif unit_type == "troop":
+        field_dict_list = discord_responder.troop_lvl_all(player_obj)
+    elif unit_type == "spell":
+        field_dict_list = discord_responder.spell_lvl_all(player_obj)
+    elif unit_type == "siege":
+        field_dict_list = discord_responder.siege_lvl_all(player_obj)
+
     embed_list = discord_responder.embed_message(
         Embed=disnake.Embed,
         color=disnake.Color(client_data.embed_color),
@@ -370,291 +401,27 @@ async def allunitlvl(inter):
     await inter.edit_original_message(embeds=embed_list)
 
 
-@player.sub_command(
+# player supertroop
+@player.sub_command_group(
     brief='player',
-    description='get all your hero levels'
-)
-async def allherolvl(inter):
-    """
-        get all your hero levels
-    """
-
-    await inter.response.defer()
-
-    db_player_obj = db_responder.read_player_active(inter.author.id)
-
-    verification_payload = await discord_responder.player_verification(
-        db_player_obj, inter.author, coc_client)
-    if not verification_payload['verified']:
-        embed_list = discord_responder.embed_message(
-            Embed=disnake.Embed,
-            color=disnake.Color(client_data.embed_color),
-            icon_url=inter.bot.user.avatar.url,
-            title=None,
-            description=None,
-            bot_prefix=inter.bot.command_prefix,
-            bot_user_name=inter.bot.user.name,
-            thumbnail=None,
-            field_list=verification_payload['field_dict_list'],
-            image_url=None,
-            author_display_name=inter.author.display_name,
-            author_avatar_url=inter.author.avatar.url
-        )
-
-        await inter.edit_original_message(embeds=embed_list)
-        return
-
-    player_obj = verification_payload['player_obj']
-
-    field_dict_list = discord_responder.hero_lvl_all(player_obj)
-    embed_list = discord_responder.embed_message(
-        Embed=disnake.Embed,
-        color=disnake.Color(client_data.embed_color),
-        icon_url=inter.bot.user.avatar.url,
-        title=f"{player_obj.name} heroes",
-        description=None,
-        bot_prefix=inter.bot.command_prefix,
-        bot_user_name=inter.bot.user.name,
-        thumbnail=player_obj.league.icon,
-        field_list=field_dict_list,
-        image_url=None,
-        author_display_name=inter.author.display_name,
-        author_avatar_url=inter.author.avatar.url
-    )
-
-    await inter.edit_original_message(embeds=embed_list)
-
-
-@player.sub_command(
-    brief='player',
-    description='get all your pet levels'
-)
-async def allpetlvl(inter):
-    """
-        get all your pet levels
-    """
-
-    await inter.response.defer()
-
-    db_player_obj = db_responder.read_player_active(inter.author.id)
-
-    verification_payload = await discord_responder.player_verification(
-        db_player_obj, inter.author, coc_client)
-    if not verification_payload['verified']:
-        embed_list = discord_responder.embed_message(
-            Embed=disnake.Embed,
-            color=disnake.Color(client_data.embed_color),
-            icon_url=inter.bot.user.avatar.url,
-            title=None,
-            description=None,
-            bot_prefix=inter.bot.command_prefix,
-            bot_user_name=inter.bot.user.name,
-            thumbnail=None,
-            field_list=verification_payload['field_dict_list'],
-            image_url=None,
-            author_display_name=inter.author.display_name,
-            author_avatar_url=inter.author.avatar.url
-        )
-
-        await inter.edit_original_message(embeds=embed_list)
-        return
-
-    player_obj = verification_payload['player_obj']
-
-    field_dict_list = discord_responder.pet_lvl_all(player_obj)
-    embed_list = discord_responder.embed_message(
-        Embed=disnake.Embed,
-        color=disnake.Color(client_data.embed_color),
-        icon_url=inter.bot.user.avatar.url,
-        title=f"{player_obj.name} pets",
-        description=None,
-        bot_prefix=inter.bot.command_prefix,
-        bot_user_name=inter.bot.user.name,
-        thumbnail=player_obj.league.icon,
-        field_list=field_dict_list,
-        image_url=None,
-        author_display_name=inter.author.display_name,
-        author_avatar_url=inter.author.avatar.url
-    )
-
-    await inter.edit_original_message(embeds=embed_list)
-
-
-@player.sub_command(
-    brief='player',
-    description='get all your troop levels'
-)
-async def alltrooplvl(inter):
-    """
-        get all your troop levels
-    """
-
-    await inter.response.defer()
-
-    db_player_obj = db_responder.read_player_active(inter.author.id)
-
-    verification_payload = await discord_responder.player_verification(
-        db_player_obj, inter.author, coc_client)
-    if not verification_payload['verified']:
-        embed_list = discord_responder.embed_message(
-            Embed=disnake.Embed,
-            color=disnake.Color(client_data.embed_color),
-            icon_url=inter.bot.user.avatar.url,
-            title=None,
-            description=None,
-            bot_prefix=inter.bot.command_prefix,
-            bot_user_name=inter.bot.user.name,
-            thumbnail=None,
-            field_list=verification_payload['field_dict_list'],
-            image_url=None,
-            author_display_name=inter.author.display_name,
-            author_avatar_url=inter.author.avatar.url
-        )
-
-        await inter.edit_original_message(embeds=embed_list)
-        return
-
-    player_obj = verification_payload['player_obj']
-
-    field_dict_list = discord_responder.troop_lvl_all(player_obj)
-    embed_list = discord_responder.embed_message(
-        Embed=disnake.Embed,
-        color=disnake.Color(client_data.embed_color),
-        icon_url=inter.bot.user.avatar.url,
-        title=f"{player_obj.name} troops",
-        description=None,
-        bot_prefix=inter.bot.command_prefix,
-        bot_user_name=inter.bot.user.name,
-        thumbnail=player_obj.league.icon,
-        field_list=field_dict_list,
-        image_url=None,
-        author_display_name=inter.author.display_name,
-        author_avatar_url=inter.author.avatar.url
-    )
-
-    await inter.edit_original_message(embeds=embed_list)
-
-
-@player.sub_command(
-    brief='player',
-    description='get all your spell levels'
-)
-async def allspelllvl(inter):
-    """
-        get all your spell levels
-    """
-
-    await inter.response.defer()
-
-    db_player_obj = db_responder.read_player_active(inter.author.id)
-
-    verification_payload = await discord_responder.player_verification(
-        db_player_obj, inter.author, coc_client)
-    if not verification_payload['verified']:
-        embed_list = discord_responder.embed_message(
-            Embed=disnake.Embed,
-            color=disnake.Color(client_data.embed_color),
-            icon_url=inter.bot.user.avatar.url,
-            title=None,
-            description=None,
-            bot_prefix=inter.bot.command_prefix,
-            bot_user_name=inter.bot.user.name,
-            thumbnail=None,
-            field_list=verification_payload['field_dict_list'],
-            image_url=None,
-            author_display_name=inter.author.display_name,
-            author_avatar_url=inter.author.avatar.url
-        )
-
-        await inter.edit_original_message(embeds=embed_list)
-        return
-
-    player_obj = verification_payload['player_obj']
-
-    field_dict_list = discord_responder.spell_lvl_all(player_obj)
-    embed_list = discord_responder.embed_message(
-        Embed=disnake.Embed,
-        color=disnake.Color(client_data.embed_color),
-        icon_url=inter.bot.user.avatar.url,
-        title=f"{player_obj.name} spells",
-        description=None,
-        bot_prefix=inter.bot.command_prefix,
-        bot_user_name=inter.bot.user.name,
-        thumbnail=player_obj.league.icon,
-        field_list=field_dict_list,
-        image_url=None,
-        author_display_name=inter.author.display_name,
-        author_avatar_url=inter.author.avatar.url
-    )
-
-    await inter.edit_original_message(embeds=embed_list)
-
-
-@player.sub_command(
-    brief='player',
-    description='get all your siege levels'
-)
-async def allsiegelvl(inter):
-    """
-        get all your siege levels
-    """
-
-    await inter.response.defer()
-
-    db_player_obj = db_responder.read_player_active(inter.author.id)
-
-    verification_payload = await discord_responder.player_verification(
-        db_player_obj, inter.author, coc_client)
-    if not verification_payload['verified']:
-        embed_list = discord_responder.embed_message(
-            Embed=disnake.Embed,
-            color=disnake.Color(client_data.embed_color),
-            icon_url=inter.bot.user.avatar.url,
-            title=None,
-            description=None,
-            bot_prefix=inter.bot.command_prefix,
-            bot_user_name=inter.bot.user.name,
-            thumbnail=None,
-            field_list=verification_payload['field_dict_list'],
-            image_url=None,
-            author_display_name=inter.author.display_name,
-            author_avatar_url=inter.author.avatar.url
-        )
-
-        await inter.edit_original_message(embeds=embed_list)
-        return
-
-    player_obj = verification_payload['player_obj']
-
-    field_dict_list = discord_responder.siege_lvl_all(player_obj)
-    embed_list = discord_responder.embed_message(
-        Embed=disnake.Embed,
-        color=disnake.Color(client_data.embed_color),
-        icon_url=inter.bot.user.avatar.url,
-        title=f"{player_obj.name} sieges",
-        description=None,
-        bot_prefix=inter.bot.command_prefix,
-        bot_user_name=inter.bot.user.name,
-        thumbnail=player_obj.league.icon,
-        field_list=field_dict_list,
-        image_url=None,
-        author_display_name=inter.author.display_name,
-        author_avatar_url=inter.author.avatar.url
-    )
-
-    await inter.edit_original_message(embeds=embed_list)
-
-
-@player.sub_command(
-    brief='player',
-    description='check to see what super troops you have active'
+    description="group for player supertroop commands"
 )
 async def supertroop(inter):
     """
-        check to see what super troops you have active
+        group for player supertroop commands
     """
 
-    await inter.response.defer()
+    pass
+
+
+@supertroop.sub_command(
+    brief='player',
+    description='check to see what super troops you have active'
+)
+async def self(inter):
+    """
+        check to see what super troops you have active
+    """
 
     db_player_obj = db_responder.read_player_active(inter.author.id)
 
@@ -704,11 +471,24 @@ async def supertroop(inter):
     await inter.edit_original_message(embeds=embed_list)
 
 
-@player.sub_command(
+# player user
+@player.sub_command_group(
+    brief='player',
+    description="group for player user commands"
+)
+async def user(inter):
+    """
+        group for player user commands
+    """
+
+    pass
+
+
+@user.sub_command(
     brief='player',
     description='returns the user linked to a requested player'
 )
-async def finduser(inter, player_tag: str):
+async def find(inter, player_tag: str):
     """
         returns the user linked to a requested player
 
@@ -716,8 +496,6 @@ async def finduser(inter, player_tag: str):
         ----------
         player_tag: player tag to search
     """
-
-    await inter.response.defer()
 
     player_obj = await clash_responder.get_player(player_tag, coc_client)
 
@@ -1871,7 +1649,7 @@ async def memberlineup(inter):
     await inter.edit_original_message(embeds=embed_list)
 
 
-# CWL Group
+# CWL
 
 @bot.slash_command(
     brief='cwl',
@@ -1882,19 +1660,31 @@ async def cwl(inter):
         parent for cwl commands
     """
 
-    pass
+    # defer for every command
+    await inter.response.defer()
 
 
-@cwl.sub_command(
+# cwl lineup
+@cwl.sub_command_group(
     brief='cwl',
-    description="returns the CWL group lineup"
+    description="group for cwl lineup commands"
 )
 async def lineup(inter):
     """
-        returns the CWL group lineup
+        group for cwl lineup commands
     """
 
-    await inter.response.defer()
+    pass
+
+
+@lineup.sub_command(
+    brief='cwl',
+    description="returns the CWL group lineup"
+)
+async def overview(inter):
+    """
+        returns the CWL group lineup
+    """
 
     db_player_obj = db_responder.read_player_active(inter.author.id)
 
@@ -1926,16 +1716,27 @@ async def lineup(inter):
         content=discord_responder.cwl_lineup(cwl_group_obj))
 
 
-@cwl.sub_command(
+# cwl lineup
+@cwl.sub_command_group(
     brief='cwl',
-    description="lists each score you have in CWL"
+    description="group for cwl score commands"
 )
 async def score(inter):
     """
-        returns the CWL group lineup
+        group for cwl score commands
     """
 
-    await inter.response.defer()
+    pass
+
+
+@score.sub_command(
+    brief='cwl',
+    description="lists each score you have in CWL"
+)
+async def self(inter):
+    """
+        returns the CWL group lineup
+    """
 
     db_player_obj = db_responder.read_player_active(inter.author.id)
 
@@ -1983,11 +1784,11 @@ async def score(inter):
     await inter.edit_original_message(embeds=embed_list)
 
 
-@cwl.sub_command(
+@score.sub_command(
     brief='cwl',
     description="lists each score the specified member has in CWL"
 )
-async def memberscore(inter, user: disnake.User):
+async def member(inter, user: disnake.User):
     """
         lists each score the specified member has in CWL
 
@@ -1995,8 +1796,6 @@ async def memberscore(inter, user: disnake.User):
         ----------
         user: user to search for active player's cwl member score
     """
-
-    await inter.response.defer()
 
     db_player_obj = db_responder.read_player_active(user.id)
 
@@ -2044,16 +1843,14 @@ async def memberscore(inter, user: disnake.User):
     await inter.edit_original_message(embeds=embed_list)
 
 
-@cwl.sub_command(
+@score.sub_command(
     brief='cwl',
     description="Lists each member and their score in CWL"
 )
-async def clanscore(inter):
+async def clan(inter):
     """
         returns the CWL group lineup
     """
-
-    await inter.response.defer()
 
     db_player_obj = db_responder.read_player_active(inter.author.id)
 

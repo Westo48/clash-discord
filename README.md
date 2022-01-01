@@ -171,40 +171,30 @@ ClashDiscord is largely **command** focused, meaning it doesn't do anything that
 
 - ## <a id="command-list-player"></a>Player
 
-  - player find `player tag`
+  - player info self
+    - shows player information based on your active player
+  - player info find `player tag`
     - displays player information for requested player tag
     - example
-      - `/player find #RGQ8RGU9`
-      - `/player find RGQ8RGU9`
-  - player info
-    - shows player information based on your active player
-  - player memberinfo `user`
+      - `/player info find #RGQ8RGU9`
+      - `/player info find RGQ8RGU9`
+  - player info member `user`
     - shows player information based on the mentioned user's active player
-  - player unitlvl `unit name`
+  - player unit level `unit name`
     - shows the level of the requested unit, what the max for your town hall is, as well as the overall max
     - you can search troops, spells, and heroes
     - example
-      - `/player unitlvl hog rider`
-      - `/player unitlvl jump spell`
-      - `/player unitlvl archer queen`
-  - player allunitlvl
-    - shows the level your units
-  - player allherolvl
-    - shows the level your heroes
-  - player allpetlvl
-    - shows the level your pets
-  - player alltrooplvl
-    - shows the level your troops
-  - player allspelllvl
-    - shows the level your spells
-  - player allsiegelvl
-    - shows the level your sieges
-  - player supertroop
+      - `/player unit level hog rider`
+      - `/player unit level jump spell`
+      - `/player unit level archer queen`
+  - player all `unit type`
+    - shows the level your units based on the specified type
+  - player supertroop active
     - shows the super troops you have active
-  - player finduser `player_tag`
+  - player user find `player tag`
     - returns the user linked to a requested player
     - example
-      - `/player finduser #RGQ8RGU9`
+      - `/player user find #RGQ8RGU9`
 
 - ## <a id="command-list-clan"></a>Clan
 
@@ -261,26 +251,15 @@ ClashDiscord is largely **command** focused, meaning it doesn't do anything that
 
 - ## <a id="command-list-cwl-group"></a>CWL Group
 
-  - cwl lineup
+  - cwl lineup overview
     - displays a lineup for clans in your cwl group
     - uses active player's clan for all cwlgroup and cwlwar commands
-  - cwl score
+  - cwl score self
     - lists your player's score for each war in cwl
-  - cwl memberscore `mention user`
+  - cwl member score `mention user`
     - lists user's active player's score for each war in cwl
-  - cwl clanscore
+  - cwl clan score
     - displays every cwl member's score
-
-- ## <a id="command-list-cwl-war"></a>CWL War
-
-  - cwlwar info
-    - displays cwlwar information
-  - cwlwar time
-    - displays how much time is left in current war
-  - cwlwar noattack
-    - displays players that are missing attacks in current war
-  - cwlwar allattacks
-    - shows all attacks for every member in current war
 
 # <a id="contributing"></a>Contributing
 
