@@ -160,14 +160,20 @@ ClashDiscord is largely **command** focused, meaning it doesn't do anything that
   - discord announce warnoatk `channel` `message`
     - announces message to channel, pings all in war missing attacks
     - restricted to leaders and co-leaders
-  - role
+  - discord role 
     - adds and removes necessary roles in discord based on claimed players clan and role in that clan
-  - rolemember `membermention`
+  - discord role member `membermention`
     - adds and removes necessary roles in discord based on claimed players clan and role in that clan for mentioned discord user
     - restricted to leaders and co-leaders
-  - roleall
+  - discord role all
     - adds and removes necessary roles in discord based on claimed players clan and role in that clan for all users in guild
     - restricted to leaders and co-leaders
+  - discord user player `player tag`
+    - returns the user linked to a requested player
+    - example
+      - `/player user find #RGQ8RGU9`
+  - discord user clan
+    - finds the users linked to the active player's clan
 
 - ## <a id="command-list-player"></a>Player
 
@@ -191,39 +197,33 @@ ClashDiscord is largely **command** focused, meaning it doesn't do anything that
     - shows the level your units based on the specified type
   - player supertroop active
     - shows the super troops you have active
-  - player user find `player tag`
-    - returns the user linked to a requested player
-    - example
-      - `/player user find #RGQ8RGU9`
 
 - ## <a id="command-list-clan"></a>Clan
 
-  - clan find `clan tag`
+  - clan info self
+    - displays clan information for clan active player is in
+  - clan info find `clan tag`
     - displays clan information for requested clan tag
     - example
-      - `/clan find #JJRJGVR0`
-      - `/clan find JJRJGVR0`
-  - clan info
-    - displays clan information for clan active player is in
-  - clan mentioninfo `clan role`
+      - `/clan info find #JJRJGVR0`
+      - `/clan info find JJRJGVR0`
+  - clan info mention `clan role`
     - displays clan information for clan linked to the clan role mentioned
-  - clan lineup
+  - clan member lineup
     - displays clan's town hall lineup
     - restricted to leaders and co-leaders
-  - clan warpreference
+  - clan member warpreference
     - displays rundown of clan member's war preference
     - restricted to leaders and co-leaders
-  - clan donate `unit name`
+  - clan unit donate `unit name`
     - shows who can donate the best of a specified unit
     - uses active player's clan for all clan commands
     - example
       - `/clan donate hog rider`
       - `/clan donate freeze spell`
-  - clan supertroop `super troop name`
+  - clan supertroop donate `super troop name`
     - shows players in your clan that have a specified super troop activated
       - `/clan supertroop sneaky goblin`
-  - clan findusers
-    - finds the users linked to the active player's clan
 
 - ## <a id="command-list-war"></a>War
 
