@@ -1358,7 +1358,7 @@ def war_member_lineup(war_obj):
     return field_dict_list
 
 
-# CWL GROUP
+# CWL
 
 async def cwl_group_verification(db_player_obj, user_obj, coc_client):
     """
@@ -1491,7 +1491,7 @@ async def cwl_group_leadership_verification(db_player_obj, user_obj, coc_client)
 def cwl_lineup(cwl_group):
     message = (
         "```\n"
-        "CWL Group Lineup\n"
+        "CWL Lineup\n"
         "14 | 13 | 12 | 11 | 10 | 9  | 8\n"
         "-------------------------------\n"
     )
@@ -2035,22 +2035,13 @@ def help_client_super_user(db_guild_obj, user_id, bot_category, all_commands):
         })
         return help_dict
 
-    for command_name in all_commands:
+    for parent in all_commands.values():
         # command is not in the correct category
-        if not bot_category.brief == command_name:
+        if not bot_category.brief == parent.name:
             continue
 
-        # repeating for each child
-        for item in all_commands[command_name].children:
-            child = all_commands[command_name].children[item]
-
-            field_name = f"{command_name} {child.name}"
-            for param in child.docstring["params"]:
-                field_name += f" <{param}>"
-            help_dict["field_dict_list"].append({
-                'name': field_name,
-                'value': child.docstring["description"]
-            })
+        field_dict_list = help_command_dict_list(parent)
+        help_dict["field_dict_list"] = field_dict_list
     return help_dict
 
 
@@ -2242,6 +2233,24 @@ def help_cwl(player_obj, bot_category, all_commands):
             })
 
     return help_dict
+
+
+def help_command_dict_list(parent):
+    field_dict_list = []
+
+    # repeating for each child
+    for group in parent.children.values():
+
+        for child in group.children.values():
+
+            field_name = child.qualified_name
+            for param in child.docstring["params"]:
+                field_name += f" <{param}>"
+            field_dict_list.append({
+                'name': field_name,
+                'value': child.docstring["description"]
+            })
+    return field_dict_list
 
 
 # user
