@@ -36,26 +36,26 @@ Getting ClashDiscord set up in your discord server can be somewhat confusing, bu
 
 2. claim your user in ClashDiscord
 
-   - /client claimuser
+   - `client user claim`
      - this will claim you as a user
      - _this can be done in any claimed guild_
 
 3. claim your discord server
 
-   - client claimguild
+   - `client guild claim`
      - this will claim your discord server and add you as the guild admin within ClashDiscord
      - guild is what the discord API calls a server
 
 4. link a player to your user
 
-   - client claimplayer `playertag apikey`
+   - `client player claim` `player tag` `api key`
      - claims the requested player and links it to your discord user
      - _this can be done in any claimed guild_
      - getting your api key is annoying, but for everyone’s security this is necessary
 
 5. link a clan to your guild
 
-   - client claimclan `clantag`
+   - `client clan claim` `clan tag`
      - claims a clan and links it to the claimed guild
      - your active player **must** be in the clan
      - _this is also for security_
@@ -63,13 +63,13 @@ Getting ClashDiscord set up in your discord server can be somewhat confusing, bu
 6. link existing roles to your server
 
    - claim clan roles
-     - client claimclanrole `clantag mentionrole`
+     - `client clanrole claim` `clan tag` `role mention`
        - links the clan role to a claimed clan
        - _mentionrole means you have to @mention the role_
 
    B. claim rank roles
 
-   - client claimrankrole `rank mentionrole`
+   - `client rankrole claim` `rank` `role mention`
      - links the rank role to a discord role
        - leader
        - co-leader
@@ -91,7 +91,9 @@ Getting ClashDiscord set up in your discord server can be somewhat confusing, bu
 
 # <a id="usage"></a>Usage
 
-ClashDiscord is largely **command** focused, meaning it doesn't do anything that it is not told to do. The only exception to this is when a member joins. If a server has claimed an uninitiated role, then they will be given that role, otherwise nothing will happen. Once setup is complete you will be able to interact with ClashDiscord using the prefix `/` and run the commands as desired.
+ClashDiscord is largely **command** focused, meaning it doesn't do anything that it is not told to do. The only exception to this is when a member joins. If a server has claimed an uninitiated role, then they will be given that role, otherwise nothing will happen. The other action ClashDiscord will take is if it detects a role being deleted from discord it will delete the database instance of that role.
+
+Once setup is complete you will be able to interact with ClashDiscord using the prefix `/` and run the commands as desired.
 
 # <a id="command-list"></a>Command List
 
@@ -223,30 +225,28 @@ ClashDiscord is largely **command** focused, meaning it doesn't do anything that
       - `/clan donate freeze spell`
   - clan supertroop donate `super troop name`
     - shows players in your clan that have a specified super troop activated
-      - `/clan supertroop sneaky goblin`
+      - `/clan supertroop donate sneaky goblin`
 
 - ## <a id="command-list-war"></a>War
 
-  - war info
+  - war info overview
     - displays war information
     - uses active player's clan for all war commands
-  - war time
-    - displays how much time is left in war
-  - war noattack
+  - war clan noattack
     - displays players that are missing attacks in war
-  - war clanstars
+  - war clan stars
     - overview of all members in war
-  - war allattacks
+  - war clan attacks
     - shows all attacks for every member
-  - war score
+  - war score self
     - shows your member score for war
-  - war memberscore `user`
+  - war score member `user mention`
     - displays the requested member score for war
-  - war clanscore
+  - war score clan
     - displays every war member's score for war
-  - war lineup
+  - war lineup clan
     - displays a lineup for your clan and your opponent
-  - war memberlineup
+  - war lineup member
     - displays a lineup for each member in your clan and your opponent
 
 - ## <a id="command-list-cwl-group"></a>CWL Group
@@ -271,12 +271,12 @@ There aren't many required packages, but here are the few that are required and 
 
 - [disnake](https://github.com/DisnakeDev/disnake)
   - 2.0.0
+- [coc.py](https://github.com/mathsman5133/coc.py)
+  - Version 2.0.0
 - requests
   - 2.24.0
 - PyMySQL
   - 1.0.2
-- [coc.py](https://github.com/mathsman5133/coc.py)
-  - Version 2.0.0
 
 # <a id="links-and-contact"></a>Links and Contact
 

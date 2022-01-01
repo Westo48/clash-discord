@@ -1001,19 +1001,31 @@ async def war(inter):
         parent for war commands
     """
 
-    pass
+    # defer for every command
+    await inter.response.defer()
 
 
-@war.sub_command(
+# war info
+@war.sub_command_group(
     brief='war',
-    description="overview of the current war"
+    description="group for war info commands"
 )
 async def info(inter):
     """
-        overview of the current war
+        group for war info commands
     """
 
-    await inter.response.defer()
+    pass
+
+
+@info.sub_command(
+    brief='war',
+    description="overview of the current war"
+)
+async def overview(inter):
+    """
+        overview of the current war
+    """
 
     db_player_obj = db_responder.read_player_active(inter.author.id)
 
@@ -1061,63 +1073,20 @@ async def info(inter):
     await inter.edit_original_message(embeds=embed_list)
 
 
-@war.sub_command(
+# war clan
+@war.sub_command_group(
     brief='war',
-    description="time remaining in the current war")
-async def time(inter):
+    description="group for war clan commands"
+)
+async def clan(inter):
     """
-        time remaining in the current war
+        group for war clan commands
     """
 
-    await inter.response.defer()
-
-    db_player_obj = db_responder.read_player_active(inter.author.id)
-
-    verification_payload = await discord_responder.war_verification(
-        db_player_obj, inter.author, coc_client)
-    if not verification_payload['verified']:
-        embed_list = discord_responder.embed_message(
-            Embed=disnake.Embed,
-            color=disnake.Color(client_data.embed_color),
-            icon_url=inter.bot.user.avatar.url,
-            title=None,
-            description=None,
-            bot_prefix=inter.bot.command_prefix,
-            bot_user_name=inter.bot.user.name,
-            thumbnail=None,
-            field_list=verification_payload['field_dict_list'],
-            image_url=None,
-            author_display_name=inter.author.display_name,
-            author_avatar_url=inter.author.avatar.url
-        )
-
-        await inter.edit_original_message(embeds=embed_list)
-        return
-
-    player_obj = verification_payload['player_obj']
-    war_obj = verification_payload['war_obj']
-
-    field_dict_list = discord_responder.war_time(war_obj)
-
-    embed_list = discord_responder.embed_message(
-        Embed=disnake.Embed,
-        color=disnake.Color(client_data.embed_color),
-        icon_url=inter.bot.user.avatar.url,
-        title=f"{war_obj.clan.name} vs. {war_obj.opponent.name}",
-        description=None,
-        bot_prefix=inter.bot.command_prefix,
-        bot_user_name=inter.bot.user.name,
-        thumbnail=player_obj.clan.badge,
-        field_list=field_dict_list,
-        image_url=None,
-        author_display_name=inter.author.display_name,
-        author_avatar_url=inter.author.avatar.url
-    )
-
-    await inter.edit_original_message(embeds=embed_list)
+    pass
 
 
-@war.sub_command(
+@clan.sub_command(
     brief='war',
     description="list of players that missed attacks in the current war"
 )
@@ -1125,8 +1094,6 @@ async def noattack(inter):
     """
         list of players that missed attacks in the current war
     """
-
-    await inter.response.defer()
 
     db_player_obj = db_responder.read_player_active(inter.author.id)
 
@@ -1174,16 +1141,14 @@ async def noattack(inter):
     await inter.edit_original_message(embeds=embed_list)
 
 
-@war.sub_command(
+@clan.sub_command(
     brief='war',
     description="overview of all members in war"
 )
-async def clanstars(inter):
+async def stars(inter):
     """
         overview of all members in war
     """
-
-    await inter.response.defer()
 
     db_player_obj = db_responder.read_player_active(inter.author.id)
 
@@ -1231,16 +1196,14 @@ async def clanstars(inter):
     await inter.edit_original_message(embeds=embed_list)
 
 
-@war.sub_command(
+@clan.sub_command(
     brief='war',
     description="all attacks for every war member"
 )
-async def allattacks(inter):
+async def attacks(inter):
     """
         all attacks for every war member
     """
-
-    await inter.response.defer()
 
     db_player_obj = db_responder.read_player_active(inter.author.id)
 
@@ -1288,16 +1251,27 @@ async def allattacks(inter):
     await inter.edit_original_message(embeds=embed_list)
 
 
-@war.sub_command(
+# war score
+@war.sub_command_group(
     brief='war',
-    description="your war member score"
+    description="group for war score commands"
 )
 async def score(inter):
     """
-        your war member score
+        group for war score commands
     """
 
-    await inter.response.defer()
+    pass
+
+
+@score.sub_command(
+    brief='war',
+    description="your war member score"
+)
+async def self(inter):
+    """
+        your war member score
+    """
 
     db_player_obj = db_responder.read_player_active(inter.author.id)
 
@@ -1345,11 +1319,11 @@ async def score(inter):
     await inter.edit_original_message(embeds=embed_list)
 
 
-@war.sub_command(
+@score.sub_command(
     brief='war',
     description="requested war member's score"
 )
-async def memberscore(inter, user: disnake.User):
+async def member(inter, user: disnake.User):
     """
         requested war member's score
 
@@ -1357,8 +1331,6 @@ async def memberscore(inter, user: disnake.User):
         ----------
         user: user to search for active player's war member score
     """
-
-    await inter.response.defer()
 
     db_player_obj = db_responder.read_player_active(user.id)
 
@@ -1406,16 +1378,15 @@ async def memberscore(inter, user: disnake.User):
     await inter.edit_original_message(embeds=embed_list)
 
 
-@war.sub_command(
+@score.sub_command(
     brief='war',
-    description="every clanmate's war member score"
+    description="*leadership* every clanmate's war member score"
 )
-async def clanscore(inter):
+async def clan(inter):
     """
+        *leadership*
         every clanmate's war member score
     """
-
-    await inter.response.defer()
 
     db_player_obj = db_responder.read_player_active(inter.author.id)
 
@@ -1463,16 +1434,27 @@ async def clanscore(inter):
     await inter.edit_original_message(embeds=embed_list)
 
 
-@war.sub_command(
+# war lineup
+@war.sub_command_group(
     brief='war',
-    description="town hall lineup for war"
+    description="group for war lineup commands"
 )
 async def lineup(inter):
     """
-        town hall lineup for war
+        group for war lineup commands
     """
 
-    await inter.response.defer()
+    pass
+
+
+@lineup.sub_command(
+    brief='war',
+    description="town hall lineup for war"
+)
+async def clan(inter):
+    """
+        town hall lineup for war
+    """
 
     db_player_obj = db_responder.read_player_active(inter.author.id)
 
@@ -1503,16 +1485,14 @@ async def lineup(inter):
     await inter.edit_original_message(content=discord_responder.war_lineup(war_obj))
 
 
-@war.sub_command(
+@lineup.sub_command(
     brief='war',
     description="town hall lineup for each war member"
 )
-async def memberlineup(inter):
+async def member(inter):
     """
         town hall lineup for each war member
     """
-
-    await inter.response.defer()
 
     db_player_obj = db_responder.read_player_active(inter.author.id)
 
