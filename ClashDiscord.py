@@ -2799,20 +2799,31 @@ async def client(inter):
         parent for client commands
     """
 
-    pass
+    # defer for every command
+    await inter.response.defer()
 
 
 # client user
-@client.sub_command(
+@client.sub_command_group(
+    brief='client',
+    description="group for client user commands"
+)
+async def user(inter):
+    """
+        group for client user commands
+    """
+
+    pass
+
+
+@user.sub_command(
     brief='client',
     description="claim your discord user"
 )
-async def claimuser(inter):
+async def claim(inter):
     """
         claim your discord user
     """
-
-    await inter.response.defer()
 
     user = db_responder.claim_user(inter.author.id)
     # if user wasn't claimed and now is
@@ -2826,7 +2837,19 @@ async def claimuser(inter):
 
 
 # client player
-@client.sub_command(
+@client.sub_command_group(
+    brief='client',
+    description="group for client player commands"
+)
+async def player(inter):
+    """
+        group for client player commands
+    """
+
+    pass
+
+
+@player.sub_command(
     brief='client',
     description=(
         "verify and claim a player, "
@@ -2834,7 +2857,7 @@ async def claimuser(inter):
         "many of ClashDiscord commands"
     )
 )
-async def claimplayer(inter, player_tag: str, api_key: str):
+async def claim(inter, player_tag: str, api_key: str):
     """
         verify and claim a player, 
         a player must be claimed to view and run 
@@ -2845,8 +2868,6 @@ async def claimplayer(inter, player_tag: str, api_key: str):
         player_tag: player tag to search
         api_key: api key provide from in game
     """
-
-    await inter.response.defer()
 
     # confirm valid player_tag
     player_obj = await clash_responder.get_player(
@@ -2907,16 +2928,14 @@ async def claimplayer(inter, player_tag: str, api_key: str):
                      f"{player_obj.tag} for {inter.author.mention}"))
 
 
-@client.sub_command(
+@player.sub_command(
     brief='client',
     description="shows players claimed by your discord user"
 )
-async def showplayers(inter):
+async def show(inter):
     """
         shows players claimed by your discord user
     """
-
-    await inter.response.defer()
 
     db_player_obj_list = db_responder.read_player_list(inter.author.id)
 
@@ -2940,11 +2959,11 @@ async def showplayers(inter):
     await inter.edit_original_message(content=message)
 
 
-@client.sub_command(
+@player.sub_command(
     brief='client',
     description="updates your active player"
 )
-async def updateplayer(inter, player_tag: str):
+async def update(inter, player_tag: str):
     """
         updates author's active player
 
@@ -2952,8 +2971,6 @@ async def updateplayer(inter, player_tag: str):
         ----------
         player_tag: player tag to set as active
     """
-
-    await inter.response.defer()
 
     player_obj = await clash_responder.get_player(player_tag, coc_client)
 
@@ -2996,11 +3013,11 @@ async def updateplayer(inter, player_tag: str):
         return
 
 
-@client.sub_command(
+@player.sub_command(
     brief='client',
     description="deletes the user's requested player claim"
 )
-async def removeplayer(inter, player_tag: str):
+async def remove(inter, player_tag: str):
     """
         updates author's active player
 
@@ -3008,8 +3025,6 @@ async def removeplayer(inter, player_tag: str):
         ----------
         player_tag: player tag to remove
     """
-
-    await inter.response.defer()
 
     player_obj = await clash_responder.get_player(player_tag, coc_client)
 
@@ -3108,18 +3123,28 @@ async def removeplayer(inter, player_tag: str):
 
 
 # client guild
-@client.sub_command(
+@client.sub_command_group(
+    brief='client',
+    description="group for client guild commands"
+)
+async def guild(inter):
+    """
+        group for client guild commands
+    """
+
+    pass
+
+
+@guild.sub_command(
     brief='client',
     description=("claim a discord guild and set yourself "
                  "as the guild admin for ClashDiscord")
 )
-async def claimguild(inter):
+async def claim(inter):
     """
         claim a discord guild and set yourself
         as the guild admin for ClashDiscord
     """
-
-    await inter.response.defer()
 
     # getting db user object
     db_user_obj = db_responder.read_user(inter.author.id)
@@ -3154,11 +3179,23 @@ async def claimguild(inter):
 
 
 # client clan
-@client.sub_command(
+@client.sub_command_group(
+    brief='client',
+    description="group for client clan commands"
+)
+async def clan(inter):
+    """
+        group for client clan commands
+    """
+
+    pass
+
+
+@clan.sub_command(
     brief='client',
     description="claim the requested clan"
 )
-async def claimclan(inter, clan_tag: str):
+async def claim(inter, clan_tag: str):
     """
         claim the requested clan
 
@@ -3166,16 +3203,6 @@ async def claimclan(inter, clan_tag: str):
         ----------
         clan_tag: clan tag to claim
     """
-
-    await inter.response.defer()
-
-    clan_obj = await clash_responder.get_clan(clan_tag, coc_client)
-
-    # clan not found
-    if not clan_obj:
-        await inter.edit_original_message(
-            content=f"couldn't find clan {clan_tag}")
-        return
 
     db_guild_obj = db_responder.read_guild(inter.guild.id)
 
@@ -3198,6 +3225,14 @@ async def claimclan(inter, clan_tag: str):
             and not db_user_obj.super_user):
         await inter.edit_original_message(
             content=f"{inter.author.mention} is not guild's admin")
+        return
+
+    clan_obj = await clash_responder.get_clan(clan_tag, coc_client)
+
+    # clan not found
+    if not clan_obj:
+        await inter.edit_original_message(
+            content=f"couldn't find clan {clan_tag}")
         return
 
     claimed_clan_obj = db_responder.read_clan(inter.guild.id, clan_obj.tag)
@@ -3247,12 +3282,12 @@ async def claimclan(inter, clan_tag: str):
         content=f"{clan_obj.name} has been claimed")
 
 
-@client.sub_command(
+@clan.sub_command(
     brief='client',
     description="clans claimed by a discord guild",
     hidden=True
 )
-async def showclans(inter):
+async def show(inter):
     """
         clans claimed by a discord guild
 
@@ -3261,14 +3296,27 @@ async def showclans(inter):
         clan_tag: clan tag to claim
     """
 
-    await inter.response.defer()
-
     db_guild_obj = db_responder.read_guild(inter.guild.id)
 
-    # guild not found
+    # guild not claimed
     if not db_guild_obj:
         await inter.edit_original_message(
             content=f"{inter.guild.name} has not been claimed")
+        return
+
+    db_user_obj = db_responder.read_user(inter.author.id)
+
+    # user not claimed
+    if not db_user_obj:
+        await inter.edit_original_message(
+            content=f"{inter.author.mention} has not been claimed")
+        return
+
+    # user is not guild admin and is not super user
+    if (not db_guild_obj.admin_user_id == inter.author.id
+            and not db_user_obj.super_user):
+        await inter.edit_original_message(
+            content=f"{inter.author.mention} is not guild's admin")
         return
 
     db_clan_obj_list = db_responder.read_clan_list_from_guild(inter.guild.id)
@@ -3291,11 +3339,11 @@ async def showclans(inter):
     await inter.edit_original_message(content=message)
 
 
-@client.sub_command(
+@clan.sub_command(
     brief='client',
     description="deletes the requested clan claim"
 )
-async def removeclan(inter, clan_tag: str):
+async def remove(inter, clan_tag: str):
     """
         deletes the requested clan claim
 
@@ -3304,17 +3352,8 @@ async def removeclan(inter, clan_tag: str):
         clan_tag: clan tag to delete from client
     """
 
-    await inter.response.defer()
-
-    clan_obj = await clash_responder.get_clan(clan_tag, coc_client)
-
-    # clan not found
-    if not clan_obj:
-        await inter.edit_original_message(
-            content=f"couldn't find clan {clan_tag}")
-        return
-
     db_guild_obj = db_responder.read_guild(inter.guild.id)
+
     # guild not claimed
     if not db_guild_obj:
         await inter.edit_original_message(
@@ -3322,6 +3361,7 @@ async def removeclan(inter, clan_tag: str):
         return
 
     db_user_obj = db_responder.read_user(inter.author.id)
+
     # user not claimed
     if not db_user_obj:
         await inter.edit_original_message(
@@ -3333,6 +3373,14 @@ async def removeclan(inter, clan_tag: str):
             and not db_user_obj.super_user):
         await inter.edit_original_message(
             content=f"{inter.author.mention} is not guild's admin")
+        return
+
+    clan_obj = await clash_responder.get_clan(clan_tag, coc_client)
+
+    # clan not found
+    if not clan_obj:
+        await inter.edit_original_message(
+            content=f"couldn't find clan {clan_tag}")
         return
 
     db_clan_obj = db_responder.read_clan(inter.guild.id, clan_obj.tag)
@@ -3356,16 +3404,26 @@ async def removeclan(inter, clan_tag: str):
 
 
 # client roles
-@client.sub_command(
+@client.sub_command_group(
+    brief='client',
+    description="group for client role commands"
+)
+async def role(inter):
+    """
+        group for client role commands
+    """
+
+    pass
+
+
+@role.sub_command(
     brief='client',
     description="shows all roles claimed by a discord guild"
 )
-async def showroles(inter):
+async def show(inter):
     """
         shows all roles claimed by a discord guild
     """
-
-    await inter.response.defer()
 
     db_user_obj = db_responder.read_user(inter.author.id)
 
@@ -3473,12 +3531,12 @@ async def showroles(inter):
     await inter.edit_original_message(embeds=embed_list)
 
 
-@client.sub_command(
+@role.sub_command(
     brief='client',
     description=("remove the claimed discord role, "
                  "the role will not be deleted from discord")
 )
-async def removeroleclaim(inter, role: disnake.Role):
+async def remove(inter, role: disnake.Role):
     """
         remove the claimed discord role,
         the role will not be deleted from discord
@@ -3487,8 +3545,6 @@ async def removeroleclaim(inter, role: disnake.Role):
         ----------
         role: role object to remove claim
     """
-
-    await inter.response.defer()
 
     db_user_obj = db_responder.read_user(inter.author.id)
 
@@ -3551,11 +3607,23 @@ async def removeroleclaim(inter, role: disnake.Role):
 
 
 # client clan role
-@client.sub_command(
+@client.sub_command_group(
+    brief='client',
+    description="group for client clan role commands"
+)
+async def clanrole(inter):
+    """
+        group for client clan role commands
+    """
+
+    pass
+
+
+@clanrole.sub_command(
     brief='client',
     description="claim a clan's discord role"
 )
-async def claimclanrole(inter, role: disnake.Role, clan_tag: str):
+async def claim(inter, role: disnake.Role, clan_tag: str):
     """
         claim a clan's discord role
 
@@ -3564,8 +3632,6 @@ async def claimclanrole(inter, role: disnake.Role, clan_tag: str):
         role: role object to claim and link to claimed clan
         clan_tag: clan tag to link to role
     """
-
-    await inter.response.defer()
 
     clan_obj = await clash_responder.get_clan(clan_tag, coc_client)
 
@@ -3643,12 +3709,24 @@ async def claimclanrole(inter, role: disnake.Role, clan_tag: str):
 
 
 # client rank role
-@client.sub_command(
+@client.sub_command_group(
+    brief='client',
+    description="group for client rank role commands"
+)
+async def rankrole(inter):
+    """
+        group for client rank role commands
+    """
+
+    pass
+
+
+@rankrole.sub_command(
     brief='client',
     description="claim a rank's discord role"
 )
-async def claimrankrole(inter, role: disnake.Role,
-                        rank_name: str = commands.Param(choices=[
+async def claim(inter, role: disnake.Role,
+                rank_name: str = commands.Param(choices=[
         "leader", "co-leader", "elder", "member", "uninitiated"])
 ):
     """
@@ -3659,8 +3737,6 @@ async def claimrankrole(inter, role: disnake.Role,
         role: role object to claim and link to client rank
         rank_name: requested rank to link to role
     """
-
-    await inter.response.defer()
 
     # validate given role name with model
     rank_role_model_obj = db_responder.read_rank_role_model(rank_name)
@@ -3739,24 +3815,10 @@ async def clientsuperuser(inter):
     # defer for every command
     await inter.response.defer()
 
-    # check for super user for every super user command
-    db_author_obj = db_responder.read_user(inter.author.id)
-    # author is not claimed
-    if not db_author_obj:
-        await inter.edit_original_message(
-            content=f"{inter.author.mention} is not claimed")
-        return
-
-    # author is not super user
-    if not db_author_obj.super_user:
-        await inter.edit_original_message(
-            content=f"{inter.author.mention} is not super user")
-        return
-
 
 @clientsuperuser.sub_command_group(
     brief='clientsuperuser',
-    description="group for guild commands"
+    description="group for clientsuperuser guild commands"
 )
 async def guild(inter):
     """
@@ -3780,6 +3842,19 @@ async def removeclaim(inter, guild_id: str):
         guild_id: id for guild to remove claim
     """
 
+    db_author_obj = db_responder.read_user(inter.author.id)
+    # author is not claimed
+    if not db_author_obj:
+        await inter.edit_original_message(
+            content=f"{inter.author.mention} is not claimed")
+        return
+
+    # author is not super user
+    if not db_author_obj.super_user:
+        await inter.edit_original_message(
+            content=f"{inter.author.mention} is not super user")
+        return
+
     # confirm guild is claimed
     db_guild_obj = db_responder.read_guild(guild_id)
     # guild isn't claimed
@@ -3802,7 +3877,7 @@ async def removeclaim(inter, guild_id: str):
 
 @clientsuperuser.sub_command_group(
     brief='clientsuperuser',
-    description="group for user commands"
+    description="group for clientsuperuser user commands"
 )
 async def user(inter):
     """
@@ -3825,6 +3900,19 @@ async def removeclaim(inter, user_id: str):
         ----------
         user: id for user to remove claim
     """
+
+    db_author_obj = db_responder.read_user(inter.author.id)
+    # author is not claimed
+    if not db_author_obj:
+        await inter.edit_original_message(
+            content=f"{inter.author.mention} is not claimed")
+        return
+
+    # author is not super user
+    if not db_author_obj.super_user:
+        await inter.edit_original_message(
+            content=f"{inter.author.mention} is not super user")
+        return
 
     # confirm user is claimed
     db_user_obj = db_responder.read_user(user_id)

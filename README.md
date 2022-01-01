@@ -98,43 +98,43 @@ ClashDiscord is largely **command** focused, meaning it doesn't do anything that
 - ## <a id="command-list-clashdiscord"></a>ClashDiscord
 
   - ### User
-    - client claimuser
+    - client user claim
       - claims the user by discord user id within ClashDiscord
   - ### Player
-    - client claimplayer `playertag apikey`
+    - client player claim `player tag` `api key`
       - links a player to your claimed user
       - if there are no other claimed players for your user, then sets this claimed player as active for you
-    - client showplayers
+    - client player show
       - shows all claimed players for your user and which is set as active
-    - client updateplayer `playertag`
+    - client player update `player tag`
       - sets the requested player as your active player
-    - client removeplayer `playertag`
+    - client player remove `player tag`
       - removes the claimed player from your user
   - ### Guild
-    - client claimguild
+    - client guild claim
       - claims the guild by discord guild id within ClashDiscord
       - sets the user who called the command as the guild admin within ClashDiscord
   - ### Clan
-    - client claimclan `clantag`
+    - client clan claim `clan tag`
       - claims the clan and links it to the claimed guild
       - user _must_ be guild admin
       - user's active player _must_ be in the clan
       - claimed guilds can claim multiple different clans
       - multiple guilds can claim the same clan
-    - client showclans
+    - client clans show
       - shows all claimed clans for the guild
-    - client removeclan `clantag`
+    - client removeclan `clan tag`
       - removes the claimed clan from your guild
   - ### Role
-    - client showroles
+    - client role show
       - shows all claimed roles for the guild
-    - client removeroleclaim `rolemention`
+    - client role remove `role mention`
       - removes claim on the mentioned role
   - ### Clan Role
-    - client claimclanrole `clantag rolemention`
+    - client clanrole claim `clan tag` `role mention`
       - links the mentioned role to a claimed clan
   - ### Rank Role
-    - client claimrankrole `rank rolemention`
+    - client rankrole claim `rank` `role mention`
       - claims the mentioned role as a specific clan rank
       - list of ranks
         - leader

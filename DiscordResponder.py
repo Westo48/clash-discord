@@ -2051,36 +2051,29 @@ def help_client(db_guild_obj, user_id, bot_category, all_commands):
         'emoji_list': []
     }
 
-    for command_name in all_commands:
+    # guild not claimed
+    if db_guild_obj is None:
+        help_dict['field_dict_list'].append({
+            'name': "guild not claimed",
+            'value': "please claim guild using `client guild claim`"
+        })
+        return help_dict
+
+    for parent in all_commands.values():
         # command is not in the correct category
-        if not bot_category.brief == command_name:
+        if not bot_category.brief == parent.name:
             continue
 
-        # guild not claimed
-        if db_guild_obj is None:
-            help_dict['field_dict_list'].append({
-                'name': "guild not claimed",
-                'value': "please claim guild using `client claim guild`"
-            })
-            return
+        field_dict_list = help_command_dict_list(parent)
 
-        # repeating for each child
-        for item in all_commands[command_name].children:
-            child = all_commands[command_name].children[item]
-
-            field_name = f"{command_name} {child.name}"
-            for param in child.docstring["params"]:
-                field_name += f" <{param}>"
+        if len(field_dict_list) == 0:
             help_dict["field_dict_list"].append({
-                'name': field_name,
-                'value': child.docstring["description"]
-            })
-
-        if len(help_dict['field_dict_list']) == 0:
-            help_dict['field_dict_list'].append({
                 'name': "guild not claimed",
                 'value': "please claim guild using `client claim guild`"
             })
+            return help_dict
+
+        help_dict["field_dict_list"] = field_dict_list
 
     return help_dict
 
