@@ -915,8 +915,6 @@ async def donate(inter, unit_name: str):
         unit_name: name of unit to search clan super troops
     """
 
-    await inter.response.defer()
-
     db_player_obj = db_responder.read_player_active(inter.author.id)
 
     verification_payload = await discord_responder.clan_verification(
