@@ -1,20 +1,12 @@
 import math
 from coc import NotFound, Maintenance, PrivateWarLog, GatewayError
-import RazBot_Data
-import ClashResponder as clash_responder
-import RazBotDB_Responder as db_responder
+import data.RazBot_Data as RazBot_Data
+import responders.ClashResponder as clash_responder
+import responders.RazBotDB_Responder as db_responder
 from disnake.utils import get
 
 
 # CLIENT
-
-
-def get_client_prefix():
-    """
-        returns RazBot_Data client prefix
-    """
-
-    return RazBot_Data.RazBot_Data().prefix
 
 
 def get_client_discord_id():
