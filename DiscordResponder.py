@@ -1112,16 +1112,18 @@ def war_members_overview(war_obj):
         }]
     elif war_obj.state == "inWar":
         field_dict_list = []
+        map_position_index = 0
+        # no atk response
         for member_obj in war_obj.clan.members:
-            # no atk response
+            map_position_index += 1
             if len(member_obj.attacks) == 0:
                 field_dict_list.append({
-                    'name': f"{member_obj.map_position}. {member_obj.name}",
+                    'name': f"{map_position_index}. {member_obj.name}",
                     'value': f"has not attacked"
                 })
             else:
                 field_dict_list.append({
-                    'name': f"{member_obj.map_position}. {member_obj.name}",
+                    'name': f"{map_position_index}. {member_obj.name}",
                     'value': (
                         f"attacked {len(member_obj.attacks)} "
                         f"{clash_responder.string_attack_times(member_obj.attacks)} "
@@ -1132,16 +1134,18 @@ def war_members_overview(war_obj):
         return field_dict_list
     elif war_obj.state == "warEnded":
         field_dict_list = []
+        map_position_index = 0
+        # no atk response
         for member_obj in war_obj.clan.members:
-            # no atk response
+            map_position_index += 1
             if len(member_obj.attacks) == 0:
                 field_dict_list.append({
-                    'name': f"{member_obj.map_position}. {member_obj.name}",
+                    'name': f"{map_position_index}. {member_obj.name}",
                     'value': f"did not attack"
                 })
             else:
                 field_dict_list.append({
-                    'name': f"{member_obj.map_position}. {member_obj.name}",
+                    'name': f"{map_position_index}. {member_obj.name}",
                     'value': (
                         f"attacked {len(member_obj.attacks)} "
                         f"{clash_responder.string_attack_times(member_obj.attacks)} "
@@ -1168,19 +1172,20 @@ def war_all_attacks(war_obj):
         }]
     elif war_obj.state == 'inWar' or war_obj.state == "warEnded":
         field_dict_list = []
-
+        map_position_index = 0
         # no atk response
         for member_obj in war_obj.clan.members:
+            map_position_index += 1
             if len(member_obj.attacks) == 0:
                 if war_obj.state == "inWar":
                     field_dict_list.append({
-                        'name': (f"{member_obj.map_position}. {member_obj.name} "
+                        'name': (f"{map_position_index}. {member_obj.name} "
                                  f"TH {member_obj.town_hall}"),
                         'value': f"has not attacked"
                     })
                 else:
                     field_dict_list.append({
-                        'name': (f"{member_obj.map_position}. {member_obj.name} "
+                        'name': (f"{map_position_index}. {member_obj.name} "
                                  f"TH {member_obj.town_hall}"),
                         'value': f"did not attack"
                     })
@@ -1195,7 +1200,7 @@ def war_all_attacks(war_obj):
                     value_string = (
                         f"{attack_obj.stars} "
                         f"{clash_responder.string_member_stars(attack_obj.stars)} "
-                        f"against {defender_obj.map_position}. "
+                        f"against {map_position_index}. "
                         f"{defender_obj.name} TH {defender_obj.town_hall}"
                     )
                 else:
@@ -1203,12 +1208,12 @@ def war_all_attacks(war_obj):
                         f"{attack_obj.stars} "
                         f"{clash_responder.string_member_stars(attack_obj.stars)} "
                         f"{round(attack_obj.destruction, 2)}% "
-                        f"against {defender_obj.map_position}. "
+                        f"against {map_position_index}. "
                         f"{defender_obj.name} TH {defender_obj.town_hall}"
                     )
                 field_dict_list.append({
                     'name': (
-                        f"{member_obj.map_position}. "
+                        f"{map_position_index}. "
                         f"{member_obj.name} "
                         f"TH {member_obj.town_hall}"
                     ),
@@ -1342,12 +1347,13 @@ def war_lineup(war_obj):
 
 def war_member_lineup(war_obj):
     field_dict_list = []
-
+    map_position_index = 0
     for clan_member in war_obj.clan.members:
+        map_position_index += 1
         # subtract 1 for indexing purposes
-        opp_member_obj = war_obj.opponent.members[clan_member.map_position-1]
+        opp_member_obj = war_obj.opponent.members[map_position_index-1]
         field_dict_list.append({
-            "name": clan_member.map_position,
+            "name": f"{map_position_index}",
             "value": (
                 f"{clan_member.town_hall} | {clan_member.name}\n"
                 f"{opp_member_obj.town_hall} | {opp_member_obj.name}\n"
