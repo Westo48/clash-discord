@@ -1220,7 +1220,7 @@ def war_all_attacks(war_obj):
         }]
 
 
-def war_member_standing(war_obj, player):
+def war_member_score(war_obj, player):
     "returns a response list of member scores"
     field_dict_list = []
     if war_obj.state == "notInWar":
@@ -1259,7 +1259,7 @@ def war_member_standing(war_obj, player):
     return field_dict_list
 
 
-def war_all_member_standing(war_obj):
+def war_clan_score(war_obj):
     "returns a response list of all member scores"
     return_list = []
     if war_obj.state == "notInWar":
@@ -1513,7 +1513,7 @@ def cwl_lineup(cwl_group):
     return message
 
 
-async def cwl_clan_standing(cwl_group, clan_tag):
+async def cwl_clan_score(player_obj, cwl_group, clan_tag):
     class ScoredCWLMember(object):
         """
             ScoredWarMember
@@ -1532,12 +1532,12 @@ async def cwl_clan_standing(cwl_group, clan_tag):
 
     if not cwl_group:
         return [{
-            'name': "you are not in CWL",
+            'name': "{player_obj.name} is not in CWL",
             'value': "there is no score"
         }]
 
-    cwl_wars = []
     # get a list of all CWLWar objects
+    cwl_wars = []
     async for war in cwl_group.get_wars_for_clan(clan_tag):
         if war.state == "inWar" or war.state == "warEnded":
             cwl_wars.append(war)
@@ -1587,7 +1587,7 @@ async def cwl_clan_standing(cwl_group, clan_tag):
     return field_dict_list
 
 
-def cwl_member_standing(player_obj, cwl_group, clan_tag, header):
+async def cwl_member_score(player_obj, cwl_group, clan_tag):
     if not cwl_group:
         return [{
             'name': "{player_obj.name} is not in CWL",
@@ -1596,12 +1596,9 @@ def cwl_member_standing(player_obj, cwl_group, clan_tag, header):
 
     # get a list of all CWLWar objects
     cwl_wars = []
-    for cwl_round in cwl_group.rounds:
-        cwl_war = cwl_group.find_specified_war(
-            clan_tag, cwl_group.rounds.index(cwl_round), header)
-        if not cwl_war == '#0':
-            if cwl_war.state == 'warEnded':
-                cwl_wars.append(cwl_war)
+    async for war in cwl_group.get_wars_for_clan(clan_tag):
+        if war.state == "inWar" or war.state == "warEnded":
+            cwl_wars.append(war)
 
     if len(cwl_wars) < 2:
         return [{

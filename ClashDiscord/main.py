@@ -1297,7 +1297,7 @@ async def self(inter):
     player_obj = verification_payload['player_obj']
     war_obj = verification_payload['war_obj']
 
-    field_dict_list = discord_responder.war_member_standing(
+    field_dict_list = discord_responder.war_member_score(
         war_obj, player_obj)
     embed_list = discord_responder.embed_message(
         Embed=disnake.Embed,
@@ -1356,7 +1356,7 @@ async def member(inter, user: disnake.User):
     player_obj = verification_payload['player_obj']
     war_obj = verification_payload['war_obj']
 
-    field_dict_list = discord_responder.war_member_standing(
+    field_dict_list = discord_responder.war_member_score(
         war_obj, player_obj)
     embed_list = discord_responder.embed_message(
         Embed=disnake.Embed,
@@ -1412,7 +1412,7 @@ async def clan(inter):
     player_obj = verification_payload['player_obj']
     war_obj = verification_payload['war_obj']
 
-    field_dict_list = discord_responder.war_all_member_standing(
+    field_dict_list = discord_responder.war_clan_score(
         war_obj)
     embed_list = discord_responder.embed_message(
         Embed=disnake.Embed,
@@ -1605,7 +1605,7 @@ async def overview(inter):
         content=discord_responder.cwl_lineup(cwl_group_obj))
 
 
-# cwl lineup
+# cwl score
 @cwl.sub_command_group(
     brief='cwl',
     description="group for cwl score commands"
@@ -1653,8 +1653,8 @@ async def self(inter):
     player_obj = verification_payload['player_obj']
     cwl_group_obj = verification_payload['cwl_group_obj']
 
-    field_dict_list = discord_responder.cwl_member_standing(
-        player_obj, cwl_group_obj, player_obj.clan.tag, coc_client)
+    field_dict_list = await discord_responder.cwl_member_score(
+        player_obj, cwl_group_obj, player_obj.clan.tag)
     embed_list = discord_responder.embed_message(
         Embed=disnake.Embed,
         color=disnake.Color(client_data.embed_color),
@@ -1712,8 +1712,8 @@ async def member(inter, user: disnake.User):
     player_obj = verification_payload['player_obj']
     cwl_group_obj = verification_payload['cwl_group_obj']
 
-    field_dict_list = discord_responder.cwl_member_standing(
-        cwl_group_obj, player_obj.clan.tag)
+    field_dict_list = await discord_responder.cwl_member_score(
+        player_obj, cwl_group_obj, player_obj.clan.tag)
     embed_list = discord_responder.embed_message(
         Embed=disnake.Embed,
         color=disnake.Color(client_data.embed_color),
@@ -1768,8 +1768,8 @@ async def clan(inter):
     player_obj = verification_payload['player_obj']
     cwl_group_obj = verification_payload['cwl_group_obj']
 
-    field_dict_list = await discord_responder.cwl_clan_standing(
-        cwl_group_obj, player_obj.clan.tag)
+    field_dict_list = await discord_responder.cwl_clan_score(
+        player_obj, cwl_group_obj, player_obj.clan.tag)
     embed_list = discord_responder.embed_message(
         Embed=disnake.Embed,
         color=disnake.Color(client_data.embed_color),
