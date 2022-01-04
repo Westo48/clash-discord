@@ -3648,24 +3648,25 @@ async def claim(inter, role: disnake.Role,
                  f"{claimed_rank_role_obj.model_name}"))
 
 
-# client super user administration
+# super user administration
 
 @bot.slash_command(
-    brief='clientsuperuser',
+    brief='superuser',
     description="parent for client super user commands"
 )
-async def clientsuperuser(inter):
+async def superuser(inter):
     """
         parent for client super user commands
     """
 
     # defer for every command
-    await inter.response.defer()
+    await inter.response.defer(ephemeral=True)
 
 
-@clientsuperuser.sub_command_group(
-    brief='clientsuperuser',
-    description="group for clientsuperuser guild commands"
+# superuser guild
+@superuser.sub_command_group(
+    brief='superuser',
+    description="group for superuser guild commands"
 )
 async def guild(inter):
     """
@@ -3675,13 +3676,13 @@ async def guild(inter):
     pass
 
 
-# super user client guild
 @guild.sub_command(
-    brief='clientsuperuser',
-    description="delete a claimed guild from id"
+    brief='superuser',
+    description="*super user* delete a claimed guild from id"
 )
 async def removeclaim(inter, guild_id: str):
     """
+        *super user*
         claim a clan's discord role
 
         Parameters
@@ -3722,9 +3723,10 @@ async def removeclaim(inter, guild_id: str):
         content=f"guild with id {guild_id} was deleted")
 
 
-@clientsuperuser.sub_command_group(
-    brief='clientsuperuser',
-    description="group for clientsuperuser user commands"
+# superuser user
+@superuser.sub_command_group(
+    brief='superuser',
+    description="group for superuser user commands"
 )
 async def user(inter):
     """
@@ -3734,18 +3736,18 @@ async def user(inter):
     pass
 
 
-# super user client user
 @user.sub_command(
-    brief='clientsuperuser',
-    description="delete a claimed user from id"
+    brief='superuser',
+    description="*super user* delete a claimed user from id"
 )
-async def removeclaim(inter, user_id: str):
+async def removeclaim(inter, user: disnake.User):
     """
+        *super user*
         claim a clan's discord role
 
         Parameters
         ----------
-        user: id for user to remove claim
+        user: user to remove claim
     """
 
     db_author_obj = db_responder.read_user(inter.author.id)
@@ -3762,23 +3764,114 @@ async def removeclaim(inter, user_id: str):
         return
 
     # confirm user is claimed
-    db_user_obj = db_responder.read_user(user_id)
+    db_user_obj = db_responder.read_user(user.id)
     # user isn't claimed
     if not db_user_obj:
         await inter.edit_original_message(
-            content=f"user with id {user_id} is not claimed")
+            content=f"user with id {user.id} is not claimed")
         return
 
-    deleted_user_obj = db_responder.delete_user(user_id)
+    deleted_user_obj = db_responder.delete_user(user.id)
     # user could not be deleted
     if deleted_user_obj:
         await inter.edit_original_message(
-            content=f"user with id {user_id} could not be deleted")
+            content=f"user with id {user.id} could not be deleted")
         return
 
     # user was deleted properly
     await inter.edit_original_message(
-        content=f"user with id {user_id} was deleted")
+        content=f"user with id {user.id} was deleted")
+
+
+# superuser player
+@superuser.sub_command_group(
+    brief='superuser',
+    description="group for superuser player commands"
+)
+async def player(inter):
+    """
+        group for player commands
+    """
+
+    pass
+
+
+@player.sub_command(
+    brief='superuser',
+    description=(
+        "*super user* claim a player for the mentioned user"
+    )
+)
+async def claim(inter, player_tag: str, user: disnake.User):
+    """
+        *super user*
+        claim a player for the mentioned user
+
+        Parameters
+        ----------
+        player_tag: player tag link user to
+        user: user to link player to
+    """
+
+    db_author_obj = db_responder.read_user(inter.author.id)
+    # author is not claimed
+    if not db_author_obj:
+        await inter.edit_original_message(
+            content=f"{inter.author.mention} is not claimed")
+        return
+
+    # author is not super user
+    if not db_author_obj.super_user:
+        await inter.edit_original_message(
+            content=f"{inter.author.mention} is not super user")
+        return
+
+    # confirm valid player_tag
+    player_obj = await clash_responder.get_player(
+        player_tag, coc_client)
+
+    # player tag was not valid
+    if not player_obj:
+        await inter.edit_original_message(
+            content=f"player with tag {player_tag} was not found")
+        return
+
+    # confirm user has been claimed
+    db_user_obj = db_responder.read_user(user.id)
+    if not db_user_obj:
+        # user has not been claimed
+        db_user_obj = db_responder.claim_user(user.id)
+        if not db_user_obj:
+            # user could not be claimed
+            await inter.edit_original_message(
+                content=f"{user.mention} user couldn't be claimed")
+            return
+
+    # confirm player has not been claimed
+    db_player_obj = db_responder.read_player_from_tag(player_obj.tag)
+    # player has already been claimed
+    if db_player_obj:
+        await inter.edit_original_message(
+            content=(f"{player_obj.name} {player_obj.tag} "
+                     f"has already been claimed"))
+        return
+
+    # user claimed
+    # player is valid
+    # player hasn't been claimed
+    db_player_obj = db_responder.claim_player(
+        user.id, player_obj.tag)
+
+    # succesfully claimed
+    if db_player_obj:
+        await inter.edit_original_message(
+            content=(f"{player_obj.name} {player_obj.tag} "
+                     f"is now claimed by {user.mention}"))
+    # failed to claim
+    else:
+        await inter.edit_original_message(
+            content=(f"Could not claim {player_obj.name} "
+                     f"{player_obj.tag} for {user.mention}"))
 
 
 # client events
