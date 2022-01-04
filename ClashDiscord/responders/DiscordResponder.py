@@ -1514,22 +1514,6 @@ def cwl_lineup(cwl_group):
 
 
 async def cwl_clan_score(player_obj, cwl_group, clan_tag):
-    class ScoredCWLMember(object):
-        """
-            ScoredWarMember
-                Instance Attributes
-                    tag (str): WarMember's player tag
-                    name (str): WarMember's player name
-                    wars (int): rounds participated
-                    score (int): WarMember's war score
-        """
-
-        def __init__(self, tag, name, wars, score):
-            self.tag = tag
-            self.name = name
-            self.wars = wars
-            self.score = score
-
     if not cwl_group:
         return [{
             'name': "{player_obj.name} is not in CWL",
@@ -1539,7 +1523,7 @@ async def cwl_clan_score(player_obj, cwl_group, clan_tag):
     # get a list of all CWLWar objects
     cwl_wars = []
     async for war in cwl_group.get_wars_for_clan(clan_tag):
-        if war.state == "inWar" or war.state == "warEnded":
+        if war.state == "warEnded":
             cwl_wars.append(war)
 
     if len(cwl_wars) < 2:
@@ -1565,16 +1549,15 @@ async def cwl_clan_score(player_obj, cwl_group, clan_tag):
     scored_members = []
 
     for member in cwl_group:
-        total_member_score = 0
         for war in cwl_wars:
             if war.war_tag == "#0":
                 continue
             if war.status != "warEnded":
                 continue
-            if war.get_member(member.tag) is not None:
-
-                scored_members.append(
-                    clash_responder.member_score(member, war))
+            if war.get_member(member.tag) is None:
+                continue
+            scored_members.append(
+                clash_responder.member_score(member, war))
 
     sorted_cwl_war_members = sorted(
         scored_members, key=lambda member: member.score, reverse=True)
