@@ -1962,7 +1962,7 @@ def help_main(db_guild_obj, user_id, player_obj, bot_categories):
 
     db_user_obj = db_responder.read_user(user_id)
     for category in bot_categories:
-        if category.brief == "clientsuperuser":
+        if category.brief == "superuser":
             if not db_user_obj:
                 continue
             if not db_user_obj.super_user:
@@ -2002,9 +2002,9 @@ def help_switch(db_guild_obj, db_player_obj, player_obj, user_id, emoji,
                 bot_category, bot_categories, all_commands):
     if not bot_category:
         return help_main(db_guild_obj, user_id, player_obj, bot_categories)
-    if bot_category.brief == "clientsuperuser":
-        return help_client_super_user(db_guild_obj, user_id,
-                                      bot_category, all_commands)
+    if bot_category.brief == "superuser":
+        return help_super_user(db_guild_obj, user_id,
+                               bot_category, all_commands)
     if bot_category.brief == "client":
         return help_client(db_guild_obj, user_id, bot_category, all_commands)
     if bot_category.brief == "discord":
@@ -2018,7 +2018,7 @@ def help_switch(db_guild_obj, db_player_obj, player_obj, user_id, emoji,
     return help_main(db_guild_obj, user_id, player_obj, bot_categories)
 
 
-def help_client_super_user(db_guild_obj, user_id, bot_category, all_commands):
+def help_super_user(db_guild_obj, user_id, bot_category, all_commands):
     help_dict = {
         'field_dict_list': [],
         'emoji_list': []
