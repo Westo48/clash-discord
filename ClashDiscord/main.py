@@ -1768,7 +1768,7 @@ async def clan(inter):
     player_obj = verification_payload['player_obj']
     cwl_group_obj = verification_payload['cwl_group_obj']
 
-    field_dict_list = discord_responder.cwl_clan_standing(
+    field_dict_list = await discord_responder.cwl_clan_standing(
         cwl_group_obj, player_obj.clan.tag)
     embed_list = discord_responder.embed_message(
         Embed=disnake.Embed,
