@@ -22,12 +22,14 @@ class ClashDiscord_Data(object):
 
             Instance Attributes
                 version (str): client version
+                prefix (str): prefix for command calls
                 embed_color (int): color integer for embed commands
                 back_emoji (str): emoji for back button
                 bot_categories (list): list of Bot_Category objects
     """
 
     version = '2.1.1'
+    prefix = '/'
     embed_color = 1752220
     back_emoji = '◀️'
     bot_categories = [

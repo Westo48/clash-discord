@@ -2,10 +2,10 @@ import disnake
 import coc
 from asyncio.tasks import sleep
 from disnake.ext import commands
-import ClashDiscord_Client_Data
-import ClashResponder as clash_responder
-import DiscordResponder as discord_responder
-import RazBotDB_Responder as db_responder
+import data.ClashDiscord_Client_Data as ClashDiscord_Client_Data
+import responders.ClashResponder as clash_responder
+import responders.DiscordResponder as discord_responder
+import responders.RazBotDB_Responder as db_responder
 
 client_data = ClashDiscord_Client_Data.ClashDiscord_Data()
 
@@ -17,7 +17,7 @@ coc_client = coc.login(
 intents = disnake.Intents.all()
 
 bot = commands.Bot(
-    command_prefix=discord_responder.get_client_prefix(),
+    command_prefix=client_data.prefix,
     intents=intents,
     test_guilds=discord_responder.get_client_test_guilds())
 bot.remove_command('help')
@@ -1768,7 +1768,7 @@ async def clan(inter):
     player_obj = verification_payload['player_obj']
     cwl_group_obj = verification_payload['cwl_group_obj']
 
-    field_dict_list = discord_responder.cwl_clan_standing(
+    field_dict_list = await discord_responder.cwl_clan_standing(
         cwl_group_obj, player_obj.clan.tag)
     embed_list = discord_responder.embed_message(
         Embed=disnake.Embed,
@@ -3960,4 +3960,6 @@ async def on_slash_command_error(inter, exception):
             content=(f"there was an error that I have not accounted for, "
                      f"please let Razgriz know"))
 
-bot.run(discord_responder.get_client_token())
+
+if __name__ == "__main__":
+    bot.run(discord_responder.get_client_token())

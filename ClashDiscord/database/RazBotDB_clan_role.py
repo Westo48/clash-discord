@@ -1,4 +1,4 @@
-import RazBotDB_Presets as preset
+import database.RazBotDB_Presets as preset
 
 
 # clan role

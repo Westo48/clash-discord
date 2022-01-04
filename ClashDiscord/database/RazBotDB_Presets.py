@@ -1,4 +1,4 @@
-import RazBotDB_Query as db_query
+import database.RazBotDB_Query as db_query
 
 
 # INSERT

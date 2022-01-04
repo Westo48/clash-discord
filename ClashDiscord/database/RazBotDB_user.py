@@ -1,11 +1,11 @@
-import RazBotDB_Presets as preset
-import RazBotDB_user as user
-import RazBotDB_player as player
-import RazBotDB_guild as guild
-import RazBotDB_clan as clan
-import RazBotDB_clan_role as clan_role
-import RazBotDB_rank_role_model as rank_role_model
-import RazBotDB_rank_role as rank_role
+import database.RazBotDB_Presets as preset
+import database.RazBotDB_user as user
+import database.RazBotDB_player as player
+import database.RazBotDB_guild as guild
+import database.RazBotDB_clan as clan
+import database.RazBotDB_clan_role as clan_role
+import database.RazBotDB_rank_role_model as rank_role_model
+import database.RazBotDB_rank_role as rank_role
 
 
 class User(object):

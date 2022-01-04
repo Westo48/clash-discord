@@ -1,20 +1,12 @@
 import math
 from coc import NotFound, Maintenance, PrivateWarLog, GatewayError
-import RazBot_Data
-import ClashResponder as clash_responder
-import RazBotDB_Responder as db_responder
+import data.RazBot_Data as RazBot_Data
+import responders.ClashResponder as clash_responder
+import responders.RazBotDB_Responder as db_responder
 from disnake.utils import get
 
 
 # CLIENT
-
-
-def get_client_prefix():
-    """
-        returns RazBot_Data client prefix
-    """
-
-    return RazBot_Data.RazBot_Data().prefix
 
 
 def get_client_discord_id():
@@ -1521,7 +1513,7 @@ def cwl_lineup(cwl_group):
     return message
 
 
-def cwl_clan_standing(cwl_group, clan_tag):
+async def cwl_clan_standing(cwl_group, clan_tag):
     class ScoredCWLMember(object):
         """
             ScoredWarMember
@@ -1544,8 +1536,11 @@ def cwl_clan_standing(cwl_group, clan_tag):
             'value': "there is no score"
         }]
 
+    cwl_wars = []
     # get a list of all CWLWar objects
-    cwl_wars = cwl_group.get_wars_for_clan(clan_tag)
+    async for war in cwl_group.get_wars_for_clan(clan_tag):
+        if war.state == "inWar" or war.state == "warEnded":
+            cwl_wars.append(war)
 
     if len(cwl_wars) < 2:
         return [{

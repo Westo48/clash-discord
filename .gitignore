@@ -4,4 +4,5 @@ notes.txt
 __pycache__
 RazBot_Data.py
 RazBotDB_Connection_Data.py
-RazBotDB_Query.py
+Procfile
+runtime.txt
