@@ -532,35 +532,47 @@ def cwl_member_score(cwl_wars, cwl_member):
                 Instance Attributes
                     tag (str): WarMember's player tag
                     name (str): WarMember's player name
-                    wars (int): rounds participated
+                    participated_wars (int): rounds participated
+                    round_scores (list[int]): scores for each round
                     score (int): WarMember's war score
         """
 
-        def __init__(self, tag, name, wars, score):
+        def __init__(self, tag, name, participated_wars, round_scores, score):
             self.tag = tag
             self.name = name
-            self.wars = wars
+            self.participated_wars = participated_wars
+            self.round_scores = round_scores
             self.score = score
 
-    scored_member = ScoredCWLMember(cwl_member.tag, cwl_member.name, 0, 0)
+    scored_member = ScoredCWLMember(cwl_member.tag, cwl_member.name, 0, [], 0)
     # for each war getting that war score and war count
     for war in cwl_wars:
         # do not include wars that are not even in preparation
         if war.war_tag == "#0":
             continue
+
         # do not include wars that are not over
         if war.status != "warEnded":
             continue
+
+        round_score = 0
         for war_member in war.clan.members:
             if war_member.tag == cwl_member.tag:
-                scored_member.wars += 1
-                scored_member.score += member_score(war_member, war).score
+                scored_member.participated_wars += 1
+                round_score = member_score(war_member, war).score
                 break
+
+        scored_member.round_scores.append(round_score)
+
     # return without operating if member did not participate
-    if scored_member.wars == 0:
+    if scored_member.participated_wars == 0:
         return scored_member
 
-    avg_score = scored_member.score / scored_member.wars
+    score_sum = 0
+    for round_score in scored_member.round_scores:
+        score_sum += round_score
+
+    avg_score = score_sum / scored_member.wars
     participation_multiplier = math.log(
         scored_member.wars, len(cwl_wars))
     scored_member.score = avg_score * participation_multiplier
