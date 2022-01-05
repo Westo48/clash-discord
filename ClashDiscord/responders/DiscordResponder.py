@@ -1566,7 +1566,7 @@ async def cwl_member_score(player_obj, cwl_group, clan_tag):
     # get a list of all CWLWar objects
     cwl_wars = []
     async for war in cwl_group.get_wars_for_clan(clan_tag):
-        if war.state == "inWar" or war.state == "warEnded":
+        if war.state == "warEnded":
             cwl_wars.append(war)
 
     if len(cwl_wars) < 2:
@@ -1575,7 +1575,6 @@ async def cwl_member_score(player_obj, cwl_group, clan_tag):
             'value': "please wait till round two has ended to score members"
         }]
 
-    member_round_scores = []
     # find your clan
     found = False
     for clan in cwl_group.clans:

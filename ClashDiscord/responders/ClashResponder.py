@@ -552,7 +552,7 @@ def cwl_member_score(cwl_wars, cwl_member):
             continue
 
         # do not include wars that are not over
-        if war.status != "warEnded":
+        if war.state != "warEnded":
             continue
 
         round_score = 0
@@ -572,9 +572,9 @@ def cwl_member_score(cwl_wars, cwl_member):
     for round_score in scored_member.round_scores:
         score_sum += round_score
 
-    avg_score = score_sum / scored_member.wars
+    avg_score = score_sum / scored_member.participated_wars
     participation_multiplier = math.log(
-        scored_member.wars, len(cwl_wars))
+        scored_member.participated_wars, len(cwl_wars))
     scored_member.score = avg_score * participation_multiplier
     return scored_member
 
@@ -600,7 +600,13 @@ def member_score(war_member, war_obj):
             self.score = score
 
     # each missed attack should be -100
-    member_score = war_obj.attacks_per_member*(-100)
+    if war_obj.is_cwl:
+        attacks_per_member = 1
+    else:
+        attacks_per_member = 2
+    # reactivate below code when coc.py returns correct attacks_per_member
+    # member_score = war_obj.attacks_per_member*(-100)
+    member_score = attacks_per_member*(-100)
     for attack in war_member.attacks:
         # add 100 since the member attacked
         member_score += 100
@@ -608,7 +614,9 @@ def member_score(war_member, war_obj):
         scored_attack = attack_score(attack, war_member, war_obj)
 
         member_score += scored_attack.score
-    member_score = member_score/war_obj.attacks_per_member
+    member_score = member_score/attacks_per_member
+    # reactivate below code when coc.py returns correct attacks_per_member
+    # member_score = member_score/war_obj.attacks_per_member
     return ScoredWarMember(war_member.tag, war_member.name, member_score)
 
 
