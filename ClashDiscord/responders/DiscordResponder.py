@@ -1220,7 +1220,7 @@ def war_all_attacks(war_obj):
         }]
 
 
-def war_member_standing(war_obj, player):
+def war_member_score(war_obj, player):
     "returns a response list of member scores"
     field_dict_list = []
     if war_obj.state == "notInWar":
@@ -1259,7 +1259,7 @@ def war_member_standing(war_obj, player):
     return field_dict_list
 
 
-def war_all_member_standing(war_obj):
+def war_clan_score(war_obj):
     "returns a response list of all member scores"
     return_list = []
     if war_obj.state == "notInWar":
@@ -1513,33 +1513,17 @@ def cwl_lineup(cwl_group):
     return message
 
 
-async def cwl_clan_standing(cwl_group, clan_tag):
-    class ScoredCWLMember(object):
-        """
-            ScoredWarMember
-                Instance Attributes
-                    tag (str): WarMember's player tag
-                    name (str): WarMember's player name
-                    wars (int): rounds participated
-                    score (int): WarMember's war score
-        """
-
-        def __init__(self, tag, name, wars, score):
-            self.tag = tag
-            self.name = name
-            self.wars = wars
-            self.score = score
-
+async def cwl_clan_score(player_obj, cwl_group, clan_tag):
     if not cwl_group:
         return [{
-            'name': "you are not in CWL",
+            'name': "{player_obj.name} is not in CWL",
             'value': "there is no score"
         }]
 
-    cwl_wars = []
     # get a list of all CWLWar objects
+    cwl_wars = []
     async for war in cwl_group.get_wars_for_clan(clan_tag):
-        if war.state == "inWar" or war.state == "warEnded":
+        if war.state == "warEnded":
             cwl_wars.append(war)
 
     if len(cwl_wars) < 2:
@@ -1554,32 +1538,17 @@ async def cwl_clan_standing(cwl_group, clan_tag):
             cwl_clan = clan
             break
 
-    cwl_war_members = []
-
-    for member in cwl_clan.members:
-        scored_member = clash_responder.cwl_member_score(cwl_wars, member)
-        if scored_member.wars != 0:
-            cwl_war_members.append(scored_member)
-
     # get a list of all CWLWarMembers their scores
     scored_members = []
+    for member in cwl_clan.members:
+        scored_member = clash_responder.cwl_member_score(cwl_wars, member)
+        if scored_member.participated_wars != 0:
+            scored_members.append(scored_member)
 
-    for member in cwl_group:
-        total_member_score = 0
-        for war in cwl_wars:
-            if war.war_tag == "#0":
-                continue
-            if war.status != "warEnded":
-                continue
-            if war.get_member(member.tag) is not None:
-
-                scored_members.append(
-                    clash_responder.member_score(member, war))
-
-    sorted_cwl_war_members = sorted(
+    sorted_scored_members = sorted(
         scored_members, key=lambda member: member.score, reverse=True)
     field_dict_list = []
-    for member in sorted_cwl_war_members:
+    for member in sorted_scored_members:
         field_dict_list.append({
             'name': member.name,
             'value': f"{round(member.score, 3)}"
@@ -1587,7 +1556,7 @@ async def cwl_clan_standing(cwl_group, clan_tag):
     return field_dict_list
 
 
-def cwl_member_standing(player_obj, cwl_group, clan_tag, header):
+async def cwl_member_score(player_obj, cwl_group, clan_tag):
     if not cwl_group:
         return [{
             'name': "{player_obj.name} is not in CWL",
@@ -1596,12 +1565,9 @@ def cwl_member_standing(player_obj, cwl_group, clan_tag, header):
 
     # get a list of all CWLWar objects
     cwl_wars = []
-    for cwl_round in cwl_group.rounds:
-        cwl_war = cwl_group.find_specified_war(
-            clan_tag, cwl_group.rounds.index(cwl_round), header)
-        if not cwl_war == '#0':
-            if cwl_war.state == 'warEnded':
-                cwl_wars.append(cwl_war)
+    async for war in cwl_group.get_wars_for_clan(clan_tag):
+        if war.state == "warEnded":
+            cwl_wars.append(war)
 
     if len(cwl_wars) < 2:
         return [{
@@ -1609,7 +1575,6 @@ def cwl_member_standing(player_obj, cwl_group, clan_tag, header):
             'value': "please wait till round two has ended to score members"
         }]
 
-    member_round_scores = []
     # find your clan
     found = False
     for clan in cwl_group.clans:
@@ -1634,44 +1599,28 @@ def cwl_member_standing(player_obj, cwl_group, clan_tag, header):
             'value': f"not found in cwl group"
         }]
 
-    for war in cwl_wars:
-        for war_member in war.clan.members:
-            if war_member.tag == player_obj.tag:
-                member_round_scores.append(war_member.score)
-                break
+    scored_member = clash_responder.cwl_member_score(cwl_wars, player_obj)
 
-    if len(member_round_scores) == 0:
-        return [{
-            'name': f"{player_obj.name}",
-            'value': f"did not participate in any wars"
-        }]
+    field_dict_list = [{
+        'name': f"{round(scored_member.score, 3)}",
+        'value': f"overall score for {len(cwl_wars)} wars"
+    }]
 
-    elif len(member_round_scores) == 1:
-        return [{
-            'name': f"{round(member_round_scores[0], 3)}",
-            'value': f"for 1 war"
-        }]
-
-    else:
-        total_score = 0
-        for round_score in member_round_scores:
-            total_score += round_score
-        avg_score = total_score / len(member_round_scores)
-        participation_multiplier = math.log(
-            len(member_round_scores), len(cwl_wars))
-        member_score = avg_score * participation_multiplier
-
-        field_dict_list = [{
-            'name': f"{round(member_score, 3)}",
-            'value': f"overall score for {len(member_round_scores)} wars"
-        }]
-        for cwl_round_score in member_round_scores:
+    round_index = 0
+    for round_score in scored_member.round_scores:
+        round_index += 1
+        if round_score == 0:
             field_dict_list.append({
-                'name': f"{round(cwl_round_score, 3)}",
-                'value': f"score"
+                'name': f"round {round_index} score",
+                'value': f"{scored_member.name} did not participate"
+            })
+        else:
+            field_dict_list.append({
+                'name': f"round {round_index} score",
+                'value': f"{round(round_score, 3)}"
             })
 
-        return field_dict_list
+    return field_dict_list
 
 
 # CWL WAR
