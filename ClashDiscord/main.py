@@ -399,6 +399,10 @@ async def all(inter, user: disnake.User = None,
         "unit", "hero", "pet", "troop", "spell", "siege"])):
     """
         get all unit levels
+
+        Parameters
+        ----------
+        user (optional): user to search for active player
     """
 
     # setting user to author if not specified
@@ -543,7 +547,11 @@ async def supertroop(inter):
 )
 async def user(inter, user: disnake.User = None):
     """
-        check to see player's active super troops 
+        check to see player's active super troops
+
+        Parameters
+        ----------
+        user (optional): user to search for active player
     """
 
     # setting user to author if not specified
@@ -630,15 +638,26 @@ async def info(inter):
     brief='clan',
     description="get information about your active player's clan"
 )
-async def overview(inter):
+async def overview(inter, clan_role: disnake.Role = None):
     """
-        get information about your active player's clan
+        get clan information
+
+        Parameters
+        ----------
+        clan_role (optional): clan role to use linked clan
     """
 
-    db_player_obj = db_responder.read_player_active(inter.author.id)
+    # role not mentioned
+    if clan_role is None:
+        db_player_obj = db_responder.read_player_active(inter.author.id)
 
-    verification_payload = await discord_responder.clan_verification(
-        db_player_obj, inter.author, coc_client)
+        verification_payload = await discord_responder.clan_verification(
+            db_player_obj, inter.author, coc_client)
+    # role has been mentioned
+    else:
+        verification_payload = await discord_responder.clan_role_verification(
+            clan_role, coc_client)
+
     if not verification_payload['verified']:
         embed_list = discord_responder.embed_message(
             Embed=disnake.Embed,
@@ -658,7 +677,6 @@ async def overview(inter):
         await inter.edit_original_message(embeds=embed_list)
         return
 
-    player_obj = verification_payload['player_obj']
     clan_obj = verification_payload['clan_obj']
 
     field_dict_list = discord_responder.clan_info(clan_obj)
@@ -736,86 +754,6 @@ async def find(inter, clan_tag: str):
     await inter.edit_original_message(embeds=embed_list)
 
 
-@info.sub_command(
-    brief='clan',
-    description="get information about mentioned clan"
-)
-async def mention(inter, role: disnake.Role):
-    """
-        get information about mentioned clan
-
-        Parameters
-        ----------
-        role: role to search for linked clan
-    """
-
-    # role has been mentioned
-    # get clan tag from clan role
-    db_clan_role = db_responder.read_clan_role(role.id)
-
-    # role mentioned was not a linked clan role
-    if db_clan_role is None:
-        embed_list = discord_responder.embed_message(
-            Embed=disnake.Embed,
-            color=disnake.Color(client_data.embed_color),
-            icon_url=inter.bot.user.avatar.url,
-            title=None,
-            description=f"role mentioned is not linked to a clan",
-            bot_prefix=inter.bot.command_prefix,
-            bot_user_name=inter.bot.user.name,
-            thumbnail=None,
-            field_list=[],
-            image_url=None,
-            author_display_name=inter.author.display_name,
-            author_avatar_url=inter.author.avatar.url
-        )
-
-        await inter.edit_original_message(embeds=embed_list)
-        return
-
-    clan_obj = await clash_responder.get_clan(
-        db_clan_role.clan_tag, coc_client)
-
-    # clan with tag from db clan role not found
-    if clan_obj is None:
-        embed_list = discord_responder.embed_message(
-            Embed=disnake.Embed,
-            color=disnake.Color(client_data.embed_color),
-            icon_url=inter.bot.user.avatar.url,
-            title=None,
-            description=f"could not find clan with tag {db_clan_role.clan_tag}",
-            bot_prefix=inter.bot.command_prefix,
-            bot_user_name=inter.bot.user.name,
-            thumbnail=None,
-            field_list=[],
-            image_url=None,
-            author_display_name=inter.author.display_name,
-            author_avatar_url=inter.author.avatar.url
-        )
-
-        await inter.edit_original_message(embeds=embed_list)
-        return
-
-    field_dict_list = discord_responder.clan_info(clan_obj)
-
-    embed_list = discord_responder.embed_message(
-        Embed=disnake.Embed,
-        color=disnake.Color(client_data.embed_color),
-        icon_url=inter.bot.user.avatar.url,
-        title=f"{clan_obj.name} {clan_obj.tag}",
-        description=None,
-        bot_prefix=inter.bot.command_prefix,
-        bot_user_name=inter.bot.user.name,
-        thumbnail=clan_obj.badge,
-        field_list=field_dict_list,
-        image_url=None,
-        author_display_name=inter.author.display_name,
-        author_avatar_url=inter.author.avatar.url
-    )
-
-    await inter.edit_original_message(embeds=embed_list)
-
-
 # clan member
 @clan.sub_command_group(
     brief='clan',
@@ -835,13 +773,24 @@ async def member(inter):
 )
 async def lineup(inter, clan_role: disnake.Role = None):
     """
-        get information about mentioned clan
+        get clan member lineup information
+
+        Parameters
+        ----------
+        clan_role (optional): clan role to use linked clan
     """
 
-    db_player_obj = db_responder.read_player_active(inter.author.id)
+    # role not mentioned
+    if clan_role is None:
+        db_player_obj = db_responder.read_player_active(inter.author.id)
 
-    verification_payload = await discord_responder.clan_leadership_verification(
-        db_player_obj, inter.author, coc_client)
+        verification_payload = await discord_responder.clan_verification(
+            db_player_obj, inter.author, coc_client)
+    # role has been mentioned
+    else:
+        verification_payload = await discord_responder.clan_role_verification(
+            clan_role, coc_client)
+
     if not verification_payload['verified']:
         embed_list = discord_responder.embed_message(
             Embed=disnake.Embed,
@@ -861,7 +810,6 @@ async def lineup(inter, clan_role: disnake.Role = None):
         await inter.edit_original_message(embeds=embed_list)
         return
 
-    player_obj = verification_payload['player_obj']
     clan_obj = verification_payload['clan_obj']
 
     field_dict_list = await discord_responder.clan_lineup(clan_obj, coc_client)
@@ -888,15 +836,26 @@ async def lineup(inter, clan_role: disnake.Role = None):
     brief='clan',
     description="rundown of clan member's war preference"
 )
-async def warpreference(inter):
+async def warpreference(inter, clan_role: disnake.Role = None):
     """
         rundown of clan member's war preference
+
+        Parameters
+        ----------
+        clan_role (optional): clan role to use linked clan
     """
 
-    db_player_obj = db_responder.read_player_active(inter.author.id)
+    # role not mentioned
+    if clan_role is None:
+        db_player_obj = db_responder.read_player_active(inter.author.id)
 
-    verification_payload = await discord_responder.clan_leadership_verification(
-        db_player_obj, inter.author, coc_client)
+        verification_payload = await discord_responder.clan_verification(
+            db_player_obj, inter.author, coc_client)
+    # role has been mentioned
+    else:
+        verification_payload = await discord_responder.clan_role_verification(
+            clan_role, coc_client)
+
     if not verification_payload['verified']:
         embed_list = discord_responder.embed_message(
             Embed=disnake.Embed,
@@ -916,7 +875,6 @@ async def warpreference(inter):
         await inter.edit_original_message(embeds=embed_list)
         return
 
-    player_obj = verification_payload['player_obj']
     clan_obj = verification_payload['clan_obj']
 
     field_dict_list = await discord_responder.clan_war_preference(

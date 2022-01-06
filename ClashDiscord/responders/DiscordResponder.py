@@ -2439,3 +2439,81 @@ def role_add_remove_list(needed_role_list, current_role_list):
             remove_list.append(current_role)
 
     return add_list, remove_list
+
+
+# DB
+async def clan_role_verification(clan_role, coc_client):
+    """
+        verifying a clan role
+        and returning verification payload
+
+        Args:
+            clan_role (obj): discord role
+            coc_client (obj): coc.py client
+
+        Returns:
+            dict: verification_payload
+                (verified, field_dict_list, clan_obj)
+    """
+
+    # clan role not used
+    if clan_role is None:
+        return {
+            'verified': False,
+            'field_dict_list': [{
+                'name': "clan role not mentioned",
+                'value': "please mention a clan role"
+            }],
+            'clan_obj': None
+        }
+
+    # get clan tag from clan role
+    db_clan_role = db_responder.read_clan_role(clan_role.id)
+
+    # role mentioned was not a linked clan role
+    if db_clan_role is None:
+        return {
+            'verified': False,
+            'field_dict_list': [{
+                'name': f"role mentioned is not linked to a clan",
+                'value': "please mention a clan role"
+            }],
+            'clan_obj': None
+        }
+
+    try:
+        clan_obj = await coc_client.get_clan(db_clan_role.clan_tag)
+    except Maintenance:
+        return {
+            'verified': False,
+            'field_dict_list': [{
+                'name': "Clash of Clans is under maintenance",
+                'value': "please try again later"
+            }],
+            'clan_obj': None
+        }
+    except NotFound:
+        return {
+            'verified': False,
+            'field_dict_list': [{
+                'name': "could not find clan",
+                'value': db_clan_role.clan_tag
+            }],
+            'clan_obj': None
+        }
+    except GatewayError:
+        return {
+            'verified': False,
+            'field_dict_list': [{
+                'name': "coc.py ran into a gateway error",
+                'value': "please try again later"
+            }],
+            'clan_obj': None
+        }
+
+    verification_payload = {
+        'verified': True,
+        'field_dict_list': None,
+        'clan_obj': clan_obj
+    }
+    return verification_payload
