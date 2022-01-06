@@ -2475,8 +2475,8 @@ async def clan_role_verification(clan_role, coc_client):
         return {
             'verified': False,
             'field_dict_list': [{
-                'name': f"role mentioned is not linked to a clan",
-                'value': "please mention a clan role"
+                'name': f"please mention a clan role",
+                'value': f"{clan_role.mention} is not linked to a clan"
             }],
             'clan_obj': None
         }
@@ -2635,5 +2635,222 @@ async def clan_role_player_leadership_verification(clan_role, user, coc_client):
         'field_dict_list': None,
         'player_obj': player_obj,
         'clan_obj': clan_obj
+    }
+    return verification_payload
+
+
+async def clan_role_war_verification(clan_role, coc_client):
+    """
+        verifying a war from clan role
+        and returning verification payload
+
+        Args:
+            db_player_obj (obj): player object from db
+            coc_client (obj): coc.py client
+
+        Returns:
+            dict: verification_payload
+                (verified, field_dict_list, war_obj)
+    """
+
+    clan_role_verification_payload = (
+        await clan_role_verification(clan_role, coc_client))
+
+    # player clan verification failed
+    # player clash in maintenance, not found, or player not in clan
+    if not clan_role_verification_payload['verified']:
+        return clan_role_verification_payload
+
+    clan_obj = clan_role_verification_payload['clan_obj']
+
+    try:
+        war_obj = await coc_client.get_current_war(clan_obj.tag)
+    except Maintenance:
+        return {
+            'verified': False,
+            'field_dict_list': [{
+                'name': "Clash of Clans is under maintenance",
+                'value': "please try again later"
+            }],
+            'war_obj': None
+        }
+    except NotFound:
+        return {
+            'verified': False,
+            'field_dict_list': [{
+                'name': "war not found",
+                'value': f"{clan_obj.name} {clan_obj.tag}"
+            }],
+            'war_obj': None
+        }
+    except PrivateWarLog:
+        return {
+            'verified': False,
+            'field_dict_list': [{
+                'name': f"{clan_obj.name} {clan_obj.tag}",
+                'value': "war log is private"
+            }],
+            'war_obj': None
+        }
+    except GatewayError:
+        return {
+            'verified': False,
+            'field_dict_list': [{
+                'name': "coc.py ran into a gateway error",
+                'value': "please try again later"
+            }],
+            'war_obj': None
+        }
+    except TypeError:
+        return {
+            'verified': False,
+            'field_dict_list': [{
+                'name': "ClashDiscord ran into a type error",
+                'value': "please try again later"
+            }],
+            'war_obj': None
+        }
+
+    # clan is not in war
+    if not war_obj:
+        return {
+            'verified': False,
+            'field_dict_list': [{
+                'name': (f"{clan_obj.name} "
+                         f"{clan_obj.tag}"),
+                'value': "not in war"
+            }],
+            'war_obj': None
+        }
+
+    # clan is not in war
+    if war_obj.state == "notInWar":
+        return {
+            'verified': False,
+            'field_dict_list': [{
+                'name': (f"{clan_obj.name} "
+                         f"{clan_obj.tag}"),
+                'value': "not in war"
+            }],
+            'war_obj': None
+        }
+
+    verification_payload = {
+        'verified': True,
+        'field_dict_list': None,
+        'war_obj': war_obj
+    }
+    return verification_payload
+
+
+async def clan_role_war_leadership_verification(clan_role, user, coc_client):
+    """
+        verifying a war through clan_role_player_leadership_verification
+        and returning verification payload
+
+        Args:
+            db_player_obj (obj): player object from db
+            user_obj (obj): discord user obj
+            coc_client (obj): coc.py client
+
+        Returns:
+            dict: verification_payload
+                (verified, field_dict_list, player_obj, war_obj)
+    """
+
+    clan_player_leadership_verification_payload = (
+        await clan_role_player_leadership_verification(
+            clan_role, user, coc_client))
+
+    if not clan_player_leadership_verification_payload['verified']:
+        return clan_player_leadership_verification_payload
+
+    player_obj = clan_player_leadership_verification_payload['player_obj']
+    clan_obj = clan_player_leadership_verification_payload['clan_obj']
+
+    try:
+        war_obj = await coc_client.get_current_war(clan_obj.tag)
+    except Maintenance:
+        return {
+            'verified': False,
+            'field_dict_list': [{
+                'name': "Clash of Clans is under maintenance",
+                'value': "please try again later"
+            }],
+            'player_obj': None,
+            'war_obj': None
+        }
+    except NotFound:
+        return {
+            'verified': False,
+            'field_dict_list': [{
+                'name': "war not found",
+                'value': f"{clan_obj.name} {clan_obj.tag}"
+            }],
+            'player_obj': None,
+            'war_obj': None
+        }
+    except PrivateWarLog:
+        return {
+            'verified': False,
+            'field_dict_list': [{
+                'name': f"{clan_obj.name} {clan_obj.tag}",
+                'value': "war log is private"
+            }],
+            'player_obj': None,
+            'war_obj': None
+        }
+    except GatewayError:
+        return {
+            'verified': False,
+            'field_dict_list': [{
+                'name': "coc.py ran into a gateway error",
+                'value': "please try again later"
+            }],
+            'player_obj': None,
+            'war_obj': None
+        }
+    except TypeError:
+        return {
+            'verified': False,
+            'field_dict_list': [{
+                'name': "ClashDiscord ran into a type error",
+                'value': "please try again later"
+            }],
+            'player_obj': None,
+            'war_obj': None
+        }
+
+    # clan is not in war
+    if not war_obj:
+        return {
+            'verified': False,
+            'field_dict_list': [{
+                'name': (f"{clan_obj.name} "
+                         f"{clan_obj.tag}"),
+                'value': "not in war"
+            }],
+            'player_obj': player_obj,
+            'war_obj': None
+        }
+
+    # clan is not in war
+    if war_obj.state == "notInWar":
+        return {
+            'verified': False,
+            'field_dict_list': [{
+                'name': (f"{clan_obj.name} "
+                         f"{clan_obj.tag}"),
+                'value': "not in war"
+            }],
+            'player_obj': player_obj,
+            'war_obj': None
+        }
+
+    verification_payload = {
+        'verified': True,
+        'field_dict_list': None,
+        'player_obj': player_obj,
+        'war_obj': war_obj
     }
     return verification_payload

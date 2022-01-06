@@ -1146,15 +1146,26 @@ async def info(inter):
     brief='war',
     description="overview of the current war"
 )
-async def overview(inter):
+async def overview(inter, clan_role: disnake.Role = None):
     """
         overview of the current war
+
+        Parameters
+        ----------
+        clan_role (optional): clan role to use linked clan
     """
 
-    db_player_obj = db_responder.read_player_active(inter.author.id)
+    # role not mentioned
+    if clan_role is None:
+        db_player_obj = db_responder.read_player_active(inter.author.id)
 
-    verification_payload = await discord_responder.war_verification(
-        db_player_obj, inter.author, coc_client)
+        verification_payload = await discord_responder.war_verification(
+            db_player_obj, inter.author, coc_client)
+    # role has been mentioned
+    else:
+        verification_payload = await discord_responder.clan_role_war_verification(
+            clan_role, coc_client)
+
     if not verification_payload['verified']:
         embed_list = discord_responder.embed_message(
             Embed=disnake.Embed,
@@ -1174,7 +1185,6 @@ async def overview(inter):
         await inter.edit_original_message(embeds=embed_list)
         return
 
-    player_obj = verification_payload['player_obj']
     war_obj = verification_payload['war_obj']
 
     field_dict_list = discord_responder.war_info(war_obj)
@@ -1187,7 +1197,7 @@ async def overview(inter):
         description=None,
         bot_prefix=inter.bot.command_prefix,
         bot_user_name=inter.bot.user.name,
-        thumbnail=player_obj.clan.badge,
+        thumbnail=war_obj.clan.badge,
         field_list=field_dict_list,
         image_url=None,
         author_display_name=inter.author.display_name,
@@ -1214,15 +1224,26 @@ async def clan(inter):
     brief='war',
     description="list of players that missed attacks in the current war"
 )
-async def noattack(inter):
+async def noattack(inter, clan_role: disnake.Role = None):
     """
         list of players that missed attacks in the current war
+
+        Parameters
+        ----------
+        clan_role (optional): clan role to use linked clan
     """
 
-    db_player_obj = db_responder.read_player_active(inter.author.id)
+    # role not mentioned
+    if clan_role is None:
+        db_player_obj = db_responder.read_player_active(inter.author.id)
 
-    verification_payload = await discord_responder.war_verification(
-        db_player_obj, inter.author, coc_client)
+        verification_payload = await discord_responder.war_verification(
+            db_player_obj, inter.author, coc_client)
+    # role has been mentioned
+    else:
+        verification_payload = await discord_responder.clan_role_war_verification(
+            clan_role, coc_client)
+
     if not verification_payload['verified']:
         embed_list = discord_responder.embed_message(
             Embed=disnake.Embed,
@@ -1242,7 +1263,6 @@ async def noattack(inter):
         await inter.edit_original_message(embeds=embed_list)
         return
 
-    player_obj = verification_payload['player_obj']
     war_obj = verification_payload['war_obj']
 
     field_dict_list = discord_responder.war_no_attack(war_obj)
@@ -1255,7 +1275,7 @@ async def noattack(inter):
         description=None,
         bot_prefix=inter.bot.command_prefix,
         bot_user_name=inter.bot.user.name,
-        thumbnail=player_obj.clan.badge,
+        thumbnail=war_obj.clan.badge,
         field_list=field_dict_list,
         image_url=None,
         author_display_name=inter.author.display_name,
@@ -1267,17 +1287,31 @@ async def noattack(inter):
 
 @clan.sub_command(
     brief='war',
-    description="overview of all members in war"
+    description="*leadership* overview of all members in war"
 )
-async def stars(inter):
+async def stars(inter, clan_role: disnake.Role = None):
     """
+        *leadership*
         overview of all members in war
+
+        Parameters
+        ----------
+        clan_role (optional): clan role to use linked clan
     """
 
-    db_player_obj = db_responder.read_player_active(inter.author.id)
+    # role not mentioned
+    if clan_role is None:
+        db_player_obj = db_responder.read_player_active(inter.author.id)
 
-    verification_payload = await discord_responder.war_leadership_verification(
-        db_player_obj, inter.author, coc_client)
+        verification_payload = (
+            await discord_responder.war_leadership_verification(
+                db_player_obj, inter.author, coc_client)
+        )    # role has been mentioned
+    else:
+        verification_payload = (
+            await discord_responder.clan_role_war_leadership_verification(
+                clan_role, inter.author, coc_client))
+
     if not verification_payload['verified']:
         embed_list = discord_responder.embed_message(
             Embed=disnake.Embed,
@@ -1297,7 +1331,6 @@ async def stars(inter):
         await inter.edit_original_message(embeds=embed_list)
         return
 
-    player_obj = verification_payload['player_obj']
     war_obj = verification_payload['war_obj']
 
     field_dict_list = discord_responder.war_members_overview(war_obj)
@@ -1310,7 +1343,7 @@ async def stars(inter):
         description=None,
         bot_prefix=inter.bot.command_prefix,
         bot_user_name=inter.bot.user.name,
-        thumbnail=player_obj.clan.badge,
+        thumbnail=war_obj.clan.badge,
         field_list=field_dict_list,
         image_url=None,
         author_display_name=inter.author.display_name,
@@ -1322,17 +1355,31 @@ async def stars(inter):
 
 @clan.sub_command(
     brief='war',
-    description="all attacks for every war member"
+    description="*leadership* all attacks for every war member"
 )
-async def attacks(inter):
+async def attacks(inter, clan_role: disnake.Role = None):
     """
+        *leadership*
         all attacks for every war member
+
+        Parameters
+        ----------
+        clan_role (optional): clan role to use linked clan
     """
 
-    db_player_obj = db_responder.read_player_active(inter.author.id)
+    # role not mentioned
+    if clan_role is None:
+        db_player_obj = db_responder.read_player_active(inter.author.id)
 
-    verification_payload = await discord_responder.war_leadership_verification(
-        db_player_obj, inter.author, coc_client)
+        verification_payload = (
+            await discord_responder.war_leadership_verification(
+                db_player_obj, inter.author, coc_client)
+        )    # role has been mentioned
+    else:
+        verification_payload = (
+            await discord_responder.clan_role_war_leadership_verification(
+                clan_role, inter.author, coc_client))
+
     if not verification_payload['verified']:
         embed_list = discord_responder.embed_message(
             Embed=disnake.Embed,
@@ -1352,7 +1399,6 @@ async def attacks(inter):
         await inter.edit_original_message(embeds=embed_list)
         return
 
-    player_obj = verification_payload['player_obj']
     war_obj = verification_payload['war_obj']
 
     field_dict_list = discord_responder.war_all_attacks(war_obj)
@@ -1365,7 +1411,7 @@ async def attacks(inter):
         description=None,
         bot_prefix=inter.bot.command_prefix,
         bot_user_name=inter.bot.user.name,
-        thumbnail=player_obj.clan.badge,
+        thumbnail=war_obj.clan.badge,
         field_list=field_dict_list,
         image_url=None,
         author_display_name=inter.author.display_name,
