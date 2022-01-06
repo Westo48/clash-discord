@@ -3321,32 +3321,6 @@ async def claim(inter, clan_tag: str):
             f"{inter.guild.name}"))
         return
 
-    db_player_obj_list = db_responder.read_player_list(inter.author.id)
-
-    # no claimed player
-    if len(db_player_obj_list) == 0:
-        await inter.edit_original_message(
-            content=f"{inter.author.mention} has no claimed players")
-        return
-
-    user_in_clan = False
-
-    # validating any player in player list is in requested clan
-    for db_player_obj in db_player_obj_list:
-        player_obj = await clash_responder.get_player(
-            db_player_obj.player_tag, coc_client)
-
-        # player in clan
-        if player_obj.clan.tag == clan_obj.tag:
-            user_in_clan = True
-            break
-
-    # player not in requested clan
-    if not user_in_clan:
-        await inter.edit_original_message(
-            content=f"{inter.author.mention} is not in {clan_obj.name}")
-        return
-
     db_clan_obj = db_responder.claim_clan(inter.guild.id, clan_obj.tag)
 
     # clan not claimed

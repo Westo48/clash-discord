@@ -120,7 +120,6 @@ Once setup is complete you will be able to interact with ClashDiscord using the 
     - client clan claim `clan tag`
       - claims the clan and links it to the claimed guild
       - user _must_ be guild admin
-      - user's active player _must_ be in the clan
       - claimed guilds can claim multiple different clans
       - multiple guilds can claim the same clan
     - client clans show

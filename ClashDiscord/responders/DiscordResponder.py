@@ -391,8 +391,8 @@ def unit_lvl(player_obj, unit_obj, unit_name):
         return {
             'name': f"{unit_obj.name} lvl {unit_obj.level}",
             'value': (
-                f"max: {unit_obj.max_level}\n"
-                f"TH {player_obj.town_hall} max: {max_level_for_townhall}"
+                f"TH {player_obj.town_hall} max: {max_level_for_townhall}\n"
+                f"max: {unit_obj.max_level}"
             )
         }
     # unit is not max for th nor is it total max
@@ -408,8 +408,8 @@ def unit_lvl(player_obj, unit_obj, unit_name):
             return {
                 'name': f"{unit_obj.name} lvl {unit_obj.level}",
                 'value': (
-                    f"max: {unit_obj.max_level}\n"
-                    f"TH {player_obj.town_hall} max: {max_level_for_townhall}"
+                    f"TH {player_obj.town_hall} max: {max_level_for_townhall}\n"
+                    f"max: {unit_obj.max_level}"
                 )
             }
 
