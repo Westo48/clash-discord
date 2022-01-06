@@ -336,13 +336,13 @@ async def find(inter, unit_name: str):
 
 @unit.sub_command(
     brief='player',
-    description='get all your unit levels'
+    description="get all unit levels for your active player"
 )
 async def all(inter,
               unit_type: str = commands.Param(choices=[
         "unit", "hero", "pet", "troop", "spell", "siege"])):
     """
-        get all your unit levels
+        get all unit levels for your active player
     """
 
     db_player_obj = db_responder.read_player_active(inter.author.id)
@@ -369,6 +369,136 @@ async def all(inter,
         return
 
     player_obj = verification_payload['player_obj']
+
+    if unit_type == "unit":
+        field_dict_list = discord_responder.unit_lvl_all(player_obj)
+    elif unit_type == "hero":
+        field_dict_list = discord_responder.hero_lvl_all(player_obj)
+    elif unit_type == "pet":
+        field_dict_list = discord_responder.pet_lvl_all(player_obj)
+    elif unit_type == "troop":
+        field_dict_list = discord_responder.troop_lvl_all(player_obj)
+    elif unit_type == "spell":
+        field_dict_list = discord_responder.spell_lvl_all(player_obj)
+    elif unit_type == "siege":
+        field_dict_list = discord_responder.siege_lvl_all(player_obj)
+
+    embed_list = discord_responder.embed_message(
+        Embed=disnake.Embed,
+        color=disnake.Color(client_data.embed_color),
+        icon_url=inter.bot.user.avatar.url,
+        title=f"{player_obj.name} units",
+        description=None,
+        bot_prefix=inter.bot.command_prefix,
+        bot_user_name=inter.bot.user.name,
+        thumbnail=player_obj.league.icon,
+        field_list=field_dict_list,
+        image_url=None,
+        author_display_name=inter.author.display_name,
+        author_avatar_url=inter.author.avatar.url
+    )
+
+    await inter.edit_original_message(embeds=embed_list)
+
+
+@unit.sub_command(
+    brief='player',
+    description="get all unit levels for the mentioned user's active player"
+)
+async def allmember(inter, user: disnake.User,
+                    unit_type: str = commands.Param(choices=[
+        "unit", "hero", "pet", "troop", "spell", "siege"])):
+    """
+        get all unit levels for the mentioned user's active player
+    """
+
+    db_player_obj = db_responder.read_player_active(user.id)
+
+    verification_payload = await discord_responder.player_verification(
+        db_player_obj, user, coc_client)
+    if not verification_payload['verified']:
+        embed_list = discord_responder.embed_message(
+            Embed=disnake.Embed,
+            color=disnake.Color(client_data.embed_color),
+            icon_url=inter.bot.user.avatar.url,
+            title=None,
+            description=None,
+            bot_prefix=inter.bot.command_prefix,
+            bot_user_name=inter.bot.user.name,
+            thumbnail=None,
+            field_list=verification_payload['field_dict_list'],
+            image_url=None,
+            author_display_name=inter.author.display_name,
+            author_avatar_url=inter.author.avatar.url
+        )
+
+        await inter.edit_original_message(embeds=embed_list)
+        return
+
+    player_obj = verification_payload['player_obj']
+
+    if unit_type == "unit":
+        field_dict_list = discord_responder.unit_lvl_all(player_obj)
+    elif unit_type == "hero":
+        field_dict_list = discord_responder.hero_lvl_all(player_obj)
+    elif unit_type == "pet":
+        field_dict_list = discord_responder.pet_lvl_all(player_obj)
+    elif unit_type == "troop":
+        field_dict_list = discord_responder.troop_lvl_all(player_obj)
+    elif unit_type == "spell":
+        field_dict_list = discord_responder.spell_lvl_all(player_obj)
+    elif unit_type == "siege":
+        field_dict_list = discord_responder.siege_lvl_all(player_obj)
+
+    embed_list = discord_responder.embed_message(
+        Embed=disnake.Embed,
+        color=disnake.Color(client_data.embed_color),
+        icon_url=inter.bot.user.avatar.url,
+        title=f"{player_obj.name} units",
+        description=None,
+        bot_prefix=inter.bot.command_prefix,
+        bot_user_name=inter.bot.user.name,
+        thumbnail=player_obj.league.icon,
+        field_list=field_dict_list,
+        image_url=None,
+        author_display_name=inter.author.display_name,
+        author_avatar_url=inter.author.avatar.url
+    )
+
+    await inter.edit_original_message(embeds=embed_list)
+
+
+@unit.sub_command(
+    brief='player',
+    description="get all unit levels for the player specified"
+)
+async def alltag(inter, player_tag: str,
+                 unit_type: str = commands.Param(choices=[
+        "unit", "hero", "pet", "troop", "spell", "siege"])):
+    """
+        get all unit levels for the player specified
+    """
+
+    player_obj = await clash_responder.get_player(player_tag, coc_client)
+
+    if player_obj is None:
+        embed_list = discord_responder.embed_message(
+            Embed=disnake.Embed,
+            color=disnake.Color(client_data.embed_color),
+            icon_url=inter.bot.user.avatar.url,
+            title=None,
+            description=f"could not find player with tag {player_tag}",
+            bot_prefix=inter.bot.command_prefix,
+            bot_user_name=inter.bot.user.name,
+            thumbnail=None,
+            field_list=[],
+            image_url=None,
+            author_display_name=inter.author.display_name,
+            author_avatar_url=inter.author.avatar.url
+        )
+
+        await inter.edit_original_message(embeds=embed_list)
+        return
 
     if unit_type == "unit":
         field_dict_list = discord_responder.unit_lvl_all(player_obj)
