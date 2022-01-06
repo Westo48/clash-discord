@@ -167,7 +167,7 @@ async def player_clan_verification(db_player_obj, user_obj, coc_client):
     return verification_payload
 
 
-async def player_leadership_verification(db_player_obj, user_obj, coc_client):
+async def player_leadership_verification(db_player_obj, user_obj, guild_id, coc_client):
     """
         verifying a player is in a clan and leadership
         and returning verification payload
@@ -175,12 +175,16 @@ async def player_leadership_verification(db_player_obj, user_obj, coc_client):
         Args:
             db_player_obj (obj): player object from db
             user_obj (obj): discord user obj
+            guild_id (obj): discord guild id
             coc_client (obj): coc.py client
 
         Returns:
             dict: verification_payload
                 (verified, field_dict_list, player_obj)
     """
+
+    db_guild = db_responder.read_guild(guild_id)
+    db_user = db_responder.read_user(user_obj.id)
 
     player_clan_verification_payload = (await player_clan_verification(
         db_player_obj, user_obj, coc_client))
@@ -191,6 +195,19 @@ async def player_leadership_verification(db_player_obj, user_obj, coc_client):
         return player_clan_verification_payload
 
     player_obj = player_clan_verification_payload['player_obj']
+
+    # skip leadership verification if user is guild admin or super user
+    if db_guild is not None:
+        if (db_guild.admin_user_id == user_obj.id or
+                db_user.super_user):
+
+            verification_payload = {
+                'verified': True,
+                'field_dict_list': None,
+                'player_obj': player_obj
+            }
+            return verification_payload
+
     # player not leader or coleader
     if (player_obj.role.value != "leader" and
             player_obj.role.value != "coLeader"):
@@ -567,7 +584,7 @@ async def clan_verification(db_player_obj, user_obj, coc_client):
     return verification_payload
 
 
-async def clan_leadership_verification(db_player_obj, user_obj, coc_client):
+async def clan_leadership_verification(db_player_obj, user_obj, guild_id, coc_client):
     """
         verifying a clan through player_leadership_verification
         and returning verification payload
@@ -575,15 +592,16 @@ async def clan_leadership_verification(db_player_obj, user_obj, coc_client):
         Args:
             db_player_obj (obj): player object from db
             user_obj (obj): discord user obj
+            guild_id (obj): discord guild id
             coc_client (obj): coc.py client
 
         Returns:
             dict: verification_payload
-                (verified, field_dict_list, player_obj, clan)
+                (verified, field_dict_list, player_obj, clan_obj)
     """
 
     player_leadership_verification_payload = (await player_leadership_verification(
-        db_player_obj, user_obj, coc_client))
+        db_player_obj, user_obj, guild_id, coc_client))
 
     # player leadership verification failed
     # player clash in maintenance, not found, or player not in leadership
@@ -864,7 +882,7 @@ async def war_verification(db_player_obj, user_obj, coc_client):
     return verification_payload
 
 
-async def war_leadership_verification(db_player_obj, user_obj, coc_client):
+async def war_leadership_verification(db_player_obj, user_obj, guild_id, coc_client):
     """
         verifying a war through player_leadership_verification
         and returning verification payload
@@ -872,6 +890,7 @@ async def war_leadership_verification(db_player_obj, user_obj, coc_client):
         Args:
             db_player_obj (obj): player object from db
             user_obj (obj): discord user obj
+            guild_id (obj): discord guild id
             coc_client (obj): coc.py client
 
         Returns:
@@ -880,7 +899,7 @@ async def war_leadership_verification(db_player_obj, user_obj, coc_client):
     """
 
     player_leadership_verification_payload = (await player_leadership_verification(
-        db_player_obj, user_obj, coc_client))
+        db_player_obj, user_obj, guild_id, coc_client))
 
     if not player_leadership_verification_payload['verified']:
         return player_leadership_verification_payload
@@ -1421,13 +1440,14 @@ async def cwl_group_verification(db_player_obj, user_obj, coc_client):
     return verification_payload
 
 
-async def cwl_group_leadership_verification(db_player_obj, user_obj, coc_client):
+async def cwl_group_leadership_verification(db_player_obj, user_obj, guild_id, coc_client):
     """
         verifying a cwl group through player_leadership_verification
         and returning verification payload
         Args:
             db_player_obj (obj): player object from db
             user_obj (obj): discord user obj
+            guild_id (obj): discord guild id
             coc_client (obj): coc.py client
         Returns:
             dict: verification_payload
@@ -1436,7 +1456,7 @@ async def cwl_group_leadership_verification(db_player_obj, user_obj, coc_client)
 
     player_leadership_verification_payload = (
         await player_leadership_verification(
-            db_player_obj, user_obj, coc_client)
+            db_player_obj, user_obj, guild_id, coc_client)
     )
 
     if not player_leadership_verification_payload['verified']:
@@ -1712,13 +1732,14 @@ async def cwl_war_verification(db_player_obj, user_obj, coc_client):
     return verification_payload
 
 
-async def cwl_war_leadership_verification(db_player_obj, user_obj, coc_client):
+async def cwl_war_leadership_verification(db_player_obj, user_obj, guild_id, coc_client):
     """
         verifying a cwl war through cwl_group_leadership_verification
         and returning verification payload
         Args:
             db_player_obj (obj): player object from db
             user_obj (obj): discord user obj
+            guild_id (obj): discord guild id
             coc_client (obj): coc.py client
         Returns:
             dict: verification_payload
@@ -2591,7 +2612,7 @@ async def clan_role_player_verification(clan_role, user, coc_client):
     return verification_payload
 
 
-async def clan_role_player_leadership_verification(clan_role, user, coc_client):
+async def clan_role_player_leadership_verification(clan_role, user, guild_id, coc_client):
     """
         verifying a player is in leadership of specified clan
         and returning verification payload
@@ -2599,12 +2620,16 @@ async def clan_role_player_leadership_verification(clan_role, user, coc_client):
         Args:
             clan_role (obj): discord role
             user (obj): discord user object
+            guild_id (obj): discord guild id
             coc_client (obj): coc.py client
 
         Returns:
             dict: verification_payload
                 (verified, field_dict_list, player_obj, clan_obj)
     """
+
+    db_guild = db_responder.read_guild(guild_id)
+    db_user = db_responder.read_user(user.id)
 
     clan_role_player_verification_payload = (await clan_role_player_verification(
         clan_role, user, coc_client))
@@ -2616,6 +2641,19 @@ async def clan_role_player_leadership_verification(clan_role, user, coc_client):
 
     clan_obj = clan_role_player_verification_payload['clan_obj']
     player_obj = clan_role_player_verification_payload['player_obj']
+
+    # skip leadership verification if user is guild admin or super user
+    if db_guild is not None:
+        if (db_guild.admin_user_id == user.id or
+                db_user.super_user):
+            verification_payload = {
+                'verified': True,
+                'field_dict_list': None,
+                'player_obj': player_obj,
+                'clan_obj': clan_obj
+            }
+            return verification_payload
+
     # player not leader or coleader
     if (player_obj.role.value != "leader" and
             player_obj.role.value != "coLeader"):
@@ -2743,7 +2781,7 @@ async def clan_role_war_verification(clan_role, coc_client):
     return verification_payload
 
 
-async def clan_role_war_leadership_verification(clan_role, user, coc_client):
+async def clan_role_war_leadership_verification(clan_role, user, guild_id, coc_client):
     """
         verifying a war through clan_role_player_leadership_verification
         and returning verification payload
@@ -2751,6 +2789,7 @@ async def clan_role_war_leadership_verification(clan_role, user, coc_client):
         Args:
             db_player_obj (obj): player object from db
             user_obj (obj): discord user obj
+            guild_id (obj): discord guild id
             coc_client (obj): coc.py client
 
         Returns:
@@ -2760,7 +2799,7 @@ async def clan_role_war_leadership_verification(clan_role, user, coc_client):
 
     clan_player_leadership_verification_payload = (
         await clan_role_player_leadership_verification(
-            clan_role, user, coc_client))
+            clan_role, user, guild_id, coc_client))
 
     if not clan_player_leadership_verification_payload['verified']:
         return clan_player_leadership_verification_payload
