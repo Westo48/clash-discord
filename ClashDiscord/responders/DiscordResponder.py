@@ -167,7 +167,7 @@ async def player_clan_verification(db_player_obj, user_obj, coc_client):
     return verification_payload
 
 
-async def player_leadership_verification(db_player_obj, user_obj, header):
+async def player_leadership_verification(db_player_obj, user_obj, coc_client):
     """
         verifying a player is in a clan and leadership
         and returning verification payload
@@ -183,7 +183,7 @@ async def player_leadership_verification(db_player_obj, user_obj, header):
     """
 
     player_clan_verification_payload = (await player_clan_verification(
-        db_player_obj, user_obj, header))
+        db_player_obj, user_obj, coc_client))
 
     # player clan verification failed
     # player clash in maintenance, not found, or player not in clan
@@ -246,33 +246,33 @@ def player_info(player_obj):
             'value': player_obj.legend_statistics.legend_trophies,
             'inline': True
         })
-    if player_obj.legend_statistics:
-        field_dict_list.append({
-            'name': '**Best Rank | Trophies**',
-            'value': (
-                f"{player_obj.legend_statistics.best_season.rank} | "
-                f"{player_obj.legend_statistics.best_season.trophies}"
-            ),
-            'inline': True
-        })
-    if player_obj.legend_statistics:
-        field_dict_list.append({
-            'name': '**Current Rank | Trophies**',
-            'value': (
-                f"{player_obj.legend_statistics.current_season.rank} | "
-                f"{player_obj.legend_statistics.current_season.trophies}"
-            ),
-            'inline': True
-        })
-    if player_obj.legend_statistics:
-        field_dict_list.append({
-            'name': '**Previous Rank | Trophies**',
-            'value': (
-                f"{player_obj.legend_statistics.previous_season.rank} | "
-                f"{player_obj.legend_statistics.previous_season.trophies}"
-            ),
-            'inline': True
-        })
+        if player_obj.legend_statistics.best_season:
+            field_dict_list.append({
+                'name': '**Best Rank | Trophies**',
+                'value': (
+                    f"{player_obj.legend_statistics.best_season.rank} | "
+                    f"{player_obj.legend_statistics.best_season.trophies}"
+                ),
+                'inline': True
+            })
+        if player_obj.legend_statistics.current_season:
+            field_dict_list.append({
+                'name': '**Current Rank | Trophies**',
+                'value': (
+                    f"{player_obj.legend_statistics.current_season.rank} | "
+                    f"{player_obj.legend_statistics.current_season.trophies}"
+                ),
+                'inline': True
+            })
+        if player_obj.legend_statistics.previous_season:
+            field_dict_list.append({
+                'name': '**Previous Rank | Trophies**',
+                'value': (
+                    f"{player_obj.legend_statistics.previous_season.rank} | "
+                    f"{player_obj.legend_statistics.previous_season.trophies}"
+                ),
+                'inline': True
+            })
 
     field_dict_list.append({
         'name': '**War Stars**',
@@ -2514,6 +2514,126 @@ async def clan_role_verification(clan_role, coc_client):
     verification_payload = {
         'verified': True,
         'field_dict_list': None,
+        'clan_obj': clan_obj
+    }
+    return verification_payload
+
+
+async def clan_role_player_verification(clan_role, user, coc_client):
+    """
+        verifying a player is in the clan linked to the clan role
+        and returning verification payload
+
+        Args:
+            clan_role (obj): discord role
+            user (obj): discord user object
+            coc_client (obj): coc.py client
+
+        Returns:
+            dict: verification_payload
+                (verified, field_dict_list, player_obj, clan_obj)
+    """
+
+    clan_verification_payload = (await clan_role_verification(
+        clan_role, coc_client))
+
+    # clan role verification failed
+    # clan in maintenance, not found, or gateway error
+    if not clan_verification_payload['verified']:
+        return clan_verification_payload
+
+    clan_obj = clan_verification_payload['clan_obj']
+
+    db_player_obj_list = db_responder.read_player_list(user.id)
+
+    if len(db_player_obj_list) == 0:
+        return {
+            'verified': False,
+            'field_dict_list': [{
+                'name': f"no claimed players",
+                'value': f"{user.mention} has no claimed players"
+            }],
+            'player_obj': None,
+            'clan_obj': None
+        }
+
+    player_obj = None
+    for db_player_obj in db_player_obj_list:
+        player_verification_payload = (
+            await player_verification(db_player_obj, user, coc_client))
+
+        if not player_verification_payload['verified']:
+            return player_verification_payload
+
+        # player is in the specified clan
+        if clan_obj.tag == player_verification_payload['player_obj'].clan.tag:
+            player_obj = player_verification_payload['player_obj']
+            break
+
+    # no players in specified clan
+    if player_obj is None:
+        return {
+            'verified': False,
+            'field_dict_list': [{
+                'name': f"no players in specified clan",
+                'value': f"{user.mention} is not in {clan_obj.name} {clan_obj.tag}"
+            }],
+            'player_obj': None,
+            'clan_obj': clan_obj
+        }
+
+    verification_payload = {
+        'verified': True,
+        'field_dict_list': None,
+        'player_obj': player_obj,
+        'clan_obj': clan_obj
+    }
+    return verification_payload
+
+
+async def clan_role_player_leadership_verification(clan_role, user, coc_client):
+    """
+        verifying a player is in leadership of specified clan
+        and returning verification payload
+
+        Args:
+            clan_role (obj): discord role
+            user (obj): discord user object
+            coc_client (obj): coc.py client
+
+        Returns:
+            dict: verification_payload
+                (verified, field_dict_list, player_obj, clan_obj)
+    """
+
+    clan_role_player_verification_payload = (await clan_role_player_verification(
+        clan_role, user, coc_client))
+
+    # player clan verification failed
+    # player clash in maintenance, not found, gateway error, or player not in clan
+    if not clan_role_player_verification_payload['verified']:
+        return clan_role_player_verification_payload
+
+    clan_obj = clan_role_player_verification_payload['clan_obj']
+    player_obj = clan_role_player_verification_payload['player_obj']
+    # player not leader or coleader
+    if (player_obj.role.value != "leader" and
+            player_obj.role.value != "coLeader"):
+        return {
+            'verified': False,
+            'field_dict_list': [{
+                'name': (f"{player_obj.name} "
+                         f"{player_obj.tag}"),
+                'value': "not in leadership"
+            }],
+            'player_obj': player_obj,
+            'clan_obj': clan_obj
+        }
+
+    verification_payload = {
+        'verified': True,
+        'field_dict_list': None,
+        'player_obj': player_obj,
         'clan_obj': clan_obj
     }
     return verification_payload
