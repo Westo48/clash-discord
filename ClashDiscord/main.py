@@ -59,6 +59,112 @@ async def ping(inter):
         content=f"pong {round(inter.bot.latency, 3) * 1000}ms")
 
 
+# misc link
+@misc.sub_command_group(
+    brief='misc',
+    description="group for misc link commands"
+)
+async def link(inter):
+    """
+        group for misc link commands
+    """
+
+    pass
+
+
+@link.sub_command(
+    brief='misc', description="gets a clash of stats link"
+)
+async def clashofstats(inter, player_tag: str):
+    """
+        gets a clash of stats link
+
+        Parameters
+        ----------
+        player_tag: player tag to search
+    """
+
+    await inter.response.defer()
+
+    player = await clash_responder.get_player(player_tag, coc_client)
+
+    if player is None:
+        embed_list = discord_responder.embed_message(
+            Embed=disnake.Embed,
+            color=disnake.Color(client_data.embed_color),
+            icon_url=inter.bot.user.avatar.url,
+            title=None,
+            description=f"could not find player with tag {player_tag}",
+            bot_prefix=inter.bot.command_prefix,
+            bot_user_name=inter.bot.user.name,
+            thumbnail=None,
+            field_list=[],
+            image_url=None,
+            author_display_name=inter.author.display_name,
+            author_avatar_url=inter.author.avatar.url
+        )
+
+        await inter.edit_original_message(embeds=embed_list)
+        return
+
+    base_url = "https://www.clashofstats.com/players/"
+    summary_url = "/summary"
+    player_url = f"{player.name} {player.tag}"
+    player_url = player_url.replace(" ", "-")
+    player_url = player_url.replace("#", "")
+
+    clash_of_stats_player_url = base_url+player_url+summary_url
+
+    await inter.edit_original_message(
+        content=(f"[{player.name} clash of stats]"
+                 f"({clash_of_stats_player_url})"))
+
+
+@link.sub_command(
+    brief='misc', description="gets a ChocolateClash link"
+)
+async def chocolateclash(inter, player_tag: str):
+    """
+        gets a ChocolateClash link
+
+        Parameters
+        ----------
+        player_tag: player tag to search
+    """
+
+    await inter.response.defer()
+
+    player = await clash_responder.get_player(player_tag, coc_client)
+
+    if player is None:
+        embed_list = discord_responder.embed_message(
+            Embed=disnake.Embed,
+            color=disnake.Color(client_data.embed_color),
+            icon_url=inter.bot.user.avatar.url,
+            title=None,
+            description=f"could not find player with tag {player_tag}",
+            bot_prefix=inter.bot.command_prefix,
+            bot_user_name=inter.bot.user.name,
+            thumbnail=None,
+            field_list=[],
+            image_url=None,
+            author_display_name=inter.author.display_name,
+            author_avatar_url=inter.author.avatar.url
+        )
+
+        await inter.edit_original_message(embeds=embed_list)
+        return
+
+    base_url = "https://chocolateclash.com/cc_n/member.php?tag="
+    player_url = player.tag.replace("#", "")
+
+    chocolateclash_player_url = base_url+player_url
+
+    await inter.edit_original_message(
+        content=(f"[{player.name} ChocolateClash]"
+                 f"({chocolateclash_player_url})"))
+
+
 # Player
 
 @bot.slash_command(
