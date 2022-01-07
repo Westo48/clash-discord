@@ -2,6 +2,7 @@ import re
 import datetime
 import math
 from coc.errors import Maintenance, NotFound, PrivateWarLog, GatewayError
+import coc.enums as coc_enums
 
 th_lineup_dict = {
     14: 0,
@@ -301,6 +302,19 @@ def home_unit_names(coc):
         coc.HOME_TROOP_ORDER +
         coc.SPELL_ORDER
     )
+
+
+def hero_units(coc_client):
+    """
+        returns a list of all hero units
+
+        Args:
+            coc_client (obj): coc.py client
+
+        Returns:
+            hero_units: list of all units
+    """
+    return coc_client._hero_holder.items
 
 
 def player_active_super_troops(player_obj):

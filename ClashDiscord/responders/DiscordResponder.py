@@ -551,6 +551,7 @@ def hero_lvl_all(player_obj):
             continue
         field_dict_list.append(unit_lvl(
             player_obj, hero_obj, hero_obj.name))
+
     return field_dict_list
 
 
@@ -562,6 +563,7 @@ def pet_lvl_all(player_obj):
             continue
         field_dict_list.append(unit_lvl(
             player_obj, pet_obj, pet_obj.name))
+
     return field_dict_list
 
 
@@ -582,6 +584,7 @@ def troop_lvl_all(player_obj):
 
         field_dict_list.append(unit_lvl(
             player_obj, troop_obj, troop_obj.name))
+
     return field_dict_list
 
 
@@ -602,6 +605,7 @@ def siege_lvl_all(player_obj):
 
         field_dict_list.append(unit_lvl(
             player_obj, troop_obj, troop_obj.name))
+
     return field_dict_list
 
 
@@ -613,14 +617,15 @@ def spell_lvl_all(player_obj):
             continue
         field_dict_list.append(unit_lvl(
             player_obj, spell_obj, spell_obj.name))
+
     return field_dict_list
 
 
 def active_super_troops(player_obj, active_super_troop_list):
     if len(active_super_troop_list) == 0:
         return [{
-            'name': player_obj.name,
-            'value': f"has no active super troops"
+            'name': f"{player_obj.name} {player_obj.tag}",
+            'value': f"no active super troops"
         }]
     else:
         field_dict_list = []
@@ -779,6 +784,37 @@ async def clan_lineup(clan_obj, coc_client):
                 'value': f"{clan_lineup_dict[th]}",
                 'inline': False
             })
+
+    return field_dict_list
+
+
+async def clan_lineup_member(clan_obj, coc_client):
+    field_dict_list = []
+
+    for member in clan_obj.members:
+        player = await clash_responder.get_player(member.tag, coc_client)
+
+        # just in case player returned None
+        if player is None:
+            continue
+
+        field_name = (f"{member.clan_rank}: {player.name} {player.tag} "
+                      f"{player.role.in_game_name}")
+
+        field_value = f"{player.town_hall} TH"
+
+        for hero in player.heroes:
+            if not hero.is_home_base:
+                continue
+
+            field_value += f"\n"
+            field_value += f"{hero.level} {hero.name}"
+
+        field_dict_list.append({
+            'name': field_name,
+            'value': field_value,
+            'inline': False
+        })
 
     return field_dict_list
 
@@ -1935,6 +1971,89 @@ def embed_message(
     author_avatar_url
 ):
     embed_list = []
+
+    # no fields given
+    if len(field_list) == 0:
+        embed = initialize_embed(
+            Embed,
+            color,
+            icon_url,
+            title,
+            description,
+            bot_prefix,
+            bot_user_name,
+            thumbnail,
+            image_url,
+            author_display_name,
+            author_avatar_url
+        )
+        embed_list.append(embed)
+        return embed_list
+
+    while len(field_list) > 0:
+        # initialize the current embed
+        embed = initialize_embed(
+            Embed,
+            color,
+            icon_url,
+            title,
+            description,
+            bot_prefix,
+            bot_user_name,
+            thumbnail,
+            image_url,
+            author_display_name,
+            author_avatar_url
+        )
+
+        while len(field_list) > 0:
+            # use first field item since they will get deleted
+            field = field_list[0]
+
+            if 'inline' in field:
+                embed.add_field(
+                    name=field['name'],
+                    value=field['value'],
+                    inline=field['inline']
+                )
+            else:
+                embed.add_field(
+                    name=field['name'],
+                    value=field['value']
+                )
+
+            del field_list[0]
+
+            # embed fields are greater than 25
+            # discord doesn't allow more than 25 fields per embed
+            if len(embed.fields) == 25:
+                # add the current embed to the list
+                embed_list.append(embed)
+
+                # break the for and restart the while
+                break
+
+        # dont add if exactly 25, already added
+        # add the last embed to the list
+        if len(embed.fields) != 25 and len(embed.fields) > 0:
+            embed_list.append(embed)
+
+    return embed_list
+
+
+def initialize_embed(
+    Embed,
+    color,
+    icon_url,
+    title,
+    description,
+    bot_prefix,
+    bot_user_name,
+    thumbnail,
+    image_url,
+    author_display_name,
+    author_avatar_url
+):
     if title and description:
         embed = Embed(
             colour=color,
@@ -1968,47 +2087,37 @@ def embed_message(
         embed.set_image(
             url=image_url)
 
-    for field in field_list:
-        if field_list.index(field) > 25:
-            # discord will not accept more than 25 fields
-            del field_list[:25]
-            embed_list.append(
-                embed_message(
-                    Embed=Embed,
-                    color=color,
-                    icon_url=icon_url,
-                    title=title,
-                    description=description,
-                    bot_prefix=bot_prefix,
-                    bot_user_name=bot_user_name,
-                    thumbnail=thumbnail,
-                    field_list=field_list,
-                    image_url=image_url,
-                    author_display_name=author_display_name,
-                    author_avatar_url=author_avatar_url
-                )[0])
-        if 'inline' in field:
-            embed.add_field(
-                name=field['name'],
-                value=field['value'],
-                inline=field['inline']
-            )
-        else:
-            embed.add_field(
-                name=field['name'],
-                value=field['value']
-            )
-
     embed.set_footer(
         text=author_display_name,
         icon_url=author_avatar_url
     )
 
-    embed_list.append(embed)
+    return embed
 
-    embed_list.reverse()
 
-    return embed_list
+async def send_embed_list(embed_list, inter):
+
+    # embed limit is 10
+    # continue repeating till there are no embeds in embed list
+    while len(embed_list) > 0:
+        # embed list has only 1 item in the list
+        if len(embed_list) == 1:
+            # embed needs to be sent in list form
+            await inter.send(embeds=[embed_list[0]])
+            break
+
+        # embed list has less than or equal to 10 items
+        # entire message can be sent in 1 send embeds
+        if len(embed_list) <= 10:
+            await inter.send(embeds=embed_list)
+            break
+
+        # embed has more than 10 items in the list
+        # entire message cannot be sent in 1 send embeds
+        await inter.send(embeds=embed_list[0:10])
+
+        # delete the first 10 indexes of the list after being sent
+        del embed_list[0:10]
 
 
 # help
@@ -2637,7 +2746,7 @@ async def clan_role_verification(clan_role, coc_client):
     return verification_payload
 
 
-async def clan_role_player_verification(clan_role, user, coc_client):
+async def clan_role_player_verification(clan_role, user, guild_id, coc_client):
     """
         verifying a player is in the clan linked to the clan role
         and returning verification payload
@@ -2652,6 +2761,9 @@ async def clan_role_player_verification(clan_role, user, coc_client):
                 (verified, field_dict_list, player_obj, clan_obj)
     """
 
+    db_guild = db_responder.read_guild(guild_id)
+    db_user = db_responder.read_user(user.id)
+
     clan_verification_payload = (await clan_role_verification(
         clan_role, coc_client))
 
@@ -2661,6 +2773,28 @@ async def clan_role_player_verification(clan_role, user, coc_client):
         return clan_verification_payload
 
     clan_obj = clan_verification_payload['clan_obj']
+
+    # skip verification if user is guild admin or super user
+    if db_guild is not None:
+        if (db_guild.admin_user_id == user.id or
+                db_user.super_user):
+
+            db_player_obj = db_responder.read_player_active(user.id)
+            player_verification_payload = (
+                await player_verification(db_player_obj, user, coc_client))
+
+            if not player_verification_payload['verified']:
+                return player_verification_payload
+
+            player_obj = player_verification_payload['player_obj']
+
+            verification_payload = {
+                'verified': True,
+                'field_dict_list': None,
+                'player_obj': player_obj,
+                'clan_obj': clan_obj
+            }
+            return verification_payload
 
     db_player_obj_list = db_responder.read_player_list(user.id)
 
@@ -2729,7 +2863,7 @@ async def clan_role_player_leadership_verification(clan_role, user, guild_id, co
     db_user = db_responder.read_user(user.id)
 
     clan_role_player_verification_payload = (await clan_role_player_verification(
-        clan_role, user, coc_client))
+        clan_role, user, guild_id, coc_client))
 
     # player clan verification failed
     # player clash in maintenance, not found, gateway error, or player not in clan
