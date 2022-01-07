@@ -183,48 +183,145 @@ async def player_leadership_verification(db_player_obj, user_obj, guild_id, coc_
                 (verified, field_dict_list, player_obj)
     """
 
-    db_guild = db_responder.read_guild(guild_id)
     db_user = db_responder.read_user(user_obj.id)
+    db_guild = db_responder.read_guild(guild_id)
 
-    player_clan_verification_payload = (await player_clan_verification(
-        db_player_obj, user_obj, coc_client))
+    if db_user is None:
+        return {
+            'verified': False,
+            'field_dict_list': [{
+                'name': f"user is not claimed",
+                'value': f"{user_obj.mention} must claim a user"
+            }],
+            'player_obj': None
+        }
 
-    # player clan verification failed
-    # player clash in maintenance, not found, or player not in clan
-    if not player_clan_verification_payload['verified']:
-        return player_clan_verification_payload
-
-    player_obj = player_clan_verification_payload['player_obj']
+    if db_guild is None:
+        return {
+            'verified': False,
+            'field_dict_list': [{
+                'name': f"guild is not claimed",
+                'value': f"guild must be claimed"
+            }],
+            'player_obj': None
+        }
 
     # skip leadership verification if user is guild admin or super user
     if db_guild is not None:
         if (db_guild.admin_user_id == user_obj.id or
                 db_user.super_user):
 
-            verification_payload = {
-                'verified': True,
-                'field_dict_list': None,
-                'player_obj': player_obj
-            }
+            verification_payload = await player_verification(
+                db_player_obj, user_obj, coc_client)
+
             return verification_payload
 
-    # player not leader or coleader
-    if (player_obj.role.value != "leader" and
-            player_obj.role.value != "coLeader"):
+    db_clan_list = db_responder.read_clan_list_from_guild(guild_id)
+    db_player_list = db_responder.read_player_list(user_obj.id)
+
+    if len(db_clan_list) == 0:
         return {
             'verified': False,
             'field_dict_list': [{
-                'name': (f"{player_obj.name} "
-                         f"{player_obj.tag}"),
-                'value': "not in leadership"
+                'name': f"no clans have been claimed",
+                'value': f"please claim a clan to use leadership commands"
             }],
-            'player_obj': player_obj
+            'player_obj': None
+        }
+    if len(db_player_list) == 0:
+        return {
+            'verified': False,
+            'field_dict_list': [{
+                'name': f"no players have been claimed",
+                'value': f"please claim a player to use leadership commands"
+            }],
+            'player_obj': None
         }
 
+    # check for leadership in any claimed clan
+    for db_player in db_player_list:
+        try:
+            player_obj = await coc_client.get_player(db_player.player_tag)
+        except Maintenance:
+            return {
+                'verified': False,
+                'field_dict_list': [{
+                    'name': "Clash of Clans is under maintenance",
+                    'value': "please try again later"
+                }],
+                'player_obj': None
+            }
+        except NotFound:
+            return {
+                'verified': False,
+                'field_dict_list': [{
+                    'name': "could not find player",
+                    'value': db_player.player_tag
+                }],
+                'player_obj': None
+            }
+        except GatewayError:
+            return {
+                'verified': False,
+                'field_dict_list': [{
+                    'name': "coc.py ran into a gateway error",
+                    'value': "please try again later"
+                }],
+                'player_obj': None
+            }
+
+        # player not leader or coleader
+        # check next player
+        if (player_obj.role.value != "leader" and
+                player_obj.role.value != "coLeader"):
+            continue
+
+        for db_clan in db_clan_list:
+            try:
+                clan_obj = await coc_client.get_clan(db_clan.clan_tag)
+            except Maintenance:
+                return {
+                    'verified': False,
+                    'field_dict_list': [{
+                        'name': "Clash of Clans is under maintenance",
+                        'value': "please try again later"
+                    }],
+                    'clan_obj': None
+                }
+            except NotFound:
+                return {
+                    'verified': False,
+                    'field_dict_list': [{
+                        'name': "could not find clan",
+                        'value': db_clan.clan_tag
+                    }],
+                    'clan_obj': None
+                }
+            except GatewayError:
+                return {
+                    'verified': False,
+                    'field_dict_list': [{
+                        'name': "coc.py ran into a gateway error",
+                        'value': "please try again later"
+                    }],
+                    'clan_obj': None
+                }
+
+            # player that is in leadership is in the clan
+            if player_obj.clan.tag == clan_obj.tag:
+                return {
+                    'verified': True,
+                    'field_dict_list': None,
+                    'player_obj': player_obj
+                }
+
     verification_payload = {
-        'verified': True,
-        'field_dict_list': None,
-        'player_obj': player_obj
+        'verified': False,
+        'field_dict_list': [{
+            'name': f"not in leadership",
+            'value': f"{user_obj.mention} must be in leadership to run command"
+        }],
+        'player_obj': None
     }
     return verification_payload
 
@@ -2408,14 +2505,14 @@ async def update_roles(user, guild, coc_client):
         for role in add_role_obj_list:
             field_dict_list.append({
                 "name": f"added role",
-                "value": role.name
+                "value": role.mention
             })
 
         # adding removed roles to field dict list
         for role in remove_role_obj_list:
             field_dict_list.append({
                 "name": f"removed role",
-                "value": role.name
+                "value": role.mention
             })
 
         embed_dict_list.append({

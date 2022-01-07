@@ -2732,15 +2732,28 @@ async def player(inter, player_tag: str):
     brief='discord',
     description="returns the users linked to the active player's clan"
 )
-async def clan(inter):
+async def clan(inter, clan_role: disnake.Role = None):
     """
         returns the users linked to the active player's clan
+
+        Parameters
+        ----------
+        clan_role (optional): clan role to use linked clan
     """
 
-    db_player_obj = db_responder.read_player_active(inter.author.id)
+    # role not mentioned
+    if clan_role is None:
+        db_player_obj = db_responder.read_player_active(inter.author.id)
 
-    verification_payload = await discord_responder.clan_leadership_verification(
-        db_player_obj, inter.author, inter.guild.id, coc_client)
+        verification_payload = (
+            await discord_responder.clan_leadership_verification(
+                db_player_obj, inter.author, inter.guild.id, coc_client))
+    # role has been mentioned
+    else:
+        verification_payload = (
+            await discord_responder.clan_role_player_leadership_verification(
+                clan_role, inter.author, inter.guild.id, coc_client))
+
     if not verification_payload['verified']:
         embed_list = discord_responder.embed_message(
             Embed=disnake.Embed,
@@ -2760,7 +2773,6 @@ async def clan(inter):
         await inter.edit_original_message(embeds=embed_list)
         return
 
-    player_obj = verification_payload['player_obj']
     clan_obj = verification_payload['clan_obj']
 
     field_dict_list = []
@@ -4123,34 +4135,6 @@ async def on_guild_remove(guild):
     if db_guild:
         deleted_guild = db_responder.delete_guild(guild.id)
         return
-
-
-@bot.event
-async def on_command_error(ctx, error):
-    if isinstance(error, commands.CommandNotFound):
-        await ctx.send(f"slash command not used, please use slash commands")
-
-    elif isinstance(error, commands.MissingRequiredArgument):
-        if hasattr(ctx, "invoked_with"):
-            await ctx.send(f"command '{ctx.invoked_with}' "
-                           f"requires more information")
-
-        else:
-            await ctx.send(f"command requires more information")
-
-    elif hasattr(error.original, "text"):
-        await ctx.send(f"there was an error that I have not accounted for, "
-                       f"please let Razgriz know.\n\n"
-                       f"error text: `{error.original.text}`")
-
-    elif hasattr(error.original, "args"):
-        await ctx.send(f"there was an error that I have not accounted for, "
-                       f"please let Razgriz know.\n\n"
-                       f"error text: `{error.original.args[0]}`")
-
-    else:
-        await ctx.send(f"there was an error that I have not accounted for, "
-                       f"please let Razgriz know")
 
 
 @bot.event
