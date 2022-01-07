@@ -1353,7 +1353,8 @@ async def stars(inter, clan_role: disnake.Role = None):
         author_avatar_url=inter.author.avatar.url
     )
 
-    await inter.edit_original_message(embeds=embed_list)
+    for embed in embed_list:
+        await inter.send(embed=embed)
 
 
 @clan.sub_command(
@@ -1422,7 +1423,8 @@ async def attacks(inter, clan_role: disnake.Role = None):
         author_avatar_url=inter.author.avatar.url
     )
 
-    await inter.edit_original_message(embeds=embed_list)
+    for embed in embed_list:
+        await inter.send(embed=embed)
 
 
 # war score
@@ -2216,7 +2218,10 @@ async def player(
                  "announces message to specified channel, "
                  "pings all in current war")
 )
-async def war(inter, channel: disnake.TextChannel, message: str):
+async def war(
+    inter, channel: disnake.TextChannel,
+    message: str, clan_role: disnake.Role = None
+):
     """
         *leadership*
         announces message to specified channel,
@@ -2226,13 +2231,23 @@ async def war(inter, channel: disnake.TextChannel, message: str):
         ----------
         channel: channel to announce the message
         message: message to send the specified channel
+        clan_role (optional): clan role to use linked clan
     """
 
-    db_player_obj = db_responder.read_player_active(inter.author.id)
+    # role not mentioned
+    if clan_role is None:
+        db_player_obj = db_responder.read_player_active(inter.author.id)
 
-    verification_payload = (
-        await discord_responder.war_leadership_verification(
-            db_player_obj, inter.author, inter.guild.id, coc_client))
+        verification_payload = (
+            await discord_responder.war_leadership_verification(
+                db_player_obj, inter.author, inter.guild.id, coc_client)
+        )
+    # role has been mentioned
+    else:
+        verification_payload = (
+            await discord_responder.clan_role_war_leadership_verification(
+                clan_role, inter.author, inter.guild.id, coc_client))
+
     if not verification_payload['verified']:
         embed_list = discord_responder.embed_message(
             Embed=disnake.Embed,
@@ -2315,7 +2330,10 @@ async def war(inter, channel: disnake.TextChannel, message: str):
                  "announces message to channel, "
                  "pings all in war missing attacks")
 )
-async def warnoattack(inter, channel: disnake.TextChannel, message: str):
+async def warnoattack(
+    inter, channel: disnake.TextChannel,
+    message: str, clan_role: disnake.Role = None
+):
     """
         *leadership*
         announces message to channel,
@@ -2325,13 +2343,23 @@ async def warnoattack(inter, channel: disnake.TextChannel, message: str):
         ----------
         channel: channel to announce the message
         message: message to send the specified channel
+        clan_role (optional): clan role to use linked clan
     """
 
-    db_player_obj = db_responder.read_player_active(inter.author.id)
+    # role not mentioned
+    if clan_role is None:
+        db_player_obj = db_responder.read_player_active(inter.author.id)
 
-    verification_payload = (
-        await discord_responder.war_leadership_verification(
-            db_player_obj, inter.author, inter.guild.id, coc_client))
+        verification_payload = (
+            await discord_responder.war_leadership_verification(
+                db_player_obj, inter.author, inter.guild.id, coc_client)
+        )
+    # role has been mentioned
+    else:
+        verification_payload = (
+            await discord_responder.clan_role_war_leadership_verification(
+                clan_role, inter.author, inter.guild.id, coc_client))
+
     if not verification_payload['verified']:
         embed_list = discord_responder.embed_message(
             Embed=disnake.Embed,
