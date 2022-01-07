@@ -1536,7 +1536,7 @@ def cwl_lineup(cwl_group):
 async def cwl_clan_score(player_obj, cwl_group, clan_tag):
     if not cwl_group:
         return [{
-            'name': "{player_obj.name} is not in CWL",
+            'name': f"{player_obj.name} is not in CWL",
             'value': "there is no score"
         }]
 
@@ -1579,7 +1579,7 @@ async def cwl_clan_score(player_obj, cwl_group, clan_tag):
 async def cwl_member_score(player_obj, cwl_group, clan_tag):
     if not cwl_group:
         return [{
-            'name': "{player_obj.name} is not in CWL",
+            'name': f"{player_obj.name} is not in CWL",
             'value': "there is no score"
         }]
 
@@ -2891,5 +2891,140 @@ async def clan_role_war_leadership_verification(clan_role, user, guild_id, coc_c
         'field_dict_list': None,
         'player_obj': player_obj,
         'war_obj': war_obj
+    }
+    return verification_payload
+
+
+async def clan_role_cwl_group_verification(clan_role, coc_client):
+    """
+        verifying a cwl group from clan role
+        and returning verification payload
+        Args:
+            db_player_obj (obj): player object from db
+            user_obj (obj): discord user obj
+            coc_client (obj): coc.py client
+        Returns:
+            dict: verification_payload
+                (verified, field_dict_list, clan_obj, cwl_group_obj)
+    """
+
+    clan_role_verification_payload = (
+        await clan_role_verification(clan_role, coc_client))
+
+    # player clan verification failed
+    # player clash in maintenance, not found, or player not in clan
+    if not clan_role_verification_payload['verified']:
+        return clan_role_verification_payload
+
+    clan_obj = clan_role_verification_payload['clan_obj']
+
+    try:
+        cwl_group_obj = await coc_client.get_league_group(clan_obj.tag)
+    except Maintenance:
+        return {
+            'verified': False,
+            'field_dict_list': [{
+                'name': "Clash of Clans is under maintenance",
+                'value': "please try again later"
+            }],
+            'clan_obj': None,
+            'cwl_group_obj': None
+        }
+    except NotFound:
+        return {
+            'verified': False,
+            'field_dict_list': [{
+                'name': "CWL group not found",
+                'value': f"{clan_obj.name} {clan_obj.tag}"
+            }],
+            'clan_obj': None,
+            'cwl_group_obj': None
+        }
+    except GatewayError:
+        return {
+            'verified': False,
+            'field_dict_list': [{
+                'name': "coc.py ran into a gateway error",
+                'value': "please try again later"
+            }],
+            'clan_obj': None,
+            'cwl_group_obj': None
+        }
+
+    verification_payload = {
+        'verified': True,
+        'field_dict_list': None,
+        'clan_obj': clan_obj,
+        'cwl_group_obj': cwl_group_obj
+    }
+    return verification_payload
+
+
+async def clan_role_cwl_group_leadership_verification(clan_role, user, guild_id, coc_client):
+    """
+        verifying a cwl group from clan role
+        and returning verification payload
+        Args:
+            db_player_obj (obj): player object from db
+            user_obj (obj): discord user obj
+            guild_id (obj): discord guild id
+            coc_client (obj): coc.py client
+        Returns:
+            dict: verification_payload
+                (verified, field_dict_list, player_obj, clan_obj, cwl_group_obj)
+    """
+
+    clan_player_leadership_verification_payload = (
+        await clan_role_player_leadership_verification(
+            clan_role, user, guild_id, coc_client))
+
+    if not clan_player_leadership_verification_payload['verified']:
+        return clan_player_leadership_verification_payload
+
+    player_obj = clan_player_leadership_verification_payload['player_obj']
+    clan_obj = clan_player_leadership_verification_payload['clan_obj']
+
+    try:
+        cwl_group_obj = await coc_client.get_league_group(clan_obj.tag)
+    except Maintenance:
+        return {
+            'verified': False,
+            'field_dict_list': [{
+                'name': "Clash of Clans is under maintenance",
+                'value': "please try again later"
+            }],
+            'player_obj': None,
+            'clan_obj': None,
+            'cwl_group_obj': None
+        }
+    except NotFound:
+        return {
+            'verified': False,
+            'field_dict_list': [{
+                'name': "CWL group not found",
+                'value': f"{clan_obj.name} {clan_obj.tag}"
+            }],
+            'player_obj': None,
+            'clan_obj': None,
+            'cwl_group_obj': None
+        }
+    except GatewayError:
+        return {
+            'verified': False,
+            'field_dict_list': [{
+                'name': "coc.py ran into a gateway error",
+                'value': "please try again later"
+            }],
+            'player_obj': None,
+            'clan_obj': None,
+            'cwl_group_obj': None
+        }
+
+    verification_payload = {
+        'verified': True,
+        'field_dict_list': None,
+        'player_obj': player_obj,
+        'clan_obj': clan_obj,
+        'cwl_group_obj': cwl_group_obj
     }
     return verification_payload
