@@ -1640,21 +1640,22 @@ async def cwl_group_leadership_verification(db_player_obj, user_obj, guild_id, c
             coc_client (obj): coc.py client
         Returns:
             dict: verification_payload
-                (verified, field_dict_list, player_obj, cwl_group_obj)
+                (verified, field_dict_list, player_obj, clan_obj, cwl_group_obj)
     """
 
-    player_leadership_verification_payload = (
-        await player_leadership_verification(
+    clan_leadership_verification_payload = (
+        await clan_leadership_verification(
             db_player_obj, user_obj, guild_id, coc_client)
     )
 
-    if not player_leadership_verification_payload['verified']:
-        return player_leadership_verification_payload
+    if not clan_leadership_verification_payload['verified']:
+        return clan_leadership_verification_payload
 
-    player_obj = player_leadership_verification_payload['player_obj']
+    player_obj = clan_leadership_verification_payload['player_obj']
+    clan_obj = clan_leadership_verification_payload['clan_obj']
 
     try:
-        cwl_group_obj = await coc_client.get_league_group(player_obj.clan.tag)
+        cwl_group_obj = await coc_client.get_league_group(clan_obj.tag)
     except Maintenance:
         return {
             'verified': False,
@@ -1663,6 +1664,7 @@ async def cwl_group_leadership_verification(db_player_obj, user_obj, guild_id, c
                 'value': "please try again later"
             }],
             'player_obj': None,
+            'clan_obj': None,
             'cwl_group_obj': None
         }
     except NotFound:
@@ -1673,6 +1675,7 @@ async def cwl_group_leadership_verification(db_player_obj, user_obj, guild_id, c
                 'value': f"{player_obj.clan.name} {player_obj.clan.tag}"
             }],
             'player_obj': None,
+            'clan_obj': None,
             'cwl_group_obj': None
         }
     except GatewayError:
@@ -1683,6 +1686,7 @@ async def cwl_group_leadership_verification(db_player_obj, user_obj, guild_id, c
                 'value': "please try again later"
             }],
             'player_obj': None,
+            'clan_obj': None,
             'cwl_group_obj': None
         }
 
@@ -1690,6 +1694,7 @@ async def cwl_group_leadership_verification(db_player_obj, user_obj, guild_id, c
         'verified': True,
         'field_dict_list': None,
         'player_obj': player_obj,
+        'clan_obj': clan_obj,
         'cwl_group_obj': cwl_group_obj
     }
     return verification_payload
@@ -1703,7 +1708,7 @@ def cwl_lineup(cwl_group):
         "-------------------------------\n"
     )
     for clan in cwl_group.clans:
-        lineup_message = f"{clan.name}\n"
+        lineup_message = f"{clan.name} {clan.tag}\n"
         clan_lineup_dict = clash_responder.cwl_clan_lineup(clan)
         for th in clan_lineup_dict:
             if th >= 8:

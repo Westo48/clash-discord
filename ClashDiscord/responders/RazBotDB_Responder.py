@@ -80,6 +80,26 @@ def read_user_from_tag(player_tag):
         return None
 
 
+def update_toggle_user_admin(discord_user_id):
+    """
+        toggles the user's admin bool 
+        and returns None if no user is found
+
+        Args:
+            discord_user_id (int): discord id for user
+
+        Returns:
+            obj: user object (discord_id, admin, super_user)
+    """
+    user_data = user.update_user_admin_toggle(discord_user_id)
+    if user_data:
+        user_discord_id, user_admin, user_super_user = user_data
+        return user.User(user_discord_id, bool(
+            user_admin), bool(user_super_user))
+    else:
+        return None
+
+
 def delete_user(discord_user_id):
     """
         deletes user and returns None if the user 
