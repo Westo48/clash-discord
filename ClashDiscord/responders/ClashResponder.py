@@ -303,6 +303,19 @@ def home_unit_names(coc):
     )
 
 
+def hero_units(coc_client):
+    """
+        returns a list of all hero units
+
+        Args:
+            coc_client (obj): coc.py client
+
+        Returns:
+            hero_units: list of all units
+    """
+    return coc_client._hero_holder.items
+
+
 def player_active_super_troops(player_obj):
     """
         Returns a list of active super troops,
