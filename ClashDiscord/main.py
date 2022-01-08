@@ -2013,11 +2013,126 @@ async def overview(inter, clan_role: disnake.Role = None):
 
 @lineup.sub_command(
     brief='cwl',
-    description="returns the CWL group lineup"
+    description="returns the CWL group clan lineup"
+)
+async def clan(inter, clan_tag: str, clan_role: disnake.Role = None):
+    """
+        returns the CWL group clan lineup
+
+        Parameters
+        ----------
+        clan_tag: clan tag to search
+        clan_role (optional): clan role to use linked clan
+    """
+
+    clan_obj = await clash_responder.get_clan(clan_tag, coc_client)
+    # clan with given tag not found
+    if clan_obj is None:
+        embed_list = discord_responder.embed_message(
+            Embed=disnake.Embed,
+            color=disnake.Color(client_data.embed_color),
+            icon_url=inter.bot.user.avatar.url,
+            title=None,
+            description=f"could not find clan with tag {clan_tag}",
+            bot_prefix=inter.bot.command_prefix,
+            bot_user_name=inter.bot.user.name,
+            thumbnail=None,
+            field_list=[],
+            image_url=None,
+            author_display_name=inter.author.display_name,
+            author_avatar_url=inter.author.avatar.url
+        )
+
+        await discord_responder.send_embed_list(embed_list, inter)
+        return
+
+    # role not mentioned
+    if clan_role is None:
+        db_player_obj = db_responder.read_player_active(inter.author.id)
+
+        verification_payload = (
+            await discord_responder.cwl_group_leadership_verification(
+                db_player_obj, inter.author, inter.guild.id, coc_client))
+    # role has been mentioned
+    else:
+        verification_payload = (
+            await discord_responder.clan_role_cwl_group_leadership_verification(
+                clan_role, inter.author, inter.guild.id, coc_client))
+
+    if not verification_payload['verified']:
+        embed_list = discord_responder.embed_message(
+            Embed=disnake.Embed,
+            color=disnake.Color(client_data.embed_color),
+            icon_url=inter.bot.user.avatar.url,
+            title=None,
+            description=None,
+            bot_prefix=inter.bot.command_prefix,
+            bot_user_name=inter.bot.user.name,
+            thumbnail=None,
+            field_list=verification_payload['field_dict_list'],
+            image_url=None,
+            author_display_name=inter.author.display_name,
+            author_avatar_url=inter.author.avatar.url
+        )
+
+        await discord_responder.send_embed_list(embed_list, inter)
+        return
+
+    cwl_group_obj = verification_payload['cwl_group_obj']
+    player_clan_obj = verification_payload['clan_obj']
+    cwl_clan_obj = coc.utils.get(cwl_group_obj.clans, tag=clan_obj.tag)
+
+    # clan not in specified group
+    if cwl_clan_obj is None:
+        description = (
+            f"{clan_obj.name} {clan_obj.tag} not in cwl group "
+            f"with {player_clan_obj.name} {player_clan_obj.tag}"
+        )
+        embed_list = discord_responder.embed_message(
+            Embed=disnake.Embed,
+            color=disnake.Color(client_data.embed_color),
+            icon_url=inter.bot.user.avatar.url,
+            title=None,
+            description=description,
+            bot_prefix=inter.bot.command_prefix,
+            bot_user_name=inter.bot.user.name,
+            thumbnail=None,
+            field_list=[],
+            image_url=None,
+            author_display_name=inter.author.display_name,
+            author_avatar_url=inter.author.avatar.url
+        )
+
+        await discord_responder.send_embed_list(embed_list, inter)
+        return
+
+    field_dict_list = await discord_responder.war_lineup_member(
+        cwl_clan_obj, coc_client)
+    embed_list = discord_responder.embed_message(
+        Embed=disnake.Embed,
+        color=disnake.Color(client_data.embed_color),
+        icon_url=inter.bot.user.avatar.url,
+        title=f"{cwl_clan_obj.name} {cwl_clan_obj.tag}",
+        description=None,
+        bot_prefix=inter.bot.command_prefix,
+        bot_user_name=inter.bot.user.name,
+        thumbnail=cwl_clan_obj.badge,
+        field_list=field_dict_list,
+        image_url=None,
+        author_display_name=inter.author.display_name,
+        author_avatar_url=inter.author.avatar.url
+    )
+
+    await discord_responder.send_embed_list(embed_list, inter)
+
+
+@lineup.sub_command(
+    brief='cwl',
+    description="returns the CWL group member lineup"
 )
 async def member(inter, clan_role: disnake.Role = None):
     """
-        returns the CWL group lineup
+        returns the CWL group member lineup
 
         Parameters
         ----------
