@@ -889,7 +889,7 @@ async def member(inter, clan_role: disnake.Role = None):
         Embed=disnake.Embed,
         color=disnake.Color(client_data.embed_color),
         icon_url=inter.bot.user.avatar.url,
-        title=f"{clan_obj.name} lineup",
+        title=f"{clan_obj.name} member lineup",
         description=None,
         bot_prefix=inter.bot.command_prefix,
         bot_user_name=inter.bot.user.name,
@@ -1038,7 +1038,7 @@ async def member(inter, clan_role: disnake.Role = None):
         Embed=disnake.Embed,
         color=disnake.Color(client_data.embed_color),
         icon_url=inter.bot.user.avatar.url,
-        title=f"{clan_obj.name} war preference",
+        title=f"{clan_obj.name} member war preference",
         description=None,
         bot_prefix=inter.bot.command_prefix,
         bot_user_name=inter.bot.user.name,
@@ -1736,11 +1736,11 @@ async def lineup(inter):
 
 @lineup.sub_command(
     brief='war',
-    description="town hall lineup for war"
+    description="town hall lineup overview for war"
 )
-async def clan(inter, clan_role: disnake.Role = None):
+async def overview(inter, clan_role: disnake.Role = None):
     """
-        town hall lineup for war
+        town hall lineup overview for war
 
         Parameters
         ----------
@@ -1779,7 +1779,73 @@ async def clan(inter, clan_role: disnake.Role = None):
 
     war_obj = verification_payload['war_obj']
 
-    await inter.edit_original_message(content=discord_responder.war_lineup(war_obj))
+    await inter.edit_original_message(
+        content=discord_responder.war_lineup_overview(war_obj))
+
+
+@lineup.sub_command(
+    brief='war',
+    description="town hall lineup for each war member"
+)
+async def clan(inter, clan_role: disnake.Role = None):
+    """
+        town hall lineup for each war member
+
+        Parameters
+        ----------
+        clan_role (optional): clan role to use linked clan
+    """
+
+    # role not mentioned
+    if clan_role is None:
+        db_player_obj = db_responder.read_player_active(inter.author.id)
+
+        verification_payload = await discord_responder.war_verification(
+            db_player_obj, inter.author, coc_client)
+    # role has been mentioned
+    else:
+        verification_payload = await discord_responder.clan_role_war_verification(
+            clan_role, coc_client)
+
+    if not verification_payload['verified']:
+        embed_list = discord_responder.embed_message(
+            Embed=disnake.Embed,
+            color=disnake.Color(client_data.embed_color),
+            icon_url=inter.bot.user.avatar.url,
+            title=None,
+            description=None,
+            bot_prefix=inter.bot.command_prefix,
+            bot_user_name=inter.bot.user.name,
+            thumbnail=None,
+            field_list=verification_payload['field_dict_list'],
+            image_url=None,
+            author_display_name=inter.author.display_name,
+            author_avatar_url=inter.author.avatar.url
+        )
+
+        await discord_responder.send_embed_list(embed_list, inter)
+        return
+
+    war_obj = verification_payload['war_obj']
+
+    field_dict_list = discord_responder.war_lineup_clan(
+        war_obj)
+    embed_list = discord_responder.embed_message(
+        Embed=disnake.Embed,
+        color=disnake.Color(client_data.embed_color),
+        icon_url=inter.bot.user.avatar.url,
+        title=f"{war_obj.clan.name} vs. {war_obj.opponent.name}",
+        description=None,
+        bot_prefix=inter.bot.command_prefix,
+        bot_user_name=inter.bot.user.name,
+        thumbnail=war_obj.clan.badge,
+        field_list=field_dict_list,
+        image_url=None,
+        author_display_name=inter.author.display_name,
+        author_avatar_url=inter.author.avatar.url
+    )
+
+    await discord_responder.send_embed_list(embed_list, inter)
 
 
 @lineup.sub_command(
@@ -1827,13 +1893,34 @@ async def member(inter, clan_role: disnake.Role = None):
 
     war_obj = verification_payload['war_obj']
 
-    field_dict_list = discord_responder.war_member_lineup(
-        war_obj)
+    field_dict_list = (await discord_responder.war_lineup_member(
+        war_obj.clan, coc_client))
+
     embed_list = discord_responder.embed_message(
         Embed=disnake.Embed,
         color=disnake.Color(client_data.embed_color),
         icon_url=inter.bot.user.avatar.url,
-        title=f"{war_obj.clan.name} vs. {war_obj.opponent.name}",
+        title=f"{war_obj.clan.name} members",
+        description=None,
+        bot_prefix=inter.bot.command_prefix,
+        bot_user_name=inter.bot.user.name,
+        thumbnail=war_obj.clan.badge,
+        field_list=field_dict_list,
+        image_url=None,
+        author_display_name=inter.author.display_name,
+        author_avatar_url=inter.author.avatar.url
+    )
+
+    await discord_responder.send_embed_list(embed_list, inter)
+
+    field_dict_list = (await discord_responder.war_lineup_member(
+        war_obj.opponent, coc_client))
+
+    embed_list = discord_responder.embed_message(
+        Embed=disnake.Embed,
+        color=disnake.Color(client_data.embed_color),
+        icon_url=inter.bot.user.avatar.url,
+        title=f"{war_obj.opponent.name} members",
         description=None,
         bot_prefix=inter.bot.command_prefix,
         bot_user_name=inter.bot.user.name,

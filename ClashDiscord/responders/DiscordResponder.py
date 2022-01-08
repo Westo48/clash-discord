@@ -1466,7 +1466,7 @@ def war_clan_score(war_obj):
     return return_list
 
 
-def war_lineup(war_obj):
+def war_lineup_overview(war_obj):
     # prepping message and title
     message = (
         "```\n"
@@ -1512,7 +1512,7 @@ def war_lineup(war_obj):
     return message
 
 
-def war_member_lineup(war_obj):
+def war_lineup_clan(war_obj):
     field_dict_list = []
     map_position_index = 0
     for clan_member in war_obj.clan.members:
@@ -1531,7 +1531,40 @@ def war_member_lineup(war_obj):
     return field_dict_list
 
 
+async def war_lineup_member(war_clan, coc_client):
+    field_dict_list = []
+
+    map_position_index = 0
+    for member in war_clan.members:
+        player = await clash_responder.get_player(member.tag, coc_client)
+
+        map_position_index += 1
+
+        # just in case player returned None
+        if player is None:
+            continue
+
+        field_name = f"{map_position_index}: {player.name} {player.tag}"
+
+        field_value = f"{player.town_hall} TH"
+
+        for hero in player.heroes:
+            if not hero.is_home_base:
+                continue
+
+            field_value += f"\n"
+            field_value += f"{hero.level} {hero.name}"
+
+        field_dict_list.append({
+            'name': field_name,
+            'value': field_value,
+            'inline': False
+        })
+
+    return field_dict_list
+
 # CWL
+
 
 async def cwl_group_verification(db_player_obj, user_obj, coc_client):
     """
