@@ -819,7 +819,7 @@ async def clan_lineup_member(clan_obj, coc_client):
     return field_dict_list
 
 
-async def clan_war_preference(clan_obj, coc_client):
+async def war_preference_clan(clan_obj, coc_client):
     in_count = 0
     for member in clan_obj.members:
         player_obj = await coc_client.get_player(member.tag)
@@ -838,6 +838,29 @@ async def clan_war_preference(clan_obj, coc_client):
         'value': f"{clan_obj.member_count - in_count}",
         'inline': False
     })
+
+    return field_dict_list
+
+
+async def war_preference_member(clan_obj, coc_client):
+    field_dict_list = []
+
+    for member in clan_obj.members:
+        player_obj = await coc_client.get_player(member.tag)
+        if player_obj.war_opted_in:
+            field_dict_list.append({
+                'name': f"{player_obj.name} {player_obj.tag}",
+                'value': f"in",
+                'inline': False
+            })
+
+            continue
+
+        field_dict_list.append({
+            'name': f"{player_obj.name} {player_obj.tag}",
+            'value': f"out",
+            'inline': False
+        })
 
     return field_dict_list
 

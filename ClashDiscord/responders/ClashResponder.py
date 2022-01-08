@@ -2,7 +2,6 @@ import re
 import datetime
 import math
 from coc.errors import Maintenance, NotFound, PrivateWarLog, GatewayError
-import coc.enums as coc_enums
 
 th_lineup_dict = {
     14: 0,

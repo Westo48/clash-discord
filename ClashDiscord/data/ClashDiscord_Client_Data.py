@@ -16,6 +16,24 @@ class ClashDiscord_Category(object):
         self.emoji = emoji
 
 
+class ClashDiscord_Emoji(object):
+    """
+        ClashDiscord_Emoji: object for client emoji's
+
+            Instance Attributes
+                discord_id (int): id for emoji in discord
+                name (str): emoji name
+                discord_name (str): formatted discord_name emoji name
+                description (str): description for emoji
+    """
+
+    def __init__(self, discord_id, name, discord_name, description):
+        self.discord_id = discord_id
+        self.name = name
+        self.discord_name = discord_name
+        self.description = description
+
+
 class ClashDiscord_Data(object):
     """
         ClashDiscord_Data: object for ClashDiscord client data
@@ -26,6 +44,7 @@ class ClashDiscord_Data(object):
                 embed_color (int): color integer for embed commands
                 back_emoji (str): emoji for back button
                 bot_categories (list): list of Bot_Category objects
+                emojis (list[obj]): list of emoji objects
     """
 
     version = '2.1.1'
@@ -48,4 +67,8 @@ class ClashDiscord_Data(object):
             'War', 'war', 'War based commands', '⚔️'),
         ClashDiscord_Category(
             'CWL', 'cwl', 'CWL based commands', '🔱')
+    ]
+
+    emojis = [
+
     ]

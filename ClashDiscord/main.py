@@ -59,47 +59,6 @@ async def ping(inter):
         content=f"pong {round(inter.bot.latency, 3) * 1000}ms")
 
 
-@misc.sub_command(
-    brief='misc', description="gets the bot ping"
-)
-async def testing(inter, number: int):
-    """
-        amount of fields to add
-
-        Parameters
-        ----------
-        inter: disnake interaction object
-    """
-
-    await inter.response.defer()
-
-    range_num = range(number)
-    field_dict_list = []
-    for i in range_num:
-        counter = i+1
-        field_dict_list.append({
-            'name': f"{counter} name",
-            'value': f"{counter} value"
-        })
-
-    embed_list = discord_responder.embed_message(
-        Embed=disnake.Embed,
-        color=disnake.Color(client_data.embed_color),
-        icon_url=inter.bot.user.avatar.url,
-        title=None,
-        description=None,
-        bot_prefix=inter.bot.command_prefix,
-        bot_user_name=inter.bot.user.name,
-        thumbnail=None,
-        field_list=field_dict_list,
-        image_url=None,
-        author_display_name=inter.author.display_name,
-        author_avatar_url=inter.author.avatar.url
-    )
-
-    await discord_responder.send_embed_list(embed_list, inter)
-
-
 # misc link
 @misc.sub_command_group(
     brief='misc',
@@ -959,9 +918,77 @@ async def warpreference(inter):
 
 @warpreference.sub_command(
     brief='clan',
-    description="rundown of clan member's war preference"
+    description="rundown of clan's war preference"
 )
 async def overview(inter, clan_role: disnake.Role = None):
+    """
+        rundown of clan's war preference
+
+        Parameters
+        ----------
+        clan_role (optional): clan role to use linked clan
+    """
+
+    # role not mentioned
+    if clan_role is None:
+        db_player_obj = db_responder.read_player_active(inter.author.id)
+
+        verification_payload = (
+            await discord_responder.clan_leadership_verification(
+                db_player_obj, inter.author, inter.guild.id, coc_client))
+    # role has been mentioned
+    else:
+        verification_payload = (
+            await discord_responder.clan_role_player_leadership_verification(
+                clan_role, inter.author, inter.guild.id, coc_client))
+
+    if not verification_payload['verified']:
+        embed_list = discord_responder.embed_message(
+            Embed=disnake.Embed,
+            color=disnake.Color(client_data.embed_color),
+            icon_url=inter.bot.user.avatar.url,
+            title=None,
+            description=None,
+            bot_prefix=inter.bot.command_prefix,
+            bot_user_name=inter.bot.user.name,
+            thumbnail=None,
+            field_list=verification_payload['field_dict_list'],
+            image_url=None,
+            author_display_name=inter.author.display_name,
+            author_avatar_url=inter.author.avatar.url
+        )
+
+        await discord_responder.send_embed_list(embed_list, inter)
+        return
+
+    clan_obj = verification_payload['clan_obj']
+
+    field_dict_list = await discord_responder.war_preference_clan(
+        clan_obj, coc_client)
+
+    embed_list = discord_responder.embed_message(
+        Embed=disnake.Embed,
+        color=disnake.Color(client_data.embed_color),
+        icon_url=inter.bot.user.avatar.url,
+        title=f"{clan_obj.name} war preference",
+        description=None,
+        bot_prefix=inter.bot.command_prefix,
+        bot_user_name=inter.bot.user.name,
+        thumbnail=clan_obj.badge,
+        field_list=field_dict_list,
+        image_url=None,
+        author_display_name=inter.author.display_name,
+        author_avatar_url=inter.author.avatar.url
+    )
+    for embed in embed_list:
+        await inter.send(embed=embed)
+
+
+@warpreference.sub_command(
+    brief='clan',
+    description="rundown of clan member's war preference"
+)
+async def member(inter, clan_role: disnake.Role = None):
     """
         rundown of clan member's war preference
 
@@ -1004,7 +1031,7 @@ async def overview(inter, clan_role: disnake.Role = None):
 
     clan_obj = verification_payload['clan_obj']
 
-    field_dict_list = await discord_responder.clan_war_preference(
+    field_dict_list = await discord_responder.war_preference_member(
         clan_obj, coc_client)
 
     embed_list = discord_responder.embed_message(
