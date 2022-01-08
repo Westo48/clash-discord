@@ -4271,16 +4271,6 @@ async def claim(inter, player_tag: str, user: disnake.User):
             content=f"{inter.author.mention} is not admin")
         return
 
-    # confirm valid player_tag
-    player_obj = await clash_responder.get_player(
-        player_tag, coc_client)
-
-    # player tag was not valid
-    if not player_obj:
-        await inter.edit_original_message(
-            content=f"player with tag {player_tag} was not found")
-        return
-
     # confirm user has been claimed
     db_user_obj = db_responder.read_user(user.id)
     if not db_user_obj:
@@ -4291,6 +4281,23 @@ async def claim(inter, player_tag: str, user: disnake.User):
             await inter.edit_original_message(
                 content=f"{user.mention} user couldn't be claimed")
             return
+
+    # admin users are not allowed to update admins or super users
+    if db_user_obj.admin or db_user_obj.super_user:
+        await inter.edit_original_message(
+            content=(f"admins are not allowed to update "
+                     f"admins or super users"))
+        return
+
+    # confirm valid player_tag
+    player_obj = await clash_responder.get_player(
+        player_tag, coc_client)
+
+    # player tag was not valid
+    if not player_obj:
+        await inter.edit_original_message(
+            content=f"player with tag {player_tag} was not found")
+        return
 
     # confirm player has not been claimed
     db_player_obj = db_responder.read_player_from_tag(player_obj.tag)
@@ -4317,6 +4324,146 @@ async def claim(inter, player_tag: str, user: disnake.User):
         await inter.edit_original_message(
             content=(f"Could not claim {player_obj.name} "
                      f"{player_obj.tag} for {user.mention}"))
+
+
+@player.sub_command(
+    brief='admin',
+    description="*admin* remove a player for the mentioned user"
+)
+async def remove(inter, player_tag: str, user: disnake.User):
+    """
+        *admin*
+        remove a player for the mentioned user
+
+        Parameters
+        ----------
+        player_tag: player tag to remove
+        user: user to remove player from
+    """
+
+    db_author_obj = db_responder.read_user(inter.author.id)
+    # author is not claimed
+    if not db_author_obj:
+        await inter.edit_original_message(
+            content=f"{inter.author.mention} is not claimed")
+        return
+
+    # author is not admin
+    if not db_author_obj.admin:
+        await inter.edit_original_message(
+            content=f"{inter.author.mention} is not admin")
+        return
+
+    # confirm db user exists
+    db_user_obj = db_responder.read_user(user.id)
+    if db_user_obj is None:
+        await inter.edit_original_message(
+            content=f"{user.mention} has not been claimed")
+        return
+
+    # admin users are not allowed to update admins or super users
+    if db_user_obj.admin or db_user_obj.super_user:
+        await inter.edit_original_message(
+            content=(f"admins are not allowed to update "
+                     f"admins or super users"))
+        return
+
+    # confirm valid player_tag
+    player_obj = await clash_responder.get_player(
+        player_tag, coc_client)
+
+    # player tag was not valid
+    if not player_obj:
+        await inter.edit_original_message(
+            content=f"player with tag {player_tag} was not found")
+        return
+
+    db_player_obj = db_responder.read_player(user.id, player_obj.tag)
+
+    # db player not found
+    if not db_player_obj:
+        await inter.edit_original_message(
+            content=(f"{player_obj.name} {player_obj.tag} "
+                     f"is not claimed by {user.mention}"))
+        return
+
+    db_del_player_obj = db_responder.delete_player(
+        user.id, player_obj.tag)
+
+    # player was not deleted
+    if db_del_player_obj:
+        await inter.edit_original_message(content=(
+            f"{player_obj.name} {player_obj.tag} "
+            f"could not be deleted "
+            f"from {user.mention} player list"
+        ))
+        return
+
+    db_active_player_obj = db_responder.read_player_active(user.id)
+
+    # active player found
+    # no need to change the active player
+    if db_active_player_obj:
+        await inter.edit_original_message(content=(
+            f"{player_obj.name} {player_obj.tag} "
+            f"has been deleted "
+            f"from {user.mention} player list"
+        ))
+        return
+
+    # no active player found
+    # check if there are any other players
+    db_player_obj_list = db_responder.read_player_list(
+        user.id)
+
+    # no additional players claimed
+    if len(db_player_obj_list) == 0:
+        await inter.edit_original_message(content=(
+            f"{player_obj.name} {player_obj.tag} "
+            f"has been deleted, "
+            f"{user.mention} has no more claimed players"
+        ))
+        return
+
+    # additional players claimed by user
+    # update the first as the new active
+    db_updated_player_obj = db_responder.update_player_active(
+        user.id, db_player_obj_list[0].player_tag)
+
+    # update not successful
+    if not db_updated_player_obj:
+        await inter.edit_original_message(content=(
+            f"{player_obj.name} {player_obj.tag} "
+            f"has been deleted, could not update active player, "
+            f"{user.mention} has no active players"
+        ))
+        return
+
+    # update was successful
+    clash_updated_player_obj = await clash_responder.get_player(
+        db_updated_player_obj.player_tag, coc_client)
+
+    # clash player not found
+    if not clash_updated_player_obj:
+        await inter.edit_original_message(content=(
+            f"{player_obj.name} {player_obj.tag} "
+            f"has been deleted, "
+            f"{user.mention} active is now set to "
+            f"{db_updated_player_obj.player_tag}, "
+            f"could not find player in clash of clans"
+        ))
+        return
+
+    # player deleted
+    # active player updated
+    # clash player found
+    await inter.edit_original_message(content=(
+        f"{player_obj.name} {player_obj.tag} "
+        f"has been deleted, "
+        f"{user.mention} active is now set to "
+        f"{clash_updated_player_obj.name} "
+        f"{clash_updated_player_obj.tag}"
+    ))
 
 
 # super user administration
@@ -4408,6 +4555,58 @@ async def user(inter):
 
 @user.sub_command(
     brief='superuser',
+    description="*super user* toggle a user's admin bool"
+)
+async def admintoggle(inter, user: disnake.User):
+    """
+        *super user*
+        toggle a user's admin bool
+
+        Parameters
+        ----------
+        user: user toggle admin
+    """
+
+    db_author_obj = db_responder.read_user(inter.author.id)
+    # author is not claimed
+    if not db_author_obj:
+        await inter.edit_original_message(
+            content=f"{inter.author.mention} is not claimed")
+        return
+
+    # author is not super user
+    if not db_author_obj.super_user:
+        await inter.edit_original_message(
+            content=f"{inter.author.mention} is not super user")
+        return
+
+    # confirm user is claimed
+    db_user_obj = db_responder.read_user(user.id)
+    # user isn't claimed
+    if not db_user_obj:
+        await inter.edit_original_message(
+            content=f"{user.mention} is not claimed")
+        return
+
+    updated_user_obj = db_responder.update_toggle_user_admin(user.id)
+    # upated user not found
+    if updated_user_obj is None:
+        await inter.edit_original_message(
+            content=f"{user.mention} could not be updated")
+        return
+
+    # user was updated properly
+    if updated_user_obj.admin:
+        await inter.edit_original_message(
+            content=f"{user.mention} is now an admin")
+
+    else:
+        await inter.edit_original_message(
+            content=f"{user.mention} is no longer an admin")
+
+
+@user.sub_command(
+    brief='superuser',
     description="*super user* delete a claimed user from id"
 )
 async def removeclaim(inter, user: disnake.User):
@@ -4438,19 +4637,19 @@ async def removeclaim(inter, user: disnake.User):
     # user isn't claimed
     if not db_user_obj:
         await inter.edit_original_message(
-            content=f"user with id {user.id} is not claimed")
+            content=f"{user.mention} is not claimed")
         return
 
     deleted_user_obj = db_responder.delete_user(user.id)
     # user could not be deleted
     if deleted_user_obj:
         await inter.edit_original_message(
-            content=f"user with id {user.id} could not be deleted")
+            content=f"{user.mention} could not be deleted")
         return
 
     # user was deleted properly
     await inter.edit_original_message(
-        content=f"user with id {user.id} was deleted")
+        content=f"{user.mention} was deleted")
 
 
 # superuser player
@@ -4542,6 +4741,132 @@ async def claim(inter, player_tag: str, user: disnake.User):
         await inter.edit_original_message(
             content=(f"Could not claim {player_obj.name} "
                      f"{player_obj.tag} for {user.mention}"))
+
+
+@player.sub_command(
+    brief='superuser',
+    description="*super user* remove a player for the mentioned user"
+)
+async def remove(inter, player_tag: str, user: disnake.User):
+    """
+        *super user*
+        remove a player for the mentioned user
+
+        Parameters
+        ----------
+        player_tag: player tag to remove
+        user: user to remove player from
+    """
+
+    db_author_obj = db_responder.read_user(inter.author.id)
+    # author is not claimed
+    if not db_author_obj:
+        await inter.edit_original_message(
+            content=f"{inter.author.mention} is not claimed")
+        return
+
+    # author is not super user
+    if not db_author_obj.super_user:
+        await inter.edit_original_message(
+            content=f"{inter.author.mention} is not super user")
+        return
+
+    # confirm valid player_tag
+    player_obj = await clash_responder.get_player(
+        player_tag, coc_client)
+
+    # player tag was not valid
+    if not player_obj:
+        await inter.edit_original_message(
+            content=f"player with tag {player_tag} was not found")
+        return
+
+    db_player_obj = db_responder.read_player(user.id, player_obj.tag)
+
+    # db player not found
+    if not db_player_obj:
+        await inter.edit_original_message(
+            content=(f"{player_obj.name} {player_obj.tag} "
+                     f"is not claimed by {user.mention}"))
+        return
+
+    db_del_player_obj = db_responder.delete_player(
+        user.id, player_obj.tag)
+
+    # player was not deleted
+    if db_del_player_obj:
+        await inter.edit_original_message(content=(
+            f"{player_obj.name} {player_obj.tag} "
+            f"could not be deleted "
+            f"from {user.mention} player list"
+        ))
+        return
+
+    db_active_player_obj = db_responder.read_player_active(user.id)
+
+    # active player found
+    # no need to change the active player
+    if db_active_player_obj:
+        await inter.edit_original_message(content=(
+            f"{player_obj.name} {player_obj.tag} "
+            f"has been deleted "
+            f"from {user.mention} player list"
+        ))
+        return
+
+    # no active player found
+    # check if there are any other players
+    db_player_obj_list = db_responder.read_player_list(
+        user.id)
+
+    # no additional players claimed
+    if len(db_player_obj_list) == 0:
+        await inter.edit_original_message(content=(
+            f"{player_obj.name} {player_obj.tag} "
+            f"has been deleted, "
+            f"{user.mention} has no more claimed players"
+        ))
+        return
+
+    # additional players claimed by user
+    # update the first as the new active
+    db_updated_player_obj = db_responder.update_player_active(
+        user.id, db_player_obj_list[0].player_tag)
+
+    # update not successful
+    if not db_updated_player_obj:
+        await inter.edit_original_message(content=(
+            f"{player_obj.name} {player_obj.tag} "
+            f"has been deleted, could not update active player, "
+            f"{user.mention} has no active players"
+        ))
+        return
+
+    # update was successful
+    clash_updated_player_obj = await clash_responder.get_player(
+        db_updated_player_obj.player_tag, coc_client)
+
+    # clash player not found
+    if not clash_updated_player_obj:
+        await inter.edit_original_message(content=(
+            f"{player_obj.name} {player_obj.tag} "
+            f"has been deleted, "
+            f"{user.mention} active is now set to "
+            f"{db_updated_player_obj.player_tag}, "
+            f"could not find player in clash of clans"
+        ))
+        return
+
+    # player deleted
+    # active player updated
+    # clash player found
+    await inter.edit_original_message(content=(
+        f"{player_obj.name} {player_obj.tag} "
+        f"has been deleted, "
+        f"{user.mention} active is now set to "
+        f"{clash_updated_player_obj.name} "
+        f"{clash_updated_player_obj.tag}"
+    ))
 
 
 # client events
