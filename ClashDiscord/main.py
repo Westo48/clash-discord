@@ -4214,8 +4214,112 @@ async def claim(inter, role: disnake.Role,
                  f"{claimed_rank_role_obj.model_name}"))
 
 
-# super user administration
+# admin
+@bot.slash_command(
+    brief='admin',
+    description="parent for client admin commands"
+)
+async def admin(inter):
+    """
+        parent for client admin commands
+    """
 
+    # defer for every command
+    await inter.response.defer()
+
+
+# admin player
+@admin.sub_command_group(
+    brief='admin',
+    description="group for admin player commands"
+)
+async def player(inter):
+    """
+        group for player commands
+    """
+
+    pass
+
+
+@player.sub_command(
+    brief='admin',
+    description=(
+        "*admin* claim a player for the mentioned user"
+    )
+)
+async def claim(inter, player_tag: str, user: disnake.User):
+    """
+        *admin*
+        claim a player for the mentioned user
+
+        Parameters
+        ----------
+        player_tag: player tag link user to
+        user: user to link player to
+    """
+
+    db_author_obj = db_responder.read_user(inter.author.id)
+    # author is not claimed
+    if not db_author_obj:
+        await inter.edit_original_message(
+            content=f"{inter.author.mention} is not claimed")
+        return
+
+    # author is not admin
+    if not db_author_obj.admin:
+        await inter.edit_original_message(
+            content=f"{inter.author.mention} is not admin")
+        return
+
+    # confirm valid player_tag
+    player_obj = await clash_responder.get_player(
+        player_tag, coc_client)
+
+    # player tag was not valid
+    if not player_obj:
+        await inter.edit_original_message(
+            content=f"player with tag {player_tag} was not found")
+        return
+
+    # confirm user has been claimed
+    db_user_obj = db_responder.read_user(user.id)
+    if not db_user_obj:
+        # user has not been claimed
+        db_user_obj = db_responder.claim_user(user.id)
+        if not db_user_obj:
+            # user could not be claimed
+            await inter.edit_original_message(
+                content=f"{user.mention} user couldn't be claimed")
+            return
+
+    # confirm player has not been claimed
+    db_player_obj = db_responder.read_player_from_tag(player_obj.tag)
+    # player has already been claimed
+    if db_player_obj:
+        await inter.edit_original_message(
+            content=(f"{player_obj.name} {player_obj.tag} "
+                     f"has already been claimed"))
+        return
+
+    # user claimed
+    # player is valid
+    # player hasn't been claimed
+    db_player_obj = db_responder.claim_player(
+        user.id, player_obj.tag)
+
+    # succesfully claimed
+    if db_player_obj:
+        await inter.edit_original_message(
+            content=(f"{player_obj.name} {player_obj.tag} "
+                     f"is now claimed by {user.mention}"))
+    # failed to claim
+    else:
+        await inter.edit_original_message(
+            content=(f"Could not claim {player_obj.name} "
+                     f"{player_obj.tag} for {user.mention}"))
+
+
+# super user administration
 @bot.slash_command(
     brief='superuser',
     description="parent for client super user commands"
