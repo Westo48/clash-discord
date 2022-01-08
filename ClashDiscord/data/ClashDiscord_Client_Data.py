@@ -23,14 +23,16 @@ class ClashDiscord_Emoji(object):
             Instance Attributes
                 discord_id (int): id for emoji in discord
                 name (str): emoji name
-                discord_name (str): formatted discord_name emoji name
+                discord_name (str): formatted discord name emoji name
+                clash_name (str): formatted clash name emoji name
                 description (str): description for emoji
     """
 
-    def __init__(self, discord_id, name, discord_name, description):
+    def __init__(self, discord_id, name, discord_name, clash_name, description):
         self.discord_id = discord_id
         self.name = name
         self.discord_name = discord_name
+        self.clash_name = clash_name
         self.description = description
 
 
