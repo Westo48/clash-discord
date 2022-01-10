@@ -498,9 +498,9 @@ def unit_lvl(
     return {
         'name': f"{unit_emoji}",
         'value': (
-            f"{unit_obj.level} | "
+            f"**{unit_obj.level} | "
             f"{max_level_for_townhall} | "
-            f"{unit_obj.max_level}"
+            f"{unit_obj.max_level}**"
         )
     }
 
@@ -630,7 +630,10 @@ def spell_lvl_all(
     return field_dict_list
 
 
-def active_super_troops(player_obj, active_super_troop_list):
+def active_super_troops(
+    player_obj, active_super_troop_list,
+    discord_emoji_list, client_emoji_list
+):
     if len(active_super_troop_list) == 0:
         return [{
             'name': f"{player_obj.name} {player_obj.tag}",
@@ -639,9 +642,12 @@ def active_super_troops(player_obj, active_super_troop_list):
     else:
         field_dict_list = []
         for troop_obj in active_super_troop_list:
+            troop_emoji = get_emoji(
+                troop_obj.name, discord_emoji_list, client_emoji_list
+            )
             field_dict_list.append({
-                'name': troop_obj.name,
-                'value': f"is active"
+                'name': f"{troop_emoji}",
+                'value': f"{troop_obj.name}"
             })
         return field_dict_list
 

@@ -614,7 +614,9 @@ async def user(inter, user: disnake.User = None):
         player_obj)
 
     field_dict_list = discord_responder.active_super_troops(
-        player_obj, active_super_troop_list)
+        player_obj, active_super_troop_list,
+        inter.client.emojis, client_data.emojis
+    )
     embed_list = discord_responder.embed_message(
         Embed=disnake.Embed,
         color=disnake.Color(client_data.embed_color),
