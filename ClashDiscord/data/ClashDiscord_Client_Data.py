@@ -687,6 +687,24 @@ class ClashDiscord_Data(object):
             coc_name="Legend Trophy"
         ),
         ClashDiscord_Emoji(
+            display_name="Shield",
+            discord_id=929407832191811615,
+            discord_name="icon_shield",
+            coc_name="Shield"
+        ),
+        ClashDiscord_Emoji(
+            display_name="White Star",
+            discord_id=930149728455364608,
+            discord_name="icon_white_star",
+            coc_name="Player Star"
+        ),
+        ClashDiscord_Emoji(
+            display_name="War Star",
+            discord_id=930152217762209822,
+            discord_name="icon_war_star",
+            coc_name="War Star"
+        ),
+        ClashDiscord_Emoji(
             display_name="Gold",
             discord_id=929407562967818243,
             discord_name="resource_gold",
@@ -709,12 +727,6 @@ class ClashDiscord_Data(object):
             discord_id=929407596211863662,
             discord_name="resource_gem",
             coc_name="Gem"
-        ),
-        ClashDiscord_Emoji(
-            display_name="Shield",
-            discord_id=929407832191811615,
-            discord_name="resource_shield",
-            coc_name="Shield"
         ),
         ClashDiscord_Emoji(
             display_name="Super Troop",

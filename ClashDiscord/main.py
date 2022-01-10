@@ -848,7 +848,8 @@ async def overview(inter, clan_role: disnake.Role = None):
 
     clan_obj = verification_payload['clan_obj']
 
-    field_dict_list = await discord_responder.clan_lineup(clan_obj, coc_client)
+    field_dict_list = await discord_responder.clan_lineup(
+        clan_obj, coc_client, inter.client.emojis, client_data.emojis)
 
     embed_list = discord_responder.embed_message(
         Embed=disnake.Embed,
@@ -916,7 +917,8 @@ async def member(inter, clan_role: disnake.Role = None):
 
     clan_obj = verification_payload['clan_obj']
 
-    field_dict_list = await discord_responder.clan_lineup_member(clan_obj, coc_client)
+    field_dict_list = await discord_responder.clan_lineup_member(
+        clan_obj, coc_client, inter.client.emojis, client_data.emojis)
 
     embed_list = discord_responder.embed_message(
         Embed=disnake.Embed,
@@ -997,7 +999,7 @@ async def overview(inter, clan_role: disnake.Role = None):
     clan_obj = verification_payload['clan_obj']
 
     field_dict_list = await discord_responder.war_preference_clan(
-        clan_obj, coc_client)
+        clan_obj, coc_client, inter.client.emojis, client_data.emojis)
 
     embed_list = discord_responder.embed_message(
         Embed=disnake.Embed,
@@ -1065,7 +1067,7 @@ async def member(inter, clan_role: disnake.Role = None):
     clan_obj = verification_payload['clan_obj']
 
     field_dict_list = await discord_responder.war_preference_member(
-        clan_obj, coc_client)
+        clan_obj, coc_client, inter.client.emojis, client_data.emojis)
 
     embed_list = discord_responder.embed_message(
         Embed=disnake.Embed,
