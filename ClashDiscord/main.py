@@ -364,7 +364,8 @@ async def find(inter, unit_name: str):
 
     unit_obj = clash_responder.find_unit(player_obj, unit_name)
     field_dict_list = [discord_responder.unit_lvl(
-        player_obj, unit_obj, unit_name)]
+        player_obj, unit_obj, unit_name,
+        inter.client.emojis, client_data.emojis)]
     # unit_obj not found
     # set title to player name
     if not unit_obj:
@@ -437,17 +438,29 @@ async def all(inter, user: disnake.User = None,
     player_obj = verification_payload['player_obj']
 
     if unit_type == "unit":
-        field_dict_list = discord_responder.unit_lvl_all(player_obj)
+        field_dict_list = discord_responder.unit_lvl_all(
+            player_obj, inter.client.emojis, client_data.emojis
+        )
     elif unit_type == "hero":
-        field_dict_list = discord_responder.hero_lvl_all(player_obj)
+        field_dict_list = discord_responder.hero_lvl_all(
+            player_obj, inter.client.emojis, client_data.emojis
+        )
     elif unit_type == "pet":
-        field_dict_list = discord_responder.pet_lvl_all(player_obj)
+        field_dict_list = discord_responder.pet_lvl_all(
+            player_obj, inter.client.emojis, client_data.emojis
+        )
     elif unit_type == "troop":
-        field_dict_list = discord_responder.troop_lvl_all(player_obj)
+        field_dict_list = discord_responder.troop_lvl_all(
+            player_obj, inter.client.emojis, client_data.emojis
+        )
     elif unit_type == "spell":
-        field_dict_list = discord_responder.spell_lvl_all(player_obj)
+        field_dict_list = discord_responder.spell_lvl_all(
+            player_obj, inter.client.emojis, client_data.emojis
+        )
     elif unit_type == "siege":
-        field_dict_list = discord_responder.siege_lvl_all(player_obj)
+        field_dict_list = discord_responder.siege_lvl_all(
+            player_obj, inter.client.emojis, client_data.emojis
+        )
 
     embed_list = discord_responder.embed_message(
         Embed=disnake.Embed,
@@ -500,17 +513,29 @@ async def alltag(inter, player_tag: str,
         return
 
     if unit_type == "unit":
-        field_dict_list = discord_responder.unit_lvl_all(player_obj)
+        field_dict_list = discord_responder.unit_lvl_all(
+            player_obj, inter.client.emojis, client_data.emojis
+        )
     elif unit_type == "hero":
-        field_dict_list = discord_responder.hero_lvl_all(player_obj)
+        field_dict_list = discord_responder.hero_lvl_all(
+            player_obj, inter.client.emojis, client_data.emojis
+        )
     elif unit_type == "pet":
-        field_dict_list = discord_responder.pet_lvl_all(player_obj)
+        field_dict_list = discord_responder.pet_lvl_all(
+            player_obj, inter.client.emojis, client_data.emojis
+        )
     elif unit_type == "troop":
-        field_dict_list = discord_responder.troop_lvl_all(player_obj)
+        field_dict_list = discord_responder.troop_lvl_all(
+            player_obj, inter.client.emojis, client_data.emojis
+        )
     elif unit_type == "spell":
-        field_dict_list = discord_responder.spell_lvl_all(player_obj)
+        field_dict_list = discord_responder.spell_lvl_all(
+            player_obj, inter.client.emojis, client_data.emojis
+        )
     elif unit_type == "siege":
-        field_dict_list = discord_responder.siege_lvl_all(player_obj)
+        field_dict_list = discord_responder.siege_lvl_all(
+            player_obj, inter.client.emojis, client_data.emojis
+        )
 
     embed_list = discord_responder.embed_message(
         Embed=disnake.Embed,

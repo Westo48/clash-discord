@@ -475,7 +475,10 @@ def player_info(player_obj, discord_emoji_list, client_emoji_list):
     return field_dict_list
 
 
-def unit_lvl(player_obj, unit_obj, unit_name):
+def unit_lvl(
+    player_obj, unit_obj, unit_name,
+    discord_emoji_list, client_emoji_list
+):
     if not unit_obj:
         # unit not found response
         return {
@@ -483,86 +486,87 @@ def unit_lvl(player_obj, unit_obj, unit_name):
             'value': f"you either do not have it unlocked or it is misspelled"
         }
 
+    unit_emoji = get_emoji(
+        unit_obj.name, discord_emoji_list, client_emoji_list)
+
     try:
         max_level_for_townhall = unit_obj.get_max_level_for_townhall(
             player_obj.town_hall)
     except:
         max_level_for_townhall = unit_obj.max_level
 
-    # unit is max lvl
-    if unit_obj.level == unit_obj.max_level:
-        return {
-            'name': f"{unit_obj.name} lvl {unit_obj.level}",
-            'value': f"max lvl"
-        }
-    # unit is max for th, but not total max
-    elif (unit_obj.level == max_level_for_townhall):
-        return {
-            'name': f"{unit_obj.name} lvl {unit_obj.level}",
-            'value': (
-                f"TH {player_obj.town_hall} max: {max_level_for_townhall}\n"
-                f"max: {unit_obj.max_level}"
-            )
-        }
-    # unit is not max for th nor is it total max
-    else:
-        # unit max is the same as th max
-        if (unit_obj.max_level == max_level_for_townhall):
-            return {
-                'name': f"{unit_obj.name} lvl {unit_obj.level}",
-                'value': f"max: {unit_obj.max_level}"
-            }
-        # unit max is not the same as th max
-        else:
-            return {
-                'name': f"{unit_obj.name} lvl {unit_obj.level}",
-                'value': (
-                    f"TH {player_obj.town_hall} max: {max_level_for_townhall}\n"
-                    f"max: {unit_obj.max_level}"
-                )
-            }
+    return {
+        'name': f"{unit_emoji}",
+        'value': (
+            f"{unit_obj.level} | "
+            f"{max_level_for_townhall} | "
+            f"{unit_obj.max_level}"
+        )
+    }
 
 
-def unit_lvl_all(player_obj):
+def unit_lvl_all(
+    player_obj, discord_emoji_list, client_emoji_list
+):
     field_dict_list = []
-    for field_dict in hero_lvl_all(player_obj):
+    for field_dict in hero_lvl_all(
+        player_obj, discord_emoji_list, client_emoji_list
+    ):
         field_dict_list.append(field_dict)
-    for field_dict in pet_lvl_all(player_obj):
+    for field_dict in pet_lvl_all(
+        player_obj, discord_emoji_list, client_emoji_list
+    ):
         field_dict_list.append(field_dict)
-    for field_dict in troop_lvl_all(player_obj):
+    for field_dict in troop_lvl_all(
+        player_obj, discord_emoji_list, client_emoji_list
+    ):
         field_dict_list.append(field_dict)
-    for field_dict in spell_lvl_all(player_obj):
+    for field_dict in spell_lvl_all(
+        player_obj, discord_emoji_list, client_emoji_list
+    ):
         field_dict_list.append(field_dict)
-    for field_dict in siege_lvl_all(player_obj):
+    for field_dict in siege_lvl_all(
+        player_obj, discord_emoji_list, client_emoji_list
+    ):
         field_dict_list.append(field_dict)
     return field_dict_list
 
 
-def hero_lvl_all(player_obj):
+def hero_lvl_all(
+    player_obj, discord_emoji_list, client_emoji_list
+):
     field_dict_list = []
     for hero_obj in player_obj.heroes:
         # hero isn't a home base hero
         if not hero_obj.is_home_base:
             continue
         field_dict_list.append(unit_lvl(
-            player_obj, hero_obj, hero_obj.name))
+            player_obj, hero_obj, hero_obj.name,
+            discord_emoji_list, client_emoji_list
+        ))
 
     return field_dict_list
 
 
-def pet_lvl_all(player_obj):
+def pet_lvl_all(
+    player_obj, discord_emoji_list, client_emoji_list
+):
     field_dict_list = []
     for pet_obj in player_obj.hero_pets:
         # pet isn't a home base pet
         if not pet_obj.is_home_base:
             continue
         field_dict_list.append(unit_lvl(
-            player_obj, pet_obj, pet_obj.name))
+            player_obj, pet_obj, pet_obj.name,
+            discord_emoji_list, client_emoji_list
+        ))
 
     return field_dict_list
 
 
-def troop_lvl_all(player_obj):
+def troop_lvl_all(
+    player_obj, discord_emoji_list, client_emoji_list
+):
     field_dict_list = []
     for troop_obj in player_obj.home_troops:
         # troop isn't a home base troop
@@ -578,12 +582,16 @@ def troop_lvl_all(player_obj):
             continue
 
         field_dict_list.append(unit_lvl(
-            player_obj, troop_obj, troop_obj.name))
+            player_obj, troop_obj, troop_obj.name,
+            discord_emoji_list, client_emoji_list
+        ))
 
     return field_dict_list
 
 
-def siege_lvl_all(player_obj):
+def siege_lvl_all(
+    player_obj, discord_emoji_list, client_emoji_list
+):
     field_dict_list = []
     for troop_obj in player_obj.home_troops:
         # troop isn't a home base troop
@@ -599,19 +607,25 @@ def siege_lvl_all(player_obj):
             continue
 
         field_dict_list.append(unit_lvl(
-            player_obj, troop_obj, troop_obj.name))
+            player_obj, troop_obj, troop_obj.name,
+            discord_emoji_list, client_emoji_list
+        ))
 
     return field_dict_list
 
 
-def spell_lvl_all(player_obj):
+def spell_lvl_all(
+    player_obj, discord_emoji_list, client_emoji_list
+):
     field_dict_list = []
     for spell_obj in player_obj.spells:
         # spell isn't a home base spell
         if not spell_obj.is_home_base:
             continue
         field_dict_list.append(unit_lvl(
-            player_obj, spell_obj, spell_obj.name))
+            player_obj, spell_obj, spell_obj.name,
+            discord_emoji_list, client_emoji_list
+        ))
 
     return field_dict_list
 
