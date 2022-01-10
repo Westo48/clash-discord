@@ -669,6 +669,12 @@ class ClashDiscord_Data(object):
             coc_name="received"
         ),
         ClashDiscord_Emoji(
+            display_name="Exp Level",
+            discord_id=929407046435102751,
+            discord_name="icon_exp",
+            coc_name="Exp Level"
+        ),
+        ClashDiscord_Emoji(
             display_name="Gold",
             discord_id=929407562967818243,
             discord_name="resource_gold",

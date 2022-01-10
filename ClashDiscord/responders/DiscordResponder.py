@@ -326,24 +326,19 @@ async def player_leadership_verification(db_player_obj, user_obj, guild_id, coc_
     return verification_payload
 
 
-def player_info(player_obj):
+def player_info(player_obj, discord_emoji_list, client_emoji_list):
     field_dict_list = []
     field_dict_list.append({
-        'name': '**Exp Lvl**',
+        'name': get_emoji("Exp Level", discord_emoji_list, client_emoji_list),
         'value': player_obj.exp_level,
         'inline': True
     })
     field_dict_list.append({
         'name': '**TH Lvl**',
-        'value': player_obj.town_hall,
+        'value': get_emoji(
+            player_obj.town_hall, discord_emoji_list, client_emoji_list),
         'inline': True
     })
-    if player_obj.town_hall_weapon:
-        field_dict_list.append({
-            'name': '**TH Weapon Lvl**',
-            'value': player_obj.town_hall_weapon,
-            'inline': True
-        })
     field_dict_list.append({
         'name': '**Trophies**',
         'value': player_obj.trophies,
@@ -412,36 +407,32 @@ def player_info(player_obj):
             'inline': True
         })
 
-    if player_obj.war_opted_in:
-        field_dict_list.append({
-            'name': '**War Preference**',
-            'value': "in",
-            'inline': True
-        })
-    else:
-        field_dict_list.append({
-            'name': '**War Preference**',
-            'value': "out",
-            'inline': True
-        })
+    field_dict_list.append({
+        'name': '**War Preference**',
+        'value': get_emoji(
+            player_obj.war_opted_in, discord_emoji_list, client_emoji_list),
+        'inline': True
+    })
 
     hero_title = ''
     hero_value = ''
     for hero in player_obj.heroes:
-        if hero.name == 'Barbarian King':
-            hero_title = 'BK'
+        # hero isn't a home base hero
+        if not hero.is_home_base:
+            continue
+
+        # value hasn't been set, no need for "| "
+        if hero_value == "":
+            emoji_str = get_emoji(
+                hero.name, discord_emoji_list, client_emoji_list)
+            hero_title = emoji_str
             hero_value = f'{hero.level}'
-        elif hero.name == 'Archer Queen':
-            hero_title += ' | AQ'
-            hero_value += f' | {hero.level}'
-        elif hero.name == 'Grand Warden':
-            hero_title += ' | GW'
-            hero_value += f' | {hero.level}'
-        elif hero.name == 'Royal Champion':
-            hero_title += ' | RC'
-            hero_value += f' | {hero.level}'
         else:
-            break
+            emoji_str = get_emoji(
+                hero.name, discord_emoji_list, client_emoji_list)
+            hero_title += f" | {emoji_str}"
+            hero_value += f" | {hero.level}"
+
     if hero_title != '':
         field_dict_list.append({
             'name': f'**{hero_title}**',
@@ -452,18 +443,22 @@ def player_info(player_obj):
     pet_title = ''
     pet_value = ''
     for pet in player_obj.hero_pets:
-        if pet.name == 'L.A.S.S.I':
-            pet_title = 'LA'
+        # pet isn't a home base pet
+        if not pet.is_home_base:
+            continue
+
+        # value hasn't been set, no need for "| "
+        if pet_value == "":
+            emoji_str = get_emoji(
+                pet.name, discord_emoji_list, client_emoji_list)
+            pet_title = emoji_str
             pet_value = f'{pet.level}'
-        elif pet.name == 'Mighty Yak':
-            pet_title += ' | MY'
-            pet_value += f' | {pet.level}'
-        elif pet.name == 'Electro Owl':
-            pet_title += ' | EO'
-            pet_value += f' | {pet.level}'
-        elif pet.name == 'Unicorn':
-            pet_title += ' | UC'
-            pet_value += f' | {pet.level}'
+        else:
+            emoji_str = get_emoji(
+                pet.name, discord_emoji_list, client_emoji_list)
+            pet_title += f" | {emoji_str}"
+            pet_value += f" | {pet.level}"
+
     if pet_title != '':
         field_dict_list.append({
             'name': f'**{pet_title}**',
@@ -1727,16 +1722,16 @@ def cwl_lineup(cwl_group):
     return message
 
 
-async def cwl_clan_score(player_obj, cwl_group, clan_tag):
+async def cwl_clan_score(clan_obj, cwl_group):
     if not cwl_group:
         return [{
-            'name': f"{player_obj.name} is not in CWL",
+            'name': f"{clan_obj.name} is not in CWL",
             'value': "there is no score"
         }]
 
     # get a list of all CWLWar objects
     cwl_wars = []
-    async for war in cwl_group.get_wars_for_clan(clan_tag):
+    async for war in cwl_group.get_wars_for_clan(clan_obj.tag):
         if war.state == "warEnded":
             cwl_wars.append(war)
 
@@ -1748,7 +1743,7 @@ async def cwl_clan_score(player_obj, cwl_group, clan_tag):
 
     # get the cwl clan
     for clan in cwl_group.clans:
-        if clan.tag == clan_tag:
+        if clan.tag == clan_obj.tag:
             cwl_clan = clan
             break
 
@@ -2211,7 +2206,7 @@ def get_emoji(coc_name, discord_emoji_list, client_emoji_list):
     if client_emoji is not None:
         return client_emoji
 
-    return None
+    return coc_name
 
 
 def get_base_emoji(coc_name, discord_emoji_list, client_emoji_list):

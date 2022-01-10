@@ -235,7 +235,8 @@ async def user(inter, user: disnake.User = None):
 
     player_obj = verification_payload['player_obj']
 
-    field_dict_list = discord_responder.player_info(player_obj)
+    field_dict_list = discord_responder.player_info(
+        player_obj, inter.client.emojis, client_data.emojis)
 
     embed_list = discord_responder.embed_message(
         Embed=disnake.Embed,
@@ -289,7 +290,8 @@ async def find(inter, player_tag: str):
         await discord_responder.send_embed_list(embed_list, inter)
         return
 
-    field_dict_list = discord_responder.player_info(player_obj)
+    field_dict_list = discord_responder.player_info(
+        player_obj, inter.client.emojis, client_data.emojis)
 
     embed_list = discord_responder.embed_message(
         Embed=disnake.Embed,
@@ -2318,15 +2320,16 @@ async def clan(inter, clan_role: disnake.Role = None):
         return
 
     player_obj = verification_payload['player_obj']
+    clan_obj = verification_payload['clan_obj']
     cwl_group_obj = verification_payload['cwl_group_obj']
 
     field_dict_list = await discord_responder.cwl_clan_score(
-        player_obj, cwl_group_obj, player_obj.clan.tag)
+        clan_obj, cwl_group_obj)
     embed_list = discord_responder.embed_message(
         Embed=disnake.Embed,
         color=disnake.Color(client_data.embed_color),
         icon_url=inter.bot.user.avatar.url,
-        title=f"{player_obj.clan.name} CWL scores",
+        title=f"{clan_obj.name} CWL scores",
         description=None,
         bot_prefix=inter.bot.command_prefix,
         bot_user_name=inter.bot.user.name,
