@@ -2181,6 +2181,111 @@ async def send_embed_list(embed_list, inter):
         del embed_list[0:10]
 
 
+# emojis
+def get_emoji(coc_name, discord_emoji_list, client_emoji_list):
+    client_emoji = get_base_emoji(
+        coc_name, discord_emoji_list, client_emoji_list)
+
+    # base emoji found
+    if client_emoji is not None:
+        return client_emoji
+
+    client_emoji = get_th_emoji(
+        coc_name, discord_emoji_list, client_emoji_list)
+
+    # town hall emoji found
+    if client_emoji is not None:
+        return client_emoji
+
+    client_emoji = get_war_opted_in_emoji(
+        coc_name, discord_emoji_list, client_emoji_list)
+
+    # war opted in emoji found
+    if client_emoji is not None:
+        return client_emoji
+
+    client_emoji = get_clan_war_league_emoji(
+        coc_name, discord_emoji_list, client_emoji_list)
+
+    # clan war league emoji found
+    if client_emoji is not None:
+        return client_emoji
+
+    return None
+
+
+def get_base_emoji(coc_name, discord_emoji_list, client_emoji_list):
+    client_emoji = get(client_emoji_list, coc_name=coc_name)
+
+    # emoji not found in client list
+    if client_emoji is None:
+        return None
+
+    discord_emoji = get(
+        discord_emoji_list,
+        name=client_emoji.discord_name, id=client_emoji.discord_id)
+
+    # emoji not found in discord list
+    if discord_emoji is None:
+        return None
+
+    return (f"<:{discord_emoji.name}:{discord_emoji.id}>")
+
+
+def get_th_emoji(coc_name, discord_emoji_list, client_emoji_list):
+    client_emoji = get(client_emoji_list, coc_name=f"Town Hall {coc_name}")
+
+    # emoji not found in client list
+    if client_emoji is None:
+        return None
+
+    discord_emoji = get(
+        discord_emoji_list,
+        name=client_emoji.discord_name, id=client_emoji.discord_id)
+
+    # emoji not found in discord list
+    if discord_emoji is None:
+        return None
+
+    return (f"<:{discord_emoji.name}:{discord_emoji.id}>")
+
+
+def get_war_opted_in_emoji(coc_name, discord_emoji_list, client_emoji_list):
+    client_emoji = get(client_emoji_list, coc_name=f"war_opted_in={coc_name}")
+
+    # emoji not found in client list
+    if client_emoji is None:
+        return None
+
+    discord_emoji = get(
+        discord_emoji_list,
+        name=client_emoji.discord_name, id=client_emoji.discord_id)
+
+    # emoji not found in discord list
+    if discord_emoji is None:
+        return None
+
+    return (f"<:{discord_emoji.name}:{discord_emoji.id}>")
+
+
+def get_clan_war_league_emoji(coc_name, discord_emoji_list, client_emoji_list):
+    client_emoji = get(client_emoji_list, coc_name=f"Clan War {coc_name}")
+
+    # emoji not found in client list
+    if client_emoji is None:
+        return None
+
+    discord_emoji = get(
+        discord_emoji_list,
+        name=client_emoji.discord_name, id=client_emoji.discord_id)
+
+    # emoji not found in discord list
+    if discord_emoji is None:
+        return None
+
+    return (f"<:{discord_emoji.name}:{discord_emoji.id}>")
+
+
 # help
 def help_main(db_guild_obj, user_id, player_obj, bot_categories):
     help_dict = {

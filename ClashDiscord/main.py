@@ -3080,6 +3080,46 @@ async def all(inter):
     await discord_responder.send_embed_list(embed_list, inter)
 
 
+# discord emoji
+@discord.sub_command_group(
+    brief='client',
+    description="group for discord emoji commands"
+)
+async def emoji(inter):
+    """
+        group for discord emoji commands
+    """
+
+    await inter.response.defer(ephemeral=True)
+
+
+@emoji.sub_command(
+    brief='discord', description="sends specified emoji"
+)
+async def message(inter, coc_name: str):
+    """
+        sends specified emoji
+
+        Parameters
+        ----------
+        coc_name: name of emoji to search for
+    """
+
+    await inter.edit_original_message(content="getting emoji")
+
+    emoji = discord_responder.get_emoji(
+        coc_name, inter.client.emojis, client_data.emojis)
+
+    if emoji is None:
+        await inter.edit_original_message(
+            content=f"{coc_name} emoji not found")
+        return
+
+    await inter.send(content=emoji)
+
+    await inter.edit_original_message(content=f"{emoji} emoji sent")
+
+
 # discord user
 @discord.sub_command_group(
     brief='discord',
