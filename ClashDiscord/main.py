@@ -708,7 +708,9 @@ async def overview(inter, clan_role: disnake.Role = None):
 
     clan_obj = verification_payload['clan_obj']
 
-    field_dict_list = discord_responder.clan_info(clan_obj)
+    field_dict_list = discord_responder.clan_info(
+        clan_obj, inter.client.emojis, client_data.emojis
+    )
 
     embed_list = discord_responder.embed_message(
         Embed=disnake.Embed,
@@ -763,7 +765,9 @@ async def find(inter, clan_tag: str):
         await discord_responder.send_embed_list(embed_list, inter)
         return
 
-    field_dict_list = discord_responder.clan_info(clan_obj)
+    field_dict_list = discord_responder.clan_info(
+        clan_obj, inter.client.emojis, client_data.emojis
+    )
 
     embed_list = discord_responder.embed_message(
         Embed=disnake.Embed,

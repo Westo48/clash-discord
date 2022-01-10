@@ -675,6 +675,18 @@ class ClashDiscord_Data(object):
             coc_name="Exp Level"
         ),
         ClashDiscord_Emoji(
+            display_name="Trophy",
+            discord_id=930106600960720946,
+            discord_name="icon_trophy",
+            coc_name="Trophy"
+        ),
+        ClashDiscord_Emoji(
+            display_name="Legend Trophy",
+            discord_id=930107837051461682,
+            discord_name="icon_legend_trophy",
+            coc_name="Legend Trophy"
+        ),
+        ClashDiscord_Emoji(
             display_name="Gold",
             discord_id=929407562967818243,
             discord_name="resource_gold",

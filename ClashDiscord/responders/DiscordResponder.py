@@ -328,36 +328,45 @@ async def player_leadership_verification(db_player_obj, user_obj, guild_id, coc_
 
 def player_info(player_obj, discord_emoji_list, client_emoji_list):
     field_dict_list = []
+    exp_emoji = get_emoji("Exp Level", discord_emoji_list, client_emoji_list)
     field_dict_list.append({
-        'name': get_emoji("Exp Level", discord_emoji_list, client_emoji_list),
+        'name': exp_emoji,
         'value': player_obj.exp_level,
         'inline': True
     })
+    th_emoji = get_emoji(
+        player_obj.town_hall, discord_emoji_list, client_emoji_list)
     field_dict_list.append({
         'name': '**TH Lvl**',
-        'value': get_emoji(
-            player_obj.town_hall, discord_emoji_list, client_emoji_list),
+        'value': th_emoji,
         'inline': True
     })
+    trophy_emoji = get_emoji(
+        "Trophy", discord_emoji_list, client_emoji_list)
     field_dict_list.append({
-        'name': '**Trophies**',
+        'name': trophy_emoji,
         'value': player_obj.trophies,
         'inline': True
     })
     field_dict_list.append({
-        'name': '**Best Trophies**',
+        'name': (
+            f"**{trophy_emoji} Best**"),
         'value': player_obj.best_trophies,
         'inline': True
     })
     if player_obj.legend_statistics:
+        legend_trophy_emoji = get_emoji(
+            "Legend Trophy", discord_emoji_list, client_emoji_list)
         field_dict_list.append({
-            'name': '**Legend Trophies**',
+            'name': legend_trophy_emoji,
             'value': player_obj.legend_statistics.legend_trophies,
             'inline': True
         })
         if player_obj.legend_statistics.best_season:
+            legend_league_emoji = get_emoji(
+                player_obj.league.name, discord_emoji_list, client_emoji_list)
             field_dict_list.append({
-                'name': '**Best Rank | Trophies**',
+                'name': f"**{legend_league_emoji} Best Rank | Trophies**",
                 'value': (
                     f"{player_obj.legend_statistics.best_season.rank} | "
                     f"{player_obj.legend_statistics.best_season.trophies}"
@@ -366,7 +375,7 @@ def player_info(player_obj, discord_emoji_list, client_emoji_list):
             })
         if player_obj.legend_statistics.current_season:
             field_dict_list.append({
-                'name': '**Current Rank | Trophies**',
+                'name': f"**{legend_league_emoji} Current Rank | Trophies**",
                 'value': (
                     f"{player_obj.legend_statistics.current_season.rank} | "
                     f"{player_obj.legend_statistics.current_season.trophies}"
@@ -375,7 +384,7 @@ def player_info(player_obj, discord_emoji_list, client_emoji_list):
             })
         if player_obj.legend_statistics.previous_season:
             field_dict_list.append({
-                'name': '**Previous Rank | Trophies**',
+                'name': f"**{legend_league_emoji} Previous Rank | Trophies**",
                 'value': (
                     f"{player_obj.legend_statistics.previous_season.rank} | "
                     f"{player_obj.legend_statistics.previous_season.trophies}"
@@ -407,10 +416,11 @@ def player_info(player_obj, discord_emoji_list, client_emoji_list):
             'inline': True
         })
 
+    war_preference_emoji = get_emoji(
+        player_obj.war_opted_in, discord_emoji_list, client_emoji_list)
     field_dict_list.append({
         'name': '**War Preference**',
-        'value': get_emoji(
-            player_obj.war_opted_in, discord_emoji_list, client_emoji_list),
+        'value': war_preference_emoji,
         'inline': True
     })
 
@@ -421,15 +431,15 @@ def player_info(player_obj, discord_emoji_list, client_emoji_list):
         if not hero.is_home_base:
             continue
 
+        hero_emoji = get_emoji(
+            hero.name, discord_emoji_list, client_emoji_list)
         # value hasn't been set, no need for "| "
         if hero_value == "":
-            emoji_str = get_emoji(
-                hero.name, discord_emoji_list, client_emoji_list)
+            emoji_str = hero_emoji
             hero_title = emoji_str
             hero_value = f'{hero.level}'
         else:
-            emoji_str = get_emoji(
-                hero.name, discord_emoji_list, client_emoji_list)
+            emoji_str = hero_emoji
             hero_title += f" | {emoji_str}"
             hero_value += f" | {hero.level}"
 
@@ -447,15 +457,15 @@ def player_info(player_obj, discord_emoji_list, client_emoji_list):
         if not pet.is_home_base:
             continue
 
+        pet_emoji = get_emoji(
+            pet.name, discord_emoji_list, client_emoji_list)
         # value hasn't been set, no need for "| "
         if pet_value == "":
-            emoji_str = get_emoji(
-                pet.name, discord_emoji_list, client_emoji_list)
+            emoji_str = pet_emoji
             pet_title = emoji_str
             pet_value = f'{pet.level}'
         else:
-            emoji_str = get_emoji(
-                pet.name, discord_emoji_list, client_emoji_list)
+            emoji_str = pet_emoji
             pet_title += f" | {emoji_str}"
             pet_value += f" | {pet.level}"
 
@@ -750,7 +760,9 @@ async def clan_leadership_verification(db_player_obj, user_obj, guild_id, coc_cl
     return verification_payload
 
 
-def clan_info(clan_obj):
+def clan_info(
+        clan_obj, discord_emoji_list, client_emoji_list
+):
     field_dict_list = []
 
     field_dict_list.append({
@@ -758,23 +770,42 @@ def clan_info(clan_obj):
         'value': clan_obj.description,
         'inline': False
     })
+    if len(clan_obj.labels) != 0:
+        label_value = ""
+        for label in clan_obj.labels:
+            label_emoji = get_emoji(
+                label.name, discord_emoji_list, client_emoji_list)
+            label_value += f"{label_emoji} "
+
+        # removing the last 1 character of label value " "
+        label_value = label_value[:-1]
+
+        field_dict_list.append({
+            'name': "**Clan Labels**",
+            'value': label_value,
+            'inline': False
+        })
     field_dict_list.append({
         'name': "**Members**",
         'value': clan_obj.member_count,
         'inline': True
     })
     field_dict_list.append({
-        'name': "**Clan Lvl**",
+        'name': "**Clan Level**",
         'value': clan_obj.level,
         'inline': True
     })
+    clan_war_league_emoji = get_clan_war_league_emoji(
+        clan_obj.war_league.name, discord_emoji_list, client_emoji_list)
     field_dict_list.append({
         'name': "**Clan War League**",
-        'value': clan_obj.war_league.name,
+        'value': f"{clan_war_league_emoji} {clan_obj.war_league.name}",
         'inline': True
     })
+    trophy_emoji = get_emoji(
+        "Trophy", discord_emoji_list, client_emoji_list)
     field_dict_list.append({
-        'name': "**Total Points**",
+        'name': f"**{trophy_emoji} Total**",
         'value': clan_obj.points,
         'inline': True
     })
