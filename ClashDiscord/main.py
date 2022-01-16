@@ -4282,12 +4282,15 @@ async def claim(inter, player_tag: str, user: disnake.User):
                 content=f"{user.mention} user couldn't be claimed")
             return
 
-    # admin users are not allowed to update admins or super users
-    if db_user_obj.admin or db_user_obj.super_user:
-        await inter.edit_original_message(
-            content=(f"admins are not allowed to update "
-                     f"admins or super users"))
-        return
+    # admin is not a super user and author is not the user
+    if (not db_author_obj.super_user
+            and db_author_obj.discord_id != db_user_obj.discord_id):
+        # admin users are not allowed to update admins or super users
+        if db_user_obj.admin or db_user_obj.super_user:
+            await inter.edit_original_message(
+                content=(f"admins are not allowed to update "
+                         f"admins or super users"))
+            return
 
     # confirm valid player_tag
     player_obj = await clash_responder.get_player(
@@ -4328,6 +4331,72 @@ async def claim(inter, player_tag: str, user: disnake.User):
 
 @player.sub_command(
     brief='admin',
+    description="*admin* shows players claimed by the mentioned user"
+)
+async def show(inter, user: disnake.User):
+    """
+        *admin*
+        shows players claimed by the mentioned user
+
+        Parameters
+        ----------
+        user: user to show player tags
+    """
+
+    db_author_obj = db_responder.read_user(inter.author.id)
+    # author is not claimed
+    if not db_author_obj:
+        await inter.edit_original_message(
+            content=f"{inter.author.mention} is not claimed")
+        return
+
+    # author is not admin
+    if not db_author_obj.admin:
+        await inter.edit_original_message(
+            content=f"{inter.author.mention} is not admin")
+        return
+
+    # confirm db user exists
+    db_user_obj = db_responder.read_user(user.id)
+    if db_user_obj is None:
+        await inter.edit_original_message(
+            content=f"{user.mention} has not been claimed")
+        return
+
+    # admin is not a super user and author is not the user
+    if (not db_author_obj.super_user
+            and db_author_obj.discord_id != db_user_obj.discord_id):
+        # admin users are not allowed to update admins or super users
+        if db_user_obj.admin or db_user_obj.super_user:
+            await inter.edit_original_message(
+                content=(f"admins are not allowed to update "
+                         f"admins or super users"))
+            return
+
+    db_player_obj_list = db_responder.read_player_list(user.id)
+
+    # user has no claimed players
+    if len(db_player_obj_list) == 0:
+        await inter.edit_original_message(
+            content=(f"{user.mention} does not have any "
+                     f"claimed players"))
+        return
+
+    message = f"{user.mention} has claimed "
+    for db_player_obj in db_player_obj_list:
+        player_obj = await clash_responder.get_player(
+            db_player_obj.player_tag, coc_client)
+        if db_player_obj.active:
+            message += f"{player_obj.name} {player_obj.tag} (active), "
+        else:
+            message += f"{player_obj.name} {player_obj.tag}, "
+    # cuts the last two characters from the string ', '
+    message = message[:-2]
+    await inter.edit_original_message(content=message)
+
+
+@player.sub_command(
+    brief='admin',
     description="*admin* remove a player for the mentioned user"
 )
 async def remove(inter, player_tag: str, user: disnake.User):
@@ -4361,12 +4430,15 @@ async def remove(inter, player_tag: str, user: disnake.User):
             content=f"{user.mention} has not been claimed")
         return
 
-    # admin users are not allowed to update admins or super users
-    if db_user_obj.admin or db_user_obj.super_user:
-        await inter.edit_original_message(
-            content=(f"admins are not allowed to update "
-                     f"admins or super users"))
-        return
+    # admin is not a super user and author is not the user
+    if (not db_author_obj.super_user
+            and db_author_obj.discord_id != db_user_obj.discord_id):
+        # admin users are not allowed to update admins or super users
+        if db_user_obj.admin or db_user_obj.super_user:
+            await inter.edit_original_message(
+                content=(f"admins are not allowed to update "
+                         f"admins or super users"))
+            return
 
     # confirm valid player_tag
     player_obj = await clash_responder.get_player(
