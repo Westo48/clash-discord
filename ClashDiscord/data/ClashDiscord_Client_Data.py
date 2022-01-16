@@ -700,9 +700,15 @@ class ClashDiscord_Data(object):
         ),
         ClashDiscord_Emoji(
             display_name="War Star",
-            discord_id=930152217762209822,
+            discord_id=930307229872181289,
             discord_name="icon_war_star",
             coc_name="War Star"
+        ),
+        ClashDiscord_Emoji(
+            display_name="Clan Exp",
+            discord_id=930307258775130202,
+            discord_name="icon_clan_exp",
+            coc_name="Clan Exp"
         ),
         ClashDiscord_Emoji(
             display_name="Gold",

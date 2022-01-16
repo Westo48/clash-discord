@@ -850,9 +850,11 @@ def clan_info(
             'value': label_value,
             'inline': True
         })
+    clan_exp_emoji = get_emoji(
+        "Clan Exp", discord_emoji_list, client_emoji_list)
     field_dict_list.append({
         'name': "**Clan Level**",
-        'value': clan_obj.level,
+        'value': f"{clan_exp_emoji} {clan_obj.level}",
         'inline': True
     })
     field_dict_list.append({
@@ -1311,7 +1313,7 @@ async def war_leadership_verification(db_player_obj, user_obj, guild_id, coc_cli
     return verification_payload
 
 
-def war_info(war_obj):
+def war_info(war_obj, discord_emoji_list, client_emoji_list):
     if not war_obj:
         return [{
             'name': f"not in war",
@@ -1326,15 +1328,21 @@ def war_info(war_obj):
             'value': f"left before war starts"
         }]
     elif war_obj.state == "inWar":
+        star_emoji = get_emoji(
+            "War Star", discord_emoji_list, client_emoji_list)
         time_string = clash_responder.string_date_time(war_obj)
-        scoreboard_string = clash_responder.string_scoreboard(war_obj)
+        scoreboard_string = clash_responder.string_scoreboard(
+            war_obj, star_emoji)
 
         return [{
             'name': f"{war_obj.clan.name} is {scoreboard_string}",
             'value': f"{time_string} left in war"
         }]
     elif war_obj.state == "warEnded":
-        scoreboard_string = clash_responder.string_scoreboard(war_obj)
+        star_emoji = get_emoji(
+            "War Star", discord_emoji_list, client_emoji_list)
+        scoreboard_string = clash_responder.string_scoreboard(
+            war_obj, star_emoji)
 
         return [{
             'name': f"{war_obj.clan.name} {scoreboard_string}",
@@ -1345,6 +1353,54 @@ def war_info(war_obj):
             'name': f"not in war",
             'value': f"you are not in war"
         }]
+
+
+def war_scoreboard(war, discord_emoji_list, client_emoji_list):
+    if not war:
+        return [{
+            'name': f"not in war",
+            'value': f"you are not in war"
+        }]
+
+    time_string = clash_responder.string_date_time(war)
+    if war.state == "preparation":
+
+        return [{
+            'name': f"{time_string}",
+            'value': f"left before war starts"
+        }]
+
+    field_dict_list = []
+
+    # overview: state, time remaining, win/lose/tie, score
+    star_emoji = get_emoji(
+        "War Star", discord_emoji_list, client_emoji_list)
+    scoreboard_string = clash_responder.string_scoreboard(war, star_emoji)
+
+    # getting the overview
+    if war.state == "inWar":
+        field_name = f"{war.clan.name} is {scoreboard_string}"
+        field_value = f"{time_string} left in war"
+
+    else:
+        field_name = f"{war.clan.name} {scoreboard_string}"
+        field_value = f"war has ended"
+
+    field_dict_list.append({
+        'name': field_name,
+        'value': field_value
+    })
+
+    # clan: stars/potential stars, attacks/potential attacks, total destruction
+    # getting the clan scoreboard
+    clan_scoreboard_fields=clash_responder.war_clan_scoreboard(war, war.clan, star_emoji)
+    field_dict_list.extend(clan_scoreboard_fields)
+    
+    # getting the opponent scoreboard
+    opp_scoreboard_fields=clash_responder.war_clan_scoreboard(war, war.opponent, star_emoji)
+    field_dict_list.extend(opp_scoreboard_fields)
+    
+    return field_dict_list
 
 
 def war_time(war_obj):
