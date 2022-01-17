@@ -2215,7 +2215,7 @@ async def clan(inter, clan_tag: str, clan_role: disnake.Role = None):
         return
 
     field_dict_list = await discord_responder.war_lineup_member(
-        cwl_clan_obj, coc_client)
+        cwl_clan_obj, coc_client, inter.client.emojis, client_data.emojis)
     embed_list = discord_responder.embed_message(
         Embed=disnake.Embed,
         color=disnake.Color(client_data.embed_color),
@@ -2283,7 +2283,7 @@ async def member(inter, clan_role: disnake.Role = None):
 
     for clan in cwl_group_obj.clans:
         field_dict_list = await discord_responder.war_lineup_member(
-            clan, coc_client)
+            clan, coc_client, inter.client.emojis, client_data.emojis)
         embed_list = discord_responder.embed_message(
             Embed=disnake.Embed,
             color=disnake.Color(client_data.embed_color),
