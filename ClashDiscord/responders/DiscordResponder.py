@@ -1393,13 +1393,15 @@ def war_scoreboard(war, discord_emoji_list, client_emoji_list):
 
     # clan: stars/potential stars, attacks/potential attacks, total destruction
     # getting the clan scoreboard
-    clan_scoreboard_fields=clash_responder.war_clan_scoreboard(war, war.clan, star_emoji)
+    clan_scoreboard_fields = clash_responder.war_clan_scoreboard(
+        war, war.clan, star_emoji)
     field_dict_list.extend(clan_scoreboard_fields)
-    
+
     # getting the opponent scoreboard
-    opp_scoreboard_fields=clash_responder.war_clan_scoreboard(war, war.opponent, star_emoji)
+    opp_scoreboard_fields = clash_responder.war_clan_scoreboard(
+        war, war.opponent, star_emoji)
     field_dict_list.extend(opp_scoreboard_fields)
-    
+
     return field_dict_list
 
 
@@ -1484,8 +1486,14 @@ def war_no_attack(war_obj):
         }]
 
 
-def war_members_overview(war_obj):
+def war_clan_stars(war_obj, discord_emoji_list, client_emoji_list):
     "returns a list of all war members and their stars"
+
+    if war_obj is None:
+        return [{
+            'name': f"not in war",
+            'value': f"you are not in war"
+        }]
 
     if war_obj.state == "preparation":
         time_string = clash_responder.string_date_time(war_obj)
@@ -1494,58 +1502,53 @@ def war_members_overview(war_obj):
             'name': f"{time_string}",
             'value': f"left before war starts, nobody has attacked"
         }]
-    elif war_obj.state == "inWar":
-        field_dict_list = []
-        map_position_index = 0
-        # no atk response
-        for member_obj in war_obj.clan.members:
-            map_position_index += 1
-            if len(member_obj.attacks) == 0:
-                field_dict_list.append({
-                    'name': f"{map_position_index}. {member_obj.name}",
-                    'value': f"has not attacked"
-                })
+
+    star_emoji = get_emoji(
+        "War Star", discord_emoji_list, client_emoji_list)
+    field_dict_list = []
+
+    for member_obj in war_obj.clan.members:
+
+        if member_obj.star_count <= 3:
+            star_string = star_emoji*member_obj.star_count
+        else:
+            star_string = f"{member_obj.star_count} {star_emoji}"
+
+        th_emoji = get_emoji(
+            member_obj.town_hall, discord_emoji_list, client_emoji_list)
+
+        if len(member_obj.attacks) == 0:
+            if war_obj.state == "inWar":
+                field_value = f"has not attacked"
             else:
-                field_dict_list.append({
-                    'name': f"{map_position_index}. {member_obj.name}",
-                    'value': (
-                        f"attacked {len(member_obj.attacks)} "
-                        f"{clash_responder.string_attack_times(member_obj.attacks)} "
-                        f"for {member_obj.star_count} "
-                        f"{clash_responder.string_member_stars(member_obj.star_count)}"
-                    )
-                })
-        return field_dict_list
-    elif war_obj.state == "warEnded":
-        field_dict_list = []
-        map_position_index = 0
-        # no atk response
-        for member_obj in war_obj.clan.members:
-            map_position_index += 1
-            if len(member_obj.attacks) == 0:
-                field_dict_list.append({
-                    'name': f"{map_position_index}. {member_obj.name}",
-                    'value': f"did not attack"
-                })
-            else:
-                field_dict_list.append({
-                    'name': f"{map_position_index}. {member_obj.name}",
-                    'value': (
-                        f"attacked {len(member_obj.attacks)} "
-                        f"{clash_responder.string_attack_times(member_obj.attacks)} "
-                        f"for {member_obj.star_count} "
-                        f"{clash_responder.string_member_stars(member_obj.star_count)}"
-                    )
-                })
-        return field_dict_list
-    else:
+                field_value = f"did not attack"
+
+            field_dict_list.append({
+                'name': (f"{member_obj.map_position}. {member_obj.name} "
+                         f"{th_emoji}\n"),
+                'value': field_value
+            })
+        else:
+            field_dict_list.append({
+                'name': (f"{member_obj.map_position}. {member_obj.name} "
+                         f"{th_emoji}"),
+                'value': (
+                    f"attacked {len(member_obj.attacks)} "
+                    f"{clash_responder.string_attack_times(member_obj.attacks)}\n"
+                    f"{star_string}"
+                )
+            })
+
+    return field_dict_list
+
+
+def war_all_attacks(war_obj, discord_emoji_list, client_emoji_list):
+
+    if war_obj is None:
         return [{
             'name': f"not in war",
             'value': f"you are not in war"
         }]
-
-
-def war_all_attacks(war_obj):
 
     if war_obj.state == 'preparation':
         time_string = clash_responder.string_date_time(war_obj)
@@ -1554,62 +1557,68 @@ def war_all_attacks(war_obj):
             'name': f"{time_string}",
             'value': f"left before war starts, nobody has attacked"
         }]
-    elif war_obj.state == 'inWar' or war_obj.state == "warEnded":
-        field_dict_list = []
-        map_position_index = 0
-        # no atk response
-        for member_obj in war_obj.clan.members:
-            map_position_index += 1
-            if len(member_obj.attacks) == 0:
-                if war_obj.state == "inWar":
-                    field_dict_list.append({
-                        'name': (f"{map_position_index}. {member_obj.name} "
-                                 f"TH {member_obj.town_hall}"),
-                        'value': f"has not attacked"
-                    })
-                else:
-                    field_dict_list.append({
-                        'name': (f"{map_position_index}. {member_obj.name} "
-                                 f"TH {member_obj.town_hall}"),
-                        'value': f"did not attack"
-                    })
-                continue
 
-            for attack_obj in member_obj.attacks:
+    star_emoji = get_emoji(
+        "War Star", discord_emoji_list, client_emoji_list)
+    field_dict_list = []
 
-                defender_obj = clash_responder.find_defender(
-                    war_obj.opponent, attack_obj.defender_tag)
+    for member_obj in war_obj.clan.members:
 
-                if attack_obj.stars == 0 or attack_obj.stars == 3:
-                    value_string = (
-                        f"{attack_obj.stars} "
-                        f"{clash_responder.string_member_stars(attack_obj.stars)} "
-                        f"against {map_position_index}. "
-                        f"{defender_obj.name} TH {defender_obj.town_hall}"
-                    )
-                else:
-                    value_string = (
-                        f"{attack_obj.stars} "
-                        f"{clash_responder.string_member_stars(attack_obj.stars)} "
-                        f"{round(attack_obj.destruction, 2)}% "
-                        f"against {map_position_index}. "
-                        f"{defender_obj.name} TH {defender_obj.town_hall}"
-                    )
-                field_dict_list.append({
-                    'name': (
-                        f"{map_position_index}. "
-                        f"{member_obj.name} "
-                        f"TH {member_obj.town_hall}"
-                    ),
-                    'value': value_string
-                })
-        return field_dict_list
+        field_value = ""
 
-    else:
-        return [{
-            'name': f"not in war",
-            'value': f"you are not in war"
-        }]
+        th_emoji = get_emoji(
+            member_obj.town_hall, discord_emoji_list, client_emoji_list)
+
+        if len(member_obj.attacks) == 0:
+            if war_obj.state == "inWar":
+                field_value = f"has not attacked"
+
+            else:
+                field_value = f"did not attack"
+
+            field_dict_list.append({
+                'name': (f"{member_obj.map_position}. {member_obj.name} "
+                         f"{th_emoji}"),
+                'value': field_value
+            })
+
+            continue
+
+        for attack_obj in member_obj.attacks:
+            defender_obj = clash_responder.find_defender(
+                war_obj.opponent, attack_obj.defender_tag)
+
+            defender_th_emoji = get_emoji(
+                defender_obj.town_hall, discord_emoji_list, client_emoji_list)
+
+            star_string = star_emoji*attack_obj.stars
+
+            if attack_obj.stars == 3:
+                field_value += (
+                    f"{defender_obj.map_position}. "
+                    f"{defender_obj.name} {defender_th_emoji}\n"
+                    f"{star_string}\n\n"
+                )
+            else:
+                field_value += (
+                    f"{defender_obj.map_position}. "
+                    f"{defender_obj.name} {defender_th_emoji}\n"
+                    f"{round(attack_obj.destruction, 2)}%\n"
+                    f"{star_string}\n\n"
+                )
+
+        # remove trailing space in field value
+        field_value = field_value[:-2]
+
+        field_dict_list.append({
+            'name': (
+                f"{member_obj.map_position}. "
+                f"{member_obj.name} "
+                f"{th_emoji}"
+            ),
+            'value': field_value
+        })
+    return field_dict_list
 
 
 def war_member_score(war_obj, player):

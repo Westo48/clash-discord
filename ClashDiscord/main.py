@@ -1587,7 +1587,8 @@ async def stars(inter, clan_role: disnake.Role = None):
 
     war_obj = verification_payload['war_obj']
 
-    field_dict_list = discord_responder.war_members_overview(war_obj)
+    field_dict_list = discord_responder.war_clan_stars(
+        war_obj, inter.client.emojis, client_data.emojis)
 
     embed_list = discord_responder.embed_message(
         Embed=disnake.Embed,
@@ -1657,7 +1658,8 @@ async def attacks(inter, clan_role: disnake.Role = None):
 
     war_obj = verification_payload['war_obj']
 
-    field_dict_list = discord_responder.war_all_attacks(war_obj)
+    field_dict_list = discord_responder.war_all_attacks(
+        war_obj, inter.client.emojis, client_data.emojis)
 
     embed_list = discord_responder.embed_message(
         Embed=disnake.Embed,
@@ -4619,8 +4621,7 @@ async def superuser(inter):
         parent for client super user commands
     """
 
-    # defer for every command
-    await inter.response.defer(ephemeral=True)
+    pass
 
 
 # superuser guild
@@ -4638,17 +4639,74 @@ async def guild(inter):
 
 @guild.sub_command(
     brief='superuser',
-    description="*super user* delete a claimed guild from id"
+    description="*super user* shows all guilds ClashDiscord is in"
 )
-async def removeclaim(inter, guild_id: str):
+async def show(inter):
     """
         *super user*
-        claim a clan's discord role
+        "*super user* shows all guilds ClashDiscord is in
+    """
+
+    await inter.response.defer()
+
+    db_author_obj = db_responder.read_user(inter.author.id)
+    # author is not claimed
+    if not db_author_obj:
+        await inter.edit_original_message(
+            content=f"{inter.author.mention} is not claimed")
+        return
+
+    # author is not super user
+    if not db_author_obj.super_user:
+        await inter.edit_original_message(
+            content=f"{inter.author.mention} is not super user")
+        return
+
+    field_dict_list = []
+
+    field_dict_list.append({
+        'name': f"**GUILD COUNT**",
+        'value': f"{len(inter.client.guilds)}"
+    })
+
+    for guild in inter.client.guilds:
+        field_dict_list.append({
+            'name': f"{guild.name}",
+            'value': f"{guild.id}"
+        })
+
+    embed_list = discord_responder.embed_message(
+        Embed=disnake.Embed,
+        color=disnake.Color(client_data.embed_color),
+        icon_url=inter.bot.user.avatar.url,
+        title=None,
+        description=None,
+        bot_prefix=inter.bot.command_prefix,
+        bot_user_name=inter.bot.user.name,
+        thumbnail=None,
+        field_list=field_dict_list,
+        image_url=None,
+        author_display_name=inter.author.display_name,
+        author_avatar_url=inter.author.avatar.url
+    )
+    await discord_responder.send_embed_list(embed_list, inter)
+
+
+@guild.sub_command(
+    brief='superuser',
+    description="*super user* delete a claimed guild from id"
+)
+async def remove(inter, guild_id: str):
+    """
+        *super user*
+        delete a claimed guild from id
 
         Parameters
         ----------
         guild_id: id for guild to remove claim
     """
+
+    await inter.response.defer(ephemeral=True)
 
     db_author_obj = db_responder.read_user(inter.author.id)
     # author is not claimed
@@ -4693,7 +4751,8 @@ async def user(inter):
         group for user commands
     """
 
-    pass
+    # defer for every superuser user command
+    await inter.response.defer(ephemeral=True)
 
 
 @user.sub_command(
@@ -4752,7 +4811,7 @@ async def admintoggle(inter, user: disnake.User):
     brief='superuser',
     description="*super user* delete a claimed user from id"
 )
-async def removeclaim(inter, user: disnake.User):
+async def remove(inter, user: disnake.User):
     """
         *super user*
         claim a clan's discord role
@@ -4805,7 +4864,8 @@ async def player(inter):
         group for player commands
     """
 
-    pass
+    # defer for every superuser player command
+    await inter.response.defer(ephemeral=True)
 
 
 @player.sub_command(
