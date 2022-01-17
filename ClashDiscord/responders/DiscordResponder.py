@@ -1031,7 +1031,7 @@ async def war_preference_member(
     return field_dict_list
 
 
-def donation(clan_obj, donator_list, unit_name):
+def donation(clan_obj, donator_list, unit_name, discord_emoji_list, client_emoji_list):
     # unit is a hero or pet
     if donator_list is None:
         return [{
@@ -1048,17 +1048,20 @@ def donation(clan_obj, donator_list, unit_name):
     field_dict_list = []
     donation_upgrade = clash_responder.clan_donation_upgrade(clan_obj)
 
+    unit_emoji = get_emoji(
+        donator_list[0].unit_obj.name, discord_emoji_list, client_emoji_list)
+
     # donators can donate max
     if ((donator_list[0].unit_obj.level + donation_upgrade) >=
             donator_list[0].unit_obj.max_level):
         value = (
-            f"{donator_list[0].unit_obj.name} "
+            f"{unit_emoji} "
             f"lvl {donator_list[0].unit_obj.max_level}, "
             f"max"
         )
     else:
         value = (
-            f"{donator_list[0].unit_obj.name} "
+            f"{unit_emoji} "
             f"lvl {donator_list[0].unit_obj.level + donation_upgrade} "
             f"max is {donator_list[0].unit_obj.max_level}"
         )
@@ -1072,18 +1075,23 @@ def donation(clan_obj, donator_list, unit_name):
     return field_dict_list
 
 
-def super_troop_search(clan_obj, donor_list, super_troop_obj):
+def super_troop_search(clan_obj, donor_list, super_troop_obj,
+                       discord_emoji_list, client_emoji_list):
+
+    unit_emoji = get_emoji(
+        super_troop_obj.name, discord_emoji_list, client_emoji_list)
+
     if len(donor_list) == 0:
         return [{
             'name': clan_obj.name,
-            'value': f"does not have {super_troop_obj.name} activated"
+            'value': f"does not have {unit_emoji} activated"
         }]
 
     field_dict_list = []
     for donator in donor_list:
         field_dict_list.append({
             'name': donator.name,
-            'value': f"has {super_troop_obj.name} active"
+            'value': f"has {unit_emoji} active"
         })
 
     return field_dict_list

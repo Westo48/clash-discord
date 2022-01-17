@@ -1150,7 +1150,9 @@ async def donate(inter, unit_name: str, clan_role: disnake.Role = None):
         clan_obj, unit_name, coc_client)
 
     field_dict_list = discord_responder.donation(
-        clan_obj, donator_list, unit_name)
+        clan_obj, donator_list, unit_name,
+        inter.client.emojis, client_data.emojis
+    )
 
     embed_list = discord_responder.embed_message(
         Embed=disnake.Embed,
@@ -1280,7 +1282,9 @@ async def donate(inter, unit_name: str, clan_role: disnake.Role = None):
         super_troop_obj, clan_obj, coc_client)
 
     field_dict_list = discord_responder.super_troop_search(
-        clan_obj, donor_list, super_troop_obj)
+        clan_obj, donor_list, super_troop_obj,
+        inter.client.emojis, client_data.emojis
+    )
 
     embed_list = discord_responder.embed_message(
         Embed=disnake.Embed,
