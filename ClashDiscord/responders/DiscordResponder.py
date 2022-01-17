@@ -522,8 +522,11 @@ def unit_lvl_group(
         unit_emoji = get_emoji(
             unit.name, discord_emoji_list, client_emoji_list)
 
-        max_level_for_townhall = unit.get_max_level_for_townhall(
-            player_obj.town_hall)
+        try:
+            max_level_for_townhall = unit.get_max_level_for_townhall(
+                player_obj.town_hall)
+        except:
+            max_level_for_townhall = unit.max_level
 
         field_value += f"{unit_emoji} "
 
@@ -1738,18 +1741,24 @@ def war_lineup_overview(war_obj):
     return message
 
 
-def war_lineup_clan(war_obj):
+def war_lineup_clan(war_obj, discord_emoji_list, client_emoji_list):
     field_dict_list = []
     map_position_index = 0
     for clan_member in war_obj.clan.members:
         map_position_index += 1
         # subtract 1 for indexing purposes
         opp_member_obj = war_obj.opponent.members[map_position_index-1]
+
+        member_th_emoji = get_emoji(
+            clan_member.town_hall, discord_emoji_list, client_emoji_list)
+        opp_th_emoji = get_emoji(
+            opp_member_obj.town_hall, discord_emoji_list, client_emoji_list)
+
         field_dict_list.append({
             "name": f"{map_position_index}",
             "value": (
-                f"{clan_member.town_hall} | {clan_member.name}\n"
-                f"{opp_member_obj.town_hall} | {opp_member_obj.name}\n"
+                f"{member_th_emoji} | {clan_member.name}\n"
+                f"{opp_th_emoji} | {opp_member_obj.name}\n"
             ),
             "inline": False
         })
@@ -1757,7 +1766,9 @@ def war_lineup_clan(war_obj):
     return field_dict_list
 
 
-async def war_lineup_member(war_clan, coc_client):
+async def war_lineup_member(
+    war_clan, coc_client, discord_emoji_list, client_emoji_list
+):
     field_dict_list = []
 
     map_position_index = 0
@@ -1770,16 +1781,22 @@ async def war_lineup_member(war_clan, coc_client):
         if player is None:
             continue
 
+        th_emoji = get_emoji(
+            player.town_hall, discord_emoji_list, client_emoji_list)
+
         field_name = f"{map_position_index}: {player.name} {player.tag}"
 
-        field_value = f"{player.town_hall} TH"
+        field_value = f"{th_emoji}"
 
         for hero in player.heroes:
             if not hero.is_home_base:
                 continue
 
+            hero_emoji = get_emoji(
+                hero.name, discord_emoji_list, client_emoji_list)
+
             field_value += f"\n"
-            field_value += f"{hero.level} {hero.name}"
+            field_value += f"{hero_emoji} {hero.level}"
 
         field_dict_list.append({
             'name': field_name,
