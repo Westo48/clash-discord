@@ -493,6 +493,24 @@ async def get_war(clan_tag, coc_client):
     return war_obj
 
 
+def war_clan_scoreboard(war, war_clan, star_emoji):
+    # clan: stars/potential stars, attacks/potential attacks, total destruction
+    field_dict_list = []
+    
+    field_dict_list.append({
+        'name': f"{war_clan.name}",
+        # value will be "star_count/potential_stars"
+        'value': (
+            f"{star_emoji}: {war_clan.stars}/{war_clan.max_stars}\n"
+            f"Attacks: {war_clan.attacks_used}/"
+            f"{war.team_size * war.attacks_per_member}\n"
+            f"Destruction: {round(war_clan.destruction, 2)}%"
+        )
+    })
+    
+    return field_dict_list
+
+
 def war_clan_lineup(war_clan_obj):
     clan_lineup_dict = th_lineup_dict.copy()
 
@@ -723,7 +741,7 @@ def date_time_calculator(time_final):
     return days, hours, minutes, remaining_seconds
 
 
-def string_scoreboard(war_obj):
+def string_scoreboard(war_obj, star_emoji):
     """
         Returns a string of the war score.
     """
@@ -734,15 +752,10 @@ def string_scoreboard(war_obj):
     star_difference = (war_obj.clan.stars - war_obj.opponent.stars)
     destruction_difference = (war_obj.clan.destruction
                               - war_obj.opponent.destruction)
-    # singular or plural
-    if abs(star_difference) == 1:
-        star_string = "star"
-    else:
-        star_string = "stars"
 
     # there is a star difference
     if star_difference != 0:
-        return f"{war_obj.status} by {abs(star_difference)} {star_string}"
+        return f"{war_obj.status} by {abs(star_difference)} {star_emoji}"
     # there is a destruction difference
     elif destruction_difference != 0:
         return (

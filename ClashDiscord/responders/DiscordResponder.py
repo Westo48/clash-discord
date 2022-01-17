@@ -326,43 +326,47 @@ async def player_leadership_verification(db_player_obj, user_obj, guild_id, coc_
     return verification_payload
 
 
-def player_info(player_obj):
+def player_info(player_obj, discord_emoji_list, client_emoji_list):
     field_dict_list = []
+    exp_emoji = get_emoji("Exp Level", discord_emoji_list, client_emoji_list)
     field_dict_list.append({
-        'name': '**Exp Lvl**',
+        'name': exp_emoji,
         'value': player_obj.exp_level,
         'inline': True
     })
+    th_emoji = get_emoji(
+        player_obj.town_hall, discord_emoji_list, client_emoji_list)
     field_dict_list.append({
         'name': '**TH Lvl**',
-        'value': player_obj.town_hall,
+        'value': th_emoji,
         'inline': True
     })
-    if player_obj.town_hall_weapon:
-        field_dict_list.append({
-            'name': '**TH Weapon Lvl**',
-            'value': player_obj.town_hall_weapon,
-            'inline': True
-        })
+    trophy_emoji = get_emoji(
+        "Trophy", discord_emoji_list, client_emoji_list)
     field_dict_list.append({
-        'name': '**Trophies**',
+        'name': trophy_emoji,
         'value': player_obj.trophies,
         'inline': True
     })
     field_dict_list.append({
-        'name': '**Best Trophies**',
+        'name': (
+            f"**{trophy_emoji} Best**"),
         'value': player_obj.best_trophies,
         'inline': True
     })
     if player_obj.legend_statistics:
+        legend_trophy_emoji = get_emoji(
+            "Legend Trophy", discord_emoji_list, client_emoji_list)
         field_dict_list.append({
-            'name': '**Legend Trophies**',
+            'name': legend_trophy_emoji,
             'value': player_obj.legend_statistics.legend_trophies,
             'inline': True
         })
         if player_obj.legend_statistics.best_season:
+            legend_league_emoji = get_emoji(
+                player_obj.league.name, discord_emoji_list, client_emoji_list)
             field_dict_list.append({
-                'name': '**Best Rank | Trophies**',
+                'name': f"**{legend_league_emoji} Best Rank | Trophies**",
                 'value': (
                     f"{player_obj.legend_statistics.best_season.rank} | "
                     f"{player_obj.legend_statistics.best_season.trophies}"
@@ -371,7 +375,7 @@ def player_info(player_obj):
             })
         if player_obj.legend_statistics.current_season:
             field_dict_list.append({
-                'name': '**Current Rank | Trophies**',
+                'name': f"**{legend_league_emoji} Current Rank | Trophies**",
                 'value': (
                     f"{player_obj.legend_statistics.current_season.rank} | "
                     f"{player_obj.legend_statistics.current_season.trophies}"
@@ -380,16 +384,17 @@ def player_info(player_obj):
             })
         if player_obj.legend_statistics.previous_season:
             field_dict_list.append({
-                'name': '**Previous Rank | Trophies**',
+                'name': f"**{legend_league_emoji} Previous Rank | Trophies**",
                 'value': (
                     f"{player_obj.legend_statistics.previous_season.rank} | "
                     f"{player_obj.legend_statistics.previous_season.trophies}"
                 ),
                 'inline': True
             })
-
+    player_star = get_emoji(
+        "Player Star", discord_emoji_list, client_emoji_list)
     field_dict_list.append({
-        'name': '**War Stars**',
+        'name': f"**{player_star} War Stars**",
         'value': player_obj.war_stars,
         'inline': True
     })
@@ -412,61 +417,52 @@ def player_info(player_obj):
             'inline': True
         })
 
-    if player_obj.war_opted_in:
-        field_dict_list.append({
-            'name': '**War Preference**',
-            'value': "in",
-            'inline': True
-        })
-    else:
-        field_dict_list.append({
-            'name': '**War Preference**',
-            'value': "out",
-            'inline': True
-        })
+    war_preference_emoji = get_emoji(
+        player_obj.war_opted_in, discord_emoji_list, client_emoji_list)
+    field_dict_list.append({
+        'name': '**War Preference**',
+        'value': war_preference_emoji,
+        'inline': True
+    })
 
-    hero_title = ''
-    hero_value = ''
+    hero_value = ""
     for hero in player_obj.heroes:
-        if hero.name == 'Barbarian King':
-            hero_title = 'BK'
-            hero_value = f'{hero.level}'
-        elif hero.name == 'Archer Queen':
-            hero_title += ' | AQ'
-            hero_value += f' | {hero.level}'
-        elif hero.name == 'Grand Warden':
-            hero_title += ' | GW'
-            hero_value += f' | {hero.level}'
-        elif hero.name == 'Royal Champion':
-            hero_title += ' | RC'
-            hero_value += f' | {hero.level}'
-        else:
-            break
-    if hero_title != '':
+        # hero isn't a home base hero
+        if not hero.is_home_base:
+            continue
+
+        hero_emoji = get_emoji(
+            hero.name, discord_emoji_list, client_emoji_list)
+
+        emoji_str = hero_emoji
+        hero_value += f"{hero_emoji} {hero.level}\n"
+
+    if hero_value != "":
+        # remove trailing space in hero value
+        hero_value = hero_value[:-1]
         field_dict_list.append({
-            'name': f'**{hero_title}**',
+            'name': f"**Heroes**",
             'value': hero_value,
             'inline': True
         })
 
-    pet_title = ''
-    pet_value = ''
+    pet_value = ""
     for pet in player_obj.hero_pets:
-        if pet.name == 'L.A.S.S.I':
-            pet_title = 'LA'
-            pet_value = f'{pet.level}'
-        elif pet.name == 'Mighty Yak':
-            pet_title += ' | MY'
-            pet_value += f' | {pet.level}'
-        elif pet.name == 'Electro Owl':
-            pet_title += ' | EO'
-            pet_value += f' | {pet.level}'
-        elif pet.name == 'Unicorn':
-            pet_title += ' | UC'
-            pet_value += f' | {pet.level}'
-    if pet_title != '':
+        # pet isn't a home base pet
+        if not pet.is_home_base:
+            continue
+
+        pet_emoji = get_emoji(
+            pet.name, discord_emoji_list, client_emoji_list)
+
+        emoji_str = pet_emoji
+        pet_value += f"{pet_emoji} {pet.level}\n"
+
+    if pet_value != "":
+        # remove trailing space in pet value
+        pet_value = pet_value[:-1]
         field_dict_list.append({
-            'name': f'**{pet_title}**',
+            'name': f"**Pets**",
             'value': pet_value,
             'inline': True
         })
@@ -480,7 +476,10 @@ def player_info(player_obj):
     return field_dict_list
 
 
-def unit_lvl(player_obj, unit_obj, unit_name):
+def unit_lvl(
+    player_obj, unit_obj, unit_name,
+    discord_emoji_list, client_emoji_list
+):
     if not unit_obj:
         # unit not found response
         return {
@@ -488,140 +487,231 @@ def unit_lvl(player_obj, unit_obj, unit_name):
             'value': f"you either do not have it unlocked or it is misspelled"
         }
 
+    unit_emoji = get_emoji(
+        unit_obj.name, discord_emoji_list, client_emoji_list)
+
     try:
         max_level_for_townhall = unit_obj.get_max_level_for_townhall(
             player_obj.town_hall)
     except:
         max_level_for_townhall = unit_obj.max_level
 
-    # unit is max lvl
-    if unit_obj.level == unit_obj.max_level:
-        return {
-            'name': f"{unit_obj.name} lvl {unit_obj.level}",
-            'value': f"max lvl"
-        }
-    # unit is max for th, but not total max
-    elif (unit_obj.level == max_level_for_townhall):
-        return {
-            'name': f"{unit_obj.name} lvl {unit_obj.level}",
-            'value': (
-                f"TH {player_obj.town_hall} max: {max_level_for_townhall}\n"
-                f"max: {unit_obj.max_level}"
-            )
-        }
-    # unit is not max for th nor is it total max
-    else:
-        # unit max is the same as th max
-        if (unit_obj.max_level == max_level_for_townhall):
-            return {
-                'name': f"{unit_obj.name} lvl {unit_obj.level}",
-                'value': f"max: {unit_obj.max_level}"
-            }
-        # unit max is not the same as th max
+    return {
+        'name': f"{unit_emoji}",
+        'value': (
+            f"**{unit_obj.level} | "
+            f"{max_level_for_townhall} | "
+            f"{unit_obj.max_level}**"
+        )
+    }
+
+
+def unit_lvl_group(
+    player_obj, unit_group, group_title,
+    discord_emoji_list, client_emoji_list
+):
+
+    # if there are no units in the group, return empty list
+    if len(unit_group) == 0:
+        return[]
+
+    field_value = ""
+    index = 0
+    for unit in unit_group:
+        index += 1
+        unit_emoji = get_emoji(
+            unit.name, discord_emoji_list, client_emoji_list)
+
+        try:
+            max_level_for_townhall = unit.get_max_level_for_townhall(
+                player_obj.town_hall)
+        except:
+            max_level_for_townhall = unit.max_level
+
+        field_value += f"{unit_emoji} "
+
+        # if unit.level is a two digit number
+        if unit.level > 9:
+            level_str = unit.level
         else:
-            return {
-                'name': f"{unit_obj.name} lvl {unit_obj.level}",
-                'value': (
-                    f"TH {player_obj.town_hall} max: {max_level_for_townhall}\n"
-                    f"max: {unit_obj.max_level}"
-                )
-            }
+            level_str = f" {unit.level}"
+
+        # if max_level_for_townhall is a two digit number
+        if max_level_for_townhall > 9:
+            max_level_for_townhall_str = max_level_for_townhall
+        else:
+            max_level_for_townhall_str = f" {max_level_for_townhall}"
+
+        # if unit.max_level is a two digit number
+        if unit.max_level > 9:
+            max_level_str = unit.max_level
+        else:
+            max_level_str = f" {unit.max_level}"
+
+        field_value += (
+            f"`{level_str}|"
+            f"{max_level_for_townhall_str}|"
+            f"{max_level_str}`"
+        )
+
+        if (index % 2) == 0:
+            field_value += "\n"
+        else:
+            field_value += " "
+
+    return [{
+        'name': f"**{group_title}**",
+        'value': field_value,
+        'inline': False
+    }]
 
 
-def unit_lvl_all(player_obj):
+def unit_lvl_all(
+    player_obj, discord_emoji_list, client_emoji_list
+):
     field_dict_list = []
-    for field_dict in hero_lvl_all(player_obj):
-        field_dict_list.append(field_dict)
-    for field_dict in pet_lvl_all(player_obj):
-        field_dict_list.append(field_dict)
-    for field_dict in troop_lvl_all(player_obj):
-        field_dict_list.append(field_dict)
-    for field_dict in spell_lvl_all(player_obj):
-        field_dict_list.append(field_dict)
-    for field_dict in siege_lvl_all(player_obj):
-        field_dict_list.append(field_dict)
+    field_dict_list += hero_lvl_all(
+        player_obj, discord_emoji_list, client_emoji_list)
+    field_dict_list += pet_lvl_all(
+        player_obj, discord_emoji_list, client_emoji_list)
+    field_dict_list += troop_lvl_all(
+        player_obj, discord_emoji_list, client_emoji_list)
+    field_dict_list += spell_lvl_all(
+        player_obj, discord_emoji_list, client_emoji_list)
+    field_dict_list += siege_lvl_all(
+        player_obj, discord_emoji_list, client_emoji_list)
     return field_dict_list
 
 
-def hero_lvl_all(player_obj):
-    field_dict_list = []
-    for hero_obj in player_obj.heroes:
+def hero_lvl_all(
+    player, discord_emoji_list, client_emoji_list
+):
+    group_title = "Heroes"
+    # get unit group
+    unit_group = []
+    for hero in player.heroes:
         # hero isn't a home base hero
-        if not hero_obj.is_home_base:
+        if not hero.is_home_base:
             continue
-        field_dict_list.append(unit_lvl(
-            player_obj, hero_obj, hero_obj.name))
+        unit_group.append(hero)
 
-    return field_dict_list
+    return unit_lvl_group(player, unit_group, group_title,
+                          discord_emoji_list, client_emoji_list)
 
 
-def pet_lvl_all(player_obj):
-    field_dict_list = []
-    for pet_obj in player_obj.hero_pets:
+def pet_lvl_all(
+    player, discord_emoji_list, client_emoji_list
+):
+    group_title = "Pets"
+    # get unit group
+    unit_group = []
+    for pet in player.hero_pets:
         # pet isn't a home base pet
-        if not pet_obj.is_home_base:
+        if not pet.is_home_base:
             continue
-        field_dict_list.append(unit_lvl(
-            player_obj, pet_obj, pet_obj.name))
+        unit_group.append(pet)
 
-    return field_dict_list
+    return unit_lvl_group(player, unit_group, group_title,
+                          discord_emoji_list, client_emoji_list)
 
 
-def troop_lvl_all(player_obj):
-    field_dict_list = []
-    for troop_obj in player_obj.home_troops:
+def troop_lvl_all(
+    player, discord_emoji_list, client_emoji_list
+):
+    elixir_title = "Elixir Troops"
+    dark_title = "Dark Troops"
+    # get unit groups
+    elixir_group = []
+    dark_group = []
+    for troop in player.home_troops:
         # troop isn't a home base troop
-        if not troop_obj.is_home_base:
+        if not troop.is_home_base:
             continue
 
         # troop is a super troop
-        if troop_obj.is_super_troop:
+        if troop.is_super_troop:
             continue
 
         # troop is a siege
-        if troop_obj.is_siege_machine:
+        if troop.is_siege_machine:
             continue
 
-        field_dict_list.append(unit_lvl(
-            player_obj, troop_obj, troop_obj.name))
+        if troop.is_elixir_troop:
+            elixir_group.append(troop)
+        else:
+            dark_group.append(troop)
 
-    return field_dict_list
+    elixir_group_fields = unit_lvl_group(
+        player, elixir_group, elixir_title,
+        discord_emoji_list, client_emoji_list
+    )
+    dark_group_fields = unit_lvl_group(
+        player, dark_group, dark_title,
+        discord_emoji_list, client_emoji_list
+    )
+
+    return elixir_group_fields + dark_group_fields
 
 
-def siege_lvl_all(player_obj):
-    field_dict_list = []
-    for troop_obj in player_obj.home_troops:
+def spell_lvl_all(
+    player, discord_emoji_list, client_emoji_list
+):
+    elixir_title = "Elixir Spells"
+    dark_title = "Dark Spells"
+    # get unit groups
+    elixir_group = []
+    dark_group = []
+    for spell in player.spells:
+        # spell isn't a home base spell
+        if not spell.is_home_base:
+            continue
+
+        if spell.is_elixir_spell:
+            elixir_group.append(spell)
+        else:
+            dark_group.append(spell)
+
+    elixir_group_fields = unit_lvl_group(
+        player, elixir_group, elixir_title,
+        discord_emoji_list, client_emoji_list
+    )
+    dark_group_fields = unit_lvl_group(
+        player, dark_group, dark_title,
+        discord_emoji_list, client_emoji_list
+    )
+
+    return elixir_group_fields + dark_group_fields
+
+
+def siege_lvl_all(
+    player, discord_emoji_list, client_emoji_list
+):
+    group_title = "Sieges"
+    # get unit group
+    unit_group = []
+    for troop in player.home_troops:
         # troop isn't a home base troop
-        if not troop_obj.is_home_base:
+        if not troop.is_home_base:
             continue
 
         # troop is a super troop
-        if troop_obj.is_super_troop:
+        if troop.is_super_troop:
             continue
 
         # troop is NOT a siege
-        if not troop_obj.is_siege_machine:
+        if not troop.is_siege_machine:
             continue
 
-        field_dict_list.append(unit_lvl(
-            player_obj, troop_obj, troop_obj.name))
+        unit_group.append(troop)
 
-    return field_dict_list
-
-
-def spell_lvl_all(player_obj):
-    field_dict_list = []
-    for spell_obj in player_obj.spells:
-        # spell isn't a home base spell
-        if not spell_obj.is_home_base:
-            continue
-        field_dict_list.append(unit_lvl(
-            player_obj, spell_obj, spell_obj.name))
-
-    return field_dict_list
+    return unit_lvl_group(player, unit_group, group_title,
+                          discord_emoji_list, client_emoji_list)
 
 
-def active_super_troops(player_obj, active_super_troop_list):
+def active_super_troops(
+    player_obj, active_super_troop_list,
+    discord_emoji_list, client_emoji_list
+):
     if len(active_super_troop_list) == 0:
         return [{
             'name': f"{player_obj.name} {player_obj.tag}",
@@ -630,9 +720,12 @@ def active_super_troops(player_obj, active_super_troop_list):
     else:
         field_dict_list = []
         for troop_obj in active_super_troop_list:
+            troop_emoji = get_emoji(
+                troop_obj.name, discord_emoji_list, client_emoji_list
+            )
             field_dict_list.append({
-                'name': troop_obj.name,
-                'value': f"is active"
+                'name': f"{troop_emoji}",
+                'value': f"{troop_obj.name}"
             })
         return field_dict_list
 
@@ -686,7 +779,8 @@ async def clan_verification(db_player_obj, user_obj, coc_client):
     return verification_payload
 
 
-async def clan_leadership_verification(db_player_obj, user_obj, guild_id, coc_client):
+async def clan_leadership_verification(
+        db_player_obj, user_obj, guild_id, coc_client):
     """
         verifying a clan through player_leadership_verification
         and returning verification payload
@@ -735,7 +829,8 @@ async def clan_leadership_verification(db_player_obj, user_obj, guild_id, coc_cl
     return verification_payload
 
 
-def clan_info(clan_obj):
+def clan_info(
+        clan_obj, discord_emoji_list, client_emoji_list):
     field_dict_list = []
 
     field_dict_list.append({
@@ -743,23 +838,67 @@ def clan_info(clan_obj):
         'value': clan_obj.description,
         'inline': False
     })
+    if len(clan_obj.labels) != 0:
+        label_value = ""
+        for label in clan_obj.labels:
+            label_emoji = get_emoji(
+                label.name, discord_emoji_list, client_emoji_list)
+            label_value += f"{label_emoji} {label.name}\n"
+
+        # removing the last 1 character of label value "\n"
+        label_value = label_value[:-1]
+
+        field_dict_list.append({
+            'name': "**Clan Labels**",
+            'value': label_value,
+            'inline': True
+        })
+    clan_exp_emoji = get_emoji(
+        "Clan Exp", discord_emoji_list, client_emoji_list)
+    field_dict_list.append({
+        'name': "**Clan Level**",
+        'value': f"{clan_exp_emoji} {clan_obj.level}",
+        'inline': True
+    })
     field_dict_list.append({
         'name': "**Members**",
         'value': clan_obj.member_count,
         'inline': True
     })
-    field_dict_list.append({
-        'name': "**Clan Lvl**",
-        'value': clan_obj.level,
-        'inline': True
-    })
+    if clan_obj.public_war_log:
+        win_emoji = get_emoji(
+            "True", discord_emoji_list, client_emoji_list)
+        war_log_value = f"{win_emoji} {clan_obj.war_wins}\n"
+
+        loss_emoji = get_emoji(
+            "False", discord_emoji_list, client_emoji_list)
+        war_log_value += f"{loss_emoji} {clan_obj.war_losses}\n"
+
+        tie_emoji = get_emoji(
+            "Grey Tick", discord_emoji_list, client_emoji_list)
+        war_log_value += f"{tie_emoji} {clan_obj.war_ties}"
+
+        field_dict_list.append({
+            'name': "**War Log**",
+            'value': war_log_value,
+            'inline': True
+        })
+        field_dict_list.append({
+            'name': "**Win Streak**",
+            'value': clan_obj.war_win_streak,
+            'inline': True
+        })
+    clan_war_league_emoji = get_clan_war_league_emoji(
+        clan_obj.war_league.name, discord_emoji_list, client_emoji_list)
     field_dict_list.append({
         'name': "**Clan War League**",
-        'value': clan_obj.war_league.name,
+        'value': f"{clan_war_league_emoji} {clan_obj.war_league.name}",
         'inline': True
     })
+    trophy_emoji = get_emoji(
+        "Trophy", discord_emoji_list, client_emoji_list)
     field_dict_list.append({
-        'name': "**Total Points**",
+        'name': f"**{trophy_emoji} Total**",
         'value': clan_obj.points,
         'inline': True
     })
@@ -772,23 +911,28 @@ def clan_info(clan_obj):
     return field_dict_list
 
 
-async def clan_lineup(clan_obj, coc_client):
+async def clan_lineup(
+        clan_obj, coc_client, discord_emoji_list, client_emoji_list):
     clan_lineup_dict = await clash_responder.clan_lineup(clan_obj, coc_client)
 
     field_dict_list = []
 
     for th in clan_lineup_dict:
         if clan_lineup_dict[th] > 0:
+            th_emoji = get_th_emoji(
+                f"{th}", discord_emoji_list, client_emoji_list)
             field_dict_list.append({
                 'name': f"Town Hall {th}",
-                'value': f"{clan_lineup_dict[th]}",
+                'value': f"{th_emoji} {clan_lineup_dict[th]}",
                 'inline': False
             })
 
     return field_dict_list
 
 
-async def clan_lineup_member(clan_obj, coc_client):
+async def clan_lineup_member(
+    clan_obj, coc_client, discord_emoji_list, client_emoji_list
+):
     field_dict_list = []
 
     for member in clan_obj.members:
@@ -801,14 +945,24 @@ async def clan_lineup_member(clan_obj, coc_client):
         field_name = (f"{member.clan_rank}: {player.name} {player.tag} "
                       f"{player.role.in_game_name}")
 
-        field_value = f"{player.town_hall} TH"
+        th_emoji = get_th_emoji(
+            player.town_hall, discord_emoji_list, client_emoji_list)
+        field_value = f"{th_emoji} {player.town_hall}"
 
         for hero in player.heroes:
             if not hero.is_home_base:
                 continue
 
+            hero_emoji = get_emoji(
+                hero.name, discord_emoji_list, client_emoji_list)
+
+            max_level_for_townhall = hero.get_max_level_for_townhall(
+                player.town_hall)
+
             field_value += f"\n"
-            field_value += f"{hero.level} {hero.name}"
+            field_value += f"{hero_emoji} {hero.level}"
+            field_value += f"|{max_level_for_townhall}"
+            field_value += f"|{hero.max_level}"
 
         field_dict_list.append({
             'name': field_name,
@@ -819,7 +973,8 @@ async def clan_lineup_member(clan_obj, coc_client):
     return field_dict_list
 
 
-async def war_preference_clan(clan_obj, coc_client):
+async def war_preference_clan(
+        clan_obj, coc_client, discord_emoji_list, client_emoji_list):
     in_count = 0
     for member in clan_obj.members:
         player_obj = await coc_client.get_player(member.tag)
@@ -828,13 +983,18 @@ async def war_preference_clan(clan_obj, coc_client):
 
     field_dict_list = []
 
+    in_emoji = get_war_opted_in_emoji(
+        "True", discord_emoji_list, client_emoji_list)
+    out_emoji = get_war_opted_in_emoji(
+        "False", discord_emoji_list, client_emoji_list)
+
     field_dict_list.append({
-        'name': "in",
+        'name': in_emoji,
         'value': f"{in_count}",
         'inline': False
     })
     field_dict_list.append({
-        'name': "out",
+        'name': out_emoji,
         'value': f"{clan_obj.member_count - in_count}",
         'inline': False
     })
@@ -842,30 +1002,36 @@ async def war_preference_clan(clan_obj, coc_client):
     return field_dict_list
 
 
-async def war_preference_member(clan_obj, coc_client):
+async def war_preference_member(
+        clan_obj, coc_client, discord_emoji_list, client_emoji_list):
     field_dict_list = []
+
+    in_emoji = get_war_opted_in_emoji(
+        "True", discord_emoji_list, client_emoji_list)
+    out_emoji = get_war_opted_in_emoji(
+        "False", discord_emoji_list, client_emoji_list)
 
     for member in clan_obj.members:
         player_obj = await coc_client.get_player(member.tag)
         if player_obj.war_opted_in:
             field_dict_list.append({
                 'name': f"{player_obj.name} {player_obj.tag}",
-                'value': f"in",
-                'inline': False
+                'value': in_emoji,
+                'inline': True
             })
 
             continue
 
         field_dict_list.append({
             'name': f"{player_obj.name} {player_obj.tag}",
-            'value': f"out",
-            'inline': False
+            'value': out_emoji,
+            'inline': True
         })
 
     return field_dict_list
 
 
-def donation(clan_obj, donator_list, unit_name):
+def donation(clan_obj, donator_list, unit_name, discord_emoji_list, client_emoji_list):
     # unit is a hero or pet
     if donator_list is None:
         return [{
@@ -882,17 +1048,20 @@ def donation(clan_obj, donator_list, unit_name):
     field_dict_list = []
     donation_upgrade = clash_responder.clan_donation_upgrade(clan_obj)
 
+    unit_emoji = get_emoji(
+        donator_list[0].unit_obj.name, discord_emoji_list, client_emoji_list)
+
     # donators can donate max
     if ((donator_list[0].unit_obj.level + donation_upgrade) >=
             donator_list[0].unit_obj.max_level):
         value = (
-            f"{donator_list[0].unit_obj.name} "
+            f"{unit_emoji} "
             f"lvl {donator_list[0].unit_obj.max_level}, "
             f"max"
         )
     else:
         value = (
-            f"{donator_list[0].unit_obj.name} "
+            f"{unit_emoji} "
             f"lvl {donator_list[0].unit_obj.level + donation_upgrade} "
             f"max is {donator_list[0].unit_obj.max_level}"
         )
@@ -906,18 +1075,23 @@ def donation(clan_obj, donator_list, unit_name):
     return field_dict_list
 
 
-def super_troop_search(clan_obj, donor_list, super_troop_obj):
+def super_troop_search(clan_obj, donor_list, super_troop_obj,
+                       discord_emoji_list, client_emoji_list):
+
+    unit_emoji = get_emoji(
+        super_troop_obj.name, discord_emoji_list, client_emoji_list)
+
     if len(donor_list) == 0:
         return [{
             'name': clan_obj.name,
-            'value': f"does not have {super_troop_obj.name} activated"
+            'value': f"does not have {unit_emoji} activated"
         }]
 
     field_dict_list = []
     for donator in donor_list:
         field_dict_list.append({
             'name': donator.name,
-            'value': f"has {super_troop_obj.name} active"
+            'value': f"has {unit_emoji} active"
         })
 
     return field_dict_list
@@ -1150,7 +1324,7 @@ async def war_leadership_verification(db_player_obj, user_obj, guild_id, coc_cli
     return verification_payload
 
 
-def war_info(war_obj):
+def war_info(war_obj, discord_emoji_list, client_emoji_list):
     if not war_obj:
         return [{
             'name': f"not in war",
@@ -1165,15 +1339,21 @@ def war_info(war_obj):
             'value': f"left before war starts"
         }]
     elif war_obj.state == "inWar":
+        star_emoji = get_emoji(
+            "War Star", discord_emoji_list, client_emoji_list)
         time_string = clash_responder.string_date_time(war_obj)
-        scoreboard_string = clash_responder.string_scoreboard(war_obj)
+        scoreboard_string = clash_responder.string_scoreboard(
+            war_obj, star_emoji)
 
         return [{
             'name': f"{war_obj.clan.name} is {scoreboard_string}",
             'value': f"{time_string} left in war"
         }]
     elif war_obj.state == "warEnded":
-        scoreboard_string = clash_responder.string_scoreboard(war_obj)
+        star_emoji = get_emoji(
+            "War Star", discord_emoji_list, client_emoji_list)
+        scoreboard_string = clash_responder.string_scoreboard(
+            war_obj, star_emoji)
 
         return [{
             'name': f"{war_obj.clan.name} {scoreboard_string}",
@@ -1184,6 +1364,56 @@ def war_info(war_obj):
             'name': f"not in war",
             'value': f"you are not in war"
         }]
+
+
+def war_scoreboard(war, discord_emoji_list, client_emoji_list):
+    if not war:
+        return [{
+            'name': f"not in war",
+            'value': f"you are not in war"
+        }]
+
+    time_string = clash_responder.string_date_time(war)
+    if war.state == "preparation":
+
+        return [{
+            'name': f"{time_string}",
+            'value': f"left before war starts"
+        }]
+
+    field_dict_list = []
+
+    # overview: state, time remaining, win/lose/tie, score
+    star_emoji = get_emoji(
+        "War Star", discord_emoji_list, client_emoji_list)
+    scoreboard_string = clash_responder.string_scoreboard(war, star_emoji)
+
+    # getting the overview
+    if war.state == "inWar":
+        field_name = f"{war.clan.name} is {scoreboard_string}"
+        field_value = f"{time_string} left in war"
+
+    else:
+        field_name = f"{war.clan.name} {scoreboard_string}"
+        field_value = f"war has ended"
+
+    field_dict_list.append({
+        'name': field_name,
+        'value': field_value
+    })
+
+    # clan: stars/potential stars, attacks/potential attacks, total destruction
+    # getting the clan scoreboard
+    clan_scoreboard_fields = clash_responder.war_clan_scoreboard(
+        war, war.clan, star_emoji)
+    field_dict_list.extend(clan_scoreboard_fields)
+
+    # getting the opponent scoreboard
+    opp_scoreboard_fields = clash_responder.war_clan_scoreboard(
+        war, war.opponent, star_emoji)
+    field_dict_list.extend(opp_scoreboard_fields)
+
+    return field_dict_list
 
 
 def war_time(war_obj):
@@ -1267,8 +1497,14 @@ def war_no_attack(war_obj):
         }]
 
 
-def war_members_overview(war_obj):
+def war_clan_stars(war_obj, discord_emoji_list, client_emoji_list):
     "returns a list of all war members and their stars"
+
+    if war_obj is None:
+        return [{
+            'name': f"not in war",
+            'value': f"you are not in war"
+        }]
 
     if war_obj.state == "preparation":
         time_string = clash_responder.string_date_time(war_obj)
@@ -1277,58 +1513,53 @@ def war_members_overview(war_obj):
             'name': f"{time_string}",
             'value': f"left before war starts, nobody has attacked"
         }]
-    elif war_obj.state == "inWar":
-        field_dict_list = []
-        map_position_index = 0
-        # no atk response
-        for member_obj in war_obj.clan.members:
-            map_position_index += 1
-            if len(member_obj.attacks) == 0:
-                field_dict_list.append({
-                    'name': f"{map_position_index}. {member_obj.name}",
-                    'value': f"has not attacked"
-                })
+
+    star_emoji = get_emoji(
+        "War Star", discord_emoji_list, client_emoji_list)
+    field_dict_list = []
+
+    for member_obj in war_obj.clan.members:
+
+        if member_obj.star_count <= 3:
+            star_string = star_emoji*member_obj.star_count
+        else:
+            star_string = f"{member_obj.star_count} {star_emoji}"
+
+        th_emoji = get_emoji(
+            member_obj.town_hall, discord_emoji_list, client_emoji_list)
+
+        if len(member_obj.attacks) == 0:
+            if war_obj.state == "inWar":
+                field_value = f"has not attacked"
             else:
-                field_dict_list.append({
-                    'name': f"{map_position_index}. {member_obj.name}",
-                    'value': (
-                        f"attacked {len(member_obj.attacks)} "
-                        f"{clash_responder.string_attack_times(member_obj.attacks)} "
-                        f"for {member_obj.star_count} "
-                        f"{clash_responder.string_member_stars(member_obj.star_count)}"
-                    )
-                })
-        return field_dict_list
-    elif war_obj.state == "warEnded":
-        field_dict_list = []
-        map_position_index = 0
-        # no atk response
-        for member_obj in war_obj.clan.members:
-            map_position_index += 1
-            if len(member_obj.attacks) == 0:
-                field_dict_list.append({
-                    'name': f"{map_position_index}. {member_obj.name}",
-                    'value': f"did not attack"
-                })
-            else:
-                field_dict_list.append({
-                    'name': f"{map_position_index}. {member_obj.name}",
-                    'value': (
-                        f"attacked {len(member_obj.attacks)} "
-                        f"{clash_responder.string_attack_times(member_obj.attacks)} "
-                        f"for {member_obj.star_count} "
-                        f"{clash_responder.string_member_stars(member_obj.star_count)}"
-                    )
-                })
-        return field_dict_list
-    else:
+                field_value = f"did not attack"
+
+            field_dict_list.append({
+                'name': (f"{member_obj.map_position}. {member_obj.name} "
+                         f"{th_emoji}\n"),
+                'value': field_value
+            })
+        else:
+            field_dict_list.append({
+                'name': (f"{member_obj.map_position}. {member_obj.name} "
+                         f"{th_emoji}"),
+                'value': (
+                    f"attacked {len(member_obj.attacks)} "
+                    f"{clash_responder.string_attack_times(member_obj.attacks)}\n"
+                    f"{star_string}"
+                )
+            })
+
+    return field_dict_list
+
+
+def war_all_attacks(war_obj, discord_emoji_list, client_emoji_list):
+
+    if war_obj is None:
         return [{
             'name': f"not in war",
             'value': f"you are not in war"
         }]
-
-
-def war_all_attacks(war_obj):
 
     if war_obj.state == 'preparation':
         time_string = clash_responder.string_date_time(war_obj)
@@ -1337,62 +1568,68 @@ def war_all_attacks(war_obj):
             'name': f"{time_string}",
             'value': f"left before war starts, nobody has attacked"
         }]
-    elif war_obj.state == 'inWar' or war_obj.state == "warEnded":
-        field_dict_list = []
-        map_position_index = 0
-        # no atk response
-        for member_obj in war_obj.clan.members:
-            map_position_index += 1
-            if len(member_obj.attacks) == 0:
-                if war_obj.state == "inWar":
-                    field_dict_list.append({
-                        'name': (f"{map_position_index}. {member_obj.name} "
-                                 f"TH {member_obj.town_hall}"),
-                        'value': f"has not attacked"
-                    })
-                else:
-                    field_dict_list.append({
-                        'name': (f"{map_position_index}. {member_obj.name} "
-                                 f"TH {member_obj.town_hall}"),
-                        'value': f"did not attack"
-                    })
-                continue
 
-            for attack_obj in member_obj.attacks:
+    star_emoji = get_emoji(
+        "War Star", discord_emoji_list, client_emoji_list)
+    field_dict_list = []
 
-                defender_obj = clash_responder.find_defender(
-                    war_obj.opponent, attack_obj.defender_tag)
+    for member_obj in war_obj.clan.members:
 
-                if attack_obj.stars == 0 or attack_obj.stars == 3:
-                    value_string = (
-                        f"{attack_obj.stars} "
-                        f"{clash_responder.string_member_stars(attack_obj.stars)} "
-                        f"against {map_position_index}. "
-                        f"{defender_obj.name} TH {defender_obj.town_hall}"
-                    )
-                else:
-                    value_string = (
-                        f"{attack_obj.stars} "
-                        f"{clash_responder.string_member_stars(attack_obj.stars)} "
-                        f"{round(attack_obj.destruction, 2)}% "
-                        f"against {map_position_index}. "
-                        f"{defender_obj.name} TH {defender_obj.town_hall}"
-                    )
-                field_dict_list.append({
-                    'name': (
-                        f"{map_position_index}. "
-                        f"{member_obj.name} "
-                        f"TH {member_obj.town_hall}"
-                    ),
-                    'value': value_string
-                })
-        return field_dict_list
+        field_value = ""
 
-    else:
-        return [{
-            'name': f"not in war",
-            'value': f"you are not in war"
-        }]
+        th_emoji = get_emoji(
+            member_obj.town_hall, discord_emoji_list, client_emoji_list)
+
+        if len(member_obj.attacks) == 0:
+            if war_obj.state == "inWar":
+                field_value = f"has not attacked"
+
+            else:
+                field_value = f"did not attack"
+
+            field_dict_list.append({
+                'name': (f"{member_obj.map_position}. {member_obj.name} "
+                         f"{th_emoji}"),
+                'value': field_value
+            })
+
+            continue
+
+        for attack_obj in member_obj.attacks:
+            defender_obj = clash_responder.find_defender(
+                war_obj.opponent, attack_obj.defender_tag)
+
+            defender_th_emoji = get_emoji(
+                defender_obj.town_hall, discord_emoji_list, client_emoji_list)
+
+            star_string = star_emoji*attack_obj.stars
+
+            if attack_obj.stars == 3:
+                field_value += (
+                    f"{defender_obj.map_position}. "
+                    f"{defender_obj.name} {defender_th_emoji}\n"
+                    f"{star_string}\n\n"
+                )
+            else:
+                field_value += (
+                    f"{defender_obj.map_position}. "
+                    f"{defender_obj.name} {defender_th_emoji}\n"
+                    f"{round(attack_obj.destruction, 2)}%\n"
+                    f"{star_string}\n\n"
+                )
+
+        # remove trailing space in field value
+        field_value = field_value[:-2]
+
+        field_dict_list.append({
+            'name': (
+                f"{member_obj.map_position}. "
+                f"{member_obj.name} "
+                f"{th_emoji}"
+            ),
+            'value': field_value
+        })
+    return field_dict_list
 
 
 def war_member_score(war_obj, player):
@@ -1512,18 +1749,24 @@ def war_lineup_overview(war_obj):
     return message
 
 
-def war_lineup_clan(war_obj):
+def war_lineup_clan(war_obj, discord_emoji_list, client_emoji_list):
     field_dict_list = []
     map_position_index = 0
     for clan_member in war_obj.clan.members:
         map_position_index += 1
         # subtract 1 for indexing purposes
         opp_member_obj = war_obj.opponent.members[map_position_index-1]
+
+        member_th_emoji = get_emoji(
+            clan_member.town_hall, discord_emoji_list, client_emoji_list)
+        opp_th_emoji = get_emoji(
+            opp_member_obj.town_hall, discord_emoji_list, client_emoji_list)
+
         field_dict_list.append({
             "name": f"{map_position_index}",
             "value": (
-                f"{clan_member.town_hall} | {clan_member.name}\n"
-                f"{opp_member_obj.town_hall} | {opp_member_obj.name}\n"
+                f"{member_th_emoji} | {clan_member.name}\n"
+                f"{opp_th_emoji} | {opp_member_obj.name}\n"
             ),
             "inline": False
         })
@@ -1531,7 +1774,9 @@ def war_lineup_clan(war_obj):
     return field_dict_list
 
 
-async def war_lineup_member(war_clan, coc_client):
+async def war_lineup_member(
+    war_clan, coc_client, discord_emoji_list, client_emoji_list
+):
     field_dict_list = []
 
     map_position_index = 0
@@ -1544,16 +1789,22 @@ async def war_lineup_member(war_clan, coc_client):
         if player is None:
             continue
 
+        th_emoji = get_emoji(
+            player.town_hall, discord_emoji_list, client_emoji_list)
+
         field_name = f"{map_position_index}: {player.name} {player.tag}"
 
-        field_value = f"{player.town_hall} TH"
+        field_value = f"{th_emoji}"
 
         for hero in player.heroes:
             if not hero.is_home_base:
                 continue
 
+            hero_emoji = get_emoji(
+                hero.name, discord_emoji_list, client_emoji_list)
+
             field_value += f"\n"
-            field_value += f"{hero.level} {hero.name}"
+            field_value += f"{hero_emoji} {hero.level}"
 
         field_dict_list.append({
             'name': field_name,
@@ -1727,16 +1978,16 @@ def cwl_lineup(cwl_group):
     return message
 
 
-async def cwl_clan_score(player_obj, cwl_group, clan_tag):
+async def cwl_clan_score(clan_obj, cwl_group):
     if not cwl_group:
         return [{
-            'name': f"{player_obj.name} is not in CWL",
+            'name': f"{clan_obj.name} is not in CWL",
             'value': "there is no score"
         }]
 
     # get a list of all CWLWar objects
     cwl_wars = []
-    async for war in cwl_group.get_wars_for_clan(clan_tag):
+    async for war in cwl_group.get_wars_for_clan(clan_obj.tag):
         if war.state == "warEnded":
             cwl_wars.append(war)
 
@@ -1748,7 +1999,7 @@ async def cwl_clan_score(player_obj, cwl_group, clan_tag):
 
     # get the cwl clan
     for clan in cwl_group.clans:
-        if clan.tag == clan_tag:
+        if clan.tag == clan_obj.tag:
             cwl_clan = clan
             break
 
@@ -2066,10 +2317,30 @@ def embed_message(
             author_display_name,
             author_avatar_url
         )
+        # initialize embed str count
+        embed_str_count = 0
+
+        # total up the initialized embed to the count
+        embed_str_count += (
+            len(embed.title)
+            + len(embed.author)
+            + len(embed.description)
+            + len(embed.footer)
+        )
 
         while len(field_list) > 0:
             # use first field item since they will get deleted
             field = field_list[0]
+
+            field_str_len = (len(str(field['name']))
+                             + len(str(field['value'])))
+            # embed data is greater than 6000
+            if embed_str_count + field_str_len > 6000:
+                # add the current embed to the list
+                embed_list.append(embed)
+
+                # break the for and restart the while
+                break
 
             if 'inline' in field:
                 embed.add_field(
@@ -2082,6 +2353,9 @@ def embed_message(
                     name=field['name'],
                     value=field['value']
                 )
+
+            embed_str_count += (len(str(field['name']))
+                                + len(str(field['value'])))
 
             del field_list[0]
 
@@ -2157,28 +2431,157 @@ def initialize_embed(
 
 
 async def send_embed_list(embed_list, inter):
-
     # embed limit is 10
-    # continue repeating till there are no embeds in embed list
-    while len(embed_list) > 0:
-        # embed list has only 1 item in the list
-        if len(embed_list) == 1:
-            # embed needs to be sent in list form
-            await inter.send(embeds=[embed_list[0]])
+    # embed char limit is 6000
+    # embed field limit is 25
+
+    # prep a list of embeds to send
+    # this will be lists of embeds in a list
+    total_str = ""
+    send_list = []
+    add_list = []
+    for embed in embed_list:
+        embed_str = ""
+        # embed would be the discord.Embed instance
+        fields = [embed.title, embed.description,
+                  embed.footer.text, embed.author.name]
+
+        fields.extend([field.name for field in embed.fields])
+        fields.extend([field.value for field in embed.fields])
+
+        for item in fields:
+            # if we str(discord.Embed.Empty) we get 'Embed.Empty', when
+            # we just want an empty string...
+            embed_str += str(item) if str(item) != 'Embed.Empty' else ''
+
+        # embeds will be higher than 6000 if added
+        # embeds will have more than 10 embeds if added
+        if len(total_str)+len(embed_str) > 6000 or len(add_list) == 10:
+            # add the add_list to the send_list
+            send_list.append(add_list.copy())
+
+            # clear the add_list
+            add_list.clear()
+
+            total_str = ""
+
+        add_list.append(embed)
+        total_str += embed_str
+
+        # if the embed is the last embed in the list
+        # adding one to index for 0 index start
+        if (embed_list.index(embed) + 1) == len(embed_list):
+            send_list.append(add_list.copy())
             break
 
-        # embed list has less than or equal to 10 items
-        # entire message can be sent in 1 send embeds
-        if len(embed_list) <= 10:
-            await inter.send(embeds=embed_list)
-            break
+    # send all embeds
+    for embeds in send_list:
+        await inter.send(embeds=embeds)
 
-        # embed has more than 10 items in the list
-        # entire message cannot be sent in 1 send embeds
-        await inter.send(embeds=embed_list[0:10])
 
-        # delete the first 10 indexes of the list after being sent
-        del embed_list[0:10]
+# emojis
+def get_emoji(coc_name, discord_emoji_list, client_emoji_list):
+    client_emoji = get_base_emoji(
+        coc_name, discord_emoji_list, client_emoji_list)
+
+    # base emoji found
+    if client_emoji is not None:
+        return client_emoji
+
+    client_emoji = get_th_emoji(
+        coc_name, discord_emoji_list, client_emoji_list)
+
+    # town hall emoji found
+    if client_emoji is not None:
+        return client_emoji
+
+    client_emoji = get_war_opted_in_emoji(
+        coc_name, discord_emoji_list, client_emoji_list)
+
+    # war opted in emoji found
+    if client_emoji is not None:
+        return client_emoji
+
+    client_emoji = get_clan_war_league_emoji(
+        coc_name, discord_emoji_list, client_emoji_list)
+
+    # clan war league emoji found
+    if client_emoji is not None:
+        return client_emoji
+
+    return coc_name
+
+
+def get_base_emoji(coc_name, discord_emoji_list, client_emoji_list):
+    client_emoji = get(client_emoji_list, coc_name=coc_name)
+
+    # emoji not found in client list
+    if client_emoji is None:
+        return None
+
+    discord_emoji = get(
+        discord_emoji_list,
+        name=client_emoji.discord_name, id=client_emoji.discord_id)
+
+    # emoji not found in discord list
+    if discord_emoji is None:
+        return None
+
+    return (f"<:{discord_emoji.name}:{discord_emoji.id}>")
+
+
+def get_th_emoji(coc_name, discord_emoji_list, client_emoji_list):
+    client_emoji = get(client_emoji_list, coc_name=f"Town Hall {coc_name}")
+
+    # emoji not found in client list
+    if client_emoji is None:
+        return None
+
+    discord_emoji = get(
+        discord_emoji_list,
+        name=client_emoji.discord_name, id=client_emoji.discord_id)
+
+    # emoji not found in discord list
+    if discord_emoji is None:
+        return None
+
+    return (f"<:{discord_emoji.name}:{discord_emoji.id}>")
+
+
+def get_war_opted_in_emoji(coc_name, discord_emoji_list, client_emoji_list):
+    client_emoji = get(client_emoji_list, coc_name=f"war_opted_in={coc_name}")
+
+    # emoji not found in client list
+    if client_emoji is None:
+        return None
+
+    discord_emoji = get(
+        discord_emoji_list,
+        name=client_emoji.discord_name, id=client_emoji.discord_id)
+
+    # emoji not found in discord list
+    if discord_emoji is None:
+        return None
+
+    return (f"<:{discord_emoji.name}:{discord_emoji.id}>")
+
+
+def get_clan_war_league_emoji(coc_name, discord_emoji_list, client_emoji_list):
+    client_emoji = get(client_emoji_list, coc_name=f"Clan War {coc_name}")
+
+    # emoji not found in client list
+    if client_emoji is None:
+        return None
+
+    discord_emoji = get(
+        discord_emoji_list,
+        name=client_emoji.discord_name, id=client_emoji.discord_id)
+
+    # emoji not found in discord list
+    if discord_emoji is None:
+        return None
+
+    return (f"<:{discord_emoji.name}:{discord_emoji.id}>")
 
 
 # help

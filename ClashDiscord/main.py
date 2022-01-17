@@ -235,7 +235,8 @@ async def user(inter, user: disnake.User = None):
 
     player_obj = verification_payload['player_obj']
 
-    field_dict_list = discord_responder.player_info(player_obj)
+    field_dict_list = discord_responder.player_info(
+        player_obj, inter.client.emojis, client_data.emojis)
 
     embed_list = discord_responder.embed_message(
         Embed=disnake.Embed,
@@ -289,7 +290,8 @@ async def find(inter, player_tag: str):
         await discord_responder.send_embed_list(embed_list, inter)
         return
 
-    field_dict_list = discord_responder.player_info(player_obj)
+    field_dict_list = discord_responder.player_info(
+        player_obj, inter.client.emojis, client_data.emojis)
 
     embed_list = discord_responder.embed_message(
         Embed=disnake.Embed,
@@ -362,7 +364,8 @@ async def find(inter, unit_name: str):
 
     unit_obj = clash_responder.find_unit(player_obj, unit_name)
     field_dict_list = [discord_responder.unit_lvl(
-        player_obj, unit_obj, unit_name)]
+        player_obj, unit_obj, unit_name,
+        inter.client.emojis, client_data.emojis)]
     # unit_obj not found
     # set title to player name
     if not unit_obj:
@@ -396,7 +399,7 @@ async def find(inter, unit_name: str):
 )
 async def all(inter, user: disnake.User = None,
               unit_type: str = commands.Param(choices=[
-        "unit", "hero", "pet", "troop", "spell", "siege"])):
+        "all", "hero", "pet", "troop", "spell", "siege"])):
     """
         get all unit levels
 
@@ -434,18 +437,30 @@ async def all(inter, user: disnake.User = None,
 
     player_obj = verification_payload['player_obj']
 
-    if unit_type == "unit":
-        field_dict_list = discord_responder.unit_lvl_all(player_obj)
+    if unit_type == "all":
+        field_dict_list = discord_responder.unit_lvl_all(
+            player_obj, inter.client.emojis, client_data.emojis
+        )
     elif unit_type == "hero":
-        field_dict_list = discord_responder.hero_lvl_all(player_obj)
+        field_dict_list = discord_responder.hero_lvl_all(
+            player_obj, inter.client.emojis, client_data.emojis
+        )
     elif unit_type == "pet":
-        field_dict_list = discord_responder.pet_lvl_all(player_obj)
+        field_dict_list = discord_responder.pet_lvl_all(
+            player_obj, inter.client.emojis, client_data.emojis
+        )
     elif unit_type == "troop":
-        field_dict_list = discord_responder.troop_lvl_all(player_obj)
+        field_dict_list = discord_responder.troop_lvl_all(
+            player_obj, inter.client.emojis, client_data.emojis
+        )
     elif unit_type == "spell":
-        field_dict_list = discord_responder.spell_lvl_all(player_obj)
+        field_dict_list = discord_responder.spell_lvl_all(
+            player_obj, inter.client.emojis, client_data.emojis
+        )
     elif unit_type == "siege":
-        field_dict_list = discord_responder.siege_lvl_all(player_obj)
+        field_dict_list = discord_responder.siege_lvl_all(
+            player_obj, inter.client.emojis, client_data.emojis
+        )
 
     embed_list = discord_responder.embed_message(
         Embed=disnake.Embed,
@@ -471,7 +486,7 @@ async def all(inter, user: disnake.User = None,
 )
 async def alltag(inter, player_tag: str,
                  unit_type: str = commands.Param(choices=[
-        "unit", "hero", "pet", "troop", "spell", "siege"])):
+        "all", "hero", "pet", "troop", "spell", "siege"])):
     """
         get all unit levels for the player specified
     """
@@ -497,18 +512,30 @@ async def alltag(inter, player_tag: str,
         await discord_responder.send_embed_list(embed_list, inter)
         return
 
-    if unit_type == "unit":
-        field_dict_list = discord_responder.unit_lvl_all(player_obj)
+    if unit_type == "all":
+        field_dict_list = discord_responder.unit_lvl_all(
+            player_obj, inter.client.emojis, client_data.emojis
+        )
     elif unit_type == "hero":
-        field_dict_list = discord_responder.hero_lvl_all(player_obj)
+        field_dict_list = discord_responder.hero_lvl_all(
+            player_obj, inter.client.emojis, client_data.emojis
+        )
     elif unit_type == "pet":
-        field_dict_list = discord_responder.pet_lvl_all(player_obj)
+        field_dict_list = discord_responder.pet_lvl_all(
+            player_obj, inter.client.emojis, client_data.emojis
+        )
     elif unit_type == "troop":
-        field_dict_list = discord_responder.troop_lvl_all(player_obj)
+        field_dict_list = discord_responder.troop_lvl_all(
+            player_obj, inter.client.emojis, client_data.emojis
+        )
     elif unit_type == "spell":
-        field_dict_list = discord_responder.spell_lvl_all(player_obj)
+        field_dict_list = discord_responder.spell_lvl_all(
+            player_obj, inter.client.emojis, client_data.emojis
+        )
     elif unit_type == "siege":
-        field_dict_list = discord_responder.siege_lvl_all(player_obj)
+        field_dict_list = discord_responder.siege_lvl_all(
+            player_obj, inter.client.emojis, client_data.emojis
+        )
 
     embed_list = discord_responder.embed_message(
         Embed=disnake.Embed,
@@ -587,7 +614,9 @@ async def user(inter, user: disnake.User = None):
         player_obj)
 
     field_dict_list = discord_responder.active_super_troops(
-        player_obj, active_super_troop_list)
+        player_obj, active_super_troop_list,
+        inter.client.emojis, client_data.emojis
+    )
     embed_list = discord_responder.embed_message(
         Embed=disnake.Embed,
         color=disnake.Color(client_data.embed_color),
@@ -679,7 +708,9 @@ async def overview(inter, clan_role: disnake.Role = None):
 
     clan_obj = verification_payload['clan_obj']
 
-    field_dict_list = discord_responder.clan_info(clan_obj)
+    field_dict_list = discord_responder.clan_info(
+        clan_obj, inter.client.emojis, client_data.emojis
+    )
 
     embed_list = discord_responder.embed_message(
         Embed=disnake.Embed,
@@ -734,7 +765,9 @@ async def find(inter, clan_tag: str):
         await discord_responder.send_embed_list(embed_list, inter)
         return
 
-    field_dict_list = discord_responder.clan_info(clan_obj)
+    field_dict_list = discord_responder.clan_info(
+        clan_obj, inter.client.emojis, client_data.emojis
+    )
 
     embed_list = discord_responder.embed_message(
         Embed=disnake.Embed,
@@ -815,7 +848,8 @@ async def overview(inter, clan_role: disnake.Role = None):
 
     clan_obj = verification_payload['clan_obj']
 
-    field_dict_list = await discord_responder.clan_lineup(clan_obj, coc_client)
+    field_dict_list = await discord_responder.clan_lineup(
+        clan_obj, coc_client, inter.client.emojis, client_data.emojis)
 
     embed_list = discord_responder.embed_message(
         Embed=disnake.Embed,
@@ -883,7 +917,8 @@ async def member(inter, clan_role: disnake.Role = None):
 
     clan_obj = verification_payload['clan_obj']
 
-    field_dict_list = await discord_responder.clan_lineup_member(clan_obj, coc_client)
+    field_dict_list = await discord_responder.clan_lineup_member(
+        clan_obj, coc_client, inter.client.emojis, client_data.emojis)
 
     embed_list = discord_responder.embed_message(
         Embed=disnake.Embed,
@@ -964,7 +999,7 @@ async def overview(inter, clan_role: disnake.Role = None):
     clan_obj = verification_payload['clan_obj']
 
     field_dict_list = await discord_responder.war_preference_clan(
-        clan_obj, coc_client)
+        clan_obj, coc_client, inter.client.emojis, client_data.emojis)
 
     embed_list = discord_responder.embed_message(
         Embed=disnake.Embed,
@@ -1032,7 +1067,7 @@ async def member(inter, clan_role: disnake.Role = None):
     clan_obj = verification_payload['clan_obj']
 
     field_dict_list = await discord_responder.war_preference_member(
-        clan_obj, coc_client)
+        clan_obj, coc_client, inter.client.emojis, client_data.emojis)
 
     embed_list = discord_responder.embed_message(
         Embed=disnake.Embed,
@@ -1115,7 +1150,9 @@ async def donate(inter, unit_name: str, clan_role: disnake.Role = None):
         clan_obj, unit_name, coc_client)
 
     field_dict_list = discord_responder.donation(
-        clan_obj, donator_list, unit_name)
+        clan_obj, donator_list, unit_name,
+        inter.client.emojis, client_data.emojis
+    )
 
     embed_list = discord_responder.embed_message(
         Embed=disnake.Embed,
@@ -1245,7 +1282,9 @@ async def donate(inter, unit_name: str, clan_role: disnake.Role = None):
         super_troop_obj, clan_obj, coc_client)
 
     field_dict_list = discord_responder.super_troop_search(
-        clan_obj, donor_list, super_troop_obj)
+        clan_obj, donor_list, super_troop_obj,
+        inter.client.emojis, client_data.emojis
+    )
 
     embed_list = discord_responder.embed_message(
         Embed=disnake.Embed,
@@ -1338,7 +1377,74 @@ async def overview(inter, clan_role: disnake.Role = None):
 
     war_obj = verification_payload['war_obj']
 
-    field_dict_list = discord_responder.war_info(war_obj)
+    field_dict_list = discord_responder.war_info(
+        war_obj, inter.client.emojis, client_data.emojis)
+
+    embed_list = discord_responder.embed_message(
+        Embed=disnake.Embed,
+        color=disnake.Color(client_data.embed_color),
+        icon_url=inter.bot.user.avatar.url,
+        title=f"{war_obj.clan.name} vs. {war_obj.opponent.name}",
+        description=None,
+        bot_prefix=inter.bot.command_prefix,
+        bot_user_name=inter.bot.user.name,
+        thumbnail=war_obj.clan.badge,
+        field_list=field_dict_list,
+        image_url=None,
+        author_display_name=inter.author.display_name,
+        author_avatar_url=inter.author.avatar.url
+    )
+
+    await discord_responder.send_embed_list(embed_list, inter)
+
+
+@info.sub_command(
+    brief='war',
+    description="scoreboard for the current war"
+)
+async def scoreboard(inter, clan_role: disnake.Role = None):
+    """
+        overview of the current war
+
+        Parameters
+        ----------
+        clan_role (optional): clan role to use linked clan
+    """
+
+    # role not mentioned
+    if clan_role is None:
+        db_player_obj = db_responder.read_player_active(inter.author.id)
+
+        verification_payload = await discord_responder.war_verification(
+            db_player_obj, inter.author, coc_client)
+    # role has been mentioned
+    else:
+        verification_payload = await discord_responder.clan_role_war_verification(
+            clan_role, coc_client)
+
+    if not verification_payload['verified']:
+        embed_list = discord_responder.embed_message(
+            Embed=disnake.Embed,
+            color=disnake.Color(client_data.embed_color),
+            icon_url=inter.bot.user.avatar.url,
+            title=None,
+            description=None,
+            bot_prefix=inter.bot.command_prefix,
+            bot_user_name=inter.bot.user.name,
+            thumbnail=None,
+            field_list=verification_payload['field_dict_list'],
+            image_url=None,
+            author_display_name=inter.author.display_name,
+            author_avatar_url=inter.author.avatar.url
+        )
+
+        await discord_responder.send_embed_list(embed_list, inter)
+        return
+
+    war_obj = verification_payload['war_obj']
+
+    field_dict_list = discord_responder.war_scoreboard(
+        war_obj, inter.client.emojis, client_data.emojis)
 
     embed_list = discord_responder.embed_message(
         Embed=disnake.Embed,
@@ -1485,7 +1591,8 @@ async def stars(inter, clan_role: disnake.Role = None):
 
     war_obj = verification_payload['war_obj']
 
-    field_dict_list = discord_responder.war_members_overview(war_obj)
+    field_dict_list = discord_responder.war_clan_stars(
+        war_obj, inter.client.emojis, client_data.emojis)
 
     embed_list = discord_responder.embed_message(
         Embed=disnake.Embed,
@@ -1555,7 +1662,8 @@ async def attacks(inter, clan_role: disnake.Role = None):
 
     war_obj = verification_payload['war_obj']
 
-    field_dict_list = discord_responder.war_all_attacks(war_obj)
+    field_dict_list = discord_responder.war_all_attacks(
+        war_obj, inter.client.emojis, client_data.emojis)
 
     embed_list = discord_responder.embed_message(
         Embed=disnake.Embed,
@@ -1829,7 +1937,7 @@ async def clan(inter, clan_role: disnake.Role = None):
     war_obj = verification_payload['war_obj']
 
     field_dict_list = discord_responder.war_lineup_clan(
-        war_obj)
+        war_obj, inter.client.emojis, client_data.emojis)
     embed_list = discord_responder.embed_message(
         Embed=disnake.Embed,
         color=disnake.Color(client_data.embed_color),
@@ -1894,7 +2002,7 @@ async def member(inter, clan_role: disnake.Role = None):
     war_obj = verification_payload['war_obj']
 
     field_dict_list = (await discord_responder.war_lineup_member(
-        war_obj.clan, coc_client))
+        war_obj.clan, coc_client, inter.client.emojis, client_data.emojis))
 
     embed_list = discord_responder.embed_message(
         Embed=disnake.Embed,
@@ -1914,7 +2022,7 @@ async def member(inter, clan_role: disnake.Role = None):
     await discord_responder.send_embed_list(embed_list, inter)
 
     field_dict_list = await discord_responder.war_lineup_member(
-        war_obj.opponent, coc_client)
+        war_obj.opponent, coc_client, inter.client.emojis, client_data.emojis)
 
     embed_list = discord_responder.embed_message(
         Embed=disnake.Embed,
@@ -1924,7 +2032,7 @@ async def member(inter, clan_role: disnake.Role = None):
         description=None,
         bot_prefix=inter.bot.command_prefix,
         bot_user_name=inter.bot.user.name,
-        thumbnail=war_obj.clan.badge,
+        thumbnail=war_obj.opponent.badge,
         field_list=field_dict_list,
         image_url=None,
         author_display_name=inter.author.display_name,
@@ -2107,7 +2215,7 @@ async def clan(inter, clan_tag: str, clan_role: disnake.Role = None):
         return
 
     field_dict_list = await discord_responder.war_lineup_member(
-        cwl_clan_obj, coc_client)
+        cwl_clan_obj, coc_client, inter.client.emojis, client_data.emojis)
     embed_list = discord_responder.embed_message(
         Embed=disnake.Embed,
         color=disnake.Color(client_data.embed_color),
@@ -2175,7 +2283,7 @@ async def member(inter, clan_role: disnake.Role = None):
 
     for clan in cwl_group_obj.clans:
         field_dict_list = await discord_responder.war_lineup_member(
-            clan, coc_client)
+            clan, coc_client, inter.client.emojis, client_data.emojis)
         embed_list = discord_responder.embed_message(
             Embed=disnake.Embed,
             color=disnake.Color(client_data.embed_color),
@@ -2318,15 +2426,16 @@ async def clan(inter, clan_role: disnake.Role = None):
         return
 
     player_obj = verification_payload['player_obj']
+    clan_obj = verification_payload['clan_obj']
     cwl_group_obj = verification_payload['cwl_group_obj']
 
     field_dict_list = await discord_responder.cwl_clan_score(
-        player_obj, cwl_group_obj, player_obj.clan.tag)
+        clan_obj, cwl_group_obj)
     embed_list = discord_responder.embed_message(
         Embed=disnake.Embed,
         color=disnake.Color(client_data.embed_color),
         icon_url=inter.bot.user.avatar.url,
-        title=f"{player_obj.clan.name} CWL scores",
+        title=f"{clan_obj.name} CWL scores",
         description=None,
         bot_prefix=inter.bot.command_prefix,
         bot_user_name=inter.bot.user.name,
@@ -3078,6 +3187,46 @@ async def all(inter):
     )
 
     await discord_responder.send_embed_list(embed_list, inter)
+
+
+# discord emoji
+@discord.sub_command_group(
+    brief='client',
+    description="group for discord emoji commands"
+)
+async def emoji(inter):
+    """
+        group for discord emoji commands
+    """
+
+    await inter.response.defer(ephemeral=True)
+
+
+@emoji.sub_command(
+    brief='discord', description="sends specified emoji"
+)
+async def message(inter, coc_name: str):
+    """
+        sends specified emoji
+
+        Parameters
+        ----------
+        coc_name: name of emoji to search for
+    """
+
+    await inter.edit_original_message(content="getting emoji")
+
+    emoji = discord_responder.get_emoji(
+        coc_name, inter.client.emojis, client_data.emojis)
+
+    if emoji is None:
+        await inter.edit_original_message(
+            content=f"{coc_name} emoji not found")
+        return
+
+    await inter.send(content=emoji)
+
+    await inter.edit_original_message(content=f"{emoji} emoji sent")
 
 
 # discord user
@@ -4548,8 +4697,7 @@ async def superuser(inter):
         parent for client super user commands
     """
 
-    # defer for every command
-    await inter.response.defer(ephemeral=True)
+    pass
 
 
 # superuser guild
@@ -4567,17 +4715,74 @@ async def guild(inter):
 
 @guild.sub_command(
     brief='superuser',
-    description="*super user* delete a claimed guild from id"
+    description="*super user* shows all guilds ClashDiscord is in"
 )
-async def removeclaim(inter, guild_id: str):
+async def show(inter):
     """
         *super user*
-        claim a clan's discord role
+        "*super user* shows all guilds ClashDiscord is in
+    """
+
+    await inter.response.defer()
+
+    db_author_obj = db_responder.read_user(inter.author.id)
+    # author is not claimed
+    if not db_author_obj:
+        await inter.edit_original_message(
+            content=f"{inter.author.mention} is not claimed")
+        return
+
+    # author is not super user
+    if not db_author_obj.super_user:
+        await inter.edit_original_message(
+            content=f"{inter.author.mention} is not super user")
+        return
+
+    field_dict_list = []
+
+    field_dict_list.append({
+        'name': f"**GUILD COUNT**",
+        'value': f"{len(inter.client.guilds)}"
+    })
+
+    for guild in inter.client.guilds:
+        field_dict_list.append({
+            'name': f"{guild.name}",
+            'value': f"{guild.id}"
+        })
+
+    embed_list = discord_responder.embed_message(
+        Embed=disnake.Embed,
+        color=disnake.Color(client_data.embed_color),
+        icon_url=inter.bot.user.avatar.url,
+        title=None,
+        description=None,
+        bot_prefix=inter.bot.command_prefix,
+        bot_user_name=inter.bot.user.name,
+        thumbnail=None,
+        field_list=field_dict_list,
+        image_url=None,
+        author_display_name=inter.author.display_name,
+        author_avatar_url=inter.author.avatar.url
+    )
+    await discord_responder.send_embed_list(embed_list, inter)
+
+
+@guild.sub_command(
+    brief='superuser',
+    description="*super user* delete a claimed guild from id"
+)
+async def remove(inter, guild_id: str):
+    """
+        *super user*
+        delete a claimed guild from id
 
         Parameters
         ----------
         guild_id: id for guild to remove claim
     """
+
+    await inter.response.defer(ephemeral=True)
 
     db_author_obj = db_responder.read_user(inter.author.id)
     # author is not claimed
@@ -4622,7 +4827,8 @@ async def user(inter):
         group for user commands
     """
 
-    pass
+    # defer for every superuser user command
+    await inter.response.defer(ephemeral=True)
 
 
 @user.sub_command(
@@ -4681,7 +4887,7 @@ async def admintoggle(inter, user: disnake.User):
     brief='superuser',
     description="*super user* delete a claimed user from id"
 )
-async def removeclaim(inter, user: disnake.User):
+async def remove(inter, user: disnake.User):
     """
         *super user*
         claim a clan's discord role
@@ -4734,7 +4940,8 @@ async def player(inter):
         group for player commands
     """
 
-    pass
+    # defer for every superuser player command
+    await inter.response.defer(ephemeral=True)
 
 
 @player.sub_command(
