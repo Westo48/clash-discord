@@ -55,6 +55,113 @@ def get_client_password():
     return RazBot_Data.RazBot_Data().coc_dev_password
 
 
+def client_info(client, client_data):
+    field_dict_list = []
+
+    field_dict_list.append({
+        'name': "**Client Info**",
+        'value': "_ _",
+        'inline': False
+    })
+
+    field_dict_list.append({
+        'name': "author",
+        'value': "Razgriz#7805"
+    })
+
+    field_dict_list.append({
+        'name': "description",
+        'value': client_data.description
+    })
+
+    field_dict_list.append({
+        'name': "server count",
+        'value': f"{len(client.guilds)}"
+    })
+
+    field_dict_list.append({
+        'name': "version",
+        'value': client_data.version
+    })
+
+    return field_dict_list
+
+
+def client_guild_info(guild, db_guild):
+    field_dict_list = []
+
+    field_dict_list.append({
+        'name': "**Client Server Info**",
+        'value': "_ _",
+        'inline': False
+    })
+
+    field_dict_list.append({
+        'name': f"{guild.name} owner",
+        'value': f"{guild.owner.mention}"
+    })
+
+    field_dict_list.append({
+        'name': f"{guild.name} member count",
+        'value': f"{len(guild.members)}"
+    })
+
+    if db_guild is None:
+        field_dict_list.append({
+            'name': f"{guild.name} not claimed",
+            'value': f"please claim the server using `client guild claim`"
+        })
+        return field_dict_list
+
+    db_guild_admin = get(guild.members, id=db_guild.admin_user_id)
+
+    if db_guild_admin is None:
+        guild_admin_value = f"id: {db_guild.admin_user_id}"
+    else:
+        guild_admin_value = f"{db_guild_admin.mention}"
+
+    field_dict_list.append({
+        'name': "ClashDiscord server admin",
+        'value': guild_admin_value
+    })
+
+    return field_dict_list
+
+
+async def client_player_info(author, db_players, coc_client):
+    field_dict_list = []
+
+    field_dict_list.append({
+        'name': "**Client Player Info**",
+        'value': "_ _",
+        'inline': False
+    })
+
+    # linked players count
+    field_dict_list.append({
+        'name': f"{author.display_name} players",
+        'value': f"{len(db_players)}"
+    })
+
+    for db_player in db_players:
+        player_verification_payload = await player_verification(
+            db_player, author, coc_client)
+
+        if not player_verification_payload['verified']:
+            field_dict_list.extend(
+                player_verification_payload['field_dict_list'])
+            continue
+
+        player = player_verification_payload['player_obj']
+
+        field_dict_list.append({
+            'name': player.name,
+            'value': player.tag
+        })
+
+    return field_dict_list
+
+
 # PLAYER
 
 

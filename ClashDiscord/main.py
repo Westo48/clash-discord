@@ -3454,6 +3454,61 @@ async def client(inter):
     await inter.response.defer()
 
 
+# client info
+@client.sub_command_group(
+    brief='client',
+    description="group for client info commands"
+)
+async def info(inter):
+    """
+        group for client info commands
+    """
+
+    pass
+
+
+@info.sub_command(
+    brief='client',
+    description="relevant overview for the client"
+)
+async def overview(inter):
+    """
+        relevant overview for the client
+    """
+
+    field_dict_list = []
+
+    field_dict_list.extend(discord_responder.client_info(
+        inter.client, client_data))
+
+    db_guild = db_responder.read_guild(inter.guild.id)
+
+    field_dict_list.extend(discord_responder.client_guild_info(
+        inter.guild, db_guild))
+
+    db_players = db_responder.read_player_list(inter.author.id)
+
+    field_dict_list.extend(await discord_responder.client_player_info(
+        inter.author, db_players, coc_client))
+
+    embed_list = discord_responder.embed_message(
+        Embed=disnake.Embed,
+        color=disnake.Color(client_data.embed_color),
+        icon_url=inter.bot.user.avatar.url,
+        title=f"{inter.bot.user.display_name} client overview",
+        description=None,
+        bot_prefix=inter.bot.command_prefix,
+        bot_user_name=inter.bot.user.name,
+        thumbnail=None,
+        field_list=field_dict_list,
+        image_url=None,
+        author_display_name=inter.author.display_name,
+        author_avatar_url=inter.author.avatar.url
+    )
+
+    await discord_responder.send_embed_list(embed_list, inter)
+
+
 # client user
 @client.sub_command_group(
     brief='client',
