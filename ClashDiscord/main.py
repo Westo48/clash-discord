@@ -107,17 +107,8 @@ async def clashofstats(inter, player_tag: str):
         await discord_responder.send_embed_list(embed_list, inter)
         return
 
-    base_url = "https://www.clashofstats.com/players/"
-    summary_url = "/summary"
-    player_url = f"{player.name} {player.tag}"
-    player_url = player_url.replace(" ", "-")
-    player_url = player_url.replace("#", "")
-
-    clash_of_stats_player_url = base_url+player_url+summary_url
-
     await inter.edit_original_message(
-        content=(f"[{player.name} clash of stats]"
-                 f"({clash_of_stats_player_url})"))
+        content=(discord_responder.link_clash_of_stats(player)))
 
 
 @link.sub_command(
@@ -155,14 +146,8 @@ async def chocolateclash(inter, player_tag: str):
         await discord_responder.send_embed_list(embed_list, inter)
         return
 
-    base_url = "https://chocolateclash.com/cc_n/member.php?tag="
-    player_url = player.tag.replace("#", "")
-
-    chocolateclash_player_url = base_url+player_url
-
     await inter.edit_original_message(
-        content=(f"[{player.name} ChocolateClash]"
-                 f"({chocolateclash_player_url})"))
+        content=discord_responder.link_chocolate_clash(player))
 
 
 # Player
@@ -258,7 +243,7 @@ async def user(inter, user: disnake.User = None):
 
 @info.sub_command(
     brief='player',
-    description="get information about a specified player"
+    description="get information about a requested player"
 )
 async def find(inter, player_tag: str):
     """
@@ -309,6 +294,91 @@ async def find(inter, player_tag: str):
     )
 
     await discord_responder.send_embed_list(embed_list, inter)
+
+
+@info.sub_command(
+    brief='player',
+    description="get recruitment information about a requested player"
+)
+async def recruit(inter, player_tag: str):
+    """
+        get recruitment information about a requested player
+
+        Parameters
+        ----------
+        player_tag: player tag to search
+    """
+
+    player_obj = await clash_responder.get_player(player_tag, coc_client)
+
+    if player_obj is None:
+        embed_list = discord_responder.embed_message(
+            Embed=disnake.Embed,
+            color=disnake.Color(client_data.embed_color),
+            icon_url=inter.bot.user.avatar.url,
+            title=None,
+            description=f"could not find player with tag {player_tag}",
+            bot_prefix=inter.bot.command_prefix,
+            bot_user_name=inter.bot.user.name,
+            thumbnail=None,
+            field_list=[],
+            image_url=None,
+            author_display_name=inter.author.display_name,
+            author_avatar_url=inter.author.avatar.url
+        )
+
+        await discord_responder.send_embed_list(embed_list, inter)
+        return
+
+    player_field_dict_list = discord_responder.player_info(
+        player_obj, inter.client.emojis, client_data.emojis)
+
+    embed_list = []
+
+    embed_list.extend(discord_responder.embed_message(
+        Embed=disnake.Embed,
+        color=disnake.Color(client_data.embed_color),
+        icon_url=inter.bot.user.avatar.url,
+        title=f"{player_obj.name} {player_obj.tag}",
+        description=None,
+        bot_prefix=inter.bot.command_prefix,
+        bot_user_name=inter.bot.user.name,
+        thumbnail=player_obj.league.icon,
+        field_list=player_field_dict_list,
+        image_url=None,
+        author_display_name=inter.author.display_name,
+        author_avatar_url=inter.author.avatar.url
+    ))
+
+    unit_field_dict_list = discord_responder.unit_lvl_all(
+        player_obj, inter.client.emojis, client_data.emojis)
+
+    embed_list.extend(discord_responder.embed_message(
+        Embed=disnake.Embed,
+        color=disnake.Color(client_data.embed_color),
+        icon_url=inter.bot.user.avatar.url,
+        title=f"{player_obj.name} units",
+        description=None,
+        bot_prefix=inter.bot.command_prefix,
+        bot_user_name=inter.bot.user.name,
+        thumbnail=player_obj.league.icon,
+        field_list=unit_field_dict_list,
+        image_url=None,
+        author_display_name=inter.author.display_name,
+        author_avatar_url=inter.author.avatar.url
+    ))
+
+    await discord_responder.send_embed_list(embed_list, inter)
+
+    player_links = ""
+
+    player_links += discord_responder.link_clash_of_stats(player_obj)
+
+    player_links += "\n\n"
+
+    player_links += discord_responder.link_chocolate_clash(player_obj)
+
+    await inter.send(content=player_links)
 
 
 # player unit
@@ -4740,11 +4810,6 @@ async def show(inter):
 
     field_dict_list = []
 
-    field_dict_list.append({
-        'name': f"**GUILD COUNT**",
-        'value': f"{len(inter.client.guilds)}"
-    })
-
     for guild in inter.client.guilds:
         field_dict_list.append({
             'name': f"{guild.name}",
@@ -4755,8 +4820,8 @@ async def show(inter):
         Embed=disnake.Embed,
         color=disnake.Color(client_data.embed_color),
         icon_url=inter.bot.user.avatar.url,
-        title=None,
-        description=None,
+        title=f"**ClashDiscord Guilds**",
+        description=f"Guild Count: {len(inter.client.guilds)}",
         bot_prefix=inter.bot.command_prefix,
         bot_user_name=inter.bot.user.name,
         thumbnail=None,

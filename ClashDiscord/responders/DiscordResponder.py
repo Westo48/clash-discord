@@ -730,6 +730,57 @@ def active_super_troops(
         return field_dict_list
 
 
+def link_clash_of_stats(player):
+    """
+        returns a formatted player's link to Clash of Stats page
+
+        Args:
+            player ([obj]): coc.py player object
+
+        Returns:
+            [str]: string of formatted player's link to Clash of Stats page
+    """
+
+    base_url = "https://www.clashofstats.com/players/"
+    summary_url = "/summary"
+    player_url = f"{player.name} {player.tag}"
+    player_url = player_url.replace(" ", "-")
+    player_url = player_url.replace("#", "")
+
+    clash_of_stats_player_url = base_url+player_url+summary_url
+
+    formatted_string = (
+        f"[{player.name} clash of stats]"
+        f"({clash_of_stats_player_url})"
+    )
+
+    return formatted_string
+
+
+def link_chocolate_clash(player):
+    """
+        returns a formatted player's link to Chocolate Clash page
+
+        Args:
+            player ([obj]): coc.py player object
+
+        Returns:
+            [str]: string of formatted player's link to Chocolate Clash page
+    """
+
+    base_url = "https://chocolateclash.com/cc_n/member.php?tag="
+    player_url = player.tag.replace("#", "")
+
+    chocolateclash_player_url = base_url+player_url
+
+    formatted_string = (
+        f"[{player.name} ChocolateClash]"
+        f"({chocolateclash_player_url})"
+    )
+
+    return formatted_string
+
+
 # CLAN
 
 async def clan_verification(db_player_obj, user_obj, coc_client):
