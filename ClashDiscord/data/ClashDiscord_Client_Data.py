@@ -42,6 +42,7 @@ class ClashDiscord_Data(object):
 
             Instance Attributes
                 version (str): client version
+                description (str): description of ClashDiscord
                 prefix (str): prefix for command calls
                 embed_color (int): color integer for embed commands
                 back_emoji (str): emoji for back button
@@ -49,7 +50,9 @@ class ClashDiscord_Data(object):
                 emojis (list[obj]): list of emoji objects
     """
 
-    version = '2.1.1'
+    version = '2.2.1'
+    description = ("Clash of Clans discord bot for discord member management "
+                   "and various clash related info")
     prefix = '/'
     embed_color = 1752220
     back_emoji = '◀️'

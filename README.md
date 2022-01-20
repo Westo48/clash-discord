@@ -99,6 +99,9 @@ Once setup is complete you will be able to interact with ClashDiscord using the 
 
 - ## <a id="command-list-clashdiscord"></a>ClashDiscord
 
+  - ### Info
+    - client info overview
+      - gives a relevant overview for the client
   - ### User
     - client user claim
       - claims the user by discord user id within ClashDiscord
@@ -230,7 +233,9 @@ Once setup is complete you will be able to interact with ClashDiscord using the 
 
   - war info overview
     - displays war information
-    - uses active player's clan for all war commands
+    - uses active player's clan unless a linked clan role is mentioned
+  - war info scoreboard
+    - displays the scoreboard for the current war
   - war clan noattack
     - displays players that are missing attacks in war
   - war clan stars
