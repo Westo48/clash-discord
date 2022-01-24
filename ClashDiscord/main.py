@@ -5,6 +5,7 @@ from disnake.ext import commands
 import data.ClashDiscord_Client_Data as ClashDiscord_Client_Data
 import responders.ClashResponder as clash_responder
 import responders.DiscordResponder as discord_responder
+import utils.discord_utils as discord_utils
 import responders.RazBotDB_Responder as db_responder
 
 client_data = ClashDiscord_Client_Data.ClashDiscord_Data()
@@ -398,7 +399,9 @@ async def unit(inter):
     brief='player',
     description='get level information for a specified unit'
 )
-async def find(inter, unit_name: str):
+async def find(inter,
+               unit_name: str = commands.Param(
+                   autocomplete=discord_utils.autocomp_donation)):
     """
         get information about a specified player
 
@@ -432,7 +435,7 @@ async def find(inter, unit_name: str):
 
     player_obj = verification_payload['player_obj']
 
-    unit_obj = clash_responder.find_unit_name(player_obj, unit_name)
+    unit_obj = clash_responder.find_player_unit(player_obj, unit_name)
     field_dict_list = [discord_responder.unit_lvl(
         player_obj, unit_obj, unit_name,
         inter.client.emojis, client_data.emojis)]
@@ -1174,7 +1177,10 @@ async def unit(inter):
     brief='clan',
     description='shows who can donate the best requested troop'
 )
-async def donate(inter, unit_name: str, clan_role: disnake.Role = None):
+async def donate(inter,
+                 unit_name: str = commands.Param(
+                     autocomplete=discord_utils.autocomp_donation),
+                 clan_role: disnake.Role = None):
     """
         get information about mentioned clan
 
@@ -1259,7 +1265,10 @@ async def supertroop(inter):
     brief='clan',
     description="shows who in your clan has a specified super troop active"
 )
-async def donate(inter, unit_name: str, clan_role: disnake.Role = None):
+async def donate(inter,
+                 unit_name: str = commands.Param(
+                     autocomplete=discord_utils.autocomp_supertroop),
+                 clan_role: disnake.Role = None):
     """
         shows who in your clan has a specified super troop active
 
@@ -2699,7 +2708,7 @@ async def message(inter, channel: disnake.TextChannel, message: str):
 )
 async def player(
     inter, channel: disnake.TextChannel,
-    player_tag: str, message: str
+    message: str, player_tag: str
 ):
     """
         *leadership*
@@ -2817,9 +2826,13 @@ async def player(
     description=("announces message to specified channel, "
                  "pings all that can donate the requested unit")
 )
-async def donation(
-    inter, unit_name: str, channel: disnake.TextChannel,
-    message: str, clan_role: disnake.Role = None
+async def donate(
+    inter,
+    channel: disnake.TextChannel,
+    message: str,
+    unit_name: str = commands.Param(
+        autocomplete=discord_utils.autocomp_donation),
+    clan_role: disnake.Role = None
 ):
     """
         announces message to specified channel,
@@ -2950,8 +2963,12 @@ async def donation(
                  "pings all that have the requested super troop active")
 )
 async def supertroop(
-    inter, unit_name: str, channel: disnake.TextChannel,
-    message: str, clan_role: disnake.Role = None
+    inter,
+    channel: disnake.TextChannel,
+    message: str,
+    unit_name: str = commands.Param(
+        autocomplete=discord_utils.autocomp_supertroop),
+    clan_role: disnake.Role = None
 ):
     """
         announces message to specified channel,

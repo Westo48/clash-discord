@@ -1,15 +1,9 @@
 import re
 import datetime
 import math
+import utils.coc_utils as coc_utils
 from coc.errors import Maintenance, NotFound, PrivateWarLog, GatewayError
-from coc.enums import (
-    HERO_ORDER,
-    HERO_PETS_ORDER,
-    HOME_TROOP_ORDER,
-    SPELL_ORDER,
-    SIEGE_MACHINE_ORDER,
-    SUPER_TROOP_ORDER
-)
+
 
 th_lineup_dict = {
     14: 0,
@@ -103,7 +97,8 @@ def find_hero_name(unit_name):
 
     # formatting the name for P.E.K.K.A
     unit_name = re.sub('[.]', '', unit_name)
-    for hero_name in HERO_ORDER:
+    heroe_names = coc_utils.get_hero_order()
+    for hero_name in heroe_names:
         # formatting the name for P.E.K.K.A
         formatted_unit_name = re.sub('[.]', '', hero_name)
         if formatted_unit_name.lower() == unit_name.lower():
@@ -120,7 +115,8 @@ def find_pet_name(unit_name):
 
     # formatting the name for P.E.K.K.A
     unit_name = re.sub('[.]', '', unit_name)
-    for pet_name in HERO_PETS_ORDER:
+    pet_names = coc_utils.get_pet_order()
+    for pet_name in pet_names:
         # formatting the name for P.E.K.K.A
         formatted_unit_name = re.sub('[.]', '', pet_name)
         if formatted_unit_name.lower() == unit_name.lower():
@@ -137,7 +133,8 @@ def find_home_troop_name(unit_name):
 
     # formatting the name for P.E.K.K.A
     unit_name = re.sub('[.]', '', unit_name)
-    for troop_name in HOME_TROOP_ORDER:
+    home_troop_names = coc_utils.get_home_troop_order()
+    for troop_name in home_troop_names:
         # formatting the name for P.E.K.K.A
         formatted_unit_name = re.sub('[.]', '', troop_name)
         if formatted_unit_name.lower() == unit_name.lower():
@@ -154,7 +151,8 @@ def find_spell_name(unit_name):
 
     # formatting the name for P.E.K.K.A
     unit_name = re.sub('[.]', '', unit_name)
-    for spell_name in SPELL_ORDER:
+    spell_names = coc_utils.get_spell_order()
+    for spell_name in spell_names:
         # formatting the name for P.E.K.K.A
         formatted_unit_name = re.sub('[.]', '', spell_name)
         if formatted_unit_name.lower() == unit_name.lower():
@@ -171,7 +169,8 @@ def find_siege_name(unit_name):
 
     # formatting the name for P.E.K.K.A
     unit_name = re.sub('[.]', '', unit_name)
-    for siege_name in SIEGE_MACHINE_ORDER:
+    siege_names = coc_utils.get_siege_order()
+    for siege_name in siege_names:
         # formatting the name for P.E.K.K.A
         formatted_unit_name = re.sub('[.]', '', siege_name)
         if formatted_unit_name.lower() == unit_name.lower():
@@ -188,7 +187,8 @@ def find_super_troop_name(unit_name):
 
     # formatting the name for P.E.K.K.A
     unit_name = re.sub('[.]', '', unit_name)
-    for super_troop_name in SUPER_TROOP_ORDER:
+    super_troop_names = coc_utils.get_super_troop_order()
+    for super_troop_name in super_troop_names:
         # formatting the name for P.E.K.K.A
         formatted_unit_name = re.sub('[.]', '', super_troop_name)
         if formatted_unit_name.lower() == unit_name.lower():
