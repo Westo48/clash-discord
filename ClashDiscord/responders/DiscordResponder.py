@@ -481,6 +481,8 @@ def player_info(player_obj, discord_emoji_list, client_emoji_list):
                 'inline': True
             })
         if player_obj.legend_statistics.current_season:
+            legend_league_emoji = get_emoji(
+                player_obj.league.name, discord_emoji_list, client_emoji_list)
             field_dict_list.append({
                 'name': f"**{legend_league_emoji} Current Rank | Trophies**",
                 'value': (
@@ -490,6 +492,8 @@ def player_info(player_obj, discord_emoji_list, client_emoji_list):
                 'inline': True
             })
         if player_obj.legend_statistics.previous_season:
+            legend_league_emoji = get_emoji(
+                player_obj.league.name, discord_emoji_list, client_emoji_list)
             field_dict_list.append({
                 'name': f"**{legend_league_emoji} Previous Rank | Trophies**",
                 'value': (
@@ -1233,11 +1237,11 @@ def donation(clan_obj, donator_list, unit_name, discord_emoji_list, client_emoji
     return field_dict_list
 
 
-def super_troop_search(clan_obj, donor_list, super_troop_obj,
+def super_troop_search(clan_obj, donor_list, super_troop_name,
                        discord_emoji_list, client_emoji_list):
 
     unit_emoji = get_emoji(
-        super_troop_obj.name, discord_emoji_list, client_emoji_list)
+        super_troop_name, discord_emoji_list, client_emoji_list)
 
     if len(donor_list) == 0:
         return [{

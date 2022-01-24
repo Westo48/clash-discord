@@ -432,7 +432,7 @@ async def find(inter, unit_name: str):
 
     player_obj = verification_payload['player_obj']
 
-    unit_obj = clash_responder.find_unit(player_obj, unit_name)
+    unit_obj = clash_responder.find_unit_name(player_obj, unit_name)
     field_dict_list = [discord_responder.unit_lvl(
         player_obj, unit_obj, unit_name,
         inter.client.emojis, client_data.emojis)]
@@ -1265,6 +1265,7 @@ async def donate(inter, unit_name: str, clan_role: disnake.Role = None):
 
         Parameters
         ----------
+        unit_name: name of unit to search clan donations
         clan_role (optional): clan role to use linked clan
     """
 
@@ -1325,11 +1326,10 @@ async def donate(inter, unit_name: str, clan_role: disnake.Role = None):
 
     clan_obj = verification_payload['clan_obj']
 
-    super_troop_obj = clash_responder.find_super_troop(
-        player_obj, unit_name)
+    super_troop_name = clash_responder.find_super_troop_name(unit_name)
 
     # super troop was not found
-    if super_troop_obj is None:
+    if super_troop_name is None:
         embed_list = discord_responder.embed_message(
             Embed=disnake.Embed,
             color=disnake.Color(client_data.embed_color),
@@ -1349,10 +1349,10 @@ async def donate(inter, unit_name: str, clan_role: disnake.Role = None):
         return
 
     donor_list = await clash_responder.active_super_troop_search(
-        super_troop_obj, clan_obj, coc_client)
+        clan_obj, super_troop_name, coc_client)
 
     field_dict_list = discord_responder.super_troop_search(
-        clan_obj, donor_list, super_troop_obj,
+        clan_obj, donor_list, super_troop_name,
         inter.client.emojis, client_data.emojis
     )
 
@@ -2766,6 +2766,275 @@ async def player(
 
     message += discord_responder.user_player_ping(
         player, inter.guild.members)
+
+    try:
+        await channel.send(content=message)
+    except:
+        field_dict_list = [{
+            "name": "message could not be sent",
+            "value": f"please ensure bot is in channel {channel.mention}"
+        }]
+        embed_list = discord_responder.embed_message(
+            Embed=disnake.Embed,
+            color=disnake.Color(client_data.embed_color),
+            icon_url=inter.bot.user.avatar.url,
+            title=None,
+            description=None,
+            bot_prefix=inter.bot.command_prefix,
+            bot_user_name=inter.bot.user.name,
+            thumbnail=None,
+            field_list=field_dict_list,
+            image_url=None,
+            author_display_name=inter.author.display_name,
+            author_avatar_url=inter.author.avatar.url
+        )
+        await discord_responder.send_embed_list(embed_list, inter)
+
+        return
+
+    field_dict_list = [{
+        "name": "message sent",
+        "value": f"channel {channel.mention}"
+    }]
+    embed_list = discord_responder.embed_message(
+        Embed=disnake.Embed,
+        color=disnake.Color(client_data.embed_color),
+        icon_url=inter.bot.user.avatar.url,
+        title=None,
+        description=None,
+        bot_prefix=inter.bot.command_prefix,
+        bot_user_name=inter.bot.user.name,
+        thumbnail=None,
+        field_list=field_dict_list,
+        image_url=None,
+        author_display_name=inter.author.display_name,
+        author_avatar_url=inter.author.avatar.url
+    )
+    await discord_responder.send_embed_list(embed_list, inter)
+
+
+@announce.sub_command(
+    description=("announces message to specified channel, "
+                 "pings all that can donate the requested unit")
+)
+async def donation(
+    inter, unit_name: str, channel: disnake.TextChannel,
+    message: str, clan_role: disnake.Role = None
+):
+    """
+        announces message to specified channel,
+        pings all that can donate the requested unit
+
+        Parameters
+        ----------
+        unit_name: name of unit to search clan donations
+        channel: channel to announce the message
+        message: message to send the specified channel
+        clan_role (optional): clan role to use linked clan
+    """
+
+    # role not mentioned
+    if clan_role is None:
+        db_player_obj = db_responder.read_player_active(inter.author.id)
+
+        verification_payload = (
+            await discord_responder.clan_verification(
+                db_player_obj, inter.author, coc_client)
+        )
+    # role has been mentioned
+    else:
+        verification_payload = (
+            await discord_responder.clan_role_verification(
+                clan_role, coc_client))
+
+    if not verification_payload['verified']:
+        embed_list = discord_responder.embed_message(
+            Embed=disnake.Embed,
+            color=disnake.Color(client_data.embed_color),
+            icon_url=inter.bot.user.avatar.url,
+            title=None,
+            description=None,
+            bot_prefix=inter.bot.command_prefix,
+            bot_user_name=inter.bot.user.name,
+            thumbnail=None,
+            field_list=verification_payload['field_dict_list'],
+            image_url=None,
+            author_display_name=inter.author.display_name,
+            author_avatar_url=inter.author.avatar.url
+        )
+
+        await discord_responder.send_embed_list(embed_list, inter)
+        return
+
+    clan = verification_payload['clan_obj']
+
+    donator_list = await clash_responder.donation(
+        clan, unit_name, coc_client)
+
+    # unit is either hero, pet or is an incorrect unit
+    if donator_list is None:
+        await inter.edit_original_message(
+            content=f"{unit_name} is not a valid donatable unit")
+        return
+
+    formatted_unit_name = clash_responder.find_unit_name(unit_name)
+
+    unit_emoji = discord_responder.get_emoji(
+        formatted_unit_name, inter.client.emojis, client_data.emojis)
+
+    message += "\n\n"
+    message += f"{unit_emoji} **donors**\n\n"
+
+    # nobody in the clan can donate the requested unit
+    if len(donator_list) == 0:
+        message += f"{clan.name} is unable to donate {unit_emoji}"
+
+    else:
+
+        for donor in donator_list:
+            donor_ping = discord_responder.user_player_ping(
+                donor.player_obj, inter.guild.members)
+            message += (f"{donor_ping}, ")
+
+        # cuts the last two characters from the string ', '
+        message = message[:-2]
+
+    try:
+        await channel.send(content=message)
+    except:
+        field_dict_list = [{
+            "name": "message could not be sent",
+            "value": f"please ensure bot is in channel {channel.mention}"
+        }]
+        embed_list = discord_responder.embed_message(
+            Embed=disnake.Embed,
+            color=disnake.Color(client_data.embed_color),
+            icon_url=inter.bot.user.avatar.url,
+            title=None,
+            description=None,
+            bot_prefix=inter.bot.command_prefix,
+            bot_user_name=inter.bot.user.name,
+            thumbnail=None,
+            field_list=field_dict_list,
+            image_url=None,
+            author_display_name=inter.author.display_name,
+            author_avatar_url=inter.author.avatar.url
+        )
+        await discord_responder.send_embed_list(embed_list, inter)
+
+        return
+
+    field_dict_list = [{
+        "name": "message sent",
+        "value": f"channel {channel.mention}"
+    }]
+    embed_list = discord_responder.embed_message(
+        Embed=disnake.Embed,
+        color=disnake.Color(client_data.embed_color),
+        icon_url=inter.bot.user.avatar.url,
+        title=None,
+        description=None,
+        bot_prefix=inter.bot.command_prefix,
+        bot_user_name=inter.bot.user.name,
+        thumbnail=None,
+        field_list=field_dict_list,
+        image_url=None,
+        author_display_name=inter.author.display_name,
+        author_avatar_url=inter.author.avatar.url
+    )
+    await discord_responder.send_embed_list(embed_list, inter)
+
+
+@announce.sub_command(
+    description=("announces message to specified channel, "
+                 "pings all that have the requested super troop active")
+)
+async def supertroop(
+    inter, unit_name: str, channel: disnake.TextChannel,
+    message: str, clan_role: disnake.Role = None
+):
+    """
+        announces message to specified channel,
+        pings all that have the requested super troop active
+
+        Parameters
+        ----------
+        unit_name: name of unit to search clan donations
+        channel: channel to announce the message
+        message: message to send the specified channel
+        clan_role (optional): clan role to use linked clan
+    """
+
+    # role not mentioned
+    if clan_role is None:
+        db_player_obj = db_responder.read_player_active(inter.author.id)
+
+        verification_payload = (
+            await discord_responder.clan_verification(
+                db_player_obj, inter.author, coc_client)
+        )
+    # role has been mentioned
+    else:
+        verification_payload = (
+            await discord_responder.clan_role_verification(
+                clan_role, coc_client))
+
+    if not verification_payload['verified']:
+        embed_list = discord_responder.embed_message(
+            Embed=disnake.Embed,
+            color=disnake.Color(client_data.embed_color),
+            icon_url=inter.bot.user.avatar.url,
+            title=None,
+            description=None,
+            bot_prefix=inter.bot.command_prefix,
+            bot_user_name=inter.bot.user.name,
+            thumbnail=None,
+            field_list=verification_payload['field_dict_list'],
+            image_url=None,
+            author_display_name=inter.author.display_name,
+            author_avatar_url=inter.author.avatar.url
+        )
+
+        await discord_responder.send_embed_list(embed_list, inter)
+        return
+
+    clan = verification_payload['clan_obj']
+
+    super_troop_name = clash_responder.find_super_troop_name(unit_name)
+
+    if super_troop_name is None:
+        await inter.edit_original_message(
+            content=f"{unit_name} is not super troop")
+        return
+
+    donator_list = await clash_responder.active_super_troop_search(
+        clan, super_troop_name, coc_client)
+
+    # unit is either hero, pet or is an incorrect unit
+    if donator_list is None:
+        await inter.edit_original_message(
+            content=f"{unit_name} is not a super troop")
+        return
+
+    unit_emoji = discord_responder.get_emoji(
+        super_troop_name, inter.client.emojis, client_data.emojis)
+
+    message += "\n\n"
+    message += f"{unit_emoji} **donors**\n\n"
+
+    # nobody in the clan can donate the requested unit
+    if len(donator_list) == 0:
+        message += f"{clan.name} is unable to donate {unit_emoji}"
+
+    else:
+
+        for donor in donator_list:
+            donor_ping = discord_responder.user_player_ping(
+                donor, inter.guild.members)
+            message += (f"{donor_ping}, ")
+
+        # cuts the last two characters from the string ', '
+        message = message[:-2]
 
     try:
         await channel.send(content=message)

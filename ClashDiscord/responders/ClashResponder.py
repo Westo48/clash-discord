@@ -2,6 +2,14 @@ import re
 import datetime
 import math
 from coc.errors import Maintenance, NotFound, PrivateWarLog, GatewayError
+from coc.enums import (
+    HERO_ORDER,
+    HERO_PETS_ORDER,
+    HOME_TROOP_ORDER,
+    SPELL_ORDER,
+    SIEGE_MACHINE_ORDER,
+    SUPER_TROOP_ORDER
+)
 
 th_lineup_dict = {
     14: 0,
@@ -55,7 +63,140 @@ async def verify_token(api_key, player_tag, coc_client):
     return player_obj
 
 
-def find_unit_name(unit_name, unit_list):
+def find_unit_name(unit_name):
+    """
+        take in unit name and list of units
+        odered list of unit names from coc.py
+        then returns the unit name provided by coc.py,
+        returns None if not found
+    """
+
+    found_unit_name = find_hero_name(unit_name)
+    if found_unit_name is not None:
+        return found_unit_name
+
+    found_unit_name = find_pet_name(unit_name)
+    if found_unit_name is not None:
+        return found_unit_name
+
+    found_unit_name = find_home_troop_name(unit_name)
+    if found_unit_name is not None:
+        return found_unit_name
+
+    found_unit_name = find_spell_name(unit_name)
+    if found_unit_name is not None:
+        return found_unit_name
+
+    found_unit_name = find_siege_name(unit_name)
+    if found_unit_name is not None:
+        return found_unit_name
+
+    return None
+
+
+def find_hero_name(unit_name):
+    """
+        take in unit name
+        then returns the hero name provided by coc.py,
+        returns None if not found
+    """
+
+    # formatting the name for P.E.K.K.A
+    unit_name = re.sub('[.]', '', unit_name)
+    for hero_name in HERO_ORDER:
+        # formatting the name for P.E.K.K.A
+        formatted_unit_name = re.sub('[.]', '', hero_name)
+        if formatted_unit_name.lower() == unit_name.lower():
+            return hero_name
+    return None
+
+
+def find_pet_name(unit_name):
+    """
+        take in unit name
+        then returns the pet name provided by coc.py,
+        returns None if not found
+    """
+
+    # formatting the name for P.E.K.K.A
+    unit_name = re.sub('[.]', '', unit_name)
+    for pet_name in HERO_PETS_ORDER:
+        # formatting the name for P.E.K.K.A
+        formatted_unit_name = re.sub('[.]', '', pet_name)
+        if formatted_unit_name.lower() == unit_name.lower():
+            return pet_name
+    return None
+
+
+def find_home_troop_name(unit_name):
+    """
+        take in unit name
+        then returns the troop name provided by coc.py,
+        returns None if not found
+    """
+
+    # formatting the name for P.E.K.K.A
+    unit_name = re.sub('[.]', '', unit_name)
+    for troop_name in HOME_TROOP_ORDER:
+        # formatting the name for P.E.K.K.A
+        formatted_unit_name = re.sub('[.]', '', troop_name)
+        if formatted_unit_name.lower() == unit_name.lower():
+            return troop_name
+    return None
+
+
+def find_spell_name(unit_name):
+    """
+        take in unit name
+        then returns the spell name provided by coc.py,
+        returns None if not found
+    """
+
+    # formatting the name for P.E.K.K.A
+    unit_name = re.sub('[.]', '', unit_name)
+    for spell_name in SPELL_ORDER:
+        # formatting the name for P.E.K.K.A
+        formatted_unit_name = re.sub('[.]', '', spell_name)
+        if formatted_unit_name.lower() == unit_name.lower():
+            return spell_name
+    return None
+
+
+def find_siege_name(unit_name):
+    """
+        take in unit name
+        then returns the siege name provided by coc.py,
+        returns None if not found
+    """
+
+    # formatting the name for P.E.K.K.A
+    unit_name = re.sub('[.]', '', unit_name)
+    for siege_name in SIEGE_MACHINE_ORDER:
+        # formatting the name for P.E.K.K.A
+        formatted_unit_name = re.sub('[.]', '', siege_name)
+        if formatted_unit_name.lower() == unit_name.lower():
+            return siege_name
+    return None
+
+
+def find_super_troop_name(unit_name):
+    """
+        take in unit name
+        then returns the super troop name provided by coc.py,
+        returns None if not found
+    """
+
+    # formatting the name for P.E.K.K.A
+    unit_name = re.sub('[.]', '', unit_name)
+    for super_troop_name in SUPER_TROOP_ORDER:
+        # formatting the name for P.E.K.K.A
+        formatted_unit_name = re.sub('[.]', '', super_troop_name)
+        if formatted_unit_name.lower() == unit_name.lower():
+            return super_troop_name
+    return None
+
+
+def find_unit(unit_name, unit_list):
     """
         take in unit name and list of units
         odered list of unit objects from coc.py
@@ -86,7 +227,7 @@ def find_hero(player_obj, hero_name):
             None: if hero is not found returns none
     """
     # search in heroes
-    coc_hero_obj = find_unit_name(hero_name, player_obj.heroes)
+    coc_hero_obj = find_unit(hero_name, player_obj.heroes)
 
     # hero is found based on name retun hero object
     if coc_hero_obj:
@@ -109,7 +250,7 @@ def find_pet(player_obj, pet_name):
             None: if pet is not found returns none
     """
     # search in pets
-    coc_pet_obj = find_unit_name(pet_name, player_obj.hero_pets)
+    coc_pet_obj = find_unit(pet_name, player_obj.hero_pets)
 
     # pet is found based on name retun pet object
     if coc_pet_obj:
@@ -132,7 +273,7 @@ def find_home_troop(player_obj, troop_name):
             None: if troop is not found returns none
     """
     # search in home troops
-    coc_troop_obj = find_unit_name(troop_name, player_obj.home_troops)
+    coc_troop_obj = find_unit(troop_name, player_obj.home_troops)
 
     # troop is found based on name retun troop object
     if coc_troop_obj:
@@ -155,7 +296,7 @@ def find_siege(player_obj, siege_name):
             None: if siege is not found returns none
     """
     # search in sieges
-    coc_siege_obj = find_unit_name(siege_name, player_obj.siege_machines)
+    coc_siege_obj = find_unit(siege_name, player_obj.siege_machines)
 
     # siege is found based on name retun siege object
     if coc_siege_obj:
@@ -178,7 +319,7 @@ def find_super_troop(player_obj, troop_name):
             None: if super troop is not found returns none
     """
     # search in super troops
-    coc_troop_obj = find_unit_name(troop_name, player_obj.super_troops)
+    coc_troop_obj = find_unit(troop_name, player_obj.super_troops)
 
     # super troop is found based on name retun super troop object
     if coc_troop_obj:
@@ -201,7 +342,7 @@ def find_spell(player_obj, spell_name):
             None: if spell is not found returns none
     """
     # search in spells
-    coc_spell_obj = find_unit_name(spell_name, player_obj.spells)
+    coc_spell_obj = find_unit(spell_name, player_obj.spells)
 
     # spell is found based on name retun spell object
     if coc_spell_obj:
@@ -224,7 +365,7 @@ def find_builder_troop(player_obj, troop_name):
             None: if troop is not found returns none
     """
     # search in builder troops
-    coc_troop_obj = find_unit_name(troop_name, player_obj.builder_troops)
+    coc_troop_obj = find_unit(troop_name, player_obj.builder_troops)
 
     # troop is found based on name retun troop object
     if coc_troop_obj:
@@ -234,7 +375,7 @@ def find_builder_troop(player_obj, troop_name):
     return None
 
 
-def find_unit(player_obj, unit_name):
+def find_player_unit(player_obj, unit_name):
     """
         finds a unit based on unformatted name given
 
@@ -378,35 +519,41 @@ async def donation(clan_obj, unit_name, coc_client):
             self.player_obj = player_obj
             self.unit_obj = unit_obj
 
+    # get the valid unit name
+    unit_found = False
+    found_unit_name = None
+
+    # checking for troops and sieges
+    if not unit_found:
+        found_unit_name = find_home_troop_name(unit_name)
+        if found_unit_name is not None:
+            unit_found = True
+
+    # checking for spells
+    if not unit_found:
+        found_unit_name = find_spell_name(unit_name)
+        if found_unit_name is not None:
+            unit_found = True
+
+    # requested unit was not found in troops, sieges, or spells
+    if not unit_found:
+        return None
+
+    unit_name = found_unit_name
+
     # get a member list to make less overall responses
     member_list = []
     for member in clan_obj.members:
         player_obj = await coc_client.get_player(member.tag)
 
         # checking if they have the specified unit
-        unit_obj = find_unit(player_obj, unit_name)
+        unit_obj = find_player_unit(player_obj, unit_name)
         if unit_obj:
             member_list.append(Donor(player_obj, unit_obj))
 
     # if nobody has the requested unit
     if len(member_list) == 0:
         return member_list
-
-    # if hero has been requested return None
-    if find_hero(member_list[0].player_obj, member_list[0].unit_obj.name):
-        return None
-
-    # if pet has been requested return None
-    if find_pet(member_list[0].player_obj, member_list[0].unit_obj.name):
-        return None
-
-    # if super troop has been requested return None
-    if member_list[0].unit_obj.is_super_troop:
-        return None
-
-    # if builder has been requested return None
-    if member_list[0].unit_obj.is_builder_base:
-        return None
 
     donor_max = max(member.unit_obj.level for member in member_list)
 
@@ -444,7 +591,7 @@ def clan_donation_upgrade(clan_obj):
         return 2
 
 
-async def active_super_troop_search(super_troop_obj, clan_obj, coc_client):
+async def active_super_troop_search(clan_obj, super_troop_name, coc_client):
     """
         Takes in the unit name and clan object, returns a list of players
         who have super troop active.
@@ -452,7 +599,7 @@ async def active_super_troop_search(super_troop_obj, clan_obj, coc_client):
         Returns an empty list if nobody has the super troop active.
 
         Args:
-            super_troop_obj (obj): coc.py super troop object
+            super_troop_name (str): super troop name
             clan_obj (obj): coc.py clan object
             coc_client (obj): coc.py client
 
@@ -464,7 +611,7 @@ async def active_super_troop_search(super_troop_obj, clan_obj, coc_client):
     # getting a list of members with the given super_troop activated
     for clan_member_obj in clan_obj.members:
         member_obj = await get_player(clan_member_obj.tag, coc_client)
-        active_super_troop = member_obj.get_troop(super_troop_obj.name)
+        active_super_troop = member_obj.get_troop(super_troop_name)
         if not active_super_troop:
             continue
         if active_super_troop.is_active:
@@ -496,7 +643,7 @@ async def get_war(clan_tag, coc_client):
 def war_clan_scoreboard(war, war_clan, star_emoji):
     # clan: stars/potential stars, attacks/potential attacks, total destruction
     field_dict_list = []
-    
+
     field_dict_list.append({
         'name': f"{war_clan.name}",
         # value will be "star_count/potential_stars"
@@ -507,7 +654,7 @@ def war_clan_scoreboard(war, war_clan, star_emoji):
             f"Destruction: {round(war_clan.destruction, 2)}%"
         )
     })
-    
+
     return field_dict_list
 
 
