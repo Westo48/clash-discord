@@ -153,25 +153,29 @@ Once setup is complete you will be able to interact with ClashDiscord using the 
   - discord help info
     - displays relevant help-text regarding what commands can be run
   - discord announce message `channel` `message`
+    - *restricted to leaders and co-leaders*
     - announces message to specified channel
-    - restricted to leaders and co-leaders
-  - discord announce player `channel` `player tag` `message`
-    - announces message to specified channel
-    - restricted to leaders and co-leaders
+  - discord announce player `channel` `message` `player tag`
+    - *restricted to leaders and co-leaders*
+    - announces message to specified channel, pings the requested player's user
+  - discord announce donate `channel` `message` `unit name`
+    - announces message to specified channel, pings all users that can donate the requested unit
+  - discord announce supertroop `channel` `message` `super troop name`
+    - announces message to specified channel, pings all users that have the requested super troop active
   - discord announce war `channel` `message`
+    - *restricted to leaders and co-leaders*
     - announces message to specified channel, pings all in current war
-    - restricted to leaders and co-leaders
   - discord announce warnoatk `channel` `message`
+    - *restricted to leaders and co-leaders*
     - announces message to channel, pings all in war missing attacks
-    - restricted to leaders and co-leaders
   - discord role 
     - adds and removes necessary roles in discord based on claimed players clan and role in that clan
   - discord role member `membermention`
+    - *restricted to leaders and co-leaders*
     - adds and removes necessary roles in discord based on claimed players clan and role in that clan for mentioned discord user
-    - restricted to leaders and co-leaders
   - discord role all
+    - *restricted to leaders and co-leaders*
     - adds and removes necessary roles in discord based on claimed players clan and role in that clan for all users in guild
-    - restricted to leaders and co-leaders
   - discord user player `player tag`
     - returns the user linked to a requested player
     - example
@@ -181,17 +185,17 @@ Once setup is complete you will be able to interact with ClashDiscord using the 
 
 - ## <a id="command-list-player"></a>Player
 
-  - player info self
-    - shows player information based on your active player
+  - player info user
+    - shows player information based on your _or mentioned user's_ active player
   - player info find `player tag`
     - displays player information for requested player tag
     - example
       - `/player info find #RGQ8RGU9`
       - `/player info find RGQ8RGU9`
-  - player info member `user`
-    - shows player information based on the mentioned user's active player
-  - player unit level `unit name`
-    - shows the level of the requested unit, what the max for your town hall is, as well as the overall max
+  - player info recruit `player tag`
+    - displays player recruit information for requested player tag
+  - player unit find `unit name`
+    - shows the level, town hall max, and overall max levels for the requested unit
     - you can search troops, spells, and heroes
     - example
       - `/player unit level hog rider`
@@ -213,12 +217,18 @@ Once setup is complete you will be able to interact with ClashDiscord using the 
       - `/clan info find JJRJGVR0`
   - clan info mention `clan role`
     - displays clan information for clan linked to the clan role mentioned
-  - clan member lineup
+  - clan lineup overview
+    - *restricted to leaders and co-leaders*
     - displays clan's town hall lineup
-    - restricted to leaders and co-leaders
-  - clan member warpreference
+  - clan lineup member
+    - *restricted to leaders and co-leaders*
+    - displays clan's lineup for each member
+  - clan warpreference overview
+    - *restricted to leaders and co-leaders*
     - displays rundown of clan member's war preference
-    - restricted to leaders and co-leaders
+  - clan warpreference member
+    - *restricted to leaders and co-leaders*
+    - displays each clan member's war preference
   - clan unit donate `unit name`
     - shows who can donate the best of a specified unit
     - uses active player's clan for all clan commands
@@ -248,6 +258,8 @@ Once setup is complete you will be able to interact with ClashDiscord using the 
     - displays the requested member score for war
   - war score clan
     - displays every war member's score for war
+  - war lineup overview
+    - displays a lineup overview for your clan and your opponent
   - war lineup clan
     - displays a lineup for your clan and your opponent
   - war lineup member
@@ -257,12 +269,15 @@ Once setup is complete you will be able to interact with ClashDiscord using the 
 
   - cwl lineup overview
     - displays a lineup for clans in your cwl group
-    - uses active player's clan for all cwlgroup and cwlwar commands
-  - cwl score self
-    - lists your player's score for each war in cwl
-  - cwl member score `mention user`
-    - lists user's active player's score for each war in cwl
+  - cwl lineup clan `clan tag`
+    - displays a lineup for the requested clan in cwl
+  - cwl lineup member
+    - *restricted to leaders and co-leaders*
+    - displays a lineup each member of each clan in cwl
+  - cwl score user
+    - lists your _or the mentioned user's_ active player's score for each war in cwl
   - cwl clan score
+    - *restricted to leaders and co-leaders*
     - displays every cwl member's score
 
 # <a id="contributing"></a>Contributing

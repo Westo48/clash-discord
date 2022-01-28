@@ -1,7 +1,7 @@
 import re
 import datetime
 import math
-import utils.coc_utils as coc_utils
+from utils import coc_utils
 from coc.errors import Maintenance, NotFound, PrivateWarLog, GatewayError
 
 
@@ -925,6 +925,16 @@ def find_defender(war_clan_obj, defender_tag):
         if defender_tag == defender_member_obj.tag:
             return defender_member_obj
     return None
+
+
+def string_attack(attack_count):
+    """
+        returns 'attack' or 'attacks' based on the number of attacks
+    """
+    if attack_count == 1:
+        return 'attack'
+    else:
+        return 'attacks'
 
 
 def string_attack_times(member_attack_list):

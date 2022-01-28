@@ -169,6 +169,26 @@ def select_user_all():
     return data
 
 
+def select_user_admin_all():
+    """
+        user db discord_id, admin, and super_user of all admin users
+
+        Returns:
+            discord_id: user's discord id in db
+            admin: 1 or 0 (T or F) if user is admin
+            super_user: 1 or 0 (T or F) if user is super user
+    """
+    # set up the query
+    query = (
+        f"SELECT discord_id, admin, super_user FROM user "
+        f"WHERE admin = true;"
+    )
+
+    # execute and return query
+    data = preset.select_list(query)
+    return data
+
+
 def select_user_from_tag(player_tag):
     """
         Takes in a player tag and returns discord_id, admin, and super_user

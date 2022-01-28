@@ -2,11 +2,11 @@ import disnake
 import coc
 from asyncio.tasks import sleep
 from disnake.ext import commands
-import data.ClashDiscord_Client_Data as ClashDiscord_Client_Data
+from data import ClashDiscord_Client_Data
 import responders.ClashResponder as clash_responder
 import responders.DiscordResponder as discord_responder
-import utils.discord_utils as discord_utils
 import responders.RazBotDB_Responder as db_responder
+from utils import discord_utils
 
 client_data = ClashDiscord_Client_Data.ClashDiscord_Data()
 
@@ -91,16 +91,9 @@ async def clashofstats(inter, player_tag: str):
 
     if player is None:
         embed_list = discord_responder.embed_message(
-            Embed=disnake.Embed,
-            color=disnake.Color(client_data.embed_color),
             icon_url=inter.bot.user.avatar.url,
-            title=None,
             description=f"could not find player with tag {player_tag}",
-            bot_prefix=inter.bot.command_prefix,
-            bot_user_name=inter.bot.user.name,
-            thumbnail=None,
-            field_list=[],
-            image_url=None,
+            bot_user_name=inter.me.display_name,
             author_display_name=inter.author.display_name,
             author_avatar_url=inter.author.avatar.url
         )
@@ -130,16 +123,9 @@ async def chocolateclash(inter, player_tag: str):
 
     if player is None:
         embed_list = discord_responder.embed_message(
-            Embed=disnake.Embed,
-            color=disnake.Color(client_data.embed_color),
             icon_url=inter.bot.user.avatar.url,
-            title=None,
             description=f"could not find player with tag {player_tag}",
-            bot_prefix=inter.bot.command_prefix,
-            bot_user_name=inter.bot.user.name,
-            thumbnail=None,
-            field_list=[],
-            image_url=None,
+            bot_user_name=inter.me.display_name,
             author_display_name=inter.author.display_name,
             author_avatar_url=inter.author.avatar.url
         )
@@ -202,16 +188,9 @@ async def user(inter, user: disnake.User = None):
         db_player_obj, user, coc_client)
     if not verification_payload['verified']:
         embed_list = discord_responder.embed_message(
-            Embed=disnake.Embed,
-            color=disnake.Color(client_data.embed_color),
             icon_url=inter.bot.user.avatar.url,
-            title=None,
-            description=None,
-            bot_prefix=inter.bot.command_prefix,
-            bot_user_name=inter.bot.user.name,
-            thumbnail=None,
+            bot_user_name=inter.me.display_name,
             field_list=verification_payload['field_dict_list'],
-            image_url=None,
             author_display_name=inter.author.display_name,
             author_avatar_url=inter.author.avatar.url
         )
@@ -225,16 +204,11 @@ async def user(inter, user: disnake.User = None):
         player_obj, inter.client.emojis, client_data.emojis)
 
     embed_list = discord_responder.embed_message(
-        Embed=disnake.Embed,
-        color=disnake.Color(client_data.embed_color),
         icon_url=inter.bot.user.avatar.url,
         title=f"{player_obj.name} {player_obj.tag}",
-        description=None,
-        bot_prefix=inter.bot.command_prefix,
-        bot_user_name=inter.bot.user.name,
+        bot_user_name=inter.me.display_name,
         thumbnail=player_obj.league.icon,
         field_list=field_dict_list,
-        image_url=None,
         author_display_name=inter.author.display_name,
         author_avatar_url=inter.author.avatar.url
     )
@@ -259,16 +233,9 @@ async def find(inter, player_tag: str):
 
     if player_obj is None:
         embed_list = discord_responder.embed_message(
-            Embed=disnake.Embed,
-            color=disnake.Color(client_data.embed_color),
             icon_url=inter.bot.user.avatar.url,
-            title=None,
             description=f"could not find player with tag {player_tag}",
-            bot_prefix=inter.bot.command_prefix,
-            bot_user_name=inter.bot.user.name,
-            thumbnail=None,
-            field_list=[],
-            image_url=None,
+            bot_user_name=inter.me.display_name,
             author_display_name=inter.author.display_name,
             author_avatar_url=inter.author.avatar.url
         )
@@ -280,16 +247,11 @@ async def find(inter, player_tag: str):
         player_obj, inter.client.emojis, client_data.emojis)
 
     embed_list = discord_responder.embed_message(
-        Embed=disnake.Embed,
-        color=disnake.Color(client_data.embed_color),
         icon_url=inter.bot.user.avatar.url,
         title=f"{player_obj.name} {player_obj.tag}",
-        description=None,
-        bot_prefix=inter.bot.command_prefix,
-        bot_user_name=inter.bot.user.name,
+        bot_user_name=inter.me.display_name,
         thumbnail=player_obj.league.icon,
         field_list=field_dict_list,
-        image_url=None,
         author_display_name=inter.author.display_name,
         author_avatar_url=inter.author.avatar.url
     )
@@ -314,16 +276,9 @@ async def recruit(inter, player_tag: str):
 
     if player_obj is None:
         embed_list = discord_responder.embed_message(
-            Embed=disnake.Embed,
-            color=disnake.Color(client_data.embed_color),
             icon_url=inter.bot.user.avatar.url,
-            title=None,
             description=f"could not find player with tag {player_tag}",
-            bot_prefix=inter.bot.command_prefix,
-            bot_user_name=inter.bot.user.name,
-            thumbnail=None,
-            field_list=[],
-            image_url=None,
+            bot_user_name=inter.me.display_name,
             author_display_name=inter.author.display_name,
             author_avatar_url=inter.author.avatar.url
         )
@@ -337,16 +292,11 @@ async def recruit(inter, player_tag: str):
     embed_list = []
 
     embed_list.extend(discord_responder.embed_message(
-        Embed=disnake.Embed,
-        color=disnake.Color(client_data.embed_color),
         icon_url=inter.bot.user.avatar.url,
         title=f"{player_obj.name} {player_obj.tag}",
-        description=None,
-        bot_prefix=inter.bot.command_prefix,
-        bot_user_name=inter.bot.user.name,
+        bot_user_name=inter.me.display_name,
         thumbnail=player_obj.league.icon,
         field_list=player_field_dict_list,
-        image_url=None,
         author_display_name=inter.author.display_name,
         author_avatar_url=inter.author.avatar.url
     ))
@@ -355,16 +305,11 @@ async def recruit(inter, player_tag: str):
         player_obj, inter.client.emojis, client_data.emojis)
 
     embed_list.extend(discord_responder.embed_message(
-        Embed=disnake.Embed,
-        color=disnake.Color(client_data.embed_color),
         icon_url=inter.bot.user.avatar.url,
         title=f"{player_obj.name} units",
-        description=None,
-        bot_prefix=inter.bot.command_prefix,
-        bot_user_name=inter.bot.user.name,
+        bot_user_name=inter.me.display_name,
         thumbnail=player_obj.league.icon,
         field_list=unit_field_dict_list,
-        image_url=None,
         author_display_name=inter.author.display_name,
         author_avatar_url=inter.author.avatar.url
     ))
@@ -416,16 +361,9 @@ async def find(inter,
         db_player_obj, inter.author, coc_client)
     if not verification_payload['verified']:
         embed_list = discord_responder.embed_message(
-            Embed=disnake.Embed,
-            color=disnake.Color(client_data.embed_color),
             icon_url=inter.bot.user.avatar.url,
-            title=None,
-            description=None,
-            bot_prefix=inter.bot.command_prefix,
-            bot_user_name=inter.bot.user.name,
-            thumbnail=None,
+            bot_user_name=inter.me.display_name,
             field_list=verification_payload['field_dict_list'],
-            image_url=None,
             author_display_name=inter.author.display_name,
             author_avatar_url=inter.author.avatar.url
         )
@@ -449,16 +387,11 @@ async def find(inter,
         title_string = f"{player_obj.name} {unit_obj.name}"
 
     embed_list = discord_responder.embed_message(
-        Embed=disnake.Embed,
-        color=disnake.Color(client_data.embed_color),
         icon_url=inter.bot.user.avatar.url,
         title=title_string,
-        description=None,
-        bot_prefix=inter.bot.command_prefix,
-        bot_user_name=inter.bot.user.name,
+        bot_user_name=inter.me.display_name,
         thumbnail=player_obj.league.icon,
         field_list=field_dict_list,
-        image_url=None,
         author_display_name=inter.author.display_name,
         author_avatar_url=inter.author.avatar.url
     )
@@ -491,16 +424,9 @@ async def all(inter, user: disnake.User = None,
         db_player_obj, user, coc_client)
     if not verification_payload['verified']:
         embed_list = discord_responder.embed_message(
-            Embed=disnake.Embed,
-            color=disnake.Color(client_data.embed_color),
             icon_url=inter.bot.user.avatar.url,
-            title=None,
-            description=None,
-            bot_prefix=inter.bot.command_prefix,
-            bot_user_name=inter.bot.user.name,
-            thumbnail=None,
+            bot_user_name=inter.me.display_name,
             field_list=verification_payload['field_dict_list'],
-            image_url=None,
             author_display_name=inter.author.display_name,
             author_avatar_url=inter.author.avatar.url
         )
@@ -536,16 +462,11 @@ async def all(inter, user: disnake.User = None,
         )
 
     embed_list = discord_responder.embed_message(
-        Embed=disnake.Embed,
-        color=disnake.Color(client_data.embed_color),
         icon_url=inter.bot.user.avatar.url,
         title=f"{player_obj.name} units",
-        description=None,
-        bot_prefix=inter.bot.command_prefix,
-        bot_user_name=inter.bot.user.name,
+        bot_user_name=inter.me.display_name,
         thumbnail=player_obj.league.icon,
         field_list=field_dict_list,
-        image_url=None,
         author_display_name=inter.author.display_name,
         author_avatar_url=inter.author.avatar.url
     )
@@ -568,16 +489,9 @@ async def alltag(inter, player_tag: str,
 
     if player_obj is None:
         embed_list = discord_responder.embed_message(
-            Embed=disnake.Embed,
-            color=disnake.Color(client_data.embed_color),
             icon_url=inter.bot.user.avatar.url,
-            title=None,
             description=f"could not find player with tag {player_tag}",
-            bot_prefix=inter.bot.command_prefix,
-            bot_user_name=inter.bot.user.name,
-            thumbnail=None,
-            field_list=[],
-            image_url=None,
+            bot_user_name=inter.me.display_name,
             author_display_name=inter.author.display_name,
             author_avatar_url=inter.author.avatar.url
         )
@@ -611,16 +525,11 @@ async def alltag(inter, player_tag: str,
         )
 
     embed_list = discord_responder.embed_message(
-        Embed=disnake.Embed,
-        color=disnake.Color(client_data.embed_color),
         icon_url=inter.bot.user.avatar.url,
         title=f"{player_obj.name} units",
-        description=None,
-        bot_prefix=inter.bot.command_prefix,
-        bot_user_name=inter.bot.user.name,
+        bot_user_name=inter.me.display_name,
         thumbnail=player_obj.league.icon,
         field_list=field_dict_list,
-        image_url=None,
         author_display_name=inter.author.display_name,
         author_avatar_url=inter.author.avatar.url
     )
@@ -664,16 +573,9 @@ async def user(inter, user: disnake.User = None):
         db_player_obj, user, coc_client)
     if not verification_payload['verified']:
         embed_list = discord_responder.embed_message(
-            Embed=disnake.Embed,
-            color=disnake.Color(client_data.embed_color),
             icon_url=inter.bot.user.avatar.url,
-            title=None,
-            description=None,
-            bot_prefix=inter.bot.command_prefix,
-            bot_user_name=inter.bot.user.name,
-            thumbnail=None,
+            bot_user_name=inter.me.display_name,
             field_list=verification_payload['field_dict_list'],
-            image_url=None,
             author_display_name=inter.author.display_name,
             author_avatar_url=inter.author.avatar.url
         )
@@ -691,16 +593,11 @@ async def user(inter, user: disnake.User = None):
         inter.client.emojis, client_data.emojis
     )
     embed_list = discord_responder.embed_message(
-        Embed=disnake.Embed,
-        color=disnake.Color(client_data.embed_color),
         icon_url=inter.bot.user.avatar.url,
         title=f"{player_obj.name} super troops",
-        description=None,
-        bot_prefix=inter.bot.command_prefix,
-        bot_user_name=inter.bot.user.name,
+        bot_user_name=inter.me.display_name,
         thumbnail=player_obj.league.icon,
         field_list=field_dict_list,
-        image_url=None,
         author_display_name=inter.author.display_name,
         author_avatar_url=inter.author.avatar.url
     )
@@ -762,16 +659,9 @@ async def overview(inter, clan_role: disnake.Role = None):
 
     if not verification_payload['verified']:
         embed_list = discord_responder.embed_message(
-            Embed=disnake.Embed,
-            color=disnake.Color(client_data.embed_color),
             icon_url=inter.bot.user.avatar.url,
-            title=None,
-            description=None,
-            bot_prefix=inter.bot.command_prefix,
-            bot_user_name=inter.bot.user.name,
-            thumbnail=None,
+            bot_user_name=inter.me.display_name,
             field_list=verification_payload['field_dict_list'],
-            image_url=None,
             author_display_name=inter.author.display_name,
             author_avatar_url=inter.author.avatar.url
         )
@@ -786,16 +676,11 @@ async def overview(inter, clan_role: disnake.Role = None):
     )
 
     embed_list = discord_responder.embed_message(
-        Embed=disnake.Embed,
-        color=disnake.Color(client_data.embed_color),
         icon_url=inter.bot.user.avatar.url,
         title=f"{clan_obj.name} {clan_obj.tag}",
-        description=None,
-        bot_prefix=inter.bot.command_prefix,
-        bot_user_name=inter.bot.user.name,
+        bot_user_name=inter.me.display_name,
         thumbnail=clan_obj.badge,
         field_list=field_dict_list,
-        image_url=None,
         author_display_name=inter.author.display_name,
         author_avatar_url=inter.author.avatar.url
     )
@@ -821,16 +706,9 @@ async def find(inter, clan_tag: str):
     # clan with given tag not found
     if clan_obj is None:
         embed_list = discord_responder.embed_message(
-            Embed=disnake.Embed,
-            color=disnake.Color(client_data.embed_color),
             icon_url=inter.bot.user.avatar.url,
-            title=None,
             description=f"could not find clan with tag {clan_tag}",
-            bot_prefix=inter.bot.command_prefix,
-            bot_user_name=inter.bot.user.name,
-            thumbnail=None,
-            field_list=[],
-            image_url=None,
+            bot_user_name=inter.me.display_name,
             author_display_name=inter.author.display_name,
             author_avatar_url=inter.author.avatar.url
         )
@@ -843,16 +721,11 @@ async def find(inter, clan_tag: str):
     )
 
     embed_list = discord_responder.embed_message(
-        Embed=disnake.Embed,
-        color=disnake.Color(client_data.embed_color),
         icon_url=inter.bot.user.avatar.url,
         title=f"{clan_obj.name} {clan_obj.tag}",
-        description=None,
-        bot_prefix=inter.bot.command_prefix,
-        bot_user_name=inter.bot.user.name,
+        bot_user_name=inter.me.display_name,
         thumbnail=clan_obj.badge,
         field_list=field_dict_list,
-        image_url=None,
         author_display_name=inter.author.display_name,
         author_avatar_url=inter.author.avatar.url
     )
@@ -902,16 +775,9 @@ async def overview(inter, clan_role: disnake.Role = None):
 
     if not verification_payload['verified']:
         embed_list = discord_responder.embed_message(
-            Embed=disnake.Embed,
-            color=disnake.Color(client_data.embed_color),
             icon_url=inter.bot.user.avatar.url,
-            title=None,
-            description=None,
-            bot_prefix=inter.bot.command_prefix,
-            bot_user_name=inter.bot.user.name,
-            thumbnail=None,
+            bot_user_name=inter.me.display_name,
             field_list=verification_payload['field_dict_list'],
-            image_url=None,
             author_display_name=inter.author.display_name,
             author_avatar_url=inter.author.avatar.url
         )
@@ -925,16 +791,11 @@ async def overview(inter, clan_role: disnake.Role = None):
         clan_obj, coc_client, inter.client.emojis, client_data.emojis)
 
     embed_list = discord_responder.embed_message(
-        Embed=disnake.Embed,
-        color=disnake.Color(client_data.embed_color),
         icon_url=inter.bot.user.avatar.url,
         title=f"{clan_obj.name} lineup",
-        description=None,
-        bot_prefix=inter.bot.command_prefix,
-        bot_user_name=inter.bot.user.name,
+        bot_user_name=inter.me.display_name,
         thumbnail=clan_obj.badge,
         field_list=field_dict_list,
-        image_url=None,
         author_display_name=inter.author.display_name,
         author_avatar_url=inter.author.avatar.url
     )
@@ -971,16 +832,9 @@ async def member(inter, clan_role: disnake.Role = None):
 
     if not verification_payload['verified']:
         embed_list = discord_responder.embed_message(
-            Embed=disnake.Embed,
-            color=disnake.Color(client_data.embed_color),
             icon_url=inter.bot.user.avatar.url,
-            title=None,
-            description=None,
-            bot_prefix=inter.bot.command_prefix,
-            bot_user_name=inter.bot.user.name,
-            thumbnail=None,
+            bot_user_name=inter.me.display_name,
             field_list=verification_payload['field_dict_list'],
-            image_url=None,
             author_display_name=inter.author.display_name,
             author_avatar_url=inter.author.avatar.url
         )
@@ -994,16 +848,11 @@ async def member(inter, clan_role: disnake.Role = None):
         clan_obj, coc_client, inter.client.emojis, client_data.emojis)
 
     embed_list = discord_responder.embed_message(
-        Embed=disnake.Embed,
-        color=disnake.Color(client_data.embed_color),
         icon_url=inter.bot.user.avatar.url,
         title=f"{clan_obj.name} member lineup",
-        description=None,
-        bot_prefix=inter.bot.command_prefix,
-        bot_user_name=inter.bot.user.name,
+        bot_user_name=inter.me.display_name,
         thumbnail=clan_obj.badge,
         field_list=field_dict_list,
-        image_url=None,
         author_display_name=inter.author.display_name,
         author_avatar_url=inter.author.avatar.url
     )
@@ -1026,10 +875,11 @@ async def warpreference(inter):
 
 @warpreference.sub_command(
     brief='clan',
-    description="rundown of clan's war preference"
+    description="*leadership* rundown of clan's war preference"
 )
 async def overview(inter, clan_role: disnake.Role = None):
     """
+        *leadership*
         rundown of clan's war preference
 
         Parameters
@@ -1052,16 +902,9 @@ async def overview(inter, clan_role: disnake.Role = None):
 
     if not verification_payload['verified']:
         embed_list = discord_responder.embed_message(
-            Embed=disnake.Embed,
-            color=disnake.Color(client_data.embed_color),
             icon_url=inter.bot.user.avatar.url,
-            title=None,
-            description=None,
-            bot_prefix=inter.bot.command_prefix,
-            bot_user_name=inter.bot.user.name,
-            thumbnail=None,
+            bot_user_name=inter.me.display_name,
             field_list=verification_payload['field_dict_list'],
-            image_url=None,
             author_display_name=inter.author.display_name,
             author_avatar_url=inter.author.avatar.url
         )
@@ -1075,16 +918,11 @@ async def overview(inter, clan_role: disnake.Role = None):
         clan_obj, coc_client, inter.client.emojis, client_data.emojis)
 
     embed_list = discord_responder.embed_message(
-        Embed=disnake.Embed,
-        color=disnake.Color(client_data.embed_color),
         icon_url=inter.bot.user.avatar.url,
         title=f"{clan_obj.name} war preference",
-        description=None,
-        bot_prefix=inter.bot.command_prefix,
-        bot_user_name=inter.bot.user.name,
+        bot_user_name=inter.me.display_name,
         thumbnail=clan_obj.badge,
         field_list=field_dict_list,
-        image_url=None,
         author_display_name=inter.author.display_name,
         author_avatar_url=inter.author.avatar.url
     )
@@ -1094,10 +932,11 @@ async def overview(inter, clan_role: disnake.Role = None):
 
 @warpreference.sub_command(
     brief='clan',
-    description="rundown of clan member's war preference"
+    description="*leadership* rundown of clan member's war preference"
 )
 async def member(inter, clan_role: disnake.Role = None):
     """
+        *leadership*
         rundown of clan member's war preference
 
         Parameters
@@ -1120,16 +959,9 @@ async def member(inter, clan_role: disnake.Role = None):
 
     if not verification_payload['verified']:
         embed_list = discord_responder.embed_message(
-            Embed=disnake.Embed,
-            color=disnake.Color(client_data.embed_color),
             icon_url=inter.bot.user.avatar.url,
-            title=None,
-            description=None,
-            bot_prefix=inter.bot.command_prefix,
-            bot_user_name=inter.bot.user.name,
-            thumbnail=None,
+            bot_user_name=inter.me.display_name,
             field_list=verification_payload['field_dict_list'],
-            image_url=None,
             author_display_name=inter.author.display_name,
             author_avatar_url=inter.author.avatar.url
         )
@@ -1143,16 +975,11 @@ async def member(inter, clan_role: disnake.Role = None):
         clan_obj, coc_client, inter.client.emojis, client_data.emojis)
 
     embed_list = discord_responder.embed_message(
-        Embed=disnake.Embed,
-        color=disnake.Color(client_data.embed_color),
         icon_url=inter.bot.user.avatar.url,
         title=f"{clan_obj.name} member war preference",
-        description=None,
-        bot_prefix=inter.bot.command_prefix,
-        bot_user_name=inter.bot.user.name,
+        bot_user_name=inter.me.display_name,
         thumbnail=clan_obj.badge,
         field_list=field_dict_list,
-        image_url=None,
         author_display_name=inter.author.display_name,
         author_avatar_url=inter.author.avatar.url
     )
@@ -1203,16 +1030,9 @@ async def donate(inter,
 
     if not verification_payload['verified']:
         embed_list = discord_responder.embed_message(
-            Embed=disnake.Embed,
-            color=disnake.Color(client_data.embed_color),
             icon_url=inter.bot.user.avatar.url,
-            title=None,
-            description=None,
-            bot_prefix=inter.bot.command_prefix,
-            bot_user_name=inter.bot.user.name,
-            thumbnail=None,
+            bot_user_name=inter.me.display_name,
             field_list=verification_payload['field_dict_list'],
-            image_url=None,
             author_display_name=inter.author.display_name,
             author_avatar_url=inter.author.avatar.url
         )
@@ -1231,16 +1051,11 @@ async def donate(inter,
     )
 
     embed_list = discord_responder.embed_message(
-        Embed=disnake.Embed,
-        color=disnake.Color(client_data.embed_color),
         icon_url=inter.bot.user.avatar.url,
         title=f"{clan_obj.name} {clan_obj.tag}",
-        description=None,
-        bot_prefix=inter.bot.command_prefix,
-        bot_user_name=inter.bot.user.name,
+        bot_user_name=inter.me.display_name,
         thumbnail=clan_obj.badge,
         field_list=field_dict_list,
-        image_url=None,
         author_display_name=inter.author.display_name,
         author_avatar_url=inter.author.avatar.url
     )
@@ -1286,16 +1101,9 @@ async def donate(inter,
 
     if not verification_payload['verified']:
         embed_list = discord_responder.embed_message(
-            Embed=disnake.Embed,
-            color=disnake.Color(client_data.embed_color),
             icon_url=inter.bot.user.avatar.url,
-            title=None,
-            description=None,
-            bot_prefix=inter.bot.command_prefix,
-            bot_user_name=inter.bot.user.name,
-            thumbnail=None,
+            bot_user_name=inter.me.display_name,
             field_list=verification_payload['field_dict_list'],
-            image_url=None,
             author_display_name=inter.author.display_name,
             author_avatar_url=inter.author.avatar.url
         )
@@ -1316,16 +1124,9 @@ async def donate(inter,
 
     if not verification_payload['verified']:
         embed_list = discord_responder.embed_message(
-            Embed=disnake.Embed,
-            color=disnake.Color(client_data.embed_color),
             icon_url=inter.bot.user.avatar.url,
-            title=None,
-            description=None,
-            bot_prefix=inter.bot.command_prefix,
-            bot_user_name=inter.bot.user.name,
-            thumbnail=None,
+            bot_user_name=inter.me.display_name,
             field_list=verification_payload['field_dict_list'],
-            image_url=None,
             author_display_name=inter.author.display_name,
             author_avatar_url=inter.author.avatar.url
         )
@@ -1340,16 +1141,9 @@ async def donate(inter,
     # super troop was not found
     if super_troop_name is None:
         embed_list = discord_responder.embed_message(
-            Embed=disnake.Embed,
-            color=disnake.Color(client_data.embed_color),
             icon_url=inter.bot.user.avatar.url,
-            title=None,
             description=f"{unit_name} is not a viable request",
-            bot_prefix=inter.bot.command_prefix,
-            bot_user_name=inter.bot.user.name,
-            thumbnail=None,
-            field_list=[],
-            image_url=None,
+            bot_user_name=inter.me.display_name,
             author_display_name=inter.author.display_name,
             author_avatar_url=inter.author.avatar.url
         )
@@ -1366,16 +1160,11 @@ async def donate(inter,
     )
 
     embed_list = discord_responder.embed_message(
-        Embed=disnake.Embed,
-        color=disnake.Color(client_data.embed_color),
         icon_url=inter.bot.user.avatar.url,
         title=f"{clan_obj.name} {clan_obj.tag}",
-        description=None,
-        bot_prefix=inter.bot.command_prefix,
-        bot_user_name=inter.bot.user.name,
+        bot_user_name=inter.me.display_name,
         thumbnail=clan_obj.badge,
         field_list=field_dict_list,
-        image_url=None,
         author_display_name=inter.author.display_name,
         author_avatar_url=inter.author.avatar.url
     )
@@ -1437,16 +1226,9 @@ async def overview(inter, clan_role: disnake.Role = None):
 
     if not verification_payload['verified']:
         embed_list = discord_responder.embed_message(
-            Embed=disnake.Embed,
-            color=disnake.Color(client_data.embed_color),
             icon_url=inter.bot.user.avatar.url,
-            title=None,
-            description=None,
-            bot_prefix=inter.bot.command_prefix,
-            bot_user_name=inter.bot.user.name,
-            thumbnail=None,
+            bot_user_name=inter.me.display_name,
             field_list=verification_payload['field_dict_list'],
-            image_url=None,
             author_display_name=inter.author.display_name,
             author_avatar_url=inter.author.avatar.url
         )
@@ -1460,16 +1242,11 @@ async def overview(inter, clan_role: disnake.Role = None):
         war_obj, inter.client.emojis, client_data.emojis)
 
     embed_list = discord_responder.embed_message(
-        Embed=disnake.Embed,
-        color=disnake.Color(client_data.embed_color),
         icon_url=inter.bot.user.avatar.url,
         title=f"{war_obj.clan.name} vs. {war_obj.opponent.name}",
-        description=None,
-        bot_prefix=inter.bot.command_prefix,
-        bot_user_name=inter.bot.user.name,
+        bot_user_name=inter.me.display_name,
         thumbnail=war_obj.clan.badge,
         field_list=field_dict_list,
-        image_url=None,
         author_display_name=inter.author.display_name,
         author_avatar_url=inter.author.avatar.url
     )
@@ -1503,16 +1280,9 @@ async def scoreboard(inter, clan_role: disnake.Role = None):
 
     if not verification_payload['verified']:
         embed_list = discord_responder.embed_message(
-            Embed=disnake.Embed,
-            color=disnake.Color(client_data.embed_color),
             icon_url=inter.bot.user.avatar.url,
-            title=None,
-            description=None,
-            bot_prefix=inter.bot.command_prefix,
-            bot_user_name=inter.bot.user.name,
-            thumbnail=None,
+            bot_user_name=inter.me.display_name,
             field_list=verification_payload['field_dict_list'],
-            image_url=None,
             author_display_name=inter.author.display_name,
             author_avatar_url=inter.author.avatar.url
         )
@@ -1526,16 +1296,11 @@ async def scoreboard(inter, clan_role: disnake.Role = None):
         war_obj, inter.client.emojis, client_data.emojis)
 
     embed_list = discord_responder.embed_message(
-        Embed=disnake.Embed,
-        color=disnake.Color(client_data.embed_color),
         icon_url=inter.bot.user.avatar.url,
         title=f"{war_obj.clan.name} vs. {war_obj.opponent.name}",
-        description=None,
-        bot_prefix=inter.bot.command_prefix,
-        bot_user_name=inter.bot.user.name,
+        bot_user_name=inter.me.display_name,
         thumbnail=war_obj.clan.badge,
         field_list=field_dict_list,
-        image_url=None,
         author_display_name=inter.author.display_name,
         author_avatar_url=inter.author.avatar.url
     )
@@ -1582,16 +1347,9 @@ async def noattack(inter, clan_role: disnake.Role = None):
 
     if not verification_payload['verified']:
         embed_list = discord_responder.embed_message(
-            Embed=disnake.Embed,
-            color=disnake.Color(client_data.embed_color),
             icon_url=inter.bot.user.avatar.url,
-            title=None,
-            description=None,
-            bot_prefix=inter.bot.command_prefix,
-            bot_user_name=inter.bot.user.name,
-            thumbnail=None,
+            bot_user_name=inter.me.display_name,
             field_list=verification_payload['field_dict_list'],
-            image_url=None,
             author_display_name=inter.author.display_name,
             author_avatar_url=inter.author.avatar.url
         )
@@ -1604,16 +1362,11 @@ async def noattack(inter, clan_role: disnake.Role = None):
     field_dict_list = discord_responder.war_no_attack(war_obj)
 
     embed_list = discord_responder.embed_message(
-        Embed=disnake.Embed,
-        color=disnake.Color(client_data.embed_color),
         icon_url=inter.bot.user.avatar.url,
         title=f"{war_obj.clan.name} vs. {war_obj.opponent.name}",
-        description=None,
-        bot_prefix=inter.bot.command_prefix,
-        bot_user_name=inter.bot.user.name,
+        bot_user_name=inter.me.display_name,
         thumbnail=war_obj.clan.badge,
         field_list=field_dict_list,
-        image_url=None,
         author_display_name=inter.author.display_name,
         author_avatar_url=inter.author.avatar.url
     )
@@ -1651,16 +1404,9 @@ async def stars(inter, clan_role: disnake.Role = None):
 
     if not verification_payload['verified']:
         embed_list = discord_responder.embed_message(
-            Embed=disnake.Embed,
-            color=disnake.Color(client_data.embed_color),
             icon_url=inter.bot.user.avatar.url,
-            title=None,
-            description=None,
-            bot_prefix=inter.bot.command_prefix,
-            bot_user_name=inter.bot.user.name,
-            thumbnail=None,
+            bot_user_name=inter.me.display_name,
             field_list=verification_payload['field_dict_list'],
-            image_url=None,
             author_display_name=inter.author.display_name,
             author_avatar_url=inter.author.avatar.url
         )
@@ -1674,16 +1420,11 @@ async def stars(inter, clan_role: disnake.Role = None):
         war_obj, inter.client.emojis, client_data.emojis)
 
     embed_list = discord_responder.embed_message(
-        Embed=disnake.Embed,
-        color=disnake.Color(client_data.embed_color),
         icon_url=inter.bot.user.avatar.url,
         title=f"{war_obj.clan.name} vs. {war_obj.opponent.name}",
-        description=None,
-        bot_prefix=inter.bot.command_prefix,
-        bot_user_name=inter.bot.user.name,
+        bot_user_name=inter.me.display_name,
         thumbnail=war_obj.clan.badge,
         field_list=field_dict_list,
-        image_url=None,
         author_display_name=inter.author.display_name,
         author_avatar_url=inter.author.avatar.url
     )
@@ -1722,16 +1463,9 @@ async def attacks(inter, clan_role: disnake.Role = None):
 
     if not verification_payload['verified']:
         embed_list = discord_responder.embed_message(
-            Embed=disnake.Embed,
-            color=disnake.Color(client_data.embed_color),
             icon_url=inter.bot.user.avatar.url,
-            title=None,
-            description=None,
-            bot_prefix=inter.bot.command_prefix,
-            bot_user_name=inter.bot.user.name,
-            thumbnail=None,
+            bot_user_name=inter.me.display_name,
             field_list=verification_payload['field_dict_list'],
-            image_url=None,
             author_display_name=inter.author.display_name,
             author_avatar_url=inter.author.avatar.url
         )
@@ -1745,16 +1479,11 @@ async def attacks(inter, clan_role: disnake.Role = None):
         war_obj, inter.client.emojis, client_data.emojis)
 
     embed_list = discord_responder.embed_message(
-        Embed=disnake.Embed,
-        color=disnake.Color(client_data.embed_color),
         icon_url=inter.bot.user.avatar.url,
         title=f"{war_obj.clan.name} vs. {war_obj.opponent.name}",
-        description=None,
-        bot_prefix=inter.bot.command_prefix,
-        bot_user_name=inter.bot.user.name,
+        bot_user_name=inter.me.display_name,
         thumbnail=war_obj.clan.badge,
         field_list=field_dict_list,
-        image_url=None,
         author_display_name=inter.author.display_name,
         author_avatar_url=inter.author.avatar.url
     )
@@ -1799,16 +1528,9 @@ async def user(inter, user: disnake.User = None):
         db_player_obj, user, coc_client)
     if not verification_payload['verified']:
         embed_list = discord_responder.embed_message(
-            Embed=disnake.Embed,
-            color=disnake.Color(client_data.embed_color),
             icon_url=inter.bot.user.avatar.url,
-            title=None,
-            description=None,
-            bot_prefix=inter.bot.command_prefix,
-            bot_user_name=inter.bot.user.name,
-            thumbnail=None,
+            bot_user_name=inter.me.display_name,
             field_list=verification_payload['field_dict_list'],
-            image_url=None,
             author_display_name=inter.author.display_name,
             author_avatar_url=inter.author.avatar.url
         )
@@ -1822,16 +1544,11 @@ async def user(inter, user: disnake.User = None):
     field_dict_list = discord_responder.war_member_score(
         war_obj, player_obj)
     embed_list = discord_responder.embed_message(
-        Embed=disnake.Embed,
-        color=disnake.Color(client_data.embed_color),
         icon_url=inter.bot.user.avatar.url,
         title=f"{player_obj.name} war score",
-        description=None,
-        bot_prefix=inter.bot.command_prefix,
-        bot_user_name=inter.bot.user.name,
+        bot_user_name=inter.me.display_name,
         thumbnail=player_obj.clan.badge,
         field_list=field_dict_list,
-        image_url=None,
         author_display_name=inter.author.display_name,
         author_avatar_url=inter.author.avatar.url
     )
@@ -1869,16 +1586,9 @@ async def clan(inter, clan_role: disnake.Role = None):
 
     if not verification_payload['verified']:
         embed_list = discord_responder.embed_message(
-            Embed=disnake.Embed,
-            color=disnake.Color(client_data.embed_color),
             icon_url=inter.bot.user.avatar.url,
-            title=None,
-            description=None,
-            bot_prefix=inter.bot.command_prefix,
-            bot_user_name=inter.bot.user.name,
-            thumbnail=None,
+            bot_user_name=inter.me.display_name,
             field_list=verification_payload['field_dict_list'],
-            image_url=None,
             author_display_name=inter.author.display_name,
             author_avatar_url=inter.author.avatar.url
         )
@@ -1891,16 +1601,11 @@ async def clan(inter, clan_role: disnake.Role = None):
     field_dict_list = discord_responder.war_clan_score(
         war_obj)
     embed_list = discord_responder.embed_message(
-        Embed=disnake.Embed,
-        color=disnake.Color(client_data.embed_color),
         icon_url=inter.bot.user.avatar.url,
         title=f"{war_obj.clan.name} vs. {war_obj.opponent.name}",
-        description=None,
-        bot_prefix=inter.bot.command_prefix,
-        bot_user_name=inter.bot.user.name,
+        bot_user_name=inter.me.display_name,
         thumbnail=war_obj.clan.badge,
         field_list=field_dict_list,
-        image_url=None,
         author_display_name=inter.author.display_name,
         author_avatar_url=inter.author.avatar.url
     )
@@ -1947,16 +1652,9 @@ async def overview(inter, clan_role: disnake.Role = None):
 
     if not verification_payload['verified']:
         embed_list = discord_responder.embed_message(
-            Embed=disnake.Embed,
-            color=disnake.Color(client_data.embed_color),
             icon_url=inter.bot.user.avatar.url,
-            title=None,
-            description=None,
-            bot_prefix=inter.bot.command_prefix,
-            bot_user_name=inter.bot.user.name,
-            thumbnail=None,
+            bot_user_name=inter.me.display_name,
             field_list=verification_payload['field_dict_list'],
-            image_url=None,
             author_display_name=inter.author.display_name,
             author_avatar_url=inter.author.avatar.url
         )
@@ -1996,16 +1694,9 @@ async def clan(inter, clan_role: disnake.Role = None):
 
     if not verification_payload['verified']:
         embed_list = discord_responder.embed_message(
-            Embed=disnake.Embed,
-            color=disnake.Color(client_data.embed_color),
             icon_url=inter.bot.user.avatar.url,
-            title=None,
-            description=None,
-            bot_prefix=inter.bot.command_prefix,
-            bot_user_name=inter.bot.user.name,
-            thumbnail=None,
+            bot_user_name=inter.me.display_name,
             field_list=verification_payload['field_dict_list'],
-            image_url=None,
             author_display_name=inter.author.display_name,
             author_avatar_url=inter.author.avatar.url
         )
@@ -2018,16 +1709,11 @@ async def clan(inter, clan_role: disnake.Role = None):
     field_dict_list = discord_responder.war_lineup_clan(
         war_obj, inter.client.emojis, client_data.emojis)
     embed_list = discord_responder.embed_message(
-        Embed=disnake.Embed,
-        color=disnake.Color(client_data.embed_color),
         icon_url=inter.bot.user.avatar.url,
         title=f"{war_obj.clan.name} vs. {war_obj.opponent.name}",
-        description=None,
-        bot_prefix=inter.bot.command_prefix,
-        bot_user_name=inter.bot.user.name,
+        bot_user_name=inter.me.display_name,
         thumbnail=war_obj.clan.badge,
         field_list=field_dict_list,
-        image_url=None,
         author_display_name=inter.author.display_name,
         author_avatar_url=inter.author.avatar.url
     )
@@ -2061,16 +1747,9 @@ async def member(inter, clan_role: disnake.Role = None):
 
     if not verification_payload['verified']:
         embed_list = discord_responder.embed_message(
-            Embed=disnake.Embed,
-            color=disnake.Color(client_data.embed_color),
             icon_url=inter.bot.user.avatar.url,
-            title=None,
-            description=None,
-            bot_prefix=inter.bot.command_prefix,
-            bot_user_name=inter.bot.user.name,
-            thumbnail=None,
+            bot_user_name=inter.me.display_name,
             field_list=verification_payload['field_dict_list'],
-            image_url=None,
             author_display_name=inter.author.display_name,
             author_avatar_url=inter.author.avatar.url
         )
@@ -2084,16 +1763,11 @@ async def member(inter, clan_role: disnake.Role = None):
         war_obj.clan, coc_client, inter.client.emojis, client_data.emojis))
 
     embed_list = discord_responder.embed_message(
-        Embed=disnake.Embed,
-        color=disnake.Color(client_data.embed_color),
         icon_url=inter.bot.user.avatar.url,
         title=f"{war_obj.clan.name} members",
-        description=None,
-        bot_prefix=inter.bot.command_prefix,
-        bot_user_name=inter.bot.user.name,
+        bot_user_name=inter.me.display_name,
         thumbnail=war_obj.clan.badge,
         field_list=field_dict_list,
-        image_url=None,
         author_display_name=inter.author.display_name,
         author_avatar_url=inter.author.avatar.url
     )
@@ -2104,16 +1778,11 @@ async def member(inter, clan_role: disnake.Role = None):
         war_obj.opponent, coc_client, inter.client.emojis, client_data.emojis)
 
     embed_list = discord_responder.embed_message(
-        Embed=disnake.Embed,
-        color=disnake.Color(client_data.embed_color),
         icon_url=inter.bot.user.avatar.url,
         title=f"{war_obj.opponent.name} members",
-        description=None,
-        bot_prefix=inter.bot.command_prefix,
-        bot_user_name=inter.bot.user.name,
+        bot_user_name=inter.me.display_name,
         thumbnail=war_obj.opponent.badge,
         field_list=field_dict_list,
-        image_url=None,
         author_display_name=inter.author.display_name,
         author_avatar_url=inter.author.avatar.url
     )
@@ -2175,16 +1844,9 @@ async def overview(inter, clan_role: disnake.Role = None):
 
     if not verification_payload['verified']:
         embed_list = discord_responder.embed_message(
-            Embed=disnake.Embed,
-            color=disnake.Color(client_data.embed_color),
             icon_url=inter.bot.user.avatar.url,
-            title=None,
-            description=None,
-            bot_prefix=inter.bot.command_prefix,
-            bot_user_name=inter.bot.user.name,
-            thumbnail=None,
+            bot_user_name=inter.me.display_name,
             field_list=verification_payload['field_dict_list'],
-            image_url=None,
             author_display_name=inter.author.display_name,
             author_avatar_url=inter.author.avatar.url
         )
@@ -2216,16 +1878,9 @@ async def clan(inter, clan_tag: str, clan_role: disnake.Role = None):
     # clan with given tag not found
     if clan_obj is None:
         embed_list = discord_responder.embed_message(
-            Embed=disnake.Embed,
-            color=disnake.Color(client_data.embed_color),
             icon_url=inter.bot.user.avatar.url,
-            title=None,
             description=f"could not find clan with tag {clan_tag}",
-            bot_prefix=inter.bot.command_prefix,
-            bot_user_name=inter.bot.user.name,
-            thumbnail=None,
-            field_list=[],
-            image_url=None,
+            bot_user_name=inter.me.display_name,
             author_display_name=inter.author.display_name,
             author_avatar_url=inter.author.avatar.url
         )
@@ -2248,16 +1903,9 @@ async def clan(inter, clan_tag: str, clan_role: disnake.Role = None):
 
     if not verification_payload['verified']:
         embed_list = discord_responder.embed_message(
-            Embed=disnake.Embed,
-            color=disnake.Color(client_data.embed_color),
             icon_url=inter.bot.user.avatar.url,
-            title=None,
-            description=None,
-            bot_prefix=inter.bot.command_prefix,
-            bot_user_name=inter.bot.user.name,
-            thumbnail=None,
+            bot_user_name=inter.me.display_name,
             field_list=verification_payload['field_dict_list'],
-            image_url=None,
             author_display_name=inter.author.display_name,
             author_avatar_url=inter.author.avatar.url
         )
@@ -2276,16 +1924,9 @@ async def clan(inter, clan_tag: str, clan_role: disnake.Role = None):
             f"with {player_clan_obj.name} {player_clan_obj.tag}"
         )
         embed_list = discord_responder.embed_message(
-            Embed=disnake.Embed,
-            color=disnake.Color(client_data.embed_color),
             icon_url=inter.bot.user.avatar.url,
-            title=None,
             description=description,
-            bot_prefix=inter.bot.command_prefix,
-            bot_user_name=inter.bot.user.name,
-            thumbnail=None,
-            field_list=[],
-            image_url=None,
+            bot_user_name=inter.me.display_name,
             author_display_name=inter.author.display_name,
             author_avatar_url=inter.author.avatar.url
         )
@@ -2296,16 +1937,11 @@ async def clan(inter, clan_tag: str, clan_role: disnake.Role = None):
     field_dict_list = await discord_responder.war_lineup_member(
         cwl_clan_obj, coc_client, inter.client.emojis, client_data.emojis)
     embed_list = discord_responder.embed_message(
-        Embed=disnake.Embed,
-        color=disnake.Color(client_data.embed_color),
         icon_url=inter.bot.user.avatar.url,
         title=f"{cwl_clan_obj.name} {cwl_clan_obj.tag}",
-        description=None,
-        bot_prefix=inter.bot.command_prefix,
-        bot_user_name=inter.bot.user.name,
+        bot_user_name=inter.me.display_name,
         thumbnail=cwl_clan_obj.badge,
         field_list=field_dict_list,
-        image_url=None,
         author_display_name=inter.author.display_name,
         author_avatar_url=inter.author.avatar.url
     )
@@ -2315,10 +1951,11 @@ async def clan(inter, clan_tag: str, clan_role: disnake.Role = None):
 
 @lineup.sub_command(
     brief='cwl',
-    description="returns the CWL group member lineup"
+    description="*leadership* returns the CWL group member lineup"
 )
 async def member(inter, clan_role: disnake.Role = None):
     """
+        *leadership*
         returns the CWL group member lineup
 
         Parameters
@@ -2341,16 +1978,9 @@ async def member(inter, clan_role: disnake.Role = None):
 
     if not verification_payload['verified']:
         embed_list = discord_responder.embed_message(
-            Embed=disnake.Embed,
-            color=disnake.Color(client_data.embed_color),
             icon_url=inter.bot.user.avatar.url,
-            title=None,
-            description=None,
-            bot_prefix=inter.bot.command_prefix,
-            bot_user_name=inter.bot.user.name,
-            thumbnail=None,
+            bot_user_name=inter.me.display_name,
             field_list=verification_payload['field_dict_list'],
-            image_url=None,
             author_display_name=inter.author.display_name,
             author_avatar_url=inter.author.avatar.url
         )
@@ -2364,16 +1994,11 @@ async def member(inter, clan_role: disnake.Role = None):
         field_dict_list = await discord_responder.war_lineup_member(
             clan, coc_client, inter.client.emojis, client_data.emojis)
         embed_list = discord_responder.embed_message(
-            Embed=disnake.Embed,
-            color=disnake.Color(client_data.embed_color),
             icon_url=inter.bot.user.avatar.url,
             title=f"{clan.name} {clan.tag}",
-            description=None,
-            bot_prefix=inter.bot.command_prefix,
-            bot_user_name=inter.bot.user.name,
+            bot_user_name=inter.me.display_name,
             thumbnail=clan.badge,
             field_list=field_dict_list,
-            image_url=None,
             author_display_name=inter.author.display_name,
             author_avatar_url=inter.author.avatar.url
         )
@@ -2417,16 +2042,9 @@ async def user(inter, user: disnake.User = None):
         db_player_obj, user, coc_client)
     if not verification_payload['verified']:
         embed_list = discord_responder.embed_message(
-            Embed=disnake.Embed,
-            color=disnake.Color(client_data.embed_color),
             icon_url=inter.bot.user.avatar.url,
-            title=None,
-            description=None,
-            bot_prefix=inter.bot.command_prefix,
-            bot_user_name=inter.bot.user.name,
-            thumbnail=None,
+            bot_user_name=inter.me.display_name,
             field_list=verification_payload['field_dict_list'],
-            image_url=None,
             author_display_name=inter.author.display_name,
             author_avatar_url=inter.author.avatar.url
         )
@@ -2440,16 +2058,11 @@ async def user(inter, user: disnake.User = None):
     field_dict_list = await discord_responder.cwl_member_score(
         player_obj, cwl_group_obj, player_obj.clan.tag)
     embed_list = discord_responder.embed_message(
-        Embed=disnake.Embed,
-        color=disnake.Color(client_data.embed_color),
         icon_url=inter.bot.user.avatar.url,
         title=f"{player_obj.name} CWL score",
-        description=None,
-        bot_prefix=inter.bot.command_prefix,
-        bot_user_name=inter.bot.user.name,
+        bot_user_name=inter.me.display_name,
         thumbnail=player_obj.league.icon,
         field_list=field_dict_list,
-        image_url=None,
         author_display_name=inter.author.display_name,
         author_avatar_url=inter.author.avatar.url
     )
@@ -2487,16 +2100,9 @@ async def clan(inter, clan_role: disnake.Role = None):
 
     if not verification_payload['verified']:
         embed_list = discord_responder.embed_message(
-            Embed=disnake.Embed,
-            color=disnake.Color(client_data.embed_color),
             icon_url=inter.bot.user.avatar.url,
-            title=None,
-            description=None,
-            bot_prefix=inter.bot.command_prefix,
-            bot_user_name=inter.bot.user.name,
-            thumbnail=None,
+            bot_user_name=inter.me.display_name,
             field_list=verification_payload['field_dict_list'],
-            image_url=None,
             author_display_name=inter.author.display_name,
             author_avatar_url=inter.author.avatar.url
         )
@@ -2511,16 +2117,11 @@ async def clan(inter, clan_role: disnake.Role = None):
     field_dict_list = await discord_responder.cwl_clan_score(
         clan_obj, cwl_group_obj)
     embed_list = discord_responder.embed_message(
-        Embed=disnake.Embed,
-        color=disnake.Color(client_data.embed_color),
         icon_url=inter.bot.user.avatar.url,
         title=f"{clan_obj.name} CWL scores",
-        description=None,
-        bot_prefix=inter.bot.command_prefix,
-        bot_user_name=inter.bot.user.name,
+        bot_user_name=inter.me.display_name,
         thumbnail=player_obj.clan.badge,
         field_list=field_dict_list,
-        image_url=None,
         author_display_name=inter.author.display_name,
         author_avatar_url=inter.author.avatar.url
     )
@@ -2580,16 +2181,10 @@ async def info(inter):
     emoji_list = help_dict['emoji_list']
 
     embed_list = discord_responder.embed_message(
-        Embed=disnake.Embed,
-        color=disnake.Color(client_data.embed_color),
         icon_url=inter.bot.user.avatar.url,
-        title=f"{inter.bot.user.name} help menu",
-        description=None,
-        bot_prefix=inter.bot.command_prefix,
-        bot_user_name=inter.bot.user.name,
-        thumbnail=None,
+        title=f"{inter.me.display_name} help menu",
+        bot_user_name=inter.me.display_name,
         field_list=field_dict_list,
-        image_url=None,
         author_display_name=inter.author.display_name,
         author_avatar_url=inter.author.avatar.url
     )
@@ -2637,16 +2232,9 @@ async def message(inter, channel: disnake.TextChannel, message: str):
             db_player_obj, inter.author, inter.guild.id, coc_client))
     if not verification_payload['verified']:
         embed_list = discord_responder.embed_message(
-            Embed=disnake.Embed,
-            color=disnake.Color(client_data.embed_color),
             icon_url=inter.bot.user.avatar.url,
-            title=None,
-            description=None,
-            bot_prefix=inter.bot.command_prefix,
-            bot_user_name=inter.bot.user.name,
-            thumbnail=None,
+            bot_user_name=inter.me.display_name,
             field_list=verification_payload['field_dict_list'],
-            image_url=None,
             author_display_name=inter.author.display_name,
             author_avatar_url=inter.author.avatar.url
         )
@@ -2662,16 +2250,9 @@ async def message(inter, channel: disnake.TextChannel, message: str):
             "value": f"please ensure bot is in channel {channel.mention}"
         }]
         embed_list = discord_responder.embed_message(
-            Embed=disnake.Embed,
-            color=disnake.Color(client_data.embed_color),
             icon_url=inter.bot.user.avatar.url,
-            title=None,
-            description=None,
-            bot_prefix=inter.bot.command_prefix,
-            bot_user_name=inter.bot.user.name,
-            thumbnail=None,
+            bot_user_name=inter.me.display_name,
             field_list=field_dict_list,
-            image_url=None,
             author_display_name=inter.author.display_name,
             author_avatar_url=inter.author.avatar.url
         )
@@ -2684,16 +2265,9 @@ async def message(inter, channel: disnake.TextChannel, message: str):
         "value": f"channel {channel.mention}"
     }]
     embed_list = discord_responder.embed_message(
-        Embed=disnake.Embed,
-        color=disnake.Color(client_data.embed_color),
         icon_url=inter.bot.user.avatar.url,
-        title=None,
-        description=None,
-        bot_prefix=inter.bot.command_prefix,
-        bot_user_name=inter.bot.user.name,
-        thumbnail=None,
+        bot_user_name=inter.me.display_name,
         field_list=field_dict_list,
-        image_url=None,
         author_display_name=inter.author.display_name,
         author_avatar_url=inter.author.avatar.url
     )
@@ -2729,16 +2303,9 @@ async def player(
             db_player_obj, inter.author, inter.guild.id, coc_client))
     if not verification_payload['verified']:
         embed_list = discord_responder.embed_message(
-            Embed=disnake.Embed,
-            color=disnake.Color(client_data.embed_color),
             icon_url=inter.bot.user.avatar.url,
-            title=None,
-            description=None,
-            bot_prefix=inter.bot.command_prefix,
-            bot_user_name=inter.bot.user.name,
-            thumbnail=None,
+            bot_user_name=inter.me.display_name,
             field_list=verification_payload['field_dict_list'],
-            image_url=None,
             author_display_name=inter.author.display_name,
             author_avatar_url=inter.author.avatar.url
         )
@@ -2754,16 +2321,9 @@ async def player(
             "value": f"please check the tag and try again"
         }]
         embed_list = discord_responder.embed_message(
-            Embed=disnake.Embed,
-            color=disnake.Color(client_data.embed_color),
             icon_url=inter.bot.user.avatar.url,
-            title=None,
-            description=None,
-            bot_prefix=inter.bot.command_prefix,
-            bot_user_name=inter.bot.user.name,
-            thumbnail=None,
+            bot_user_name=inter.me.display_name,
             field_list=field_dict_list,
-            image_url=None,
             author_display_name=inter.author.display_name,
             author_avatar_url=inter.author.avatar.url
         )
@@ -2784,16 +2344,9 @@ async def player(
             "value": f"please ensure bot is in channel {channel.mention}"
         }]
         embed_list = discord_responder.embed_message(
-            Embed=disnake.Embed,
-            color=disnake.Color(client_data.embed_color),
             icon_url=inter.bot.user.avatar.url,
-            title=None,
-            description=None,
-            bot_prefix=inter.bot.command_prefix,
-            bot_user_name=inter.bot.user.name,
-            thumbnail=None,
+            bot_user_name=inter.me.display_name,
             field_list=field_dict_list,
-            image_url=None,
             author_display_name=inter.author.display_name,
             author_avatar_url=inter.author.avatar.url
         )
@@ -2806,16 +2359,9 @@ async def player(
         "value": f"channel {channel.mention}"
     }]
     embed_list = discord_responder.embed_message(
-        Embed=disnake.Embed,
-        color=disnake.Color(client_data.embed_color),
         icon_url=inter.bot.user.avatar.url,
-        title=None,
-        description=None,
-        bot_prefix=inter.bot.command_prefix,
-        bot_user_name=inter.bot.user.name,
-        thumbnail=None,
+        bot_user_name=inter.me.display_name,
         field_list=field_dict_list,
-        image_url=None,
         author_display_name=inter.author.display_name,
         author_avatar_url=inter.author.avatar.url
     )
@@ -2862,16 +2408,9 @@ async def donate(
 
     if not verification_payload['verified']:
         embed_list = discord_responder.embed_message(
-            Embed=disnake.Embed,
-            color=disnake.Color(client_data.embed_color),
             icon_url=inter.bot.user.avatar.url,
-            title=None,
-            description=None,
-            bot_prefix=inter.bot.command_prefix,
-            bot_user_name=inter.bot.user.name,
-            thumbnail=None,
+            bot_user_name=inter.me.display_name,
             field_list=verification_payload['field_dict_list'],
-            image_url=None,
             author_display_name=inter.author.display_name,
             author_avatar_url=inter.author.avatar.url
         )
@@ -2920,16 +2459,9 @@ async def donate(
             "value": f"please ensure bot is in channel {channel.mention}"
         }]
         embed_list = discord_responder.embed_message(
-            Embed=disnake.Embed,
-            color=disnake.Color(client_data.embed_color),
             icon_url=inter.bot.user.avatar.url,
-            title=None,
-            description=None,
-            bot_prefix=inter.bot.command_prefix,
-            bot_user_name=inter.bot.user.name,
-            thumbnail=None,
+            bot_user_name=inter.me.display_name,
             field_list=field_dict_list,
-            image_url=None,
             author_display_name=inter.author.display_name,
             author_avatar_url=inter.author.avatar.url
         )
@@ -2942,16 +2474,9 @@ async def donate(
         "value": f"channel {channel.mention}"
     }]
     embed_list = discord_responder.embed_message(
-        Embed=disnake.Embed,
-        color=disnake.Color(client_data.embed_color),
         icon_url=inter.bot.user.avatar.url,
-        title=None,
-        description=None,
-        bot_prefix=inter.bot.command_prefix,
-        bot_user_name=inter.bot.user.name,
-        thumbnail=None,
+        bot_user_name=inter.me.display_name,
         field_list=field_dict_list,
-        image_url=None,
         author_display_name=inter.author.display_name,
         author_avatar_url=inter.author.avatar.url
     )
@@ -2998,16 +2523,9 @@ async def supertroop(
 
     if not verification_payload['verified']:
         embed_list = discord_responder.embed_message(
-            Embed=disnake.Embed,
-            color=disnake.Color(client_data.embed_color),
             icon_url=inter.bot.user.avatar.url,
-            title=None,
-            description=None,
-            bot_prefix=inter.bot.command_prefix,
-            bot_user_name=inter.bot.user.name,
-            thumbnail=None,
+            bot_user_name=inter.me.display_name,
             field_list=verification_payload['field_dict_list'],
-            image_url=None,
             author_display_name=inter.author.display_name,
             author_avatar_url=inter.author.avatar.url
         )
@@ -3061,16 +2579,9 @@ async def supertroop(
             "value": f"please ensure bot is in channel {channel.mention}"
         }]
         embed_list = discord_responder.embed_message(
-            Embed=disnake.Embed,
-            color=disnake.Color(client_data.embed_color),
             icon_url=inter.bot.user.avatar.url,
-            title=None,
-            description=None,
-            bot_prefix=inter.bot.command_prefix,
-            bot_user_name=inter.bot.user.name,
-            thumbnail=None,
+            bot_user_name=inter.me.display_name,
             field_list=field_dict_list,
-            image_url=None,
             author_display_name=inter.author.display_name,
             author_avatar_url=inter.author.avatar.url
         )
@@ -3083,16 +2594,9 @@ async def supertroop(
         "value": f"channel {channel.mention}"
     }]
     embed_list = discord_responder.embed_message(
-        Embed=disnake.Embed,
-        color=disnake.Color(client_data.embed_color),
         icon_url=inter.bot.user.avatar.url,
-        title=None,
-        description=None,
-        bot_prefix=inter.bot.command_prefix,
-        bot_user_name=inter.bot.user.name,
-        thumbnail=None,
+        bot_user_name=inter.me.display_name,
         field_list=field_dict_list,
-        image_url=None,
         author_display_name=inter.author.display_name,
         author_avatar_url=inter.author.avatar.url
     )
@@ -3136,16 +2640,9 @@ async def war(
 
     if not verification_payload['verified']:
         embed_list = discord_responder.embed_message(
-            Embed=disnake.Embed,
-            color=disnake.Color(client_data.embed_color),
             icon_url=inter.bot.user.avatar.url,
-            title=None,
-            description=None,
-            bot_prefix=inter.bot.command_prefix,
-            bot_user_name=inter.bot.user.name,
-            thumbnail=None,
+            bot_user_name=inter.me.display_name,
             field_list=verification_payload['field_dict_list'],
-            image_url=None,
             author_display_name=inter.author.display_name,
             author_avatar_url=inter.author.avatar.url
         )
@@ -3173,16 +2670,9 @@ async def war(
             "value": f"please ensure bot is in channel {channel.mention}"
         }]
         embed_list = discord_responder.embed_message(
-            Embed=disnake.Embed,
-            color=disnake.Color(client_data.embed_color),
             icon_url=inter.bot.user.avatar.url,
-            title=None,
-            description=None,
-            bot_prefix=inter.bot.command_prefix,
-            bot_user_name=inter.bot.user.name,
-            thumbnail=None,
+            bot_user_name=inter.me.display_name,
             field_list=field_dict_list,
-            image_url=None,
             author_display_name=inter.author.display_name,
             author_avatar_url=inter.author.avatar.url
         )
@@ -3195,16 +2685,9 @@ async def war(
         "value": f"channel {channel.mention}"
     }]
     embed_list = discord_responder.embed_message(
-        Embed=disnake.Embed,
-        color=disnake.Color(client_data.embed_color),
         icon_url=inter.bot.user.avatar.url,
-        title=None,
-        description=None,
-        bot_prefix=inter.bot.command_prefix,
-        bot_user_name=inter.bot.user.name,
-        thumbnail=None,
+        bot_user_name=inter.me.display_name,
         field_list=field_dict_list,
-        image_url=None,
         author_display_name=inter.author.display_name,
         author_avatar_url=inter.author.avatar.url
     )
@@ -3248,16 +2731,9 @@ async def warnoattack(
 
     if not verification_payload['verified']:
         embed_list = discord_responder.embed_message(
-            Embed=disnake.Embed,
-            color=disnake.Color(client_data.embed_color),
             icon_url=inter.bot.user.avatar.url,
-            title=None,
-            description=None,
-            bot_prefix=inter.bot.command_prefix,
-            bot_user_name=inter.bot.user.name,
-            thumbnail=None,
+            bot_user_name=inter.me.display_name,
             field_list=verification_payload['field_dict_list'],
-            image_url=None,
             author_display_name=inter.author.display_name,
             author_avatar_url=inter.author.avatar.url
         )
@@ -3287,16 +2763,9 @@ async def warnoattack(
             "value": f"please ensure bot is in channel {channel.mention}"
         }]
         embed_list = discord_responder.embed_message(
-            Embed=disnake.Embed,
-            color=disnake.Color(client_data.embed_color),
             icon_url=inter.bot.user.avatar.url,
-            title=None,
-            description=None,
-            bot_prefix=inter.bot.command_prefix,
-            bot_user_name=inter.bot.user.name,
-            thumbnail=None,
+            bot_user_name=inter.me.display_name,
             field_list=field_dict_list,
-            image_url=None,
             author_display_name=inter.author.display_name,
             author_avatar_url=inter.author.avatar.url
         )
@@ -3309,16 +2778,9 @@ async def warnoattack(
         "value": f"channel {channel.mention}"
     }]
     embed_list = discord_responder.embed_message(
-        Embed=disnake.Embed,
-        color=disnake.Color(client_data.embed_color),
         icon_url=inter.bot.user.avatar.url,
-        title=None,
-        description=None,
-        bot_prefix=inter.bot.command_prefix,
-        bot_user_name=inter.bot.user.name,
-        thumbnail=None,
+        bot_user_name=inter.me.display_name,
         field_list=field_dict_list,
-        image_url=None,
         author_display_name=inter.author.display_name,
         author_avatar_url=inter.author.avatar.url
     )
@@ -3361,16 +2823,11 @@ async def self(inter):
     for embed_dict in embed_dict_list:
 
         embed_list = discord_responder.embed_message(
-            Embed=disnake.Embed,
-            color=disnake.Color(client_data.embed_color),
             icon_url=inter.bot.user.avatar.url,
             title=embed_dict["title"],
-            description=None,
-            bot_prefix=inter.bot.command_prefix,
-            bot_user_name=inter.bot.user.name,
+            bot_user_name=inter.me.display_name,
             thumbnail=embed_dict["thumbnail"],
             field_list=embed_dict["field_dict_list"],
-            image_url=None,
             author_display_name=inter.author.display_name,
             author_avatar_url=inter.author.avatar.url
         )
@@ -3408,16 +2865,9 @@ async def member(inter, user: disnake.User):
 
     if not verification_payload['verified']:
         embed_list = discord_responder.embed_message(
-            Embed=disnake.Embed,
-            color=disnake.Color(client_data.embed_color),
             icon_url=inter.bot.user.avatar.url,
-            title=None,
-            description=None,
-            bot_prefix=inter.bot.command_prefix,
-            bot_user_name=inter.bot.user.name,
-            thumbnail=None,
+            bot_user_name=inter.me.display_name,
             field_list=verification_payload['field_dict_list'],
-            image_url=None,
             author_display_name=inter.author.display_name,
             author_avatar_url=inter.author.avatar.url
         )
@@ -3431,16 +2881,11 @@ async def member(inter, user: disnake.User):
     for embed_dict in embed_dict_list:
 
         embed_list = discord_responder.embed_message(
-            Embed=disnake.Embed,
-            color=disnake.Color(client_data.embed_color),
             icon_url=inter.bot.user.avatar.url,
             title=embed_dict["title"],
-            description=None,
-            bot_prefix=inter.bot.command_prefix,
-            bot_user_name=inter.bot.user.name,
+            bot_user_name=inter.me.display_name,
             thumbnail=embed_dict["thumbnail"],
             field_list=embed_dict["field_dict_list"],
-            image_url=None,
             author_display_name=inter.author.display_name,
             author_avatar_url=inter.author.avatar.url
         )
@@ -3484,16 +2929,9 @@ async def all(inter):
 
     # telling the user that the bot is updating roles
     embed_list = discord_responder.embed_message(
-        Embed=disnake.Embed,
-        color=disnake.Color(client_data.embed_color),
         icon_url=inter.bot.user.avatar.url,
-        title=None,
         description="updating roles",
-        bot_prefix=inter.bot.command_prefix,
-        bot_user_name=inter.bot.user.name,
-        thumbnail=None,
-        field_list=[],
-        image_url=None,
+        bot_user_name=inter.me.display_name,
         author_display_name=inter.author.display_name,
         author_avatar_url=inter.author.avatar.url
     )
@@ -3510,16 +2948,11 @@ async def all(inter):
         for embed_dict in embed_dict_list:
 
             embed_list = discord_responder.embed_message(
-                Embed=disnake.Embed,
-                color=disnake.Color(client_data.embed_color),
                 icon_url=inter.bot.user.avatar.url,
                 title=embed_dict["title"],
-                description=None,
-                bot_prefix=inter.bot.command_prefix,
-                bot_user_name=inter.bot.user.name,
+                bot_user_name=inter.me.display_name,
                 thumbnail=embed_dict["thumbnail"],
                 field_list=embed_dict["field_dict_list"],
-                image_url=None,
                 author_display_name=inter.author.display_name,
                 author_avatar_url=inter.author.avatar.url
             )
@@ -3528,16 +2961,9 @@ async def all(inter):
 
     # telling the user that the bot is done updating roles
     embed_list = discord_responder.embed_message(
-        Embed=disnake.Embed,
-        color=disnake.Color(client_data.embed_color),
         icon_url=inter.bot.user.avatar.url,
-        title=None,
         description="update complete",
-        bot_prefix=inter.bot.command_prefix,
-        bot_user_name=inter.bot.user.name,
-        thumbnail=None,
-        field_list=[],
-        image_url=None,
+        bot_user_name=inter.me.display_name,
         author_display_name=inter.author.display_name,
         author_avatar_url=inter.author.avatar.url
     )
@@ -3616,16 +3042,9 @@ async def player(inter, player_tag: str):
     # player with given tag not found
     if player_obj is None:
         embed_list = discord_responder.embed_message(
-            Embed=disnake.Embed,
-            color=disnake.Color(client_data.embed_color),
             icon_url=inter.bot.user.avatar.url,
-            title=None,
             description=f"could not find player with tag {player_tag}",
-            bot_prefix=inter.bot.command_prefix,
-            bot_user_name=inter.bot.user.name,
-            thumbnail=None,
-            field_list=[],
-            image_url=None,
+            bot_user_name=inter.me.display_name,
             author_display_name=inter.author.display_name,
             author_avatar_url=inter.author.avatar.url
         )
@@ -3637,16 +3056,10 @@ async def player(inter, player_tag: str):
         player_obj, inter.guild.members)]
 
     embed_list = discord_responder.embed_message(
-        Embed=disnake.Embed,
-        color=disnake.Color(client_data.embed_color),
         icon_url=inter.bot.user.avatar.url,
-        title=None,
-        description=None,
-        bot_prefix=inter.bot.command_prefix,
-        bot_user_name=inter.bot.user.name,
+        bot_user_name=inter.me.display_name,
         thumbnail=player_obj.league.icon,
         field_list=field_dict_list,
-        image_url=None,
         author_display_name=inter.author.display_name,
         author_avatar_url=inter.author.avatar.url
     )
@@ -3682,16 +3095,9 @@ async def clan(inter, clan_role: disnake.Role = None):
 
     if not verification_payload['verified']:
         embed_list = discord_responder.embed_message(
-            Embed=disnake.Embed,
-            color=disnake.Color(client_data.embed_color),
             icon_url=inter.bot.user.avatar.url,
-            title=None,
-            description=None,
-            bot_prefix=inter.bot.command_prefix,
-            bot_user_name=inter.bot.user.name,
-            thumbnail=None,
+            bot_user_name=inter.me.display_name,
             field_list=verification_payload['field_dict_list'],
-            image_url=None,
             author_display_name=inter.author.display_name,
             author_avatar_url=inter.author.avatar.url
         )
@@ -3708,16 +3114,11 @@ async def clan(inter, clan_role: disnake.Role = None):
             member_obj, inter.guild.members))
 
     embed_list = discord_responder.embed_message(
-        Embed=disnake.Embed,
-        color=disnake.Color(client_data.embed_color),
         icon_url=inter.bot.user.avatar.url,
         title=f"{clan_obj.name} linked users",
-        description=None,
-        bot_prefix=inter.bot.command_prefix,
-        bot_user_name=inter.bot.user.name,
+        bot_user_name=inter.me.display_name,
         thumbnail=clan_obj.badge,
         field_list=field_dict_list,
-        image_url=None,
         author_display_name=inter.author.display_name,
         author_avatar_url=inter.author.avatar.url
     )
@@ -3778,16 +3179,10 @@ async def overview(inter):
         inter.author, db_players, coc_client))
 
     embed_list = discord_responder.embed_message(
-        Embed=disnake.Embed,
-        color=disnake.Color(client_data.embed_color),
         icon_url=inter.bot.user.avatar.url,
-        title=f"{inter.bot.user.display_name} client overview",
-        description=None,
-        bot_prefix=inter.bot.command_prefix,
-        bot_user_name=inter.bot.user.name,
-        thumbnail=None,
+        title=f"{inter.me.display_name} client overview",
+        bot_user_name=inter.me.display_name,
         field_list=field_dict_list,
-        image_url=None,
         author_display_name=inter.author.display_name,
         author_avatar_url=inter.author.avatar.url
     )
@@ -3818,14 +3213,24 @@ async def claim(inter):
     """
 
     user = db_responder.claim_user(inter.author.id)
-    # if user wasn't claimed and now is
+
+    # user wasn't claimed and now is
     if user:
-        await inter.edit_original_message(
-            content=f"{inter.author.mention} is now claimed")
-    # if user was already claimed
+        embed_description = f"{inter.author.mention} is now claimed",
+
+    # user was already claimed
     else:
-        await inter.edit_original_message(
-            content=f"{inter.author.mention} has already been claimed")
+        embed_description = f"{inter.author.mention} has already been claimed"
+
+    embed_list = discord_responder.embed_message(
+        icon_url=inter.bot.user.avatar.url,
+        description=embed_description,
+        bot_user_name=inter.me.display_name,
+        author_display_name=inter.author.display_name,
+        author_avatar_url=inter.author.avatar.url
+    )
+
+    await discord_responder.send_embed_list(embed_list, inter)
 
 
 # client player
@@ -3851,8 +3256,8 @@ async def player(inter):
 )
 async def claim(inter, player_tag: str, api_key: str):
     """
-        verify and claim a player, 
-        a player must be claimed to view and run 
+        verify and claim a player,
+        a player must be claimed to view and run
         many of ClashDiscord commands
 
         Parameters
@@ -3867,8 +3272,17 @@ async def claim(inter, player_tag: str, api_key: str):
 
     # player tag was not valid
     if not player_obj:
-        await inter.edit_original_message(
-            content=f"player with tag {player_tag} was not found")
+        embed_description = f"player with tag {player_tag} was not found"
+
+        embed_list = discord_responder.embed_message(
+            icon_url=inter.bot.user.avatar.url,
+            description=embed_description,
+            bot_user_name=inter.me.display_name,
+            author_display_name=inter.author.display_name,
+            author_avatar_url=inter.author.avatar.url
+        )
+
+        await discord_responder.send_embed_list(embed_list, inter)
         return
 
     # confirm user has been claimed
@@ -3878,17 +3292,35 @@ async def claim(inter, player_tag: str, api_key: str):
         db_user_obj = db_responder.claim_user(inter.author.id)
         if not db_user_obj:
             # user could not be claimed
-            await inter.edit_original_message(
-                content=f"{inter.author.mention} user couldn't be claimed")
+            embed_description = f"{inter.author.mention} user couldn't be claimed"
+
+            embed_list = discord_responder.embed_message(
+                icon_url=inter.bot.user.avatar.url,
+                description=embed_description,
+                bot_user_name=inter.me.display_name,
+                author_display_name=inter.author.display_name,
+                author_avatar_url=inter.author.avatar.url
+            )
+
+            await discord_responder.send_embed_list(embed_list, inter)
             return
 
     # confirm player has not been claimed
     db_player_obj = db_responder.read_player_from_tag(player_obj.tag)
     # player has already been claimed
     if db_player_obj:
-        await inter.edit_original_message(
-            content=(f"{player_obj.name} {player_obj.tag} "
-                     f"has already been claimed"))
+        embed_description = (f"{player_obj.name} {player_obj.tag} "
+                             f"has already been claimed")
+
+        embed_list = discord_responder.embed_message(
+            icon_url=inter.bot.user.avatar.url,
+            description=embed_description,
+            bot_user_name=inter.me.display_name,
+            author_display_name=inter.author.display_name,
+            author_avatar_url=inter.author.avatar.url
+        )
+
+        await discord_responder.send_embed_list(embed_list, inter)
         return
 
     # authenticate player api key
@@ -3896,9 +3328,18 @@ async def claim(inter, player_tag: str, api_key: str):
         api_key, player_obj.tag, coc_client)
     # api key could not be verified
     if not player_verified:
-        await inter.edit_original_message(
-            content=(f"verification for "
-                     f"player tag {player_obj.tag} has failed"))
+        embed_description = (f"verification for "
+                             f"player tag {player_obj.tag} has failed")
+
+        embed_list = discord_responder.embed_message(
+            icon_url=inter.bot.user.avatar.url,
+            description=embed_description,
+            bot_user_name=inter.me.display_name,
+            author_display_name=inter.author.display_name,
+            author_avatar_url=inter.author.avatar.url
+        )
+
+        await discord_responder.send_embed_list(embed_list, inter)
         return
 
     # user claimed
@@ -3908,16 +3349,24 @@ async def claim(inter, player_tag: str, api_key: str):
     db_player_obj = db_responder.claim_player(
         inter.author.id, player_obj.tag)
 
+    # succesfully claimed
     if db_player_obj:
-        # if succesfully claimed
-        await inter.edit_original_message(
-            content=(f"{player_obj.name} {player_obj.tag} "
-                     f"is now claimed by {inter.author.mention}"))
+        embed_description = (f"{player_obj.name} {player_obj.tag} "
+                             f"is now claimed by {inter.author.mention}")
+    # failed to claim
     else:
-        # if failed to claim
-        await inter.edit_original_message(
-            content=(f"Could not claim {player_obj.name} "
-                     f"{player_obj.tag} for {inter.author.mention}"))
+        embed_description = (f"Could not claim {player_obj.name} "
+                             f"{player_obj.tag} for {inter.author.mention}")
+
+    embed_list = discord_responder.embed_message(
+        icon_url=inter.bot.user.avatar.url,
+        description=embed_description,
+        bot_user_name=inter.me.display_name,
+        author_display_name=inter.author.display_name,
+        author_avatar_url=inter.author.avatar.url
+    )
+
+    await discord_responder.send_embed_list(embed_list, inter)
 
 
 @player.sub_command(
@@ -3933,9 +3382,18 @@ async def show(inter):
 
     # user has no claimed players
     if len(db_player_obj_list) == 0:
-        await inter.edit_original_message(
-            content=(f"{inter.author.mention} does not have any "
-                     f"claimed players"))
+        embed_description = (f"{inter.author.mention} does not have any "
+                             f"claimed players")
+
+        embed_list = discord_responder.embed_message(
+            icon_url=inter.bot.user.avatar.url,
+            description=embed_description,
+            bot_user_name=inter.me.display_name,
+            author_display_name=inter.author.display_name,
+            author_avatar_url=inter.author.avatar.url
+        )
+
+        await discord_responder.send_embed_list(embed_list, inter)
         return
 
     message = f"{inter.author.mention} has claimed "
@@ -3968,40 +3426,77 @@ async def update(inter, player_tag: str):
 
     # if player with tag not found
     if not player_obj:
-        await inter.edit_original_message(
-            content=f"player with tag {player_tag} not found")
+        embed_description = f"player with tag {player_tag} not found"
+
+        embed_list = discord_responder.embed_message(
+            icon_url=inter.bot.user.avatar.url,
+            description=embed_description,
+            bot_user_name=inter.me.display_name,
+            author_display_name=inter.author.display_name,
+            author_avatar_url=inter.author.avatar.url
+        )
+
+        await discord_responder.send_embed_list(embed_list, inter)
         return
 
     db_player_obj = db_responder.read_player(inter.author.id, player_obj.tag)
 
     # if requested player is not claimed
     if not db_player_obj:
-        await inter.edit_original_message(
-            content=(
-                f"{inter.author.mention} "
-                f"has not claimed "
-                f"{player_obj.name} {player_obj.tag}"
-            ))
+        embed_description = (
+            f"{inter.author.mention} "
+            f"has not claimed "
+            f"{player_obj.name} {player_obj.tag}"
+        )
+
+        embed_list = discord_responder.embed_message(
+            icon_url=inter.bot.user.avatar.url,
+            description=embed_description,
+            bot_user_name=inter.me.display_name,
+            author_display_name=inter.author.display_name,
+            author_avatar_url=inter.author.avatar.url
+        )
+
+        await discord_responder.send_embed_list(embed_list, inter)
         return
 
     # if requested player is the active player
     if db_player_obj.active:
-        await inter.edit_original_message(
-            content=(
-                f"{player_obj.name} {player_obj.tag} "
-                f"is already your active player "
-                f"{inter.author.mention}"
-            ))
+        embed_description = (
+            f"{player_obj.name} {player_obj.tag} "
+            f"is already your active player "
+            f"{inter.author.mention}"
+        )
+
+        embed_list = discord_responder.embed_message(
+            icon_url=inter.bot.user.avatar.url,
+            description=embed_description,
+            bot_user_name=inter.me.display_name,
+            author_display_name=inter.author.display_name,
+            author_avatar_url=inter.author.avatar.url
+        )
+
+        await discord_responder.send_embed_list(embed_list, inter)
         return
 
     else:
         db_player_obj = db_responder.update_player_active(
             inter.author.id, player_obj.tag)
-        await inter.edit_original_message(
-            content=(
-                f"{player_obj.name} {player_obj.tag} is now "
-                f"your active player {inter.author.mention}"
-            ))
+
+        embed_description = (
+            f"{player_obj.name} {player_obj.tag} is now "
+            f"your active player {inter.author.mention}"
+        )
+
+        embed_list = discord_responder.embed_message(
+            icon_url=inter.bot.user.avatar.url,
+            description=embed_description,
+            bot_user_name=inter.me.display_name,
+            author_display_name=inter.author.display_name,
+            author_avatar_url=inter.author.avatar.url
+        )
+
+        await discord_responder.send_embed_list(embed_list, inter)
         return
 
 
@@ -4022,17 +3517,35 @@ async def remove(inter, player_tag: str):
 
     # player not found
     if not player_obj:
-        await inter.edit_original_message(
-            content=f"player with tag {player_tag} not found")
+        embed_description = f"player with tag {player_tag} not found"
+
+        embed_list = discord_responder.embed_message(
+            icon_url=inter.bot.user.avatar.url,
+            description=embed_description,
+            bot_user_name=inter.me.display_name,
+            author_display_name=inter.author.display_name,
+            author_avatar_url=inter.author.avatar.url
+        )
+
+        await discord_responder.send_embed_list(embed_list, inter)
         return
 
     db_player_obj = db_responder.read_player(inter.author.id, player_obj.tag)
 
     # db player not found
     if not db_player_obj:
-        await inter.edit_original_message(
-            content=(f"{player_obj.name} {player_obj.tag} "
-                     f"is not claimed by {inter.author.mention}"))
+        embed_description = (f"{player_obj.name} {player_obj.tag} "
+                             f"is not claimed by {inter.author.mention}")
+
+        embed_list = discord_responder.embed_message(
+            icon_url=inter.bot.user.avatar.url,
+            description=embed_description,
+            bot_user_name=inter.me.display_name,
+            author_display_name=inter.author.display_name,
+            author_avatar_url=inter.author.avatar.url
+        )
+
+        await discord_responder.send_embed_list(embed_list, inter)
         return
 
     db_del_player_obj = db_responder.delete_player(
@@ -4040,11 +3553,21 @@ async def remove(inter, player_tag: str):
 
     # player was not deleted
     if db_del_player_obj:
-        await inter.edit_original_message(content=(
+        embed_description = (
             f"{player_obj.name} {player_obj.tag} "
             f"could not be deleted "
             f"from {inter.author.mention} player list"
-        ))
+        )
+
+        embed_list = discord_responder.embed_message(
+            icon_url=inter.bot.user.avatar.url,
+            description=embed_description,
+            bot_user_name=inter.me.display_name,
+            author_display_name=inter.author.display_name,
+            author_avatar_url=inter.author.avatar.url
+        )
+
+        await discord_responder.send_embed_list(embed_list, inter)
         return
 
     db_active_player_obj = db_responder.read_player_active(inter.author.id)
@@ -4052,11 +3575,21 @@ async def remove(inter, player_tag: str):
     # active player found
     # no need to change the active player
     if db_active_player_obj:
-        await inter.edit_original_message(content=(
+        embed_description = (
             f"{player_obj.name} {player_obj.tag} "
             f"has been deleted "
             f"from {inter.author.mention} player list"
-        ))
+        )
+
+        embed_list = discord_responder.embed_message(
+            icon_url=inter.bot.user.avatar.url,
+            description=embed_description,
+            bot_user_name=inter.me.display_name,
+            author_display_name=inter.author.display_name,
+            author_avatar_url=inter.author.avatar.url
+        )
+
+        await discord_responder.send_embed_list(embed_list, inter)
         return
 
     # no active player found
@@ -4066,11 +3599,21 @@ async def remove(inter, player_tag: str):
 
     # no additional players claimed
     if len(db_player_obj_list) == 0:
-        await inter.edit_original_message(content=(
+        embed_description = (
             f"{player_obj.name} {player_obj.tag} "
             f"has been deleted, "
             f"{inter.author.mention} has no more claimed players"
-        ))
+        )
+
+        embed_list = discord_responder.embed_message(
+            icon_url=inter.bot.user.avatar.url,
+            description=embed_description,
+            bot_user_name=inter.me.display_name,
+            author_display_name=inter.author.display_name,
+            author_avatar_url=inter.author.avatar.url
+        )
+
+        await discord_responder.send_embed_list(embed_list, inter)
         return
 
     # additional players claimed by user
@@ -4080,11 +3623,21 @@ async def remove(inter, player_tag: str):
 
     # update not successful
     if not db_updated_player_obj:
-        await inter.edit_original_message(content=(
+        embed_description = (
             f"{player_obj.name} {player_obj.tag} "
             f"has been deleted, could not update active player, "
             f"{inter.author.mention} has no active players"
-        ))
+        )
+
+        embed_list = discord_responder.embed_message(
+            icon_url=inter.bot.user.avatar.url,
+            description=embed_description,
+            bot_user_name=inter.me.display_name,
+            author_display_name=inter.author.display_name,
+            author_avatar_url=inter.author.avatar.url
+        )
+
+        await discord_responder.send_embed_list(embed_list, inter)
         return
 
     # update was successful
@@ -4093,25 +3646,45 @@ async def remove(inter, player_tag: str):
 
     # clash player not found
     if not clash_updated_player_obj:
-        await inter.edit_original_message(content=(
+        embed_description = (
             f"{player_obj.name} {player_obj.tag} "
             f"has been deleted, "
             f"{inter.author.mention} active is now set to "
             f"{db_updated_player_obj.player_tag}, "
             f"could not find player in clash of clans"
-        ))
+        )
+
+        embed_list = discord_responder.embed_message(
+            icon_url=inter.bot.user.avatar.url,
+            description=embed_description,
+            bot_user_name=inter.me.display_name,
+            author_display_name=inter.author.display_name,
+            author_avatar_url=inter.author.avatar.url
+        )
+
+        await discord_responder.send_embed_list(embed_list, inter)
         return
 
     # player deleted
     # active player updated
     # clash player found
-    await inter.edit_original_message(content=(
+    embed_description = (
         f"{player_obj.name} {player_obj.tag} "
         f"has been deleted, "
         f"{inter.author.mention} active is now set to "
         f"{clash_updated_player_obj.name} "
         f"{clash_updated_player_obj.tag}"
-    ))
+    )
+
+    embed_list = discord_responder.embed_message(
+        icon_url=inter.bot.user.avatar.url,
+        description=embed_description,
+        bot_user_name=inter.me.display_name,
+        author_display_name=inter.author.display_name,
+        author_avatar_url=inter.author.avatar.url
+    )
+
+    await discord_responder.send_embed_list(embed_list, inter)
 
 
 # client guild
@@ -4143,16 +3716,34 @@ async def claim(inter):
 
     # user not found
     if not db_user_obj:
-        await inter.edit_original_message(
-            content=f"{inter.author.mention} has not been claimed")
+        embed_description = f"{inter.author.mention} has not been claimed"
+
+        embed_list = discord_responder.embed_message(
+            icon_url=inter.bot.user.avatar.url,
+            description=embed_description,
+            bot_user_name=inter.me.display_name,
+            author_display_name=inter.author.display_name,
+            author_avatar_url=inter.author.avatar.url
+        )
+
+        await discord_responder.send_embed_list(embed_list, inter)
         return
 
     db_guild_obj = db_responder.read_guild(inter.guild.id)
 
     # guild already claimed
     if db_guild_obj:
-        await inter.edit_original_message(
-            content=f"{inter.guild.name} has already been claimed")
+        embed_description = f"{inter.guild.name} has already been claimed"
+
+        embed_list = discord_responder.embed_message(
+            icon_url=inter.bot.user.avatar.url,
+            description=embed_description,
+            bot_user_name=inter.me.display_name,
+            author_display_name=inter.author.display_name,
+            author_avatar_url=inter.author.avatar.url
+        )
+
+        await discord_responder.send_embed_list(embed_list, inter)
         return
 
     db_claimed_guild = db_responder.claim_guild(
@@ -4160,14 +3751,33 @@ async def claim(inter):
 
     # guild already claimed or could not be claimed
     if not db_claimed_guild:
-        await inter.edit_original_message(
-            content=f"{inter.guild.name} could not be claimed")
+        embed_description = f"{inter.guild.name} could not be claimed"
+
+        embed_list = discord_responder.embed_message(
+            icon_url=inter.bot.user.avatar.url,
+            description=embed_description,
+            bot_user_name=inter.me.display_name,
+            author_display_name=inter.author.display_name,
+            author_avatar_url=inter.author.avatar.url
+        )
+
+        await discord_responder.send_embed_list(embed_list, inter)
         return
 
-    await inter.edit_original_message(
-        content=(f"{inter.guild.name} is now claimed "
-                 f"by admin user {inter.author.mention}")
+    field_dict_list = [{
+        "name": f"{inter.guild.name} is now claimed",
+        "value": f"admin user {inter.author.mention}"
+    }]
+
+    embed_list = discord_responder.embed_message(
+        icon_url=inter.bot.user.avatar.url,
+        bot_user_name=inter.me.display_name,
+        field_list=field_dict_list,
+        author_display_name=inter.author.display_name,
+        author_avatar_url=inter.author.avatar.url
     )
+
+    await discord_responder.send_embed_list(embed_list, inter)
 
 
 # client clan
@@ -4201,52 +3811,117 @@ async def claim(inter, clan_tag: str):
 
     # guild not claimed
     if not db_guild_obj:
-        await inter.edit_original_message(
-            content=f"{inter.guild.name} has not been claimed")
+        embed_description = f"{inter.guild.name} has not been claimed"
+
+        embed_list = discord_responder.embed_message(
+            icon_url=inter.bot.user.avatar.url,
+            description=embed_description,
+            bot_user_name=inter.me.display_name,
+            author_display_name=inter.author.display_name,
+            author_avatar_url=inter.author.avatar.url
+        )
+
+        await discord_responder.send_embed_list(embed_list, inter)
         return
 
     db_user_obj = db_responder.read_user(inter.author.id)
 
     # user not claimed
     if not db_user_obj:
-        await inter.edit_original_message(
-            content=f"{inter.author.mention} has not been claimed")
+        embed_description = f"{inter.author.mention} has not been claimed"
+
+        embed_list = discord_responder.embed_message(
+            icon_url=inter.bot.user.avatar.url,
+            description=embed_description,
+            bot_user_name=inter.me.display_name,
+            author_display_name=inter.author.display_name,
+            author_avatar_url=inter.author.avatar.url
+        )
+
+        await discord_responder.send_embed_list(embed_list, inter)
         return
 
     # user is not guild admin and is not super user
     if (not db_guild_obj.admin_user_id == inter.author.id
             and not db_user_obj.super_user):
-        await inter.edit_original_message(
-            content=f"{inter.author.mention} is not guild's admin")
+        embed_description = f"{inter.author.mention} is not guild's admin"
+
+        embed_list = discord_responder.embed_message(
+            icon_url=inter.bot.user.avatar.url,
+            description=embed_description,
+            bot_user_name=inter.me.display_name,
+            author_display_name=inter.author.display_name,
+            author_avatar_url=inter.author.avatar.url
+        )
+
+        await discord_responder.send_embed_list(embed_list, inter)
         return
 
     clan_obj = await clash_responder.get_clan(clan_tag, coc_client)
 
     # clan not found
     if not clan_obj:
-        await inter.edit_original_message(
-            content=f"couldn't find clan {clan_tag}")
+        embed_description = f"couldn't find clan {clan_tag}"
+
+        embed_list = discord_responder.embed_message(
+            icon_url=inter.bot.user.avatar.url,
+            description=embed_description,
+            bot_user_name=inter.me.display_name,
+            author_display_name=inter.author.display_name,
+            author_avatar_url=inter.author.avatar.url
+        )
+
+        await discord_responder.send_embed_list(embed_list, inter)
         return
 
     claimed_clan_obj = db_responder.read_clan(inter.guild.id, clan_obj.tag)
 
     # already claimed
     if claimed_clan_obj:
-        await inter.edit_original_message(content=(
+        embed_description = (
             f"{clan_obj.name} has already been claimed for "
-            f"{inter.guild.name}"))
+            f"{inter.guild.name}"
+        )
+
+        embed_list = discord_responder.embed_message(
+            icon_url=inter.bot.user.avatar.url,
+            description=embed_description,
+            bot_user_name=inter.me.display_name,
+            author_display_name=inter.author.display_name,
+            author_avatar_url=inter.author.avatar.url
+        )
+
+        await discord_responder.send_embed_list(embed_list, inter)
         return
 
     db_clan_obj = db_responder.claim_clan(inter.guild.id, clan_obj.tag)
 
     # clan not claimed
     if not db_clan_obj:
-        await inter.edit_original_message(
-            content=f"couldn't claim {clan_obj.name}")
+        embed_description = f"couldn't claim {clan_obj.name}"
+
+        embed_list = discord_responder.embed_message(
+            icon_url=inter.bot.user.avatar.url,
+            description=embed_description,
+            bot_user_name=inter.me.display_name,
+            author_display_name=inter.author.display_name,
+            author_avatar_url=inter.author.avatar.url
+        )
+
+        await discord_responder.send_embed_list(embed_list, inter)
         return
 
-    await inter.edit_original_message(
-        content=f"{clan_obj.name} has been claimed")
+    embed_description = f"{clan_obj.name} has been claimed"
+
+    embed_list = discord_responder.embed_message(
+        icon_url=inter.bot.user.avatar.url,
+        description=embed_description,
+        bot_user_name=inter.me.display_name,
+        author_display_name=inter.author.display_name,
+        author_avatar_url=inter.author.avatar.url
+    )
+
+    await discord_responder.send_embed_list(embed_list, inter)
 
 
 @clan.sub_command(
@@ -4268,43 +3943,91 @@ async def show(inter):
 
     # guild not claimed
     if not db_guild_obj:
-        await inter.edit_original_message(
-            content=f"{inter.guild.name} has not been claimed")
+        embed_description = f"{inter.guild.name} has not been claimed"
+
+        embed_list = discord_responder.embed_message(
+            icon_url=inter.bot.user.avatar.url,
+            description=embed_description,
+            bot_user_name=inter.me.display_name,
+            author_display_name=inter.author.display_name,
+            author_avatar_url=inter.author.avatar.url
+        )
+
+        await discord_responder.send_embed_list(embed_list, inter)
         return
 
     db_user_obj = db_responder.read_user(inter.author.id)
 
     # user not claimed
     if not db_user_obj:
-        await inter.edit_original_message(
-            content=f"{inter.author.mention} has not been claimed")
+        embed_description = f"{inter.author.mention} has not been claimed"
+
+        embed_list = discord_responder.embed_message(
+            icon_url=inter.bot.user.avatar.url,
+            description=embed_description,
+            bot_user_name=inter.me.display_name,
+            author_display_name=inter.author.display_name,
+            author_avatar_url=inter.author.avatar.url
+        )
+
+        await discord_responder.send_embed_list(embed_list, inter)
         return
 
     # user is not guild admin and is not super user
     if (not db_guild_obj.admin_user_id == inter.author.id
             and not db_user_obj.super_user):
-        await inter.edit_original_message(
-            content=f"{inter.author.mention} is not guild's admin")
+        embed_description = f"{inter.author.mention} is not guild's admin"
+
+        embed_list = discord_responder.embed_message(
+            icon_url=inter.bot.user.avatar.url,
+            description=embed_description,
+            bot_user_name=inter.me.display_name,
+            author_display_name=inter.author.display_name,
+            author_avatar_url=inter.author.avatar.url
+        )
+
+        await discord_responder.send_embed_list(embed_list, inter)
         return
 
     db_clan_obj_list = db_responder.read_clan_list_from_guild(inter.guild.id)
 
     # guild has no claimed clans
     if len(db_clan_obj_list) == 0:
-        await inter.edit_original_message(
-            content=f"{inter.guild.name} does not have any claimed clans")
+        embed_description = f"{inter.guild.name} does not have any claimed clans"
+
+        embed_list = discord_responder.embed_message(
+            icon_url=inter.bot.user.avatar.url,
+            description=embed_description,
+            bot_user_name=inter.me.display_name,
+            author_display_name=inter.author.display_name,
+            author_avatar_url=inter.author.avatar.url
+        )
+
+        await discord_responder.send_embed_list(embed_list, inter)
         return
 
-    message = f"{inter.guild.name} has claimed "
-    for item in db_clan_obj_list:
+    embed_title = f"{inter.guild.name} claimed clans"
+
+    field_dict_list = []
+    for db_clan in db_clan_obj_list:
         clan = await clash_responder.get_clan(
-            item.clan_tag, coc_client)
-        message += f"{clan.name} {clan.tag}, "
+            db_clan.clan_tag, coc_client)
 
-    # cuts the last two characters from the string ', '
-    message = message[:-2]
+        field_dict_list.append({
+            "name": clan.name,
+            "value": clan.tag
+        })
 
-    await inter.edit_original_message(content=message)
+    embed_list = discord_responder.embed_message(
+        icon_url=inter.bot.user.avatar.url,
+        title=embed_title,
+        bot_user_name=inter.me.display_name,
+        field_list=field_dict_list,
+        author_display_name=inter.author.display_name,
+        author_avatar_url=inter.author.avatar.url
+    )
+
+    await discord_responder.send_embed_list(embed_list, inter)
 
 
 @clan.sub_command(
@@ -4325,51 +4048,114 @@ async def remove(inter, clan_tag: str):
 
     # guild not claimed
     if not db_guild_obj:
-        await inter.edit_original_message(
-            content=f"{inter.guild.name} has not been claimed")
+        embed_description = f"{inter.guild.name} has not been claimed"
+
+        embed_list = discord_responder.embed_message(
+            icon_url=inter.bot.user.avatar.url,
+            description=embed_description,
+            bot_user_name=inter.me.display_name,
+            author_display_name=inter.author.display_name,
+            author_avatar_url=inter.author.avatar.url
+        )
+
+        await discord_responder.send_embed_list(embed_list, inter)
         return
 
     db_user_obj = db_responder.read_user(inter.author.id)
 
     # user not claimed
     if not db_user_obj:
-        await inter.edit_original_message(
-            content=f"{inter.author.mention} has not been claimed")
+        embed_description = f"{inter.author.mention} has not been claimed"
+
+        embed_list = discord_responder.embed_message(
+            icon_url=inter.bot.user.avatar.url,
+            description=embed_description,
+            bot_user_name=inter.me.display_name,
+            author_display_name=inter.author.display_name,
+            author_avatar_url=inter.author.avatar.url
+        )
+
+        await discord_responder.send_embed_list(embed_list, inter)
         return
 
     # user is not guild admin and is not super user
     if (not db_guild_obj.admin_user_id == inter.author.id
             and not db_user_obj.super_user):
-        await inter.edit_original_message(
-            content=f"{inter.author.mention} is not guild's admin")
+        embed_description = f"{inter.author.mention} is not guild's admin"
+
+        embed_list = discord_responder.embed_message(
+            icon_url=inter.bot.user.avatar.url,
+            description=embed_description,
+            bot_user_name=inter.me.display_name,
+            author_display_name=inter.author.display_name,
+            author_avatar_url=inter.author.avatar.url
+        )
+
+        await discord_responder.send_embed_list(embed_list, inter)
         return
 
     clan_obj = await clash_responder.get_clan(clan_tag, coc_client)
 
     # clan not found
     if not clan_obj:
-        await inter.edit_original_message(
-            content=f"couldn't find clan {clan_tag}")
+        embed_description = f"couldn't find clan {clan_tag}"
+
+        embed_list = discord_responder.embed_message(
+            icon_url=inter.bot.user.avatar.url,
+            description=embed_description,
+            bot_user_name=inter.me.display_name,
+            author_display_name=inter.author.display_name,
+            author_avatar_url=inter.author.avatar.url
+        )
+
+        await discord_responder.send_embed_list(embed_list, inter)
         return
 
     db_clan_obj = db_responder.read_clan(inter.guild.id, clan_obj.tag)
     # clan not claimed by guild
     if not db_clan_obj:
-        await inter.edit_original_message(
-            content=f"{clan_obj.name} has not been claimed "
-            f"by {inter.guild.name}")
+        embed_description = (f"{clan_obj.name} has not been claimed by "
+                             f"{inter.guild.name}")
+
+        embed_list = discord_responder.embed_message(
+            icon_url=inter.bot.user.avatar.url,
+            description=embed_description,
+            bot_user_name=inter.me.display_name,
+            author_display_name=inter.author.display_name,
+            author_avatar_url=inter.author.avatar.url
+        )
+
+        await discord_responder.send_embed_list(embed_list, inter)
         return
 
     db_clan_deletion = db_responder.delete_clan(inter.guild.id, clan_obj.tag)
     # clan was found after deletion
     if db_clan_deletion:
-        await inter.edit_original_message(
-            content=f"{clan_obj.name} could not be deleted")
+        embed_description = f"{clan_obj.name} could not be deleted"
+
+        embed_list = discord_responder.embed_message(
+            icon_url=inter.bot.user.avatar.url,
+            description=embed_description,
+            bot_user_name=inter.me.display_name,
+            author_display_name=inter.author.display_name,
+            author_avatar_url=inter.author.avatar.url
+        )
+
+        await discord_responder.send_embed_list(embed_list, inter)
         return
 
-    await inter.edit_original_message(
-        content=(f"{clan_obj.name} has been deleted "
-                 f"from {inter.guild.name}"))
+    embed_description = (f"{clan_obj.name} has been deleted "
+                         f"from {inter.guild.name}")
+
+    embed_list = discord_responder.embed_message(
+        icon_url=inter.bot.user.avatar.url,
+        description=embed_description,
+        bot_user_name=inter.me.display_name,
+        author_display_name=inter.author.display_name,
+        author_avatar_url=inter.author.avatar.url
+    )
+
+    await discord_responder.send_embed_list(embed_list, inter)
 
 
 # client roles
@@ -4400,21 +4186,48 @@ async def show(inter):
     db_guild_obj = db_responder.read_guild(inter.guild.id)
     # guild not claimed
     if not db_guild_obj:
-        await inter.edit_original_message(
-            content=f"{inter.guild.name} has not been claimed")
+        embed_description = f"{inter.guild.name} has not been claimed"
+
+        embed_list = discord_responder.embed_message(
+            icon_url=inter.bot.user.avatar.url,
+            description=embed_description,
+            bot_user_name=inter.me.display_name,
+            author_display_name=inter.author.display_name,
+            author_avatar_url=inter.author.avatar.url
+        )
+
+        await discord_responder.send_embed_list(embed_list, inter)
         return
 
     # user not claimed
     if not db_user_obj:
-        await inter.edit_original_message(
-            content=f"{inter.author.mention} has not been claimed")
+        embed_description = f"{inter.author.mention} has not been claimed"
+
+        embed_list = discord_responder.embed_message(
+            icon_url=inter.bot.user.avatar.url,
+            description=embed_description,
+            bot_user_name=inter.me.display_name,
+            author_display_name=inter.author.display_name,
+            author_avatar_url=inter.author.avatar.url
+        )
+
+        await discord_responder.send_embed_list(embed_list, inter)
         return
 
     # user is not guild admin and is not super user
     if (not db_guild_obj.admin_user_id == inter.author.id
             and not db_user_obj.super_user):
-        await inter.edit_original_message(
-            content=f"{inter.author.mention} is not guild's admin")
+        embed_description = f"{inter.author.mention} is not guild's admin"
+
+        embed_list = discord_responder.embed_message(
+            icon_url=inter.bot.user.avatar.url,
+            description=embed_description,
+            bot_user_name=inter.me.display_name,
+            author_display_name=inter.author.display_name,
+            author_avatar_url=inter.author.avatar.url
+        )
+
+        await discord_responder.send_embed_list(embed_list, inter)
         return
 
     field_dict_list = []
@@ -4484,16 +4297,10 @@ async def show(inter):
         })
 
     embed_list = discord_responder.embed_message(
-        Embed=disnake.Embed,
-        color=disnake.Color(client_data.embed_color),
         icon_url=inter.bot.user.avatar.url,
         title=f"{inter.guild.name} claimed roles",
-        description=None,
-        bot_prefix=inter.bot.command_prefix,
-        bot_user_name=inter.bot.user.name,
-        thumbnail=None,
+        bot_user_name=inter.me.display_name,
         field_list=field_dict_list,
-        image_url=None,
         author_display_name=inter.author.display_name,
         author_avatar_url=inter.author.avatar.url
     )
@@ -4522,21 +4329,48 @@ async def remove(inter, role: disnake.Role):
     db_guild_obj = db_responder.read_guild(inter.guild.id)
     # guild not claimed
     if not db_guild_obj:
-        await inter.edit_original_message(
-            content=f"{inter.guild.name} has not been claimed")
+        embed_description = f"{inter.guild.name} has not been claimed"
+
+        embed_list = discord_responder.embed_message(
+            icon_url=inter.bot.user.avatar.url,
+            description=embed_description,
+            bot_user_name=inter.me.display_name,
+            author_display_name=inter.author.display_name,
+            author_avatar_url=inter.author.avatar.url
+        )
+
+        await discord_responder.send_embed_list(embed_list, inter)
         return
 
     # user not claimed
     if not db_user_obj:
-        await inter.edit_original_message(
-            content=f"{inter.author.mention} has not been claimed")
+        embed_description = f"{inter.author.mention} has not been claimed"
+
+        embed_list = discord_responder.embed_message(
+            icon_url=inter.bot.user.avatar.url,
+            description=embed_description,
+            bot_user_name=inter.me.display_name,
+            author_display_name=inter.author.display_name,
+            author_avatar_url=inter.author.avatar.url
+        )
+
+        await discord_responder.send_embed_list(embed_list, inter)
         return
 
     # user is not guild admin and is not super user
     if (not db_guild_obj.admin_user_id == inter.author.id
             and not db_user_obj.super_user):
-        await inter.edit_original_message(
-            content=f"{inter.author.mention} is not guild's admin")
+        embed_description = f"{inter.author.mention} is not guild's admin"
+
+        embed_list = discord_responder.embed_message(
+            icon_url=inter.bot.user.avatar.url,
+            description=embed_description,
+            bot_user_name=inter.me.display_name,
+            author_display_name=inter.author.display_name,
+            author_avatar_url=inter.author.avatar.url
+        )
+
+        await discord_responder.send_embed_list(embed_list, inter)
         return
 
     db_clan_role_obj = db_responder.read_clan_role(role.id)
@@ -4547,13 +4381,31 @@ async def remove(inter, role: disnake.Role):
         db_clan_role_deletion = db_responder.delete_clan_role(role.id)
         # clan role found after deletion
         if db_clan_role_deletion:
-            await inter.edit_original_message(
-                content=f"{role.mention} claim could not be removed")
+            embed_description = f"{role.mention} claim could not be removed"
+
+            embed_list = discord_responder.embed_message(
+                icon_url=inter.bot.user.avatar.url,
+                description=embed_description,
+                bot_user_name=inter.me.display_name,
+                author_display_name=inter.author.display_name,
+                author_avatar_url=inter.author.avatar.url
+            )
+
+            await discord_responder.send_embed_list(embed_list, inter)
             return
 
         # clan role deleted
-        await inter.edit_original_message(
-            content=f"{role.mention} claim was removed")
+        embed_description = f"{role.mention} claim was removed"
+
+        embed_list = discord_responder.embed_message(
+            icon_url=inter.bot.user.avatar.url,
+            description=embed_description,
+            bot_user_name=inter.me.display_name,
+            author_display_name=inter.author.display_name,
+            author_avatar_url=inter.author.avatar.url
+        )
+
+        await discord_responder.send_embed_list(embed_list, inter)
         return
 
     db_rank_role_obj = db_responder.read_rank_role(role.id)
@@ -4564,17 +4416,44 @@ async def remove(inter, role: disnake.Role):
         db_rank_role_deletion = db_responder.delete_rank_role(role.id)
         # rank role found after deletion
         if db_rank_role_deletion:
-            await inter.edit_original_message(
-                content=f"{role.mention} claim could not be removed")
+            embed_description = f"{role.mention} claim could not be removed"
+
+            embed_list = discord_responder.embed_message(
+                icon_url=inter.bot.user.avatar.url,
+                description=embed_description,
+                bot_user_name=inter.me.display_name,
+                author_display_name=inter.author.display_name,
+                author_avatar_url=inter.author.avatar.url
+            )
+
+            await discord_responder.send_embed_list(embed_list, inter)
             return
 
         # rank role deleted
-        await inter.edit_original_message(
-            content=f"{role.mention} claim was removed")
+        embed_description = f"{role.mention} claim was removed"
+
+        embed_list = discord_responder.embed_message(
+            icon_url=inter.bot.user.avatar.url,
+            description=embed_description,
+            bot_user_name=inter.me.display_name,
+            author_display_name=inter.author.display_name,
+            author_avatar_url=inter.author.avatar.url
+        )
+
+        await discord_responder.send_embed_list(embed_list, inter)
         return
 
-    await inter.edit_original_message(
-        content=f"{role.mention} is not claimed")
+    embed_description = f"{role.mention} is not claimed"
+
+    embed_list = discord_responder.embed_message(
+        icon_url=inter.bot.user.avatar.url,
+        description=embed_description,
+        bot_user_name=inter.me.display_name,
+        author_display_name=inter.author.display_name,
+        author_avatar_url=inter.author.avatar.url
+    )
+
+    await discord_responder.send_embed_list(embed_list, inter)
 
 
 # client clan role
@@ -4609,40 +4488,85 @@ async def claim(inter, role: disnake.Role, clan_tag: str):
 
     # clan not found
     if not clan_obj:
-        await inter.edit_original_message(
-            content=f"couldn't find clan {clan_tag}")
+        embed_description = f"couldn't find clan {clan_tag}"
+
+        embed_list = discord_responder.embed_message(
+            icon_url=inter.bot.user.avatar.url,
+            description=embed_description,
+            bot_user_name=inter.me.display_name,
+            author_display_name=inter.author.display_name,
+            author_avatar_url=inter.author.avatar.url
+        )
+
+        await discord_responder.send_embed_list(embed_list, inter)
         return
 
     db_guild_obj = db_responder.read_guild(inter.guild.id)
 
     # guild not claimed
     if not db_guild_obj:
-        await inter.edit_original_message(
-            content=f"{inter.guild.name} has not been claimed")
+        embed_description = f"{inter.guild.name} has not been claimed"
+
+        embed_list = discord_responder.embed_message(
+            icon_url=inter.bot.user.avatar.url,
+            description=embed_description,
+            bot_user_name=inter.me.display_name,
+            author_display_name=inter.author.display_name,
+            author_avatar_url=inter.author.avatar.url
+        )
+
+        await discord_responder.send_embed_list(embed_list, inter)
         return
 
     db_user_obj = db_responder.read_user(inter.author.id)
 
     # user not claimed
     if not db_user_obj:
-        await inter.edit_original_message(
-            content=f"{inter.author.mention} has not been claimed")
+        embed_description = f"{inter.author.mention} has not been claimed"
+
+        embed_list = discord_responder.embed_message(
+            icon_url=inter.bot.user.avatar.url,
+            description=embed_description,
+            bot_user_name=inter.me.display_name,
+            author_display_name=inter.author.display_name,
+            author_avatar_url=inter.author.avatar.url
+        )
+
+        await discord_responder.send_embed_list(embed_list, inter)
         return
 
     # user is not guild admin and is not super user
     if (not db_guild_obj.admin_user_id == inter.author.id
             and not db_user_obj.super_user):
-        await inter.edit_original_message(
-            content=f"{inter.author.mention} is not guild's admin")
+        embed_description = f"{inter.author.mention} is not guild's admin"
+
+        embed_list = discord_responder.embed_message(
+            icon_url=inter.bot.user.avatar.url,
+            description=embed_description,
+            bot_user_name=inter.me.display_name,
+            author_display_name=inter.author.display_name,
+            author_avatar_url=inter.author.avatar.url
+        )
+
+        await discord_responder.send_embed_list(embed_list, inter)
         return
 
     db_clan_obj = db_responder.read_clan(inter.guild.id, clan_obj.tag)
 
     # clan not claimed by guild
     if not db_clan_obj:
-        await inter.edit_original_message(
-            content=(f"{clan_obj.name} has not been claimed "
-                     f"by {inter.guild.name}"))
+        embed_description = (f"{clan_obj.name} has not been claimed by "
+                             f"{inter.guild.name}")
+
+        embed_list = discord_responder.embed_message(
+            icon_url=inter.bot.user.avatar.url,
+            description=embed_description,
+            bot_user_name=inter.me.display_name,
+            author_display_name=inter.author.display_name,
+            author_avatar_url=inter.author.avatar.url
+        )
+
+        await discord_responder.send_embed_list(embed_list, inter)
         return
 
     # confirm clan role has not been claimed
@@ -4650,9 +4574,18 @@ async def claim(inter, role: disnake.Role, clan_tag: str):
 
     # clan role has been claimed
     if db_clan_role_obj:
-        await inter.edit_original_message(
-            content=(f"{role.mention} has already been claimed "
-                     f"for clan {db_clan_role_obj.clan_tag}"))
+        embed_description = (f"{role.mention} has already been claimed "
+                             f"for clan {db_clan_role_obj.clan_tag}")
+
+        embed_list = discord_responder.embed_message(
+            icon_url=inter.bot.user.avatar.url,
+            description=embed_description,
+            bot_user_name=inter.me.display_name,
+            author_display_name=inter.author.display_name,
+            author_avatar_url=inter.author.avatar.url
+        )
+
+        await discord_responder.send_embed_list(embed_list, inter)
         return
 
     # confirm rank role has not been claimed
@@ -4660,9 +4593,18 @@ async def claim(inter, role: disnake.Role, clan_tag: str):
 
     # rank role has been claimed
     if db_rank_role_obj:
-        await inter.edit_original_message(
-            content=(f"{role.mention} has already been claimed "
-                     f"for rank {db_rank_role_obj.model_name}"))
+        embed_description = (f"{role.mention} has already been claimed "
+                             f"for rank {db_rank_role_obj.model_name}")
+
+        embed_list = discord_responder.embed_message(
+            icon_url=inter.bot.user.avatar.url,
+            description=embed_description,
+            bot_user_name=inter.me.display_name,
+            author_display_name=inter.author.display_name,
+            author_avatar_url=inter.author.avatar.url
+        )
+
+        await discord_responder.send_embed_list(embed_list, inter)
         return
 
     # claim clan role
@@ -4671,13 +4613,31 @@ async def claim(inter, role: disnake.Role, clan_tag: str):
 
     # clan role could not be claimed
     if not claimed_clan_role_obj:
-        await inter.edit_original_message(
-            content=(f"could not claim {role.mention} "
-                     f"for clan {clan_obj.tag}"))
+        embed_description = (f"could not claim {role.mention} "
+                             f"for clan {clan_obj.tag}")
+
+        embed_list = discord_responder.embed_message(
+            icon_url=inter.bot.user.avatar.url,
+            description=embed_description,
+            bot_user_name=inter.me.display_name,
+            author_display_name=inter.author.display_name,
+            author_avatar_url=inter.author.avatar.url
+        )
+
+        await discord_responder.send_embed_list(embed_list, inter)
         return
 
-    await inter.edit_original_message(
-        content=f"{role.mention} has been claimed for clan {clan_obj.tag}")
+    embed_description = f"{role.mention} has been claimed for clan {clan_obj.tag}"
+
+    embed_list = discord_responder.embed_message(
+        icon_url=inter.bot.user.avatar.url,
+        description=embed_description,
+        bot_user_name=inter.me.display_name,
+        author_display_name=inter.author.display_name,
+        author_avatar_url=inter.author.avatar.url
+    )
+
+    await discord_responder.send_embed_list(embed_list, inter)
 
 
 # client rank role
@@ -4716,62 +4676,125 @@ async def claim(inter, role: disnake.Role,
 
     # rank role name invalid
     if not rank_role_model_obj:
-        await inter.edit_original_message(
-            content=f"{rank_name} is not a valid rank")
+        embed_description = f"{rank_name} is not a valid rank"
+
+        embed_list = discord_responder.embed_message(
+            icon_url=inter.bot.user.avatar.url,
+            description=embed_description,
+            bot_user_name=inter.me.display_name,
+            author_display_name=inter.author.display_name,
+            author_avatar_url=inter.author.avatar.url
+        )
+
+        await discord_responder.send_embed_list(embed_list, inter)
         return
 
     db_guild_obj = db_responder.read_guild(inter.guild.id)
     # guild not claimed
     if not db_guild_obj:
-        await inter.edit_original_message(
-            content=f"{inter.guild.name} has not been claimed")
+        embed_description = f"{inter.guild.name} has not been claimed"
+
+        embed_list = discord_responder.embed_message(
+            icon_url=inter.bot.user.avatar.url,
+            description=embed_description,
+            bot_user_name=inter.me.display_name,
+            author_display_name=inter.author.display_name,
+            author_avatar_url=inter.author.avatar.url
+        )
+
+        await discord_responder.send_embed_list(embed_list, inter)
         return
 
     db_user_obj = db_responder.read_user(inter.author.id)
     # user not claimed
     if not db_user_obj:
-        await inter.edit_original_message(
-            content=f"{inter.author.mention} has not been claimed")
+        embed_description = f"{inter.author.mention} has not been claimed"
+
+        embed_list = discord_responder.embed_message(
+            icon_url=inter.bot.user.avatar.url,
+            description=embed_description,
+            bot_user_name=inter.me.display_name,
+            author_display_name=inter.author.display_name,
+            author_avatar_url=inter.author.avatar.url
+        )
+
+        await discord_responder.send_embed_list(embed_list, inter)
         return
 
     # user is not guild admin and is not super user
     if (not db_guild_obj.admin_user_id == inter.author.id
             and not db_user_obj.super_user):
-        await inter.edit_original_message(
-            content=f"{inter.author.mention} is not guild's admin")
+        embed_description = f"{inter.author.mention} is not guild's admin"
+
+        embed_list = discord_responder.embed_message(
+            icon_url=inter.bot.user.avatar.url,
+            description=embed_description,
+            bot_user_name=inter.me.display_name,
+            author_display_name=inter.author.display_name,
+            author_avatar_url=inter.author.avatar.url
+        )
+
+        await discord_responder.send_embed_list(embed_list, inter)
         return
 
     # confirm clan role has not been claimed
     db_clan_role_obj = db_responder.read_clan_role(role.id)
     # clan role has been claimed
     if db_clan_role_obj:
-        await inter.edit_original_message(
-            content=(f"{role.mention} has already been claimed for clan "
-                     f"{db_clan_role_obj.clan_tag}"))
+        embed_description = (f"{role.mention} has already been claimed for clan "
+                             f"{db_clan_role_obj.clan_tag}")
+
+        embed_list = discord_responder.embed_message(
+            icon_url=inter.bot.user.avatar.url,
+            description=embed_description,
+            bot_user_name=inter.me.display_name,
+            author_display_name=inter.author.display_name,
+            author_avatar_url=inter.author.avatar.url
+        )
+
+        await discord_responder.send_embed_list(embed_list, inter)
         return
 
     # confirm rank role has not been claimed
     db_rank_role_obj = db_responder.read_rank_role(role.id)
     # rank role has been claimed
     if db_rank_role_obj:
-        await inter.edit_original_message(
-            content=(f"{role.mention} has already been claimed for rank "
-                     f"{db_rank_role_obj.model_name}"))
+        embed_description = (f"{role.mention} has already been claimed for rank "
+                             f"{db_rank_role_obj.model_name}")
+
+        embed_list = discord_responder.embed_message(
+            icon_url=inter.bot.user.avatar.url,
+            description=embed_description,
+            bot_user_name=inter.me.display_name,
+            author_display_name=inter.author.display_name,
+            author_avatar_url=inter.author.avatar.url
+        )
+
+        await discord_responder.send_embed_list(embed_list, inter)
         return
 
     # claim rank role
     claimed_rank_role_obj = db_responder.claim_rank_role(
         role.id, inter.guild.id, rank_name)
     # rank role could not be claimed
-    if not claimed_rank_role_obj:
-        await inter.edit_original_message(
-            content=(f"could not claim {role.mention} for rank "
-                     f"{db_rank_role_obj.model_name}"))
-        return
+    if claimed_rank_role_obj is None:
+        embed_description = (f"could not claim {role.mention} for rank "
+                             f"{db_rank_role_obj.model_name}")
 
-    await inter.edit_original_message(
-        content=(f"{role.mention} has been claimed for rank "
-                 f"{claimed_rank_role_obj.model_name}"))
+    # rank role was claimed and found
+    else:
+        embed_description = (f"{role.mention} has been claimed for rank "
+                             f"{claimed_rank_role_obj.model_name}")
+
+    embed_list = discord_responder.embed_message(
+        icon_url=inter.bot.user.avatar.url,
+        description=embed_description,
+        bot_user_name=inter.me.display_name,
+        author_display_name=inter.author.display_name,
+        author_avatar_url=inter.author.avatar.url
+    )
+
+    await discord_responder.send_embed_list(embed_list, inter)
 
 
 # admin
@@ -4821,14 +4844,32 @@ async def claim(inter, player_tag: str, user: disnake.User):
     db_author_obj = db_responder.read_user(inter.author.id)
     # author is not claimed
     if not db_author_obj:
-        await inter.edit_original_message(
-            content=f"{inter.author.mention} is not claimed")
+        embed_description = f"{inter.author.mention} is not claimed"
+
+        embed_list = discord_responder.embed_message(
+            icon_url=inter.bot.user.avatar.url,
+            description=embed_description,
+            bot_user_name=inter.me.display_name,
+            author_display_name=inter.author.display_name,
+            author_avatar_url=inter.author.avatar.url
+        )
+
+        await discord_responder.send_embed_list(embed_list, inter)
         return
 
     # author is not admin
     if not db_author_obj.admin:
-        await inter.edit_original_message(
-            content=f"{inter.author.mention} is not admin")
+        embed_description = f"{inter.author.mention} is not admin"
+
+        embed_list = discord_responder.embed_message(
+            icon_url=inter.bot.user.avatar.url,
+            description=embed_description,
+            bot_user_name=inter.me.display_name,
+            author_display_name=inter.author.display_name,
+            author_avatar_url=inter.author.avatar.url
+        )
+
+        await discord_responder.send_embed_list(embed_list, inter)
         return
 
     # confirm user has been claimed
@@ -4838,8 +4879,17 @@ async def claim(inter, player_tag: str, user: disnake.User):
         db_user_obj = db_responder.claim_user(user.id)
         if not db_user_obj:
             # user could not be claimed
-            await inter.edit_original_message(
-                content=f"{user.mention} user couldn't be claimed")
+            embed_description = f"{user.mention} user couldn't be claimed"
+
+            embed_list = discord_responder.embed_message(
+                icon_url=inter.bot.user.avatar.url,
+                description=embed_description,
+                bot_user_name=inter.me.display_name,
+                author_display_name=inter.author.display_name,
+                author_avatar_url=inter.author.avatar.url
+            )
+
+            await discord_responder.send_embed_list(embed_list, inter)
             return
 
     # admin is not a super user and author is not the user
@@ -4847,9 +4897,18 @@ async def claim(inter, player_tag: str, user: disnake.User):
             and db_author_obj.discord_id != db_user_obj.discord_id):
         # admin users are not allowed to update admins or super users
         if db_user_obj.admin or db_user_obj.super_user:
-            await inter.edit_original_message(
-                content=(f"admins are not allowed to update "
-                         f"admins or super users"))
+            embed_description = (f"admins are not allowed to update "
+                                 f"admins or super users")
+
+            embed_list = discord_responder.embed_message(
+                icon_url=inter.bot.user.avatar.url,
+                description=embed_description,
+                bot_user_name=inter.me.display_name,
+                author_display_name=inter.author.display_name,
+                author_avatar_url=inter.author.avatar.url
+            )
+
+            await discord_responder.send_embed_list(embed_list, inter)
             return
 
     # confirm valid player_tag
@@ -4858,17 +4917,35 @@ async def claim(inter, player_tag: str, user: disnake.User):
 
     # player tag was not valid
     if not player_obj:
-        await inter.edit_original_message(
-            content=f"player with tag {player_tag} was not found")
+        embed_description = f"player with tag {player_tag} was not found"
+
+        embed_list = discord_responder.embed_message(
+            icon_url=inter.bot.user.avatar.url,
+            description=embed_description,
+            bot_user_name=inter.me.display_name,
+            author_display_name=inter.author.display_name,
+            author_avatar_url=inter.author.avatar.url
+        )
+
+        await discord_responder.send_embed_list(embed_list, inter)
         return
 
     # confirm player has not been claimed
     db_player_obj = db_responder.read_player_from_tag(player_obj.tag)
     # player has already been claimed
     if db_player_obj:
-        await inter.edit_original_message(
-            content=(f"{player_obj.name} {player_obj.tag} "
-                     f"has already been claimed"))
+        embed_description = (f"{player_obj.name} {player_obj.tag} "
+                             f"has already been claimed")
+
+        embed_list = discord_responder.embed_message(
+            icon_url=inter.bot.user.avatar.url,
+            description=embed_description,
+            bot_user_name=inter.me.display_name,
+            author_display_name=inter.author.display_name,
+            author_avatar_url=inter.author.avatar.url
+        )
+
+        await discord_responder.send_embed_list(embed_list, inter)
         return
 
     # user claimed
@@ -4879,14 +4956,22 @@ async def claim(inter, player_tag: str, user: disnake.User):
 
     # succesfully claimed
     if db_player_obj:
-        await inter.edit_original_message(
-            content=(f"{player_obj.name} {player_obj.tag} "
-                     f"is now claimed by {user.mention}"))
+        embed_description = (f"{player_obj.name} {player_obj.tag} "
+                             f"is now claimed by {user.mention}")
     # failed to claim
     else:
-        await inter.edit_original_message(
-            content=(f"Could not claim {player_obj.name} "
-                     f"{player_obj.tag} for {user.mention}"))
+        embed_description = (f"Could not claim {player_obj.name} "
+                             f"{player_obj.tag} for {user.mention}")
+
+    embed_list = discord_responder.embed_message(
+        icon_url=inter.bot.user.avatar.url,
+        description=embed_description,
+        bot_user_name=inter.me.display_name,
+        author_display_name=inter.author.display_name,
+        author_avatar_url=inter.author.avatar.url
+    )
+
+    await discord_responder.send_embed_list(embed_list, inter)
 
 
 @player.sub_command(
@@ -4906,21 +4991,48 @@ async def show(inter, user: disnake.User):
     db_author_obj = db_responder.read_user(inter.author.id)
     # author is not claimed
     if not db_author_obj:
-        await inter.edit_original_message(
-            content=f"{inter.author.mention} is not claimed")
+        embed_description = f"{inter.author.mention} is not claimed"
+
+        embed_list = discord_responder.embed_message(
+            icon_url=inter.bot.user.avatar.url,
+            description=embed_description,
+            bot_user_name=inter.me.display_name,
+            author_display_name=inter.author.display_name,
+            author_avatar_url=inter.author.avatar.url
+        )
+
+        await discord_responder.send_embed_list(embed_list, inter)
         return
 
     # author is not admin
     if not db_author_obj.admin:
-        await inter.edit_original_message(
-            content=f"{inter.author.mention} is not admin")
+        embed_description = f"{inter.author.mention} is not admin"
+
+        embed_list = discord_responder.embed_message(
+            icon_url=inter.bot.user.avatar.url,
+            description=embed_description,
+            bot_user_name=inter.me.display_name,
+            author_display_name=inter.author.display_name,
+            author_avatar_url=inter.author.avatar.url
+        )
+
+        await discord_responder.send_embed_list(embed_list, inter)
         return
 
     # confirm db user exists
     db_user_obj = db_responder.read_user(user.id)
     if db_user_obj is None:
-        await inter.edit_original_message(
-            content=f"{user.mention} has not been claimed")
+        embed_description = f"{user.mention} has not been claimed"
+
+        embed_list = discord_responder.embed_message(
+            icon_url=inter.bot.user.avatar.url,
+            description=embed_description,
+            bot_user_name=inter.me.display_name,
+            author_display_name=inter.author.display_name,
+            author_avatar_url=inter.author.avatar.url
+        )
+
+        await discord_responder.send_embed_list(embed_list, inter)
         return
 
     # admin is not a super user and author is not the user
@@ -4928,18 +5040,36 @@ async def show(inter, user: disnake.User):
             and db_author_obj.discord_id != db_user_obj.discord_id):
         # admin users are not allowed to update admins or super users
         if db_user_obj.admin or db_user_obj.super_user:
-            await inter.edit_original_message(
-                content=(f"admins are not allowed to update "
-                         f"admins or super users"))
+            embed_description = (f"admins are not allowed to update "
+                                 f"admins or super users")
+
+            embed_list = discord_responder.embed_message(
+                icon_url=inter.bot.user.avatar.url,
+                description=embed_description,
+                bot_user_name=inter.me.display_name,
+                author_display_name=inter.author.display_name,
+                author_avatar_url=inter.author.avatar.url
+            )
+
+            await discord_responder.send_embed_list(embed_list, inter)
             return
 
     db_player_obj_list = db_responder.read_player_list(user.id)
 
     # user has no claimed players
     if len(db_player_obj_list) == 0:
-        await inter.edit_original_message(
-            content=(f"{user.mention} does not have any "
-                     f"claimed players"))
+        embed_description = (f"{user.mention} does not have any "
+                             f"claimed players")
+
+        embed_list = discord_responder.embed_message(
+            icon_url=inter.bot.user.avatar.url,
+            description=embed_description,
+            bot_user_name=inter.me.display_name,
+            author_display_name=inter.author.display_name,
+            author_avatar_url=inter.author.avatar.url
+        )
+
+        await discord_responder.send_embed_list(embed_list, inter)
         return
 
     message = f"{user.mention} has claimed "
@@ -4973,21 +5103,48 @@ async def remove(inter, player_tag: str, user: disnake.User):
     db_author_obj = db_responder.read_user(inter.author.id)
     # author is not claimed
     if not db_author_obj:
-        await inter.edit_original_message(
-            content=f"{inter.author.mention} is not claimed")
+        embed_description = f"{inter.author.mention} is not claimed"
+
+        embed_list = discord_responder.embed_message(
+            icon_url=inter.bot.user.avatar.url,
+            description=embed_description,
+            bot_user_name=inter.me.display_name,
+            author_display_name=inter.author.display_name,
+            author_avatar_url=inter.author.avatar.url
+        )
+
+        await discord_responder.send_embed_list(embed_list, inter)
         return
 
     # author is not admin
     if not db_author_obj.admin:
-        await inter.edit_original_message(
-            content=f"{inter.author.mention} is not admin")
+        embed_description = f"{inter.author.mention} is not admin"
+
+        embed_list = discord_responder.embed_message(
+            icon_url=inter.bot.user.avatar.url,
+            description=embed_description,
+            bot_user_name=inter.me.display_name,
+            author_display_name=inter.author.display_name,
+            author_avatar_url=inter.author.avatar.url
+        )
+
+        await discord_responder.send_embed_list(embed_list, inter)
         return
 
     # confirm db user exists
     db_user_obj = db_responder.read_user(user.id)
     if db_user_obj is None:
-        await inter.edit_original_message(
-            content=f"{user.mention} has not been claimed")
+        embed_description = f"{user.mention} has not been claimed"
+
+        embed_list = discord_responder.embed_message(
+            icon_url=inter.bot.user.avatar.url,
+            description=embed_description,
+            bot_user_name=inter.me.display_name,
+            author_display_name=inter.author.display_name,
+            author_avatar_url=inter.author.avatar.url
+        )
+
+        await discord_responder.send_embed_list(embed_list, inter)
         return
 
     # admin is not a super user and author is not the user
@@ -4995,9 +5152,18 @@ async def remove(inter, player_tag: str, user: disnake.User):
             and db_author_obj.discord_id != db_user_obj.discord_id):
         # admin users are not allowed to update admins or super users
         if db_user_obj.admin or db_user_obj.super_user:
-            await inter.edit_original_message(
-                content=(f"admins are not allowed to update "
-                         f"admins or super users"))
+            embed_description = (f"admins are not allowed to update "
+                                 f"admins or super users")
+
+            embed_list = discord_responder.embed_message(
+                icon_url=inter.bot.user.avatar.url,
+                description=embed_description,
+                bot_user_name=inter.me.display_name,
+                author_display_name=inter.author.display_name,
+                author_avatar_url=inter.author.avatar.url
+            )
+
+            await discord_responder.send_embed_list(embed_list, inter)
             return
 
     # confirm valid player_tag
@@ -5006,17 +5172,35 @@ async def remove(inter, player_tag: str, user: disnake.User):
 
     # player tag was not valid
     if not player_obj:
-        await inter.edit_original_message(
-            content=f"player with tag {player_tag} was not found")
+        embed_description = f"player with tag {player_tag} was not found"
+
+        embed_list = discord_responder.embed_message(
+            icon_url=inter.bot.user.avatar.url,
+            description=embed_description,
+            bot_user_name=inter.me.display_name,
+            author_display_name=inter.author.display_name,
+            author_avatar_url=inter.author.avatar.url
+        )
+
+        await discord_responder.send_embed_list(embed_list, inter)
         return
 
     db_player_obj = db_responder.read_player(user.id, player_obj.tag)
 
     # db player not found
     if not db_player_obj:
-        await inter.edit_original_message(
-            content=(f"{player_obj.name} {player_obj.tag} "
-                     f"is not claimed by {user.mention}"))
+        embed_description = (f"{player_obj.name} {player_obj.tag} "
+                             f"is not claimed by {user.mention}")
+
+        embed_list = discord_responder.embed_message(
+            icon_url=inter.bot.user.avatar.url,
+            description=embed_description,
+            bot_user_name=inter.me.display_name,
+            author_display_name=inter.author.display_name,
+            author_avatar_url=inter.author.avatar.url
+        )
+
+        await discord_responder.send_embed_list(embed_list, inter)
         return
 
     db_del_player_obj = db_responder.delete_player(
@@ -5024,11 +5208,21 @@ async def remove(inter, player_tag: str, user: disnake.User):
 
     # player was not deleted
     if db_del_player_obj:
-        await inter.edit_original_message(content=(
+        embed_description = (
             f"{player_obj.name} {player_obj.tag} "
             f"could not be deleted "
             f"from {user.mention} player list"
-        ))
+        )
+
+        embed_list = discord_responder.embed_message(
+            icon_url=inter.bot.user.avatar.url,
+            description=embed_description,
+            bot_user_name=inter.me.display_name,
+            author_display_name=inter.author.display_name,
+            author_avatar_url=inter.author.avatar.url
+        )
+
+        await discord_responder.send_embed_list(embed_list, inter)
         return
 
     db_active_player_obj = db_responder.read_player_active(user.id)
@@ -5036,11 +5230,21 @@ async def remove(inter, player_tag: str, user: disnake.User):
     # active player found
     # no need to change the active player
     if db_active_player_obj:
-        await inter.edit_original_message(content=(
+        embed_description = (
             f"{player_obj.name} {player_obj.tag} "
             f"has been deleted "
             f"from {user.mention} player list"
-        ))
+        )
+
+        embed_list = discord_responder.embed_message(
+            icon_url=inter.bot.user.avatar.url,
+            description=embed_description,
+            bot_user_name=inter.me.display_name,
+            author_display_name=inter.author.display_name,
+            author_avatar_url=inter.author.avatar.url
+        )
+
+        await discord_responder.send_embed_list(embed_list, inter)
         return
 
     # no active player found
@@ -5050,11 +5254,21 @@ async def remove(inter, player_tag: str, user: disnake.User):
 
     # no additional players claimed
     if len(db_player_obj_list) == 0:
-        await inter.edit_original_message(content=(
+        embed_description = (
             f"{player_obj.name} {player_obj.tag} "
             f"has been deleted, "
             f"{user.mention} has no more claimed players"
-        ))
+        )
+
+        embed_list = discord_responder.embed_message(
+            icon_url=inter.bot.user.avatar.url,
+            description=embed_description,
+            bot_user_name=inter.me.display_name,
+            author_display_name=inter.author.display_name,
+            author_avatar_url=inter.author.avatar.url
+        )
+
+        await discord_responder.send_embed_list(embed_list, inter)
         return
 
     # additional players claimed by user
@@ -5064,11 +5278,21 @@ async def remove(inter, player_tag: str, user: disnake.User):
 
     # update not successful
     if not db_updated_player_obj:
-        await inter.edit_original_message(content=(
+        embed_description = (
             f"{player_obj.name} {player_obj.tag} "
             f"has been deleted, could not update active player, "
             f"{user.mention} has no active players"
-        ))
+        )
+
+        embed_list = discord_responder.embed_message(
+            icon_url=inter.bot.user.avatar.url,
+            description=embed_description,
+            bot_user_name=inter.me.display_name,
+            author_display_name=inter.author.display_name,
+            author_avatar_url=inter.author.avatar.url
+        )
+
+        await discord_responder.send_embed_list(embed_list, inter)
         return
 
     # update was successful
@@ -5076,26 +5300,36 @@ async def remove(inter, player_tag: str, user: disnake.User):
         db_updated_player_obj.player_tag, coc_client)
 
     # clash player not found
-    if not clash_updated_player_obj:
-        await inter.edit_original_message(content=(
+    if clash_updated_player_obj is None:
+        embed_description = (
             f"{player_obj.name} {player_obj.tag} "
             f"has been deleted, "
             f"{user.mention} active is now set to "
             f"{db_updated_player_obj.player_tag}, "
             f"could not find player in clash of clans"
-        ))
-        return
+        )
 
     # player deleted
     # active player updated
     # clash player found
-    await inter.edit_original_message(content=(
-        f"{player_obj.name} {player_obj.tag} "
-        f"has been deleted, "
-        f"{user.mention} active is now set to "
-        f"{clash_updated_player_obj.name} "
-        f"{clash_updated_player_obj.tag}"
-    ))
+    else:
+        embed_description = (
+            f"{player_obj.name} {player_obj.tag} "
+            f"has been deleted, "
+            f"{user.mention} active is now set to "
+            f"{clash_updated_player_obj.name} "
+            f"{clash_updated_player_obj.tag}"
+        )
+
+    embed_list = discord_responder.embed_message(
+        icon_url=inter.bot.user.avatar.url,
+        description=embed_description,
+        bot_user_name=inter.me.display_name,
+        author_display_name=inter.author.display_name,
+        author_avatar_url=inter.author.avatar.url
+    )
+
+    await discord_responder.send_embed_list(embed_list, inter)
 
 
 # super user administration
@@ -5139,14 +5373,32 @@ async def show(inter):
     db_author_obj = db_responder.read_user(inter.author.id)
     # author is not claimed
     if not db_author_obj:
-        await inter.edit_original_message(
-            content=f"{inter.author.mention} is not claimed")
+        embed_description = f"{inter.author.mention} is not claimed"
+
+        embed_list = discord_responder.embed_message(
+            icon_url=inter.bot.user.avatar.url,
+            description=embed_description,
+            bot_user_name=inter.me.display_name,
+            author_display_name=inter.author.display_name,
+            author_avatar_url=inter.author.avatar.url
+        )
+
+        await discord_responder.send_embed_list(embed_list, inter)
         return
 
     # author is not super user
     if not db_author_obj.super_user:
-        await inter.edit_original_message(
-            content=f"{inter.author.mention} is not super user")
+        embed_description = f"{inter.author.mention} is not super user"
+
+        embed_list = discord_responder.embed_message(
+            icon_url=inter.bot.user.avatar.url,
+            description=embed_description,
+            bot_user_name=inter.me.display_name,
+            author_display_name=inter.author.display_name,
+            author_avatar_url=inter.author.avatar.url
+        )
+
+        await discord_responder.send_embed_list(embed_list, inter)
         return
 
     field_dict_list = []
@@ -5158,16 +5410,11 @@ async def show(inter):
         })
 
     embed_list = discord_responder.embed_message(
-        Embed=disnake.Embed,
-        color=disnake.Color(client_data.embed_color),
         icon_url=inter.bot.user.avatar.url,
         title=f"**ClashDiscord Guilds**",
         description=f"Guild Count: {len(inter.client.guilds)}",
-        bot_prefix=inter.bot.command_prefix,
-        bot_user_name=inter.bot.user.name,
-        thumbnail=None,
+        bot_user_name=inter.me.display_name,
         field_list=field_dict_list,
-        image_url=None,
         author_display_name=inter.author.display_name,
         author_avatar_url=inter.author.avatar.url
     )
@@ -5193,34 +5440,70 @@ async def remove(inter, guild_id: str):
     db_author_obj = db_responder.read_user(inter.author.id)
     # author is not claimed
     if not db_author_obj:
-        await inter.edit_original_message(
-            content=f"{inter.author.mention} is not claimed")
+        embed_description = f"{inter.author.mention} is not claimed"
+
+        embed_list = discord_responder.embed_message(
+            icon_url=inter.bot.user.avatar.url,
+            description=embed_description,
+            bot_user_name=inter.me.display_name,
+            author_display_name=inter.author.display_name,
+            author_avatar_url=inter.author.avatar.url
+        )
+
+        await discord_responder.send_embed_list(embed_list, inter)
         return
 
     # author is not super user
     if not db_author_obj.super_user:
-        await inter.edit_original_message(
-            content=f"{inter.author.mention} is not super user")
+        embed_description = f"{inter.author.mention} is not super user"
+
+        embed_list = discord_responder.embed_message(
+            icon_url=inter.bot.user.avatar.url,
+            description=embed_description,
+            bot_user_name=inter.me.display_name,
+            author_display_name=inter.author.display_name,
+            author_avatar_url=inter.author.avatar.url
+        )
+
+        await discord_responder.send_embed_list(embed_list, inter)
         return
 
     # confirm guild is claimed
     db_guild_obj = db_responder.read_guild(guild_id)
     # guild isn't claimed
     if not db_guild_obj:
-        await inter.edit_original_message(
-            content=f"guild with id {guild_id} is not claimed")
+        embed_description = f"guild with id {guild_id} is not claimed"
+
+        embed_list = discord_responder.embed_message(
+            icon_url=inter.bot.user.avatar.url,
+            description=embed_description,
+            bot_user_name=inter.me.display_name,
+            author_display_name=inter.author.display_name,
+            author_avatar_url=inter.author.avatar.url
+        )
+
+        await discord_responder.send_embed_list(embed_list, inter)
         return
 
     deleted_guild_obj = db_responder.delete_guild(guild_id)
-    # guild could not be deleted
-    if deleted_guild_obj:
-        await inter.edit_original_message(
-            content=f"guild with id {guild_id} could not be deleted")
-        return
 
     # guild was deleted properly
-    await inter.edit_original_message(
-        content=f"guild with id {guild_id} was deleted")
+    if deleted_guild_obj is None:
+        embed_description = f"guild with id {guild_id} was deleted"
+
+    # guild could not be deleted
+    else:
+        embed_description = f"guild with id {guild_id} could not be deleted"
+
+    embed_list = discord_responder.embed_message(
+        icon_url=inter.bot.user.avatar.url,
+        description=embed_description,
+        bot_user_name=inter.me.display_name,
+        author_display_name=inter.author.display_name,
+        author_avatar_url=inter.author.avatar.url
+    )
+
+    await discord_responder.send_embed_list(embed_list, inter)
 
 
 # superuser user
@@ -5235,6 +5518,98 @@ async def user(inter):
 
     # defer for every superuser user command
     await inter.response.defer(ephemeral=True)
+
+
+@user.sub_command(
+    brief='superuser',
+    description="*super user* return a list of all admin users"
+)
+async def adminshow(inter):
+    """
+        *super user*
+        return a list of all admin users
+    """
+
+    db_author_obj = db_responder.read_user(inter.author.id)
+    # author is not claimed
+    if not db_author_obj:
+        embed_description = f"{inter.author.mention} is not claimed"
+
+        embed_list = discord_responder.embed_message(
+            icon_url=inter.bot.user.avatar.url,
+            description=embed_description,
+            bot_user_name=inter.me.display_name,
+            author_display_name=inter.author.display_name,
+            author_avatar_url=inter.author.avatar.url
+        )
+
+        await discord_responder.send_embed_list(embed_list, inter)
+        return
+
+    # author is not super user
+    if not db_author_obj.super_user:
+        embed_description = f"{inter.author.mention} is not super user"
+
+        embed_list = discord_responder.embed_message(
+            icon_url=inter.bot.user.avatar.url,
+            description=embed_description,
+            bot_user_name=inter.me.display_name,
+            author_display_name=inter.author.display_name,
+            author_avatar_url=inter.author.avatar.url
+        )
+
+        await discord_responder.send_embed_list(embed_list, inter)
+        return
+
+    db_admin_users = db_responder.read_user_admin_all()
+
+    if len(db_admin_users) == 0:
+        embed_description = f"{inter.me.display_name} has no admin users"
+
+        embed_list = discord_responder.embed_message(
+            icon_url=inter.bot.user.avatar.url,
+            description=embed_description,
+            bot_user_name=inter.me.display_name,
+            author_display_name=inter.author.display_name,
+            author_avatar_url=inter.author.avatar.url
+        )
+
+        await discord_responder.send_embed_list(embed_list, inter)
+        return
+
+    # initialize admin user field dict list
+    field_dict_list = []
+    for admin_user in db_admin_users:
+        # get the discord member in the server of the admin user
+        member = disnake.utils.get(
+            inter.guild.members, id=admin_user.discord_id)
+
+        # member not found in server
+        if member is None:
+            field_dict_list.append({
+                "name": "admin user id",
+                "value": f"{admin_user.discord_id}",
+                "inline": False
+            })
+
+        # member found in server
+        else:
+            field_dict_list.append({
+                "name": "admin user",
+                "value": f"{member.mention}",
+                "inline": False
+            })
+
+    embed_list = discord_responder.embed_message(
+        icon_url=inter.bot.user.avatar.url,
+        title=f"{inter.me.display_name} admin users",
+        bot_user_name=inter.me.display_name,
+        field_list=field_dict_list,
+        author_display_name=inter.author.display_name,
+        author_avatar_url=inter.author.avatar.url
+    )
+
+    await discord_responder.send_embed_list(embed_list, inter)
 
 
 @user.sub_command(
@@ -5254,39 +5629,84 @@ async def admintoggle(inter, user: disnake.User):
     db_author_obj = db_responder.read_user(inter.author.id)
     # author is not claimed
     if not db_author_obj:
-        await inter.edit_original_message(
-            content=f"{inter.author.mention} is not claimed")
+        embed_description = f"{inter.author.mention} is not claimed"
+
+        embed_list = discord_responder.embed_message(
+            icon_url=inter.bot.user.avatar.url,
+            description=embed_description,
+            bot_user_name=inter.me.display_name,
+            author_display_name=inter.author.display_name,
+            author_avatar_url=inter.author.avatar.url
+        )
+
+        await discord_responder.send_embed_list(embed_list, inter)
         return
 
     # author is not super user
     if not db_author_obj.super_user:
-        await inter.edit_original_message(
-            content=f"{inter.author.mention} is not super user")
+        embed_description = f"{inter.author.mention} is not super user"
+
+        embed_list = discord_responder.embed_message(
+            icon_url=inter.bot.user.avatar.url,
+            description=embed_description,
+            bot_user_name=inter.me.display_name,
+            author_display_name=inter.author.display_name,
+            author_avatar_url=inter.author.avatar.url
+        )
+
+        await discord_responder.send_embed_list(embed_list, inter)
         return
 
     # confirm user is claimed
     db_user_obj = db_responder.read_user(user.id)
     # user isn't claimed
     if not db_user_obj:
-        await inter.edit_original_message(
-            content=f"{user.mention} is not claimed")
+        embed_description = f"{user.mention} is not claimed"
+
+        embed_list = discord_responder.embed_message(
+            icon_url=inter.bot.user.avatar.url,
+            description=embed_description,
+            bot_user_name=inter.me.display_name,
+            author_display_name=inter.author.display_name,
+            author_avatar_url=inter.author.avatar.url
+        )
+
+        await discord_responder.send_embed_list(embed_list, inter)
         return
 
     updated_user_obj = db_responder.update_toggle_user_admin(user.id)
     # upated user not found
     if updated_user_obj is None:
-        await inter.edit_original_message(
-            content=f"{user.mention} could not be updated")
+        embed_description = f"{user.mention} could not be updated"
+
+        embed_list = discord_responder.embed_message(
+            icon_url=inter.bot.user.avatar.url,
+            description=embed_description,
+            bot_user_name=inter.me.display_name,
+            author_display_name=inter.author.display_name,
+            author_avatar_url=inter.author.avatar.url
+        )
+
+        await discord_responder.send_embed_list(embed_list, inter)
         return
 
-    # user was updated properly
+    # user was updated and is now an admin
     if updated_user_obj.admin:
-        await inter.edit_original_message(
-            content=f"{user.mention} is now an admin")
+        embed_description = f"{user.mention} is now an admin"
 
+    # user was updated and is now not an admin
     else:
-        await inter.edit_original_message(
-            content=f"{user.mention} is no longer an admin")
+        embed_description = f"{user.mention} is no longer an admin"
+
+    embed_list = discord_responder.embed_message(
+        icon_url=inter.bot.user.avatar.url,
+        description=embed_description,
+        bot_user_name=inter.me.display_name,
+        author_display_name=inter.author.display_name,
+        author_avatar_url=inter.author.avatar.url
+    )
+
+    await discord_responder.send_embed_list(embed_list, inter)
 
 
 @user.sub_command(
@@ -5306,34 +5726,70 @@ async def remove(inter, user: disnake.User):
     db_author_obj = db_responder.read_user(inter.author.id)
     # author is not claimed
     if not db_author_obj:
-        await inter.edit_original_message(
-            content=f"{inter.author.mention} is not claimed")
+        embed_description = f"{inter.author.mention} is not claimed"
+
+        embed_list = discord_responder.embed_message(
+            icon_url=inter.bot.user.avatar.url,
+            description=embed_description,
+            bot_user_name=inter.me.display_name,
+            author_display_name=inter.author.display_name,
+            author_avatar_url=inter.author.avatar.url
+        )
+
+        await discord_responder.send_embed_list(embed_list, inter)
         return
 
     # author is not super user
     if not db_author_obj.super_user:
-        await inter.edit_original_message(
-            content=f"{inter.author.mention} is not super user")
+        embed_description = f"{inter.author.mention} is not super user"
+
+        embed_list = discord_responder.embed_message(
+            icon_url=inter.bot.user.avatar.url,
+            description=embed_description,
+            bot_user_name=inter.me.display_name,
+            author_display_name=inter.author.display_name,
+            author_avatar_url=inter.author.avatar.url
+        )
+
+        await discord_responder.send_embed_list(embed_list, inter)
         return
 
     # confirm user is claimed
     db_user_obj = db_responder.read_user(user.id)
     # user isn't claimed
     if not db_user_obj:
-        await inter.edit_original_message(
-            content=f"{user.mention} is not claimed")
+        embed_description = f"{user.mention} is not claimed"
+
+        embed_list = discord_responder.embed_message(
+            icon_url=inter.bot.user.avatar.url,
+            description=embed_description,
+            bot_user_name=inter.me.display_name,
+            author_display_name=inter.author.display_name,
+            author_avatar_url=inter.author.avatar.url
+        )
+
+        await discord_responder.send_embed_list(embed_list, inter)
         return
 
     deleted_user_obj = db_responder.delete_user(user.id)
-    # user could not be deleted
-    if deleted_user_obj:
-        await inter.edit_original_message(
-            content=f"{user.mention} could not be deleted")
-        return
 
     # user was deleted properly
-    await inter.edit_original_message(
-        content=f"{user.mention} was deleted")
+    if deleted_user_obj is None:
+        embed_description = f"{user.mention} was deleted"
+
+    # user could not be deleted
+    else:
+        embed_description = f"{user.mention} could not be deleted"
+
+    embed_list = discord_responder.embed_message(
+        icon_url=inter.bot.user.avatar.url,
+        description=embed_description,
+        bot_user_name=inter.me.display_name,
+        author_display_name=inter.author.display_name,
+        author_avatar_url=inter.author.avatar.url
+    )
+
+    await discord_responder.send_embed_list(embed_list, inter)
 
 
 # superuser player
@@ -5370,14 +5826,32 @@ async def claim(inter, player_tag: str, user: disnake.User):
     db_author_obj = db_responder.read_user(inter.author.id)
     # author is not claimed
     if not db_author_obj:
-        await inter.edit_original_message(
-            content=f"{inter.author.mention} is not claimed")
+        embed_description = f"{inter.author.mention} is not claimed"
+
+        embed_list = discord_responder.embed_message(
+            icon_url=inter.bot.user.avatar.url,
+            description=embed_description,
+            bot_user_name=inter.me.display_name,
+            author_display_name=inter.author.display_name,
+            author_avatar_url=inter.author.avatar.url
+        )
+
+        await discord_responder.send_embed_list(embed_list, inter)
         return
 
     # author is not super user
     if not db_author_obj.super_user:
-        await inter.edit_original_message(
-            content=f"{inter.author.mention} is not super user")
+        embed_description = f"{inter.author.mention} is not super user"
+
+        embed_list = discord_responder.embed_message(
+            icon_url=inter.bot.user.avatar.url,
+            description=embed_description,
+            bot_user_name=inter.me.display_name,
+            author_display_name=inter.author.display_name,
+            author_avatar_url=inter.author.avatar.url
+        )
+
+        await discord_responder.send_embed_list(embed_list, inter)
         return
 
     # confirm valid player_tag
@@ -5386,8 +5860,17 @@ async def claim(inter, player_tag: str, user: disnake.User):
 
     # player tag was not valid
     if not player_obj:
-        await inter.edit_original_message(
-            content=f"player with tag {player_tag} was not found")
+        embed_description = f"player with tag {player_tag} was not found"
+
+        embed_list = discord_responder.embed_message(
+            icon_url=inter.bot.user.avatar.url,
+            description=embed_description,
+            bot_user_name=inter.me.display_name,
+            author_display_name=inter.author.display_name,
+            author_avatar_url=inter.author.avatar.url
+        )
+
+        await discord_responder.send_embed_list(embed_list, inter)
         return
 
     # confirm user has been claimed
@@ -5405,9 +5888,18 @@ async def claim(inter, player_tag: str, user: disnake.User):
     db_player_obj = db_responder.read_player_from_tag(player_obj.tag)
     # player has already been claimed
     if db_player_obj:
-        await inter.edit_original_message(
-            content=(f"{player_obj.name} {player_obj.tag} "
-                     f"has already been claimed"))
+        embed_description = (f"{player_obj.name} {player_obj.tag} "
+                             f"has already been claimed")
+
+        embed_list = discord_responder.embed_message(
+            icon_url=inter.bot.user.avatar.url,
+            description=embed_description,
+            bot_user_name=inter.me.display_name,
+            author_display_name=inter.author.display_name,
+            author_avatar_url=inter.author.avatar.url
+        )
+
+        await discord_responder.send_embed_list(embed_list, inter)
         return
 
     # user claimed
@@ -5416,16 +5908,25 @@ async def claim(inter, player_tag: str, user: disnake.User):
     db_player_obj = db_responder.claim_player(
         user.id, player_obj.tag)
 
-    # succesfully claimed
-    if db_player_obj:
-        await inter.edit_original_message(
-            content=(f"{player_obj.name} {player_obj.tag} "
-                     f"is now claimed by {user.mention}"))
     # failed to claim
+    if db_player_obj is None:
+        embed_description = (f"Could not claim {player_obj.name} "
+                             f"{player_obj.tag} for {user.mention}")
+
+    # succesfully claimed
     else:
-        await inter.edit_original_message(
-            content=(f"Could not claim {player_obj.name} "
-                     f"{player_obj.tag} for {user.mention}"))
+        embed_description = (f"{player_obj.name} {player_obj.tag} "
+                             f"is now claimed by {user.mention}")
+
+    embed_list = discord_responder.embed_message(
+        icon_url=inter.bot.user.avatar.url,
+        description=embed_description,
+        bot_user_name=inter.me.display_name,
+        author_display_name=inter.author.display_name,
+        author_avatar_url=inter.author.avatar.url
+    )
+
+    await discord_responder.send_embed_list(embed_list, inter)
 
 
 @player.sub_command(
@@ -5446,14 +5947,32 @@ async def remove(inter, player_tag: str, user: disnake.User):
     db_author_obj = db_responder.read_user(inter.author.id)
     # author is not claimed
     if not db_author_obj:
-        await inter.edit_original_message(
-            content=f"{inter.author.mention} is not claimed")
+        embed_description = f"{inter.author.mention} is not claimed"
+
+        embed_list = discord_responder.embed_message(
+            icon_url=inter.bot.user.avatar.url,
+            description=embed_description,
+            bot_user_name=inter.me.display_name,
+            author_display_name=inter.author.display_name,
+            author_avatar_url=inter.author.avatar.url
+        )
+
+        await discord_responder.send_embed_list(embed_list, inter)
         return
 
     # author is not super user
     if not db_author_obj.super_user:
-        await inter.edit_original_message(
-            content=f"{inter.author.mention} is not super user")
+        embed_description = f"{inter.author.mention} is not super user"
+
+        embed_list = discord_responder.embed_message(
+            icon_url=inter.bot.user.avatar.url,
+            description=embed_description,
+            bot_user_name=inter.me.display_name,
+            author_display_name=inter.author.display_name,
+            author_avatar_url=inter.author.avatar.url
+        )
+
+        await discord_responder.send_embed_list(embed_list, inter)
         return
 
     # confirm valid player_tag
@@ -5462,17 +5981,35 @@ async def remove(inter, player_tag: str, user: disnake.User):
 
     # player tag was not valid
     if not player_obj:
-        await inter.edit_original_message(
-            content=f"player with tag {player_tag} was not found")
+        embed_description = f"player with tag {player_tag} was not found"
+
+        embed_list = discord_responder.embed_message(
+            icon_url=inter.bot.user.avatar.url,
+            description=embed_description,
+            bot_user_name=inter.me.display_name,
+            author_display_name=inter.author.display_name,
+            author_avatar_url=inter.author.avatar.url
+        )
+
+        await discord_responder.send_embed_list(embed_list, inter)
         return
 
     db_player_obj = db_responder.read_player(user.id, player_obj.tag)
 
     # db player not found
     if not db_player_obj:
-        await inter.edit_original_message(
-            content=(f"{player_obj.name} {player_obj.tag} "
-                     f"is not claimed by {user.mention}"))
+        embed_description = (f"{player_obj.name} {player_obj.tag} "
+                             f"is not claimed by {user.mention}")
+
+        embed_list = discord_responder.embed_message(
+            icon_url=inter.bot.user.avatar.url,
+            description=embed_description,
+            bot_user_name=inter.me.display_name,
+            author_display_name=inter.author.display_name,
+            author_avatar_url=inter.author.avatar.url
+        )
+
+        await discord_responder.send_embed_list(embed_list, inter)
         return
 
     db_del_player_obj = db_responder.delete_player(
@@ -5480,11 +6017,21 @@ async def remove(inter, player_tag: str, user: disnake.User):
 
     # player was not deleted
     if db_del_player_obj:
-        await inter.edit_original_message(content=(
+        embed_description = (
             f"{player_obj.name} {player_obj.tag} "
             f"could not be deleted "
             f"from {user.mention} player list"
-        ))
+        )
+
+        embed_list = discord_responder.embed_message(
+            icon_url=inter.bot.user.avatar.url,
+            description=embed_description,
+            bot_user_name=inter.me.display_name,
+            author_display_name=inter.author.display_name,
+            author_avatar_url=inter.author.avatar.url
+        )
+
+        await discord_responder.send_embed_list(embed_list, inter)
         return
 
     db_active_player_obj = db_responder.read_player_active(user.id)
@@ -5492,11 +6039,21 @@ async def remove(inter, player_tag: str, user: disnake.User):
     # active player found
     # no need to change the active player
     if db_active_player_obj:
-        await inter.edit_original_message(content=(
+        embed_description = (
             f"{player_obj.name} {player_obj.tag} "
             f"has been deleted "
             f"from {user.mention} player list"
-        ))
+        )
+
+        embed_list = discord_responder.embed_message(
+            icon_url=inter.bot.user.avatar.url,
+            description=embed_description,
+            bot_user_name=inter.me.display_name,
+            author_display_name=inter.author.display_name,
+            author_avatar_url=inter.author.avatar.url
+        )
+
+        await discord_responder.send_embed_list(embed_list, inter)
         return
 
     # no active player found
@@ -5506,11 +6063,21 @@ async def remove(inter, player_tag: str, user: disnake.User):
 
     # no additional players claimed
     if len(db_player_obj_list) == 0:
-        await inter.edit_original_message(content=(
+        embed_description = (
             f"{player_obj.name} {player_obj.tag} "
             f"has been deleted, "
             f"{user.mention} has no more claimed players"
-        ))
+        )
+
+        embed_list = discord_responder.embed_message(
+            icon_url=inter.bot.user.avatar.url,
+            description=embed_description,
+            bot_user_name=inter.me.display_name,
+            author_display_name=inter.author.display_name,
+            author_avatar_url=inter.author.avatar.url
+        )
+
+        await discord_responder.send_embed_list(embed_list, inter)
         return
 
     # additional players claimed by user
@@ -5520,11 +6087,21 @@ async def remove(inter, player_tag: str, user: disnake.User):
 
     # update not successful
     if not db_updated_player_obj:
-        await inter.edit_original_message(content=(
+        embed_description = (
             f"{player_obj.name} {player_obj.tag} "
             f"has been deleted, could not update active player, "
             f"{user.mention} has no active players"
-        ))
+        )
+
+        embed_list = discord_responder.embed_message(
+            icon_url=inter.bot.user.avatar.url,
+            description=embed_description,
+            bot_user_name=inter.me.display_name,
+            author_display_name=inter.author.display_name,
+            author_avatar_url=inter.author.avatar.url
+        )
+
+        await discord_responder.send_embed_list(embed_list, inter)
         return
 
     # update was successful
@@ -5532,26 +6109,36 @@ async def remove(inter, player_tag: str, user: disnake.User):
         db_updated_player_obj.player_tag, coc_client)
 
     # clash player not found
-    if not clash_updated_player_obj:
-        await inter.edit_original_message(content=(
+    if clash_updated_player_obj is None:
+        embed_description = (
             f"{player_obj.name} {player_obj.tag} "
             f"has been deleted, "
             f"{user.mention} active is now set to "
             f"{db_updated_player_obj.player_tag}, "
             f"could not find player in clash of clans"
-        ))
-        return
+        )
 
     # player deleted
     # active player updated
     # clash player found
-    await inter.edit_original_message(content=(
-        f"{player_obj.name} {player_obj.tag} "
-        f"has been deleted, "
-        f"{user.mention} active is now set to "
-        f"{clash_updated_player_obj.name} "
-        f"{clash_updated_player_obj.tag}"
-    ))
+    else:
+        embed_description = (
+            f"{player_obj.name} {player_obj.tag} "
+            f"has been deleted, "
+            f"{user.mention} active is now set to "
+            f"{clash_updated_player_obj.name} "
+            f"{clash_updated_player_obj.tag}"
+        )
+
+    embed_list = discord_responder.embed_message(
+        icon_url=inter.bot.user.avatar.url,
+        description=embed_description,
+        bot_user_name=inter.me.display_name,
+        author_display_name=inter.author.display_name,
+        author_avatar_url=inter.author.avatar.url
+    )
+
+    await discord_responder.send_embed_list(embed_list, inter)
 
 
 # client events
@@ -5617,16 +6204,10 @@ async def on_reaction_add(reaction, user):
         embed_title = f"{ctx.bot.user.name} help menu"
 
     embed_list = discord_responder.embed_message(
-        Embed=disnake.Embed,
-        color=disnake.Color(client_data.embed_color),
         icon_url=ctx.bot.user.avatar.url,
         title=embed_title,
-        description=None,
-        bot_prefix=ctx.bot.command_prefix,
         bot_user_name=ctx.bot.user.name,
-        thumbnail=None,
         field_list=field_dict_list,
-        image_url=None,
         author_display_name=user.display_name,
         author_avatar_url=user.avatar.url
     )

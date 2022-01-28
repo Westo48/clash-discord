@@ -1,9 +1,11 @@
 import math
 from coc import NotFound, Maintenance, PrivateWarLog, GatewayError
 import data.RazBot_Data as RazBot_Data
+import data.ClashDiscord_Client_Data as ClashDiscord_Client_Data
 import responders.ClashResponder as clash_responder
 import responders.RazBotDB_Responder as db_responder
 from disnake.utils import get
+from disnake import Embed, Color
 
 
 # CLIENT
@@ -1629,10 +1631,17 @@ def war_no_attack(war_obj):
                           f"war members attacked")
             }]
         field_dict_list = []
-        for member_obj in no_attack_list:
+        for member in no_attack_list:
+            missing_attack_count = (
+                war_obj.attacks_per_member - len(member.attacks))
+
+            missing_attack_string = (
+                clash_responder.string_attack(missing_attack_count))
+
             field_dict_list.append({
-                'name': f"{member_obj.name}",
-                'value': f"is missing attacks"
+                'name': f"{member.name}",
+                'value': (f"is missing "
+                          f"{missing_attack_count} {missing_attack_string}")
             })
         return field_dict_list
 
@@ -1645,10 +1654,17 @@ def war_no_attack(war_obj):
                           f"war members attacked")
             }]
         field_dict_list = []
-        for member_obj in no_attack_list:
+        for member in no_attack_list:
+            missing_attack_count = (
+                war_obj.attacks_per_member - len(member.attacks))
+
+            missing_attack_string = (
+                clash_responder.string_attack(missing_attack_count))
+
             field_dict_list.append({
-                'name': f"{member_obj.name}",
-                'value': f"missed attacks"
+                'name': f"{member.name}",
+                'value': (f"missed "
+                          f"{missing_attack_count} {missing_attack_string}")
             })
         return field_dict_list
 
@@ -2431,30 +2447,28 @@ async def cwl_war_leadership_verification(db_player_obj, user_obj, guild_id, coc
 # DISCORD
 
 def embed_message(
-    Embed,
-    color,
-    icon_url,
-    title,
-    description,
-    bot_prefix,
-    bot_user_name,
-    thumbnail,
-    field_list,
-    image_url,
-    author_display_name,
-    author_avatar_url
+    discord_embed=Embed,
+    color=Color(ClashDiscord_Client_Data.ClashDiscord_Data().embed_color),
+    icon_url=None,
+    title=None,
+    description=None,
+    bot_user_name=None,
+    thumbnail=None,
+    field_list=[],
+    image_url=None,
+    author_display_name=None,
+    author_avatar_url=None
 ):
     embed_list = []
 
     # no fields given
     if len(field_list) == 0:
         embed = initialize_embed(
-            Embed,
+            discord_embed,
             color,
             icon_url,
             title,
             description,
-            bot_prefix,
             bot_user_name,
             thumbnail,
             image_url,
@@ -2467,12 +2481,11 @@ def embed_message(
     while len(field_list) > 0:
         # initialize the current embed
         embed = initialize_embed(
-            Embed,
+            discord_embed,
             color,
             icon_url,
             title,
             description,
-            bot_prefix,
             bot_user_name,
             thumbnail,
             image_url,
@@ -2539,12 +2552,11 @@ def embed_message(
 
 
 def initialize_embed(
-    Embed,
+    discord_embed,
     color,
     icon_url,
     title,
     description,
-    bot_prefix,
     bot_user_name,
     thumbnail,
     image_url,
@@ -2552,42 +2564,50 @@ def initialize_embed(
     author_avatar_url
 ):
     if title and description:
-        embed = Embed(
+        embed = discord_embed(
             colour=color,
             title=title,
             description=description
         )
     elif title and not description:
-        embed = Embed(
+        embed = discord_embed(
             colour=color,
             title=title,
         )
     elif not title and description:
-        embed = Embed(
+        embed = discord_embed(
             colour=color,
             description=description
         )
     else:
-        embed = Embed(
+        embed = discord_embed(
             colour=color
         )
 
-    embed.set_author(
-        icon_url=icon_url,
-        name=f"[{bot_prefix}] {bot_user_name}"
-    )
-    if thumbnail:
+    # icon url and bot username is not null
+    if icon_url is not None and bot_user_name is not None:
+        embed.set_author(
+            icon_url=icon_url,
+            name=f"{bot_user_name}"
+        )
+
+    # thumbnail is not null
+    if thumbnail is not None:
         embed.set_thumbnail(
             url=thumbnail.small)
 
-    if image_url:
+    # image url is not null
+    if image_url is not None:
         embed.set_image(
             url=image_url)
 
-    embed.set_footer(
-        text=author_display_name,
-        icon_url=author_avatar_url
-    )
+    # author display name and author avatar url is not null
+    if (author_display_name is not None
+            and author_avatar_url is not None):
+        embed.set_footer(
+            text=author_display_name,
+            icon_url=author_avatar_url
+        )
 
     return embed
 
@@ -2604,7 +2624,7 @@ async def send_embed_list(embed_list, inter):
     add_list = []
     for embed in embed_list:
         embed_str = ""
-        # embed would be the discord.Embed instance
+        # embed is be the disnake.Embed instance
         fields = [embed.title, embed.description,
                   embed.footer.text, embed.author.name]
 
@@ -2612,7 +2632,7 @@ async def send_embed_list(embed_list, inter):
         fields.extend([field.value for field in embed.fields])
 
         for item in fields:
-            # if we str(discord.Embed.Empty) we get 'Embed.Empty', when
+            # if we str(disnake.Embed.Empty) we get 'Embed.Empty', when
             # we just want an empty string...
             embed_str += str(item) if str(item) != 'Embed.Empty' else ''
 
@@ -3092,6 +3112,11 @@ async def update_roles(user, guild, coc_client):
     # get needed roles
     needed_role_list = []
     for player_obj in player_obj_list:
+        # player is not in a clan
+        # user should not get any roles for a player that isn't in a clan
+        if player_obj.clan is None:
+            continue
+
         # claimed clan validation
         db_clan_obj = db_responder.read_clan(
             guild.id, player_obj.clan.tag)
