@@ -1623,7 +1623,7 @@ def war_no_attack(war_obj):
         }]
 
     elif war_obj.state == "inWar":
-        no_attack_list = clash_responder.war_no_attack(war_obj)
+        no_attack_list = clash_responder.war_no_attack(war_obj, None)
         if len(no_attack_list) == 0:
             return [{
                 'name': f"no missed attacks",
@@ -1646,7 +1646,7 @@ def war_no_attack(war_obj):
         return field_dict_list
 
     elif war_obj.state == "warEnded":
-        no_attack_list = clash_responder.war_no_attack(war_obj)
+        no_attack_list = clash_responder.war_no_attack(war_obj, None)
         if len(no_attack_list) == 0:
             return [{
                 'name': f"no missed attacks",
