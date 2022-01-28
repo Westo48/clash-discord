@@ -2701,7 +2701,9 @@ async def war(
 )
 async def warnoattack(
     inter, channel: disnake.TextChannel,
-    message: str, clan_role: disnake.Role = None
+    message: str,
+    missed_attacks: int = commands.Param(choices=[1, 2], default=None),
+    clan_role: disnake.Role = None
 ):
     """
         *leadership*
@@ -2745,7 +2747,8 @@ async def warnoattack(
 
     message += "\n\n"
 
-    war_member_no_attack_list = clash_responder.war_no_attack(war)
+    war_member_no_attack_list = clash_responder.war_no_attack(
+        war, missed_attacks)
 
     for war_member in war_member_no_attack_list:
         member_message = discord_responder.user_player_ping(

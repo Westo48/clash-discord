@@ -1623,7 +1623,7 @@ def war_no_attack(war_obj):
         }]
 
     elif war_obj.state == "inWar":
-        no_attack_list = clash_responder.war_no_attack(war_obj)
+        no_attack_list = clash_responder.war_no_attack(war_obj, None)
         if len(no_attack_list) == 0:
             return [{
                 'name': f"no missed attacks",
@@ -1639,14 +1639,14 @@ def war_no_attack(war_obj):
                 clash_responder.string_attack(missing_attack_count))
 
             field_dict_list.append({
-                'name': f"{member.name}",
+                'name': f"{member.name} {member.tag}",
                 'value': (f"is missing "
                           f"{missing_attack_count} {missing_attack_string}")
             })
         return field_dict_list
 
     elif war_obj.state == "warEnded":
-        no_attack_list = clash_responder.war_no_attack(war_obj)
+        no_attack_list = clash_responder.war_no_attack(war_obj, None)
         if len(no_attack_list) == 0:
             return [{
                 'name': f"no missed attacks",
@@ -1662,7 +1662,7 @@ def war_no_attack(war_obj):
                 clash_responder.string_attack(missing_attack_count))
 
             field_dict_list.append({
-                'name': f"{member.name}",
+                'name': f"{member.name} {member.tag}",
                 'value': (f"missed "
                           f"{missing_attack_count} {missing_attack_string}")
             })

@@ -667,14 +667,29 @@ def war_clan_lineup(war_clan_obj):
     return clan_lineup_dict
 
 
-def war_no_attack(war_obj):
+def war_no_attack(war_obj, missed_attack_count):
     """
-        Returns a list of members that have missed an attack.
+        returns a list of members that have missed an attack
+        based on the missing attack count
     """
     no_attack_members = []
-    for member_obj in war_obj.clan.members:
-        if len(member_obj.attacks) != war_obj.attacks_per_member:
-            no_attack_members.append(member_obj)
+    for member in war_obj.clan.members:
+
+        # missed attack count option is not selected
+        if missed_attack_count is None:
+            # member is missing an attack
+            if len(member.attacks) != war_obj.attacks_per_member:
+                no_attack_members.append(member)
+
+        # missed attack option is selected
+        else:
+            member_missing_attacks = (
+                war_obj.attacks_per_member - len(member.attacks))
+
+            # member is missing the requested missed attack count
+            if member_missing_attacks == missed_attack_count:
+                no_attack_members.append(member)
+
     return no_attack_members
 
 
