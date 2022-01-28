@@ -1639,7 +1639,7 @@ def war_no_attack(war_obj):
                 clash_responder.string_attack(missing_attack_count))
 
             field_dict_list.append({
-                'name': f"{member.name}",
+                'name': f"{member.name} {member.tag}",
                 'value': (f"is missing "
                           f"{missing_attack_count} {missing_attack_string}")
             })
@@ -1662,7 +1662,7 @@ def war_no_attack(war_obj):
                 clash_responder.string_attack(missing_attack_count))
 
             field_dict_list.append({
-                'name': f"{member.name}",
+                'name': f"{member.name} {member.tag}",
                 'value': (f"missed "
                           f"{missing_attack_count} {missing_attack_string}")
             })
