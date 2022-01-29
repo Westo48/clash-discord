@@ -1613,7 +1613,7 @@ def war_time(war_obj):
         }]
 
 
-def war_no_attack(war_obj):
+def war_no_attack(war_obj, missed_attacks):
     if war_obj.state == "preparation":
         time_string = clash_responder.string_date_time(war_obj)
 
@@ -1623,7 +1623,7 @@ def war_no_attack(war_obj):
         }]
 
     elif war_obj.state == "inWar":
-        no_attack_list = clash_responder.war_no_attack(war_obj, None)
+        no_attack_list = clash_responder.war_no_attack(war_obj, missed_attacks)
         if len(no_attack_list) == 0:
             return [{
                 'name': f"no missed attacks",
@@ -1646,7 +1646,7 @@ def war_no_attack(war_obj):
         return field_dict_list
 
     elif war_obj.state == "warEnded":
-        no_attack_list = clash_responder.war_no_attack(war_obj, None)
+        no_attack_list = clash_responder.war_no_attack(war_obj, missed_attacks)
         if len(no_attack_list) == 0:
             return [{
                 'name': f"no missed attacks",

@@ -1325,7 +1325,11 @@ async def clan(inter):
     brief='war',
     description="list of players that missed attacks in the current war"
 )
-async def noattack(inter, clan_role: disnake.Role = None):
+async def noattack(
+    inter, 
+    missed_attacks: int = commands.Param(choices=[1, 2], default=None),
+    clan_role: disnake.Role = None
+):
     """
         list of players that missed attacks in the current war
 
@@ -1359,7 +1363,7 @@ async def noattack(inter, clan_role: disnake.Role = None):
 
     war_obj = verification_payload['war_obj']
 
-    field_dict_list = discord_responder.war_no_attack(war_obj)
+    field_dict_list = discord_responder.war_no_attack(war_obj, missed_attacks)
 
     embed_list = discord_responder.embed_message(
         icon_url=inter.bot.user.avatar.url,
@@ -2242,6 +2246,8 @@ async def message(inter, channel: disnake.TextChannel, message: str):
         await discord_responder.send_embed_list(embed_list, inter)
         return
 
+    message = "**ANNOUNCEMENT**\n\n" + message
+
     try:
         await channel.send(content=message)
     except:
@@ -2331,6 +2337,7 @@ async def player(
         await discord_responder.send_embed_list(embed_list, inter)
         return
 
+    message = f"**{player.name} {player.tag}**\n\n" + message
     message += "\n\n"
 
     message += discord_responder.user_player_ping(
@@ -2434,8 +2441,8 @@ async def donate(
     unit_emoji = discord_responder.get_emoji(
         formatted_unit_name, inter.client.emojis, client_data.emojis)
 
+    message = f"{unit_emoji} **DONORS**\n\n" + message
     message += "\n\n"
-    message += f"{unit_emoji} **donors**\n\n"
 
     # nobody in the clan can donate the requested unit
     if len(donator_list) == 0:
@@ -2452,7 +2459,7 @@ async def donate(
         message = message[:-2]
 
     try:
-        await channel.send(content=message)
+        await channel.send(content=(message))
     except:
         field_dict_list = [{
             "name": "message could not be sent",
@@ -2554,8 +2561,8 @@ async def supertroop(
     unit_emoji = discord_responder.get_emoji(
         super_troop_name, inter.client.emojis, client_data.emojis)
 
+    message = f"{unit_emoji} **DONORS**\n\n" + message
     message += "\n\n"
-    message += f"{unit_emoji} **donors**\n\n"
 
     # nobody in the clan can donate the requested unit
     if len(donator_list) == 0:
@@ -2652,6 +2659,7 @@ async def war(
 
     war = verification_payload['war_obj']
 
+    message = "**WAR ANNOUNCEMENT**\n\n" + message
     message += "\n\n"
 
     for war_member in war.clan.members:
@@ -2745,6 +2753,14 @@ async def warnoattack(
 
     war = verification_payload['war_obj']
 
+    if missed_attacks is None:
+        message = "**MISSING WAR ATTACKS**\n\n" + message
+    else:
+        if missed_attacks == 1:
+            message = "**MISSING 1 ATTACK**\n\n" + message
+        else:
+            message = "**MISSING 2 ATTACKS**\n\n" + message
+        
     message += "\n\n"
 
     war_member_no_attack_list = clash_responder.war_no_attack(
