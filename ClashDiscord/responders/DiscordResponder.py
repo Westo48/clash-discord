@@ -1,9 +1,10 @@
 import math
-from coc import NotFound, Maintenance, PrivateWarLog, GatewayError
+from coc import WarRound, NotFound, Maintenance, PrivateWarLog, GatewayError
 import data.RazBot_Data as RazBot_Data
 import data.ClashDiscord_Client_Data as ClashDiscord_Client_Data
 import responders.ClashResponder as clash_responder
 import responders.RazBotDB_Responder as db_responder
+from utils import coc_utils
 from disnake.utils import get
 from disnake import Embed, Color
 
@@ -1263,13 +1264,16 @@ def super_troop_search(clan_obj, donor_list, super_troop_name,
 
 # WAR
 
-async def war_verification(db_player_obj, user_obj, coc_client):
+async def war_verification(
+    db_player_obj, war_selection, user_obj, coc_client):
     """
         verifying a war
         and returning verification payload
 
         Args:
             db_player_obj (obj): player object from db
+            war_selection (str): cwl war selection
+                ["preparation", "current", "upcoming", None]
             user_obj (obj): discord user obj
             coc_client (obj): coc.py client
 
@@ -1288,8 +1292,31 @@ async def war_verification(db_player_obj, user_obj, coc_client):
 
     player_obj = player_clan_verification_payload['player_obj']
 
+    cwl_group = await clash_responder.get_cwl_group(
+        player_obj.clan.tag, coc_client)
+
+    cwl_enum_round = coc_utils.get_war_specified(war_selection, cwl_group)
+
     try:
-        war_obj = await coc_client.get_current_war(player_obj.clan.tag)
+        war_obj = await coc_client.get_current_war(
+            player_obj.clan.tag, cwl_round=cwl_enum_round)
+
+        # specifically for last day of CWl
+        if cwl_group is not None:
+            if cwl_group.state == "inWar":
+                # last war is the current war
+                if war_obj.state != "inWar":
+                    # change current to prep
+                    if cwl_enum_round == WarRound.current_war:
+                        cwl_enum_round = WarRound.current_preparation
+
+                    # change current previous to current
+                    elif cwl_enum_round == WarRound.previous_war:
+                        cwl_enum_round = WarRound.current_war
+
+                    war_obj = await coc_client.get_current_war(
+                        player_obj.clan.tag, cwl_round=cwl_enum_round)
+
     except Maintenance:
         return {
             'verified': False,
@@ -1376,13 +1403,16 @@ async def war_verification(db_player_obj, user_obj, coc_client):
     return verification_payload
 
 
-async def war_leadership_verification(db_player_obj, user_obj, guild_id, coc_client):
+async def war_leadership_verification(
+        db_player_obj, war_selection, user_obj, guild_id, coc_client):
     """
         verifying a war through player_leadership_verification
         and returning verification payload
 
         Args:
             db_player_obj (obj): player object from db
+            war_selection (str): cwl war selection
+                ["preparation", "current", "upcoming", None]
             user_obj (obj): discord user obj
             guild_id (obj): discord guild id
             coc_client (obj): coc.py client
@@ -1400,8 +1430,31 @@ async def war_leadership_verification(db_player_obj, user_obj, guild_id, coc_cli
 
     player_obj = player_leadership_verification_payload['player_obj']
 
+    cwl_group = await clash_responder.get_cwl_group(
+        player_obj.clan.tag, coc_client)
+
+    cwl_enum_round = coc_utils.get_war_specified(war_selection, cwl_group)
+
     try:
-        war_obj = await coc_client.get_current_war(player_obj.clan.tag)
+        war_obj = await coc_client.get_current_war(
+            player_obj.clan.tag, cwl_round=cwl_enum_round)
+
+        # specifically for last day of CWl
+        if cwl_group is not None:
+            if cwl_group.state == "inWar":
+                # last war is the current war
+                if war_obj.state != "inWar":
+                    # change current to prep
+                    if cwl_enum_round == WarRound.current_war:
+                        cwl_enum_round = WarRound.current_preparation
+
+                    # change current previous to current
+                    elif cwl_enum_round == WarRound.previous_war:
+                        cwl_enum_round = WarRound.current_war
+
+                    war_obj = await coc_client.get_current_war(
+                        player_obj.clan.tag, cwl_round=cwl_enum_round)
+
     except Maintenance:
         return {
             'verified': False,
@@ -3320,7 +3373,8 @@ def role_add_remove_list(needed_role_list, current_role_list):
 
 
 # DB
-async def clan_role_verification(clan_role, coc_client):
+async def clan_role_verification(
+        clan_role, coc_client):
     """
         verifying a clan role
         and returning verification payload
@@ -3397,7 +3451,8 @@ async def clan_role_verification(clan_role, coc_client):
     return verification_payload
 
 
-async def clan_role_player_verification(clan_role, user, guild_id, coc_client):
+async def clan_role_player_verification(
+        clan_role, user, guild_id, coc_client):
     """
         verifying a player is in the clan linked to the clan role
         and returning verification payload
@@ -3494,7 +3549,8 @@ async def clan_role_player_verification(clan_role, user, guild_id, coc_client):
     return verification_payload
 
 
-async def clan_role_player_leadership_verification(clan_role, user, guild_id, coc_client):
+async def clan_role_player_leadership_verification(
+        clan_role, user, guild_id, coc_client):
     """
         verifying a player is in leadership of specified clan
         and returning verification payload
@@ -3559,13 +3615,16 @@ async def clan_role_player_leadership_verification(clan_role, user, guild_id, co
     return verification_payload
 
 
-async def clan_role_war_verification(clan_role, coc_client):
+async def clan_role_war_verification(
+        clan_role, war_selection, coc_client):
     """
         verifying a war from clan role
         and returning verification payload
 
         Args:
             db_player_obj (obj): player object from db
+            war_selection (str): cwl war selection
+                ["preparation", "current", "upcoming", None]
             coc_client (obj): coc.py client
 
         Returns:
@@ -3583,8 +3642,31 @@ async def clan_role_war_verification(clan_role, coc_client):
 
     clan_obj = clan_role_verification_payload['clan_obj']
 
+    cwl_group = await clash_responder.get_cwl_group(
+        clan_obj.tag, coc_client)
+
+    cwl_enum_round = coc_utils.get_war_specified(war_selection, cwl_group)
+
     try:
-        war_obj = await coc_client.get_current_war(clan_obj.tag)
+        war_obj = await coc_client.get_current_war(
+            clan_obj.tag, cwl_round=cwl_enum_round)
+
+        # specifically for last day of CWl
+        if cwl_group is not None:
+            if cwl_group.state == "inWar":
+                # last war is the current war
+                if war_obj.state != "inWar":
+                    # change current to prep
+                    if cwl_enum_round == WarRound.current_war:
+                        cwl_enum_round = WarRound.current_preparation
+
+                    # change current previous to current
+                    elif cwl_enum_round == WarRound.previous_war:
+                        cwl_enum_round = WarRound.current_war
+
+                    war_obj = await coc_client.get_current_war(
+                        clan_obj.tag, cwl_round=cwl_enum_round)
+
     except Maintenance:
         return {
             'verified': False,
@@ -3663,13 +3745,16 @@ async def clan_role_war_verification(clan_role, coc_client):
     return verification_payload
 
 
-async def clan_role_war_leadership_verification(clan_role, user, guild_id, coc_client):
+async def clan_role_war_leadership_verification(
+        clan_role, war_selection, user, guild_id, coc_client):
     """
         verifying a war through clan_role_player_leadership_verification
         and returning verification payload
 
         Args:
             db_player_obj (obj): player object from db
+            war_selection (str): cwl war selection
+                ["preparation", "current", "upcoming", None]
             user_obj (obj): discord user obj
             guild_id (obj): discord guild id
             coc_client (obj): coc.py client
@@ -3689,8 +3774,31 @@ async def clan_role_war_leadership_verification(clan_role, user, guild_id, coc_c
     player_obj = clan_player_leadership_verification_payload['player_obj']
     clan_obj = clan_player_leadership_verification_payload['clan_obj']
 
+    cwl_group = await clash_responder.get_cwl_group(
+        clan_obj.tag, coc_client)
+
+    cwl_enum_round = coc_utils.get_war_specified(war_selection, cwl_group)
+
     try:
-        war_obj = await coc_client.get_current_war(clan_obj.tag)
+        war_obj = await coc_client.get_current_war(
+            clan_obj.tag, cwl_round=cwl_enum_round)
+
+        # specifically for last day of CWl
+        if cwl_group is not None:
+            if cwl_group.state == "inWar":
+                # last war is the current war
+                if war_obj.state != "inWar":
+                    # change current to prep
+                    if cwl_enum_round == WarRound.current_war:
+                        cwl_enum_round = WarRound.current_preparation
+
+                    # change current previous to current
+                    elif cwl_enum_round == WarRound.previous_war:
+                        cwl_enum_round = WarRound.current_war
+
+                    war_obj = await coc_client.get_current_war(
+                        clan_obj.tag, cwl_round=cwl_enum_round)
+
     except Maintenance:
         return {
             'verified': False,
@@ -3777,7 +3885,8 @@ async def clan_role_war_leadership_verification(clan_role, user, guild_id, coc_c
     return verification_payload
 
 
-async def clan_role_cwl_group_verification(clan_role, coc_client):
+async def clan_role_cwl_group_verification(
+        clan_role, coc_client):
     """
         verifying a cwl group from clan role
         and returning verification payload
@@ -3842,7 +3951,8 @@ async def clan_role_cwl_group_verification(clan_role, coc_client):
     return verification_payload
 
 
-async def clan_role_cwl_group_leadership_verification(clan_role, user, guild_id, coc_client):
+async def clan_role_cwl_group_leadership_verification(
+        clan_role, user, guild_id, coc_client):
     """
         verifying a cwl group from clan role
         and returning verification payload
