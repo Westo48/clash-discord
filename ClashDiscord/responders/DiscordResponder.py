@@ -69,7 +69,7 @@ def client_info(client, client_data):
 
     field_dict_list.append({
         'name': "author",
-        'value': "Razgriz#7805"
+        'value': client_data.author
     })
 
     field_dict_list.append({
@@ -1265,7 +1265,7 @@ def super_troop_search(clan_obj, donor_list, super_troop_name,
 # WAR
 
 async def war_verification(
-    db_player_obj, war_selection, user_obj, coc_client):
+        db_player_obj, war_selection, user_obj, coc_client):
     """
         verifying a war
         and returning verification payload

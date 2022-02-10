@@ -42,6 +42,7 @@ class ClashDiscord_Data(object):
 
             Instance Attributes
                 version (str): client version
+                author (str): author of ClashDiscord
                 description (str): description of ClashDiscord
                 prefix (str): prefix for command calls
                 embed_color (int): color integer for embed commands
@@ -51,6 +52,7 @@ class ClashDiscord_Data(object):
     """
 
     version = '2.2.1'
+    author = "Razgriz#7805"
     description = ("Clash of Clans discord bot for discord member management "
                    "and various clash related info")
     prefix = '/'
