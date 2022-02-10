@@ -5595,6 +5595,97 @@ async def remove(inter, guild_id: str):
     await discord_responder.send_embed_list(embed_list, inter)
 
 
+@guild.sub_command(
+    brief='superuser',
+    description="*super user* force ClashDiscord to leave a guild from id"
+)
+async def leave(inter, guild_id: str):
+    """
+        *super user*
+        force ClashDiscord to leave a claimed guild from id
+
+        Parameters
+        ----------
+        guild_id: id for guild for ClashDiscord to leave
+    """
+
+    await inter.response.defer(ephemeral=True)
+
+    db_author_obj = db_responder.read_user(inter.author.id)
+    # author is not claimed
+    if not db_author_obj:
+        embed_description = f"{inter.author.mention} is not claimed"
+
+        embed_list = discord_responder.embed_message(
+            icon_url=inter.bot.user.avatar.url,
+            description=embed_description,
+            bot_user_name=inter.me.display_name,
+            author_display_name=inter.author.display_name,
+            author_avatar_url=inter.author.avatar.url
+        )
+
+        await discord_responder.send_embed_list(embed_list, inter)
+        return
+
+    # author is not super user
+    if not db_author_obj.super_user:
+        embed_description = f"{inter.author.mention} is not super user"
+
+        embed_list = discord_responder.embed_message(
+            icon_url=inter.bot.user.avatar.url,
+            description=embed_description,
+            bot_user_name=inter.me.display_name,
+            author_display_name=inter.author.display_name,
+            author_avatar_url=inter.author.avatar.url
+        )
+
+        await discord_responder.send_embed_list(embed_list, inter)
+        return
+
+    guild_id = int(guild_id)
+
+    # confirm bot is in guild
+    guild = disnake.utils.get(inter.bot.guilds, id=guild_id)
+    # bot isn't in guild
+    if guild is None:
+        embed_description = (f"{inter.me.display_name} "
+                             f"is not in guild {guild_id}")
+
+        embed_list = discord_responder.embed_message(
+            icon_url=inter.bot.user.avatar.url,
+            description=embed_description,
+            bot_user_name=inter.me.display_name,
+            author_display_name=inter.author.display_name,
+            author_avatar_url=inter.author.avatar.url
+        )
+
+        await discord_responder.send_embed_list(embed_list, inter)
+        return
+
+    await guild.leave()
+    deleted_guild = disnake.utils.get(inter.bot.guilds, id=guild.id)
+
+    # guild was deleted properly
+    if deleted_guild is None:
+        embed_description = (f"{inter.me.display_name} left "
+                             f"guild {guild.name} id {guild.id}")
+
+    # guild could not be deleted
+    else:
+        embed_description = (f"{inter.me.display_name} could not leave "
+                             f"guild {guild.name} id {guild.id}")
+
+    embed_list = discord_responder.embed_message(
+        icon_url=inter.bot.user.avatar.url,
+        description=embed_description,
+        bot_user_name=inter.me.display_name,
+        author_display_name=inter.author.display_name,
+        author_avatar_url=inter.author.avatar.url
+    )
+
+    await discord_responder.send_embed_list(embed_list, inter)
+
+
 # superuser user
 @superuser.sub_command_group(
     brief='superuser',
