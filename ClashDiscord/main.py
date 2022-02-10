@@ -926,8 +926,8 @@ async def overview(inter, clan_role: disnake.Role = None):
         author_display_name=inter.author.display_name,
         author_avatar_url=inter.author.avatar.url
     )
-    for embed in embed_list:
-        await inter.send(embed=embed)
+
+    await discord_responder.send_embed_list(embed_list, inter)
 
 
 @warpreference.sub_command(
@@ -983,8 +983,8 @@ async def member(inter, clan_role: disnake.Role = None):
         author_display_name=inter.author.display_name,
         author_avatar_url=inter.author.avatar.url
     )
-    for embed in embed_list:
-        await inter.send(embed=embed)
+
+    await discord_responder.send_embed_list(embed_list, inter)
 
 
 # clan unit
@@ -1004,10 +1004,11 @@ async def unit(inter):
     brief='clan',
     description='shows who can donate the best requested troop'
 )
-async def donate(inter,
-                 unit_name: str = commands.Param(
-                     autocomplete=discord_utils.autocomp_donation),
-                 clan_role: disnake.Role = None):
+async def donate(
+        inter,
+        unit_name: str = commands.Param(
+            autocomplete=discord_utils.autocomp_donation),
+        clan_role: disnake.Role = None):
     """
         get information about mentioned clan
 
@@ -1059,8 +1060,8 @@ async def donate(inter,
         author_display_name=inter.author.display_name,
         author_avatar_url=inter.author.avatar.url
     )
-    for embed in embed_list:
-        await inter.send(embed=embed)
+
+    await discord_responder.send_embed_list(embed_list, inter)
 
 
 # clan supertroop
@@ -1078,12 +1079,88 @@ async def supertroop(inter):
 
 @supertroop.sub_command(
     brief='clan',
+    description="shows all active supertroops in the clan"
+)
+async def active(
+    inter,
+    clan_role: disnake.Role = None
+):
+    """
+        shows all active supertroops in the clan
+
+        Parameters
+        ----------
+        clan_role (optional): clan role to use linked clan
+    """
+
+    db_player_obj = db_responder.read_player_active(inter.author.id)
+
+    verification_payload = await discord_responder.player_verification(
+        db_player_obj, inter.author, coc_client
+    )
+
+    if not verification_payload['verified']:
+        embed_list = discord_responder.embed_message(
+            icon_url=inter.bot.user.avatar.url,
+            bot_user_name=inter.me.display_name,
+            field_list=verification_payload['field_dict_list'],
+            author_display_name=inter.author.display_name,
+            author_avatar_url=inter.author.avatar.url
+        )
+
+        await discord_responder.send_embed_list(embed_list, inter)
+        return
+
+    player_obj = verification_payload['player_obj']
+
+    # role not mentioned
+    if clan_role is None:
+        verification_payload = await discord_responder.clan_verification(
+            db_player_obj, inter.author, coc_client)
+    # role has been mentioned
+    else:
+        verification_payload = await discord_responder.clan_role_verification(
+            clan_role, coc_client)
+
+    if not verification_payload['verified']:
+        embed_list = discord_responder.embed_message(
+            icon_url=inter.bot.user.avatar.url,
+            bot_user_name=inter.me.display_name,
+            field_list=verification_payload['field_dict_list'],
+            author_display_name=inter.author.display_name,
+            author_avatar_url=inter.author.avatar.url
+        )
+
+        await discord_responder.send_embed_list(embed_list, inter)
+        return
+
+    clan_obj = verification_payload['clan_obj']
+
+    field_dict_list = await discord_responder.clan_super_troop_active(
+        clan_obj, inter.client.emojis, client_data.emojis, coc_client)
+
+    embed_list = discord_responder.embed_message(
+        icon_url=inter.bot.user.avatar.url,
+        title=f"{clan_obj.name} active super troops",
+        bot_user_name=inter.me.display_name,
+        thumbnail=clan_obj.badge,
+        field_list=field_dict_list,
+        author_display_name=inter.author.display_name,
+        author_avatar_url=inter.author.avatar.url
+    )
+
+    await discord_responder.send_embed_list(embed_list, inter)
+
+
+@supertroop.sub_command(
+    brief='clan',
     description="shows who in your clan has a specified super troop active"
 )
-async def donate(inter,
-                 unit_name: str = commands.Param(
-                     autocomplete=discord_utils.autocomp_supertroop),
-                 clan_role: disnake.Role = None):
+async def donate(
+        inter,
+        unit_name: str = commands.Param(
+            autocomplete=discord_utils.autocomp_supertroop),
+        clan_role: disnake.Role = None):
     """
         shows who in your clan has a specified super troop active
 
@@ -1456,8 +1533,7 @@ async def stars(
         author_avatar_url=inter.author.avatar.url
     )
 
-    for embed in embed_list:
-        await inter.send(embed=embed)
+    await discord_responder.send_embed_list(embed_list, inter)
 
 
 @clan.sub_command(
@@ -1522,8 +1598,7 @@ async def attacks(
         author_avatar_url=inter.author.avatar.url
     )
 
-    for embed in embed_list:
-        await inter.send(embed=embed)
+    await discord_responder.send_embed_list(embed_list, inter)
 
 
 # war score

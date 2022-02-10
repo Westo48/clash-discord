@@ -1196,7 +1196,8 @@ async def war_preference_member(
     return field_dict_list
 
 
-def donation(clan_obj, donator_list, unit_name, discord_emoji_list, client_emoji_list):
+def donation(clan_obj, donator_list, unit_name,
+             discord_emoji_list, client_emoji_list):
     # unit is a hero or pet
     if donator_list is None:
         return [{
@@ -1233,11 +1234,52 @@ def donation(clan_obj, donator_list, unit_name, discord_emoji_list, client_emoji
 
     for donator in donator_list:
         field_dict_list.append({
-            'name': donator.player_obj.name,
+            'name': f"{donator.player_obj.name} {donator.player_obj.tag}",
             'value': value
         })
 
     return field_dict_list
+
+
+async def clan_super_troop_active(
+        clan, discord_emoji_list, client_emoji_list, coc_client):
+    super_troop_list = coc_utils.get_super_troop_order()
+
+    fields_dict_list = []
+
+    for super_troop in super_troop_list:
+        donor_list = await clash_responder.active_super_troop_search(
+            clan, super_troop, coc_client)
+
+        field_name = get_emoji(
+            super_troop, discord_emoji_list, client_emoji_list)
+
+        field_value = ""
+
+        for player in donor_list:
+            player_super_troop = player.get_troop(super_troop)
+            if player_super_troop.is_active:
+                field_value += f"{player.name} {player.tag}\n"
+
+        # remove trailing space in field value
+        field_value = field_value[:-1]
+
+        # no players have super troop activated
+        if field_value == "":
+            continue
+
+        fields_dict_list.append({
+            'name': field_name,
+            'value': field_value
+        })
+
+    if len(fields_dict_list) == 0:
+        fields_dict_list.append({
+            'name': f"{clan.name} {clan.tag}",
+            'value': f"no super troops active"
+        })
+
+    return fields_dict_list
 
 
 def super_troop_search(clan_obj, donor_list, super_troop_name,
@@ -1255,7 +1297,7 @@ def super_troop_search(clan_obj, donor_list, super_troop_name,
     field_dict_list = []
     for donator in donor_list:
         field_dict_list.append({
-            'name': donator.name,
+            'name': f"{donator.name} {donator.tag}",
             'value': f"has {unit_emoji} active"
         })
 
