@@ -971,15 +971,15 @@ async def member(inter, clan_role: disnake.Role = None):
 
     clan_obj = verification_payload['clan_obj']
 
-    field_dict_list = await discord_responder.war_preference_member(
+    embed_description = await discord_responder.war_preference_member(
         clan_obj, coc_client, inter.client.emojis, client_data.emojis)
 
     embed_list = discord_responder.embed_message(
         icon_url=inter.bot.user.avatar.url,
         title=f"{clan_obj.name} member war preference",
+        description=embed_description,
         bot_user_name=inter.me.display_name,
         thumbnail=clan_obj.badge,
-        field_list=field_dict_list,
         author_display_name=inter.author.display_name,
         author_avatar_url=inter.author.avatar.url
     )

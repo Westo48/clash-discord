@@ -1169,31 +1169,34 @@ async def war_preference_clan(
 
 async def war_preference_member(
         clan_obj, coc_client, discord_emoji_list, client_emoji_list):
-    field_dict_list = []
-
     in_emoji = get_war_opted_in_emoji(
         "True", discord_emoji_list, client_emoji_list)
     out_emoji = get_war_opted_in_emoji(
         "False", discord_emoji_list, client_emoji_list)
 
+    embed_description = ""
+    in_string = ""
+    out_string = ""
+
     for member in clan_obj.members:
-        player_obj = await coc_client.get_player(member.tag)
-        if player_obj.war_opted_in:
-            field_dict_list.append({
-                'name': f"{player_obj.name} {player_obj.tag}",
-                'value': in_emoji,
-                'inline': True
-            })
+        player = await coc_client.get_player(member.tag)
+        th_emoji = get_emoji(
+            player.town_hall, discord_emoji_list, client_emoji_list)
 
-            continue
+        if player.war_opted_in:
+            in_string += (
+                f"{in_emoji} {th_emoji} {player.name}\n")
 
-        field_dict_list.append({
-            'name': f"{player_obj.name} {player_obj.tag}",
-            'value': out_emoji,
-            'inline': True
-        })
+        else:
+            out_string += (
+                f"{out_emoji} {th_emoji} {player.name}\n")
 
-    return field_dict_list
+    embed_description = in_string+out_string
+
+    # remove trailing space in field value
+    embed_description = embed_description[:-1]
+
+    return embed_description
 
 
 def donation(clan_obj, donator_list, unit_name,
@@ -2609,6 +2612,9 @@ def embed_message(
                 # add the current embed to the list
                 embed_list.append(embed)
 
+                # get rid of the embed so it won't be added a second time
+                embed = None
+
                 # break the for and restart the while
                 break
 
@@ -2635,13 +2641,17 @@ def embed_message(
                 # add the current embed to the list
                 embed_list.append(embed)
 
+                # get rid of the embed so it won't be added a second time
+                embed = None
+
                 # break the for and restart the while
                 break
 
         # dont add if exactly 25, already added
         # add the last embed to the list
-        if len(embed.fields) != 25 and len(embed.fields) > 0:
-            embed_list.append(embed)
+        if embed is not None:
+            if len(embed.fields) != 25 and len(embed.fields) > 0:
+                embed_list.append(embed)
 
     return embed_list
 
