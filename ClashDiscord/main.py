@@ -139,10 +139,7 @@ async def chocolateclash(inter, player_tag: str):
 
 # Player
 
-@bot.slash_command(
-    brief='player',
-    description="parent for player commands"
-)
+@bot.slash_command()
 async def player(inter):
     """
         parent for player commands
@@ -153,10 +150,7 @@ async def player(inter):
 
 
 # player info
-@player.sub_command_group(
-    brief='player',
-    description="group for player info commands"
-)
+@player.sub_command_group()
 async def info(inter):
     """
         group for player info commands
@@ -165,17 +159,19 @@ async def info(inter):
     pass
 
 
-@info.sub_command(
-    brief='player',
-    description="get information about a specified active player"
-)
-async def user(inter, user: disnake.User = None):
+@info.sub_command()
+async def overview(
+    inter,
+    user: disnake.User = discord_utils.command_param_dict['user'],
+    tag: str = discord_utils.command_param_dict['tag']
+):
     """
-        get information about a specified active player
+        get player information
 
         Parameters
         ----------
         user (optional): user to search for active player
+        tag (optional): tag to search
     """
 
     # setting user to author if not specified
@@ -198,16 +194,34 @@ async def user(inter, user: disnake.User = None):
         await discord_responder.send_embed_list(embed_list, inter)
         return
 
-    player_obj = verification_payload['player_obj']
+    player = verification_payload['player_obj']
+
+    # player tag selected
+    if tag is not None:
+        player = await clash_responder.get_player(tag, coc_client)
+
+        if player is None:
+            embed_description = f"could not find player with tag {tag}"
+
+            embed_list = discord_responder.embed_message(
+                icon_url=inter.bot.user.avatar.url,
+                bot_user_name=inter.me.display_name,
+                description=embed_description,
+                author_display_name=inter.author.display_name,
+                author_avatar_url=inter.author.avatar.url
+            )
+
+            await discord_responder.send_embed_list(embed_list, inter)
+            return
 
     field_dict_list = discord_responder.player_info(
-        player_obj, inter.client.emojis, client_data.emojis)
+        player, inter.client.emojis, client_data.emojis)
 
     embed_list = discord_responder.embed_message(
         icon_url=inter.bot.user.avatar.url,
-        title=f"{player_obj.name} {player_obj.tag}",
+        title=f"{player.name} {player.tag}",
         bot_user_name=inter.me.display_name,
-        thumbnail=player_obj.league.icon,
+        thumbnail=player.league.icon,
         field_list=field_dict_list,
         author_display_name=inter.author.display_name,
         author_avatar_url=inter.author.avatar.url
@@ -216,26 +230,34 @@ async def user(inter, user: disnake.User = None):
     await discord_responder.send_embed_list(embed_list, inter)
 
 
-@info.sub_command(
-    brief='player',
-    description="get information about a requested player"
-)
-async def find(inter, player_tag: str):
+@info.sub_command()
+async def recruit(
+    inter,
+    user: disnake.User = discord_utils.command_param_dict['user'],
+    tag: str = discord_utils.command_param_dict['tag']
+):
     """
-        get information about a requested player
+        get player recruitment information
 
         Parameters
         ----------
-        player_tag: player tag to search
+        user (optional): user to search for active player
+        tag (optional): tag to search
     """
 
-    player_obj = await clash_responder.get_player(player_tag, coc_client)
+    # setting user to author if not specified
+    if user is None:
+        user = inter.author
 
-    if player_obj is None:
+    db_player_obj = db_responder.read_player_active(user.id)
+
+    verification_payload = await discord_responder.player_verification(
+        db_player_obj, user, coc_client)
+    if not verification_payload['verified']:
         embed_list = discord_responder.embed_message(
             icon_url=inter.bot.user.avatar.url,
-            description=f"could not find player with tag {player_tag}",
             bot_user_name=inter.me.display_name,
+            field_list=verification_payload['field_dict_list'],
             author_display_name=inter.author.display_name,
             author_avatar_url=inter.author.avatar.url
         )
@@ -243,72 +265,49 @@ async def find(inter, player_tag: str):
         await discord_responder.send_embed_list(embed_list, inter)
         return
 
-    field_dict_list = discord_responder.player_info(
-        player_obj, inter.client.emojis, client_data.emojis)
+    player = verification_payload['player_obj']
 
-    embed_list = discord_responder.embed_message(
-        icon_url=inter.bot.user.avatar.url,
-        title=f"{player_obj.name} {player_obj.tag}",
-        bot_user_name=inter.me.display_name,
-        thumbnail=player_obj.league.icon,
-        field_list=field_dict_list,
-        author_display_name=inter.author.display_name,
-        author_avatar_url=inter.author.avatar.url
-    )
+    # player tag selected
+    if tag is not None:
+        player = await clash_responder.get_player(tag, coc_client)
 
-    await discord_responder.send_embed_list(embed_list, inter)
+        if player is None:
+            embed_description = f"could not find player with tag {tag}"
 
+            embed_list = discord_responder.embed_message(
+                icon_url=inter.bot.user.avatar.url,
+                bot_user_name=inter.me.display_name,
+                description=embed_description,
+                author_display_name=inter.author.display_name,
+                author_avatar_url=inter.author.avatar.url
+            )
 
-@info.sub_command(
-    brief='player',
-    description="get recruitment information about a requested player"
-)
-async def recruit(inter, player_tag: str):
-    """
-        get recruitment information about a requested player
-
-        Parameters
-        ----------
-        player_tag: player tag to search
-    """
-
-    player_obj = await clash_responder.get_player(player_tag, coc_client)
-
-    if player_obj is None:
-        embed_list = discord_responder.embed_message(
-            icon_url=inter.bot.user.avatar.url,
-            description=f"could not find player with tag {player_tag}",
-            bot_user_name=inter.me.display_name,
-            author_display_name=inter.author.display_name,
-            author_avatar_url=inter.author.avatar.url
-        )
-
-        await discord_responder.send_embed_list(embed_list, inter)
-        return
+            await discord_responder.send_embed_list(embed_list, inter)
+            return
 
     player_field_dict_list = discord_responder.player_info(
-        player_obj, inter.client.emojis, client_data.emojis)
+        player, inter.client.emojis, client_data.emojis)
 
     embed_list = []
 
     embed_list.extend(discord_responder.embed_message(
         icon_url=inter.bot.user.avatar.url,
-        title=f"{player_obj.name} {player_obj.tag}",
+        title=f"{player.name} {player.tag}",
         bot_user_name=inter.me.display_name,
-        thumbnail=player_obj.league.icon,
+        thumbnail=player.league.icon,
         field_list=player_field_dict_list,
         author_display_name=inter.author.display_name,
         author_avatar_url=inter.author.avatar.url
     ))
 
     unit_field_dict_list = discord_responder.unit_lvl_all(
-        player_obj, inter.client.emojis, client_data.emojis)
+        player, inter.client.emojis, client_data.emojis)
 
     embed_list.extend(discord_responder.embed_message(
         icon_url=inter.bot.user.avatar.url,
-        title=f"{player_obj.name} units",
+        title=f"{player.name} units",
         bot_user_name=inter.me.display_name,
-        thumbnail=player_obj.league.icon,
+        thumbnail=player.league.icon,
         field_list=unit_field_dict_list,
         author_display_name=inter.author.display_name,
         author_avatar_url=inter.author.avatar.url
@@ -318,11 +317,11 @@ async def recruit(inter, player_tag: str):
 
     player_links = ""
 
-    player_links += discord_responder.link_clash_of_stats(player_obj)
+    player_links += discord_responder.link_clash_of_stats(player)
 
     player_links += "\n\n"
 
-    player_links += discord_responder.link_chocolate_clash(player_obj)
+    player_links += discord_responder.link_chocolate_clash(player)
 
     await inter.send(content=player_links)
 

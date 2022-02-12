@@ -548,12 +548,20 @@ def player_info(player_obj, discord_emoji_list, client_emoji_list):
         hero_emoji = get_emoji(
             hero.name, discord_emoji_list, client_emoji_list)
 
-        emoji_str = hero_emoji
-        hero_value += f"{hero_emoji} {hero.level}\n"
+        try:
+            max_level_for_townhall = hero.get_max_level_for_townhall(
+                player_obj.town_hall)
+        except:
+            max_level_for_townhall = hero.max_level
+
+        hero_value += (f"{hero_emoji} `{hero.level} | "
+                       f"{max_level_for_townhall} | "
+                       f"{hero.max_level}`\n")
 
     if hero_value != "":
         # remove trailing space in hero value
         hero_value = hero_value[:-1]
+
         field_dict_list.append({
             'name': f"**Heroes**",
             'value': hero_value,
@@ -569,12 +577,20 @@ def player_info(player_obj, discord_emoji_list, client_emoji_list):
         pet_emoji = get_emoji(
             pet.name, discord_emoji_list, client_emoji_list)
 
-        emoji_str = pet_emoji
-        pet_value += f"{pet_emoji} {pet.level}\n"
+        try:
+            max_level_for_townhall = pet.get_max_level_for_townhall(
+                player_obj.town_hall)
+        except:
+            max_level_for_townhall = pet.max_level
+
+        pet_value += (f"{pet_emoji} `{pet.level} | "
+                      f"{max_level_for_townhall} | "
+                      f"{pet.max_level}`\n")
 
     if pet_value != "":
         # remove trailing space in pet value
         pet_value = pet_value[:-1]
+
         field_dict_list.append({
             'name': f"**Pets**",
             'value': pet_value,
