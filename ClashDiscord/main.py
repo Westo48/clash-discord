@@ -1307,10 +1307,7 @@ async def donate(
 
 # War
 
-@bot.slash_command(
-    brief='war',
-    description="parent for war commands"
-)
+@bot.slash_command()
 async def war(inter):
     """
         parent for war commands
@@ -1321,10 +1318,7 @@ async def war(inter):
 
 
 # war info
-@war.sub_command_group(
-    brief='war',
-    description="group for war info commands"
-)
+@war.sub_command_group()
 async def info(inter):
     """
         group for war info commands
@@ -1333,10 +1327,7 @@ async def info(inter):
     pass
 
 
-@info.sub_command(
-    brief='war',
-    description="overview of the current war"
-)
+@info.sub_command()
 async def overview(
     inter,
     clan_role: disnake.Role = None,
@@ -1393,10 +1384,7 @@ async def overview(
     await discord_responder.send_embed_list(embed_list, inter)
 
 
-@info.sub_command(
-    brief='war',
-    description="scoreboard for the current war"
-)
+@info.sub_command()
 async def scoreboard(
     inter,
     clan_role: disnake.Role = None,
@@ -1454,10 +1442,7 @@ async def scoreboard(
 
 
 # war clan
-@war.sub_command_group(
-    brief='war',
-    description="group for war clan commands"
-)
+@war.sub_command_group()
 async def clan(inter):
     """
         group for war clan commands
@@ -1466,10 +1451,7 @@ async def clan(inter):
     pass
 
 
-@clan.sub_command(
-    brief='war',
-    description="list of players that missed attacks in the current war"
-)
+@clan.sub_command()
 async def noattack(
     inter,
     missed_attacks: int = commands.Param(default=None, choices=[1, 2]),
@@ -1527,10 +1509,7 @@ async def noattack(
     await discord_responder.send_embed_list(embed_list, inter)
 
 
-@clan.sub_command(
-    brief='war',
-    description="*leadership* overview of all members in war"
-)
+@clan.sub_command()
 async def stars(
     inter,
     clan_role: disnake.Role = None,
@@ -1592,10 +1571,7 @@ async def stars(
     await discord_responder.send_embed_list(embed_list, inter)
 
 
-@clan.sub_command(
-    brief='war',
-    description="*leadership* all attacks for every war member"
-)
+@clan.sub_command()
 async def attacks(
     inter,
     clan_role: disnake.Role = None,
@@ -1658,10 +1634,7 @@ async def attacks(
 
 
 # war score
-@war.sub_command_group(
-    brief='war',
-    description="group for war score commands"
-)
+@war.sub_command_group()
 async def score(inter):
     """
         group for war score commands
@@ -1670,10 +1643,7 @@ async def score(inter):
     pass
 
 
-@score.sub_command(
-    brief='war',
-    description="your war member score"
-)
+@score.sub_command()
 async def user(
     inter,
     user: disnake.User = None,
@@ -1727,10 +1697,7 @@ async def user(
     await discord_responder.send_embed_list(embed_list, inter)
 
 
-@score.sub_command(
-    brief='war',
-    description="*leadership* every clanmate's war member score"
-)
+@score.sub_command()
 async def clan(
     inter,
     clan_role: disnake.Role = None,
@@ -1792,10 +1759,7 @@ async def clan(
 
 
 # war lineup
-@war.sub_command_group(
-    brief='war',
-    description="group for war lineup commands"
-)
+@war.sub_command_group()
 async def lineup(inter):
     """
         group for war lineup commands
@@ -1804,10 +1768,7 @@ async def lineup(inter):
     pass
 
 
-@lineup.sub_command(
-    brief='war',
-    description="town hall lineup overview for war"
-)
+@lineup.sub_command()
 async def overview(
     inter,
     clan_role: disnake.Role = None,
@@ -1852,10 +1813,7 @@ async def overview(
         content=discord_responder.war_lineup_overview(war_obj))
 
 
-@lineup.sub_command(
-    brief='war',
-    description="town hall lineup for each war member"
-)
+@lineup.sub_command()
 async def clan(
     inter,
     clan_role: disnake.Role = None,
@@ -1912,10 +1870,7 @@ async def clan(
     await discord_responder.send_embed_list(embed_list, inter)
 
 
-@lineup.sub_command(
-    brief='war',
-    description="lineup for each war member"
-)
+@lineup.sub_command()
 async def member(
     inter,
     clan_role: disnake.Role = None,

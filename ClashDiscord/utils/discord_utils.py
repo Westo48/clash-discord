@@ -67,5 +67,13 @@ command_param_dict = {
         choices=[
             "all", "hero", "pet", "troop", "spell", "siege"
         ]
+    ),
+    'cwl_war_selection': commands.Param(
+        name="cwl_war_selection",
+        description="*optional* cwl war selection",
+        default=None,
+        choices=[
+            "previous", "current", "upcoming"
+        ]
     )
 }
