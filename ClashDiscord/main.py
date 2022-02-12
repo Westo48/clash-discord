@@ -1330,9 +1330,8 @@ async def info(inter):
 @info.sub_command()
 async def overview(
     inter,
-    clan_role: disnake.Role = None,
-    war_selection: str = commands.Param(default=None, choices=[
-        "previous", "current", "upcoming"])
+    clan_role: disnake.Role = discord_utils.command_param_dict['clan_role'],
+    war_selection: str = discord_utils.command_param_dict['cwl_war_selection']
 ):
     """
         overview of the current war
@@ -1387,9 +1386,8 @@ async def overview(
 @info.sub_command()
 async def scoreboard(
     inter,
-    clan_role: disnake.Role = None,
-    war_selection: str = commands.Param(default=None, choices=[
-        "previous", "current", "upcoming"])
+    clan_role: disnake.Role = discord_utils.command_param_dict['clan_role'],
+    war_selection: str = discord_utils.command_param_dict['cwl_war_selection']
 ):
     """
         overview of the current war
@@ -1454,10 +1452,9 @@ async def clan(inter):
 @clan.sub_command()
 async def noattack(
     inter,
-    missed_attacks: int = commands.Param(default=None, choices=[1, 2]),
-    clan_role: disnake.Role = None,
-    war_selection: str = commands.Param(default=None, choices=[
-        "previous", "current", "upcoming"])
+    missed_attacks: int = discord_utils.command_param_dict['missed_attacks'],
+    clan_role: disnake.Role = discord_utils.command_param_dict['clan_role'],
+    war_selection: str = discord_utils.command_param_dict['cwl_war_selection']
 ):
     """
         list of players that missed attacks in the current war
@@ -1512,9 +1509,8 @@ async def noattack(
 @clan.sub_command()
 async def stars(
     inter,
-    clan_role: disnake.Role = None,
-    war_selection: str = commands.Param(default=None, choices=[
-        "previous", "current", "upcoming"])
+    clan_role: disnake.Role = discord_utils.command_param_dict['clan_role'],
+    war_selection: str = discord_utils.command_param_dict['cwl_war_selection']
 ):
     """
         *leadership*
@@ -1574,9 +1570,8 @@ async def stars(
 @clan.sub_command()
 async def attacks(
     inter,
-    clan_role: disnake.Role = None,
-    war_selection: str = commands.Param(default=None, choices=[
-        "previous", "current", "upcoming"])
+    clan_role: disnake.Role = discord_utils.command_param_dict['clan_role'],
+    war_selection: str = discord_utils.command_param_dict['cwl_war_selection']
 ):
     """
         *leadership*
@@ -1646,9 +1641,8 @@ async def score(inter):
 @score.sub_command()
 async def user(
     inter,
-    user: disnake.User = None,
-    war_selection: str = commands.Param(default=None, choices=[
-        "previous", "current", "upcoming"])
+    clan_role: disnake.Role = discord_utils.command_param_dict['clan_role'],
+    war_selection: str = discord_utils.command_param_dict['cwl_war_selection']
 ):
     """
         your war member score
@@ -1700,9 +1694,8 @@ async def user(
 @score.sub_command()
 async def clan(
     inter,
-    clan_role: disnake.Role = None,
-    war_selection: str = commands.Param(default=None, choices=[
-        "previous", "current", "upcoming"])
+    clan_role: disnake.Role = discord_utils.command_param_dict['clan_role'],
+    war_selection: str = discord_utils.command_param_dict['cwl_war_selection']
 ):
     """
         *leadership*
@@ -1771,9 +1764,8 @@ async def lineup(inter):
 @lineup.sub_command()
 async def overview(
     inter,
-    clan_role: disnake.Role = None,
-    war_selection: str = commands.Param(default=None, choices=[
-        "previous", "current", "upcoming"])
+    clan_role: disnake.Role = discord_utils.command_param_dict['clan_role'],
+    war_selection: str = discord_utils.command_param_dict['cwl_war_selection']
 ):
     """
         town hall lineup overview for war
@@ -1816,9 +1808,8 @@ async def overview(
 @lineup.sub_command()
 async def clan(
     inter,
-    clan_role: disnake.Role = None,
-    war_selection: str = commands.Param(default=None, choices=[
-        "previous", "current", "upcoming"])
+    clan_role: disnake.Role = discord_utils.command_param_dict['clan_role'],
+    war_selection: str = discord_utils.command_param_dict['cwl_war_selection']
 ):
     """
         town hall lineup for each war member
@@ -1873,9 +1864,8 @@ async def clan(
 @lineup.sub_command()
 async def member(
     inter,
-    clan_role: disnake.Role = None,
-    war_selection: str = commands.Param(default=None, choices=[
-        "previous", "current", "upcoming"])
+    clan_role: disnake.Role = discord_utils.command_param_dict['clan_role'],
+    war_selection: str = discord_utils.command_param_dict['cwl_war_selection']
 ):
     """
         lineup for each war member
@@ -1944,10 +1934,7 @@ async def member(
 
 # CWL
 
-@bot.slash_command(
-    brief='cwl',
-    description="parent for cwl commands"
-)
+@bot.slash_command()
 async def cwl(inter):
     """
         parent for cwl commands
@@ -1958,10 +1945,7 @@ async def cwl(inter):
 
 
 # cwl lineup
-@cwl.sub_command_group(
-    brief='cwl',
-    description="group for cwl lineup commands"
-)
+@cwl.sub_command_group()
 async def lineup(inter):
     """
         group for cwl lineup commands
@@ -1970,11 +1954,11 @@ async def lineup(inter):
     pass
 
 
-@lineup.sub_command(
-    brief='cwl',
-    description="returns the CWL group lineup"
-)
-async def overview(inter, clan_role: disnake.Role = None):
+@lineup.sub_command()
+async def overview(
+    inter,
+    clan_role: disnake.Role = discord_utils.command_param_dict['clan_role']
+):
     """
         returns the CWL group lineup
 
@@ -2012,11 +1996,12 @@ async def overview(inter, clan_role: disnake.Role = None):
         content=discord_responder.cwl_lineup(cwl_group_obj))
 
 
-@lineup.sub_command(
-    brief='cwl',
-    description="returns the CWL group clan lineup"
-)
-async def clan(inter, clan_tag: str, clan_role: disnake.Role = None):
+@lineup.sub_command()
+async def clan(
+    inter,
+    clan_tag: str,
+    clan_role: disnake.Role = discord_utils.command_param_dict['clan_role']
+):
     """
         returns the CWL group clan lineup
 
@@ -2101,11 +2086,11 @@ async def clan(inter, clan_tag: str, clan_role: disnake.Role = None):
     await discord_responder.send_embed_list(embed_list, inter)
 
 
-@lineup.sub_command(
-    brief='cwl',
-    description="*leadership* returns the CWL group member lineup"
-)
-async def member(inter, clan_role: disnake.Role = None):
+@lineup.sub_command()
+async def member(
+    inter,
+    clan_role: disnake.Role = discord_utils.command_param_dict['clan_role']
+):
     """
         *leadership*
         returns the CWL group member lineup
@@ -2159,10 +2144,7 @@ async def member(inter, clan_role: disnake.Role = None):
 
 
 # cwl score
-@cwl.sub_command_group(
-    brief='cwl',
-    description="group for cwl score commands"
-)
+@cwl.sub_command_group()
 async def score(inter):
     """
         group for cwl score commands
@@ -2171,11 +2153,11 @@ async def score(inter):
     pass
 
 
-@score.sub_command(
-    brief='cwl',
-    description="lists each score you have in CWL"
-)
-async def user(inter, user: disnake.User = None):
+@score.sub_command()
+async def user(
+    inter,
+    clan_role: disnake.Role = discord_utils.command_param_dict['clan_role']
+):
     """
         returns specified user's active player's cwl score
 
@@ -2222,11 +2204,11 @@ async def user(inter, user: disnake.User = None):
     await discord_responder.send_embed_list(embed_list, inter)
 
 
-@score.sub_command(
-    brief='cwl',
-    description="Lists each member and their score in CWL"
-)
-async def clan(inter, clan_role: disnake.Role = None):
+@score.sub_command()
+async def clan(
+    inter,
+    clan_role: disnake.Role = discord_utils.command_param_dict['clan_role']
+):
     """
         *leadership*
         returns all member scores for the specified clan
@@ -2366,7 +2348,11 @@ async def announce(inter):
     description=("*leadership* "
                  "announces message to specified channel")
 )
-async def message(inter, channel: disnake.TextChannel, message: str):
+async def message(
+    inter,
+    channel: disnake.TextChannel = discord_utils.command_param_dict['channel'],
+    message: str = discord_utils.command_param_dict['message']
+):
     """
         *leadership*
         announces message to specified channel
@@ -2435,8 +2421,10 @@ async def message(inter, channel: disnake.TextChannel, message: str):
                  "pings user with the specified player tag")
 )
 async def player(
-    inter, channel: disnake.TextChannel,
-    message: str, player_tag: str
+    inter,
+    channel: disnake.TextChannel = discord_utils.command_param_dict['channel'],
+    message: str = discord_utils.command_param_dict['message'],
+    tag: str = discord_utils.command_param_dict['required_tag']
 ):
     """
         *leadership*
@@ -2446,8 +2434,8 @@ async def player(
         Parameters
         ----------
         channel: channel to announce the message
-        player_tag: player tag to find and ping user
         message: message to send the specified channel
+        tag: player tag to find and ping user
     """
 
     db_player_obj = db_responder.read_player_active(inter.author.id)
@@ -2467,11 +2455,11 @@ async def player(
         await discord_responder.send_embed_list(embed_list, inter)
         return
 
-    player = await clash_responder.get_player(player_tag, coc_client)
+    player = await clash_responder.get_player(tag, coc_client)
 
     if player is None:
         field_dict_list = [{
-            "name": f"player with tag {player_tag} not found",
+            "name": f"player with tag {tag} not found",
             "value": f"please check the tag and try again"
         }]
         embed_list = discord_responder.embed_message(
@@ -2529,10 +2517,13 @@ async def player(
 )
 async def donate(
     inter,
-    channel: disnake.TextChannel,
-    message: str,
+    channel: disnake.TextChannel = discord_utils.command_param_dict['channel'],
+    message: str = discord_utils.command_param_dict['message'],
     unit_name: str = commands.Param(
-        autocomplete=discord_utils.autocomp_unit),
+        name=discord_utils.command_param_dict['unit_name'].name,
+        description=discord_utils.command_param_dict['unit_name'].description,
+        autocomplete=discord_utils.autocomp_unit
+    ),
     clan_role: disnake.Role = None
 ):
     """
@@ -2644,11 +2635,14 @@ async def donate(
 )
 async def supertroop(
     inter,
-    channel: disnake.TextChannel,
-    message: str,
-    unit_name: str = commands.Param(
-        autocomplete=discord_utils.autocomp_supertroop),
-    clan_role: disnake.Role = None
+    channel: disnake.TextChannel = discord_utils.command_param_dict['channel'],
+    message: str = discord_utils.command_param_dict['message'],
+    super_troop: str = commands.Param(
+        name=discord_utils.command_param_dict['super_troop'].name,
+        description=discord_utils.command_param_dict['super_troop'].description,
+        autocomplete=discord_utils.autocomp_supertroop
+    ),
+    clan_role: disnake.Role = discord_utils.command_param_dict['clan_role']
 ):
     """
         announces message to specified channel,
@@ -2656,9 +2650,9 @@ async def supertroop(
 
         Parameters
         ----------
-        unit_name: name of unit to search clan donations
         channel: channel to announce the message
         message: message to send the specified channel
+        super_troop: name of unit to search clan donations
         clan_role (optional): clan role to use linked clan
     """
 
@@ -2690,11 +2684,11 @@ async def supertroop(
 
     clan = verification_payload['clan_obj']
 
-    super_troop_name = clash_responder.find_super_troop_name(unit_name)
+    super_troop_name = clash_responder.find_super_troop_name(super_troop)
 
     if super_troop_name is None:
         await inter.edit_original_message(
-            content=f"{unit_name} is not super troop")
+            content=f"{super_troop} is not super troop")
         return
 
     donator_list = await clash_responder.active_super_troop_search(
@@ -2703,7 +2697,7 @@ async def supertroop(
     # unit is either hero, pet or is an incorrect unit
     if donator_list is None:
         await inter.edit_original_message(
-            content=f"{unit_name} is not a super troop")
+            content=f"{super_troop} is not a super troop")
         return
 
     unit_emoji = discord_responder.get_emoji(
@@ -2764,10 +2758,11 @@ async def supertroop(
                  "pings all in current war")
 )
 async def war(
-    inter, channel: disnake.TextChannel, message: str,
-    clan_role: disnake.Role = None,
-    war_selection: str = commands.Param(default=None, choices=[
-        "previous", "current", "upcoming"])
+    inter,
+    channel: disnake.TextChannel = discord_utils.command_param_dict['channel'],
+    message: str = discord_utils.command_param_dict['message'],
+    clan_role: disnake.Role = discord_utils.command_param_dict['clan_role'],
+    war_selection: str = discord_utils.command_param_dict['cwl_war_selection']
 ):
     """
         *leadership*
@@ -2860,11 +2855,12 @@ async def war(
                  "pings all in war missing attacks")
 )
 async def warnoattack(
-    inter, channel: disnake.TextChannel, message: str,
-    missed_attacks: int = commands.Param(default=None, choices=[1, 2]),
-    clan_role: disnake.Role = None,
-    war_selection: str = commands.Param(default=None, choices=[
-        "previous", "current", "upcoming"])
+    inter,
+    channel: disnake.TextChannel = discord_utils.command_param_dict['channel'],
+    message: str = discord_utils.command_param_dict['message'],
+    missed_attacks: int = discord_utils.command_param_dict['missed_attacks'],
+    clan_role: disnake.Role = discord_utils.command_param_dict['clan_role'],
+    war_selection: str = discord_utils.command_param_dict['cwl_war_selection']
 ):
     """
         *leadership*
@@ -3014,7 +3010,10 @@ async def self(inter):
     brief='discord',
     description="*leadership* update mentioned user's roles"
 )
-async def member(inter, user: disnake.User):
+async def member(
+    inter,
+    user: disnake.User = discord_utils.command_param_dict['user']
+):
     """
         *leadership*
         update mentioned user's roles
@@ -3203,22 +3202,25 @@ async def user(inter):
     brief='discord',
     description='returns the user linked to a requested player'
 )
-async def player(inter, player_tag: str):
+async def player(
+    inter,
+    tag: str = discord_utils.command_param_dict['required_tag']
+):
     """
         returns the user linked to a requested player
 
         Parameters
         ----------
-        player_tag: player tag to search
+        tag: player tag to search
     """
 
-    player_obj = await clash_responder.get_player(player_tag, coc_client)
+    player_obj = await clash_responder.get_player(tag, coc_client)
 
     # player with given tag not found
     if player_obj is None:
         embed_list = discord_responder.embed_message(
             icon_url=inter.bot.user.avatar.url,
-            description=f"could not find player with tag {player_tag}",
+            description=f"could not find player with tag {tag}",
             bot_user_name=inter.me.display_name,
             author_display_name=inter.author.display_name,
             author_avatar_url=inter.author.avatar.url
@@ -3246,7 +3248,10 @@ async def player(inter, player_tag: str):
     brief='discord',
     description="returns the users linked to the active player's clan"
 )
-async def clan(inter, clan_role: disnake.Role = None):
+async def clan(
+    inter,
+    clan_role: disnake.Role = discord_utils.command_param_dict['clan_role']
+):
     """
         returns the users linked to the active player's clan
 
@@ -3429,7 +3434,11 @@ async def player(inter):
         "many of ClashDiscord commands"
     )
 )
-async def claim(inter, player_tag: str, api_key: str):
+async def claim(
+    inter,
+    player_tag: str = discord_utils.command_param_dict['required_tag'],
+    api_key: str = discord_utils.command_param_dict['api_key']
+):
     """
         verify and claim a player,
         a player must be claimed to view and run
@@ -3438,7 +3447,7 @@ async def claim(inter, player_tag: str, api_key: str):
         Parameters
         ----------
         player_tag: player tag to search
-        api_key: api key provide from in game
+        api_key: api key provided from in game
     """
 
     # confirm valid player_tag
@@ -3588,7 +3597,10 @@ async def show(inter):
     brief='client',
     description="updates your active player"
 )
-async def update(inter, player_tag: str):
+async def update(
+    inter,
+    player_tag: str = discord_utils.command_param_dict['required_tag']
+):
     """
         updates author's active player
 
@@ -3679,7 +3691,10 @@ async def update(inter, player_tag: str):
     brief='client',
     description="deletes the user's requested player claim"
 )
-async def remove(inter, player_tag: str):
+async def remove(
+    inter,
+    player_tag: str = discord_utils.command_param_dict['required_tag']
+):
     """
         updates author's active player
 
@@ -3972,7 +3987,10 @@ async def clan(inter):
     brief='client',
     description="*admin* claim the requested clan"
 )
-async def claim(inter, clan_tag: str):
+async def claim(
+    inter,
+    clan_tag: str = discord_utils.command_param_dict['required_tag']
+):
     """
         *admin*
         claim the requested clan
@@ -4209,7 +4227,10 @@ async def show(inter):
     brief='client',
     description="*admin* deletes the requested clan claim"
 )
-async def remove(inter, clan_tag: str):
+async def remove(
+    inter,
+    clan_tag: str = discord_utils.command_param_dict['required_tag']
+):
     """
         *admin*
         deletes the requested clan claim
@@ -4488,7 +4509,10 @@ async def show(inter):
     description=("*admin* remove the claimed discord role, "
                  "the role will not be deleted from discord")
 )
-async def remove(inter, role: disnake.Role):
+async def remove(
+    inter,
+    role: str = discord_utils.command_param_dict['role']
+):
     """
         *admin*
         remove the claimed discord role,
@@ -4648,7 +4672,11 @@ async def clanrole(inter):
     brief='client',
     description="*admin* claim a clan's discord role"
 )
-async def claim(inter, role: disnake.Role, clan_tag: str):
+async def claim(
+    inter,
+    role: str = discord_utils.command_param_dict['role'],
+    clan_tag: str = discord_utils.command_param_dict['required_tag']
+):
     """
         *admin*
         claim a clan's discord role
@@ -4832,9 +4860,10 @@ async def rankrole(inter):
     brief='client',
     description="*admin* claim a rank's discord role"
 )
-async def claim(inter, role: disnake.Role,
-                rank_name: str = commands.Param(choices=[
-        "leader", "co-leader", "elder", "member", "uninitiated"])
+async def claim(
+    inter,
+    role: str = discord_utils.command_param_dict['role'],
+    rank_name: str = discord_utils.command_param_dict['rank_name']
 ):
     """
         *admin*
@@ -5005,7 +5034,11 @@ async def player(inter):
         "*admin* claim a player for the mentioned user"
     )
 )
-async def claim(inter, player_tag: str, user: disnake.User):
+async def claim(
+    inter,
+    player_tag: str,
+    user: disnake.User = discord_utils.command_param_dict['user']
+):
     """
         *admin*
         claim a player for the mentioned user
@@ -5153,7 +5186,10 @@ async def claim(inter, player_tag: str, user: disnake.User):
     brief='admin',
     description="*admin* shows players claimed by the mentioned user"
 )
-async def show(inter, user: disnake.User):
+async def show(
+    inter,
+    user: disnake.User = discord_utils.command_param_dict['user']
+):
     """
         *admin*
         shows players claimed by the mentioned user
@@ -5264,7 +5300,11 @@ async def show(inter, user: disnake.User):
     brief='admin',
     description="*admin* remove a player for the mentioned user"
 )
-async def remove(inter, player_tag: str, user: disnake.User):
+async def remove(
+    inter,
+    player_tag: str,
+    user: disnake.User = discord_utils.command_param_dict['user']
+):
     """
         *admin*
         remove a player for the mentioned user
@@ -5882,7 +5922,10 @@ async def adminshow(inter):
     brief='superuser',
     description="*super user* toggle a user's admin bool"
 )
-async def admintoggle(inter, user: disnake.User):
+async def admintoggle(
+    inter,
+    user: disnake.User = discord_utils.command_param_dict['user']
+):
     """
         *super user*
         toggle a user's admin bool
@@ -5979,7 +6022,10 @@ async def admintoggle(inter, user: disnake.User):
     brief='superuser',
     description="*super user* delete a claimed user from id"
 )
-async def remove(inter, user: disnake.User):
+async def remove(
+    inter,
+    user: disnake.User = discord_utils.command_param_dict['user'],
+):
     """
         *super user*
         claim a clan's discord role
@@ -6078,7 +6124,11 @@ async def player(inter):
         "*super user* claim a player for the mentioned user"
     )
 )
-async def claim(inter, player_tag: str, user: disnake.User):
+async def claim(
+    inter,
+    player_tag: str,
+    user: disnake.User = discord_utils.command_param_dict['user']
+):
     """
         *super user*
         claim a player for the mentioned user
@@ -6199,7 +6249,11 @@ async def claim(inter, player_tag: str, user: disnake.User):
     brief='superuser',
     description="*super user* remove a player for the mentioned user"
 )
-async def remove(inter, player_tag: str, user: disnake.User):
+async def remove(
+    inter,
+    player_tag: str,
+    user: disnake.User = discord_utils.command_param_dict['user']
+):
     """
         *super user*
         remove a player for the mentioned user

@@ -75,5 +75,38 @@ command_param_dict = {
         choices=[
             "previous", "current", "upcoming"
         ]
+    ),
+    'missed_attacks': commands.Param(
+        name="missed_attacks",
+        description="*optional* specified missed attack count",
+        default=None,
+        choices=[1, 2]
+    ),
+    'channel': commands.Param(
+        name="channel",
+        description="channel to announce the message"
+    ),
+    'message': commands.Param(
+        name="message",
+        description="message to send the specified channel"
+    ),
+    'required_tag': commands.Param(
+        name="tag",
+        description="tag to search"
+    ),
+    'api_key': commands.Param(
+        name="api_key",
+        description="api key provided from in game"
+    ),
+    'role': commands.Param(
+        name="role",
+        description="mentioned discord role"
+    ),
+    'rank_name': commands.Param(
+        name="rank_name",
+        description="requested rank to link to role",
+        choices=[
+            "leader", "co-leader", "elder", "member", "uninitiated"
+        ]
     )
 }
