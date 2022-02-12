@@ -38,18 +38,30 @@ async def autocomp_supertroop(
 
 command_param_dict = {
     'user': commands.Param(
+        name="user",
         description="*optional* user to search for active player",
-        default=None),
+        default=None
+    ),
     'clan_role': commands.Param(
+        name="clan_role",
         description="*optional* clan role to use linked clan",
-        default=None),
+        default=None
+    ),
     'tag': commands.Param(
+        name="tag",
         description="*optional* tag to search",
-        default=None),
+        default=None
+    ),
     'unit_name': commands.Param(
-        description="name of the unit you would like information on",
-        default=None),
+        name="unit_name",
+        description="clash of clans unit name"
+    ),
+    'super_troop': commands.Param(
+        name="super_troop",
+        description="name of super troop to search clan donations"
+    ),
     'unit_type': commands.Param(
+        name="unit_type",
         description="*optional* type of unit to return information for",
         default="all",
         choices=[
