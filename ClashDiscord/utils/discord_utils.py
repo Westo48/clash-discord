@@ -3,17 +3,7 @@ from disnake import ApplicationCommandInteraction
 from disnake.ext import commands
 
 
-command_param_dict = {
-    'user': commands.Param(
-        default=None,
-        description="*optional* user to search for active player"),
-    'tag': commands.Param(
-        default=None,
-        description="*optional* tag to search"),
-}
-
-
-async def autocomp_donation(
+async def autocomp_unit(
     inter: ApplicationCommandInteraction,
     user_input: str
 ):
@@ -44,3 +34,24 @@ async def autocomp_supertroop(
 
     del autocomp_list[25:]
     return [unit for unit in autocomp_list]
+
+
+command_param_dict = {
+    'user': commands.Param(
+        description="*optional* user to search for active player",
+        default=None),
+    'tag': commands.Param(
+        description="*optional* tag to search",
+        default=None),
+    'unit_name': commands.Param(
+        description="name of the unit you would like information on",
+        default=None,
+        autocomplete=autocomp_unit),
+    'unit_type': commands.Param(
+        description="*optional* type of unit to return information for",
+        default="all",
+        choices=[
+            "all", "hero", "pet", "troop", "spell", "siege"
+        ]
+    )
+}
