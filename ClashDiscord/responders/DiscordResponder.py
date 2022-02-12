@@ -2590,25 +2590,30 @@ def embed_message(
             author_display_name,
             author_avatar_url
         )
-        # initialize embed str count
-        embed_str_count = 0
 
-        # total up the initialized embed to the count
-        embed_str_count += (
-            len(embed.title)
-            + len(embed.author)
-            + len(embed.description)
-            + len(embed.footer)
-        )
+        embed_str = ""
+        # embed is be the disnake.Embed instance
+        fields = [embed.title, embed.description,
+                  embed.footer.text, embed.author.name]
+
+        for item in fields:
+            # if we str(disnake.Embed.Empty) we get 'Embed.Empty', when
+            # we just want an empty string...
+            embed_str += str(item) if str(item) != 'Embed.Empty' else ''
 
         while len(field_list) > 0:
             # use first field item since they will get deleted
             field = field_list[0]
 
-            field_str_len = (len(str(field['name']))
-                             + len(str(field['value'])))
+            field_str = ""
+
+            if str(field['name']) != 'Embed.Empty':
+                field_str += str(field['name'])
+            if str(field['value']) != 'Embed.Empty':
+                field_str += str(field['value'])
+
             # embed data is greater than 6000
-            if embed_str_count + field_str_len > 6000:
+            if len(embed_str) + len(field_str) > 6000:
                 # add the current embed to the list
                 embed_list.append(embed)
 
@@ -2630,8 +2635,10 @@ def embed_message(
                     value=field['value']
                 )
 
-            embed_str_count += (len(str(field['name']))
-                                + len(str(field['value'])))
+            if str(field['name']) != 'Embed.Empty':
+                embed_str += str(field['name'])
+            if str(field['value']) != 'Embed.Empty':
+                embed_str += str(field['value'])
 
             del field_list[0]
 
@@ -2745,10 +2752,13 @@ async def send_embed_list(embed_list, inter):
         # embeds will have more than 10 embeds if added
         if len(total_str)+len(embed_str) > 6000 or len(add_list) == 10:
             # add the add_list to the send_list
-            send_list.append(add_list.copy())
+            if len(add_list) != 0:
+                send_list.append(add_list.copy())
 
-            # clear the add_list
-            add_list.clear()
+                # clear the add_list
+                add_list.clear()
+            else:
+                send_list.append([embed])
 
             total_str = ""
 
