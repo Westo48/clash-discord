@@ -544,13 +544,18 @@ async def supertroop(inter):
     brief='player',
     description="check to see player's active super troops "
 )
-async def user(inter, user: disnake.User = None):
+async def active(
+    inter,
+    user: disnake.User = discord_utils.command_param_dict['user'],
+    tag: str = discord_utils.command_param_dict['tag']
+):
     """
         check to see player's active super troops
 
         Parameters
         ----------
         user (optional): user to search for active player
+        tag (optional): tag to search
     """
 
     # setting user to author if not specified
@@ -573,20 +578,38 @@ async def user(inter, user: disnake.User = None):
         await discord_responder.send_embed_list(embed_list, inter)
         return
 
-    player_obj = verification_payload['player_obj']
+    player = verification_payload['player_obj']
+
+    # player tag selected
+    if tag is not None:
+        player = await clash_responder.get_player(tag, coc_client)
+
+        if player is None:
+            embed_description = f"could not find player with tag {tag}"
+
+            embed_list = discord_responder.embed_message(
+                icon_url=inter.bot.user.avatar.url,
+                bot_user_name=inter.me.display_name,
+                description=embed_description,
+                author_display_name=inter.author.display_name,
+                author_avatar_url=inter.author.avatar.url
+            )
+
+            await discord_responder.send_embed_list(embed_list, inter)
+            return
 
     active_super_troop_list = clash_responder.player_active_super_troops(
-        player_obj)
+        player)
 
     field_dict_list = discord_responder.active_super_troops(
-        player_obj, active_super_troop_list,
+        player, active_super_troop_list,
         inter.client.emojis, client_data.emojis
     )
     embed_list = discord_responder.embed_message(
         icon_url=inter.bot.user.avatar.url,
-        title=f"{player_obj.name} super troops",
+        title=f"{player.name} super troops",
         bot_user_name=inter.me.display_name,
-        thumbnail=player_obj.league.icon,
+        thumbnail=player.league.icon,
         field_list=field_dict_list,
         author_display_name=inter.author.display_name,
         author_avatar_url=inter.author.avatar.url

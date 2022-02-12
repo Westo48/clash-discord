@@ -45,8 +45,7 @@ command_param_dict = {
         default=None),
     'unit_name': commands.Param(
         description="name of the unit you would like information on",
-        default=None,
-        autocomplete=autocomp_unit),
+        default=None),
     'unit_type': commands.Param(
         description="*optional* type of unit to return information for",
         default="all",
