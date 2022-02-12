@@ -327,10 +327,7 @@ async def recruit(
 
 
 # player unit
-@player.sub_command_group(
-    brief='player',
-    description="group for player unit commands"
-)
+@player.sub_command_group()
 async def unit(inter):
     """
         group for player unit commands
@@ -339,10 +336,7 @@ async def unit(inter):
     pass
 
 
-@unit.sub_command(
-    brief='player',
-    description='get level information for a specified unit'
-)
+@unit.sub_command()
 async def find(
     inter,
     unit_name: str = commands.Param(
@@ -429,10 +423,7 @@ async def find(
     await discord_responder.send_embed_list(embed_list, inter)
 
 
-@unit.sub_command(
-    brief='player',
-    description="get all unit levels"
-)
+@unit.sub_command()
 async def all(
     inter,
     unit_type: str = discord_utils.command_param_dict['unit_type'],
@@ -528,10 +519,7 @@ async def all(
 
 
 # player supertroop
-@player.sub_command_group(
-    brief='player',
-    description="group for player supertroop commands"
-)
+@player.sub_command_group()
 async def supertroop(inter):
     """
         group for player supertroop commands
@@ -540,10 +528,7 @@ async def supertroop(inter):
     pass
 
 
-@supertroop.sub_command(
-    brief='player',
-    description="check to see player's active super troops "
-)
+@supertroop.sub_command()
 async def active(
     inter,
     user: disnake.User = discord_utils.command_param_dict['user'],
@@ -620,10 +605,7 @@ async def active(
 
 # Clan
 
-@bot.slash_command(
-    brief='clan',
-    description="parent for clan commands"
-)
+@bot.slash_command()
 async def clan(inter):
     """
         parent for clan commands
@@ -634,10 +616,7 @@ async def clan(inter):
 
 
 # clan info
-@clan.sub_command_group(
-    brief='clan',
-    description="group for clan info commands"
-)
+@clan.sub_command_group()
 async def info(inter):
     """
         group for clan info commands
@@ -646,17 +625,19 @@ async def info(inter):
     pass
 
 
-@info.sub_command(
-    brief='clan',
-    description="get information about your active player's clan"
-)
-async def overview(inter, clan_role: disnake.Role = None):
+@info.sub_command()
+async def overview(
+    inter,
+    clan_role: disnake.Role = discord_utils.command_param_dict['clan_role'],
+    tag: str = discord_utils.command_param_dict['tag']
+):
     """
         get clan information
 
         Parameters
         ----------
         clan_role (optional): clan role to use linked clan
+        tag (optional): tag to search
     """
 
     # role not mentioned
@@ -682,62 +663,35 @@ async def overview(inter, clan_role: disnake.Role = None):
         await discord_responder.send_embed_list(embed_list, inter)
         return
 
-    clan_obj = verification_payload['clan_obj']
+    clan = verification_payload['clan_obj']
+
+    # clan tag selected
+    if tag is not None:
+        clan = await clash_responder.get_clan(tag, coc_client)
+
+        if clan is None:
+            embed_description = f"could not find clan with tag {tag}"
+
+            embed_list = discord_responder.embed_message(
+                icon_url=inter.bot.user.avatar.url,
+                bot_user_name=inter.me.display_name,
+                description=embed_description,
+                author_display_name=inter.author.display_name,
+                author_avatar_url=inter.author.avatar.url
+            )
+
+            await discord_responder.send_embed_list(embed_list, inter)
+            return
 
     field_dict_list = discord_responder.clan_info(
-        clan_obj, inter.client.emojis, client_data.emojis
+        clan, inter.client.emojis, client_data.emojis
     )
 
     embed_list = discord_responder.embed_message(
         icon_url=inter.bot.user.avatar.url,
-        title=f"{clan_obj.name} {clan_obj.tag}",
+        title=f"{clan.name} {clan.tag}",
         bot_user_name=inter.me.display_name,
-        thumbnail=clan_obj.badge,
-        field_list=field_dict_list,
-        author_display_name=inter.author.display_name,
-        author_avatar_url=inter.author.avatar.url
-    )
-
-    await discord_responder.send_embed_list(embed_list, inter)
-
-
-@info.sub_command(
-    brief='clan',
-    description="Enter a clan's tag and get a clan's information"
-)
-async def find(inter, clan_tag: str):
-    """
-        get information about a requested clan
-
-        Parameters
-        ----------
-        clan_tag: clan tag to search
-    """
-
-    clan_obj = await clash_responder.get_clan(clan_tag, coc_client)
-
-    # clan with given tag not found
-    if clan_obj is None:
-        embed_list = discord_responder.embed_message(
-            icon_url=inter.bot.user.avatar.url,
-            description=f"could not find clan with tag {clan_tag}",
-            bot_user_name=inter.me.display_name,
-            author_display_name=inter.author.display_name,
-            author_avatar_url=inter.author.avatar.url
-        )
-
-        await discord_responder.send_embed_list(embed_list, inter)
-        return
-
-    field_dict_list = discord_responder.clan_info(
-        clan_obj, inter.client.emojis, client_data.emojis
-    )
-
-    embed_list = discord_responder.embed_message(
-        icon_url=inter.bot.user.avatar.url,
-        title=f"{clan_obj.name} {clan_obj.tag}",
-        bot_user_name=inter.me.display_name,
-        thumbnail=clan_obj.badge,
+        thumbnail=clan.badge,
         field_list=field_dict_list,
         author_display_name=inter.author.display_name,
         author_avatar_url=inter.author.avatar.url

@@ -40,6 +40,9 @@ command_param_dict = {
     'user': commands.Param(
         description="*optional* user to search for active player",
         default=None),
+    'clan_role': commands.Param(
+        description="*optional* clan role to use linked clan",
+        default=None),
     'tag': commands.Param(
         description="*optional* tag to search",
         default=None),
