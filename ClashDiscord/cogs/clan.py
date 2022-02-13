@@ -371,6 +371,12 @@ class Clan(commands.Cog):
     async def supertroop(
         self,
         inter,
+        super_troop: str = commands.Param(
+            name=discord_utils.command_param_dict['super_troop'].name,
+            description=discord_utils.command_param_dict['super_troop'].description,
+            default=discord_utils.command_param_dict['super_troop'].default,
+            autocomplete=discord_utils.autocomp_supertroop
+        ),
         clan_role: disnake.Role = discord_utils.command_param_dict['clan_role'],
         tag: str = discord_utils.command_param_dict['tag']
     ):
@@ -426,79 +432,24 @@ class Clan(commands.Cog):
                 await discord_responder.send_embed_list(embed_list, inter)
                 return
 
-        field_dict_list = await discord_responder.clan_super_troop_active(
-            clan, inter.client.emojis, self.client_data.emojis, self.coc_client)
+        # super troop not specified for search
+        if super_troop is None:
+            embed_title = f"{clan.name} active super troops"
 
-        embed_list = discord_responder.embed_message(
-            icon_url=inter.bot.user.avatar.url,
-            title=f"{clan.name} active super troops",
-            bot_user_name=inter.me.display_name,
-            thumbnail=clan.badge,
-            field_list=field_dict_list,
-            author_display_name=inter.author.display_name,
-            author_avatar_url=inter.author.avatar.url
-        )
+            field_dict_list = await discord_responder.clan_super_troop_active(
+                clan, inter.client.emojis, self.client_data.emojis, self.coc_client)
 
-        await discord_responder.send_embed_list(embed_list, inter)
-
-    @clan.sub_command()
-    async def supertroopsearch(
-        self,
-        inter,
-        super_troop: str = commands.Param(
-            name=discord_utils.command_param_dict['super_troop'].name,
-            description=discord_utils.command_param_dict['super_troop'].description,
-            autocomplete=discord_utils.autocomp_supertroop
-        ),
-        clan_role: disnake.Role = discord_utils.command_param_dict['clan_role'],
-        tag: str = discord_utils.command_param_dict['tag']
-    ):
-        """
-            shows who in your clan has a specified super troop active
-
-            Parameters
-            ----------
-            super_troop: name of super troop to search clan donations
-            clan_role (optional): clan role to use linked clan
-            tag (optional): tag to search
-        """
-
-        # role not mentioned
-        if clan_role is None:
-            db_player_obj = db_responder.read_player_active(inter.author.id)
-
-            verification_payload = await discord_responder.clan_verification(
-                db_player_obj, inter.author, self.coc_client)
-        # role has been mentioned
+        # super troop specified for search
         else:
-            verification_payload = await discord_responder.clan_role_verification(
-                clan_role, self.coc_client)
+            super_troop_name = clash_responder.find_super_troop_name(
+                super_troop)
 
-        if not verification_payload['verified']:
-            embed_list = discord_responder.embed_message(
-                icon_url=inter.bot.user.avatar.url,
-                bot_user_name=inter.me.display_name,
-                field_list=verification_payload['field_dict_list'],
-                author_display_name=inter.author.display_name,
-                author_avatar_url=inter.author.avatar.url
-            )
-
-            await discord_responder.send_embed_list(embed_list, inter)
-            return
-
-        clan = verification_payload['clan_obj']
-
-        # clan tag selected
-        if tag is not None:
-            clan = await clash_responder.get_clan(tag, self.coc_client)
-
-            if clan is None:
-                embed_description = f"could not find clan with tag {tag}"
-
+            # super troop was not found
+            if super_troop_name is None:
                 embed_list = discord_responder.embed_message(
                     icon_url=inter.bot.user.avatar.url,
+                    description=f"{super_troop} is not a viable request",
                     bot_user_name=inter.me.display_name,
-                    description=embed_description,
                     author_display_name=inter.author.display_name,
                     author_avatar_url=inter.author.avatar.url
                 )
@@ -506,32 +457,19 @@ class Clan(commands.Cog):
                 await discord_responder.send_embed_list(embed_list, inter)
                 return
 
-        super_troop_name = clash_responder.find_super_troop_name(super_troop)
+            donor_list = await clash_responder.active_super_troop_search(
+                clan, super_troop_name, self.coc_client)
 
-        # super troop was not found
-        if super_troop_name is None:
-            embed_list = discord_responder.embed_message(
-                icon_url=inter.bot.user.avatar.url,
-                description=f"{super_troop} is not a viable request",
-                bot_user_name=inter.me.display_name,
-                author_display_name=inter.author.display_name,
-                author_avatar_url=inter.author.avatar.url
+            embed_title = f"{clan.name} {clan.tag}"
+
+            field_dict_list = discord_responder.super_troop_search(
+                clan, donor_list, super_troop_name,
+                inter.client.emojis, self.client_data.emojis
             )
-
-            await discord_responder.send_embed_list(embed_list, inter)
-            return
-
-        donor_list = await clash_responder.active_super_troop_search(
-            clan, super_troop_name, self.coc_client)
-
-        field_dict_list = discord_responder.super_troop_search(
-            clan, donor_list, super_troop_name,
-            inter.client.emojis, self.client_data.emojis
-        )
 
         embed_list = discord_responder.embed_message(
             icon_url=inter.bot.user.avatar.url,
-            title=f"{clan.name} {clan.tag}",
+            title=embed_title,
             bot_user_name=inter.me.display_name,
             thumbnail=clan.badge,
             field_list=field_dict_list,

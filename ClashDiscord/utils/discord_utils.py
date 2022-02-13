@@ -58,7 +58,8 @@ command_param_dict = {
     ),
     'super_troop': commands.Param(
         name="super_troop",
-        description="name of super troop to search clan donations"
+        description="*optional* name of super troop to search clan donations",
+        default=None
     ),
     'unit_type': commands.Param(
         name="unit_type",
@@ -68,7 +69,7 @@ command_param_dict = {
             "all", "hero", "pet", "troop", "spell", "siege"
         ]
     ),
-    'cwl_war_selection': commands.Param(
+    'war_selection': commands.Param(
         name="cwl_war_selection",
         description="*optional* cwl war selection",
         default=None,
@@ -131,7 +132,7 @@ command_param_dict = {
     ),
     'clan_lineup': commands.Param(
         name="option",
-        description="*optional* options for lineup returns",
+        description="*optional* options for clan lineup returns",
         default="overview",
         choices=[
             "overview", "member"
@@ -139,7 +140,7 @@ command_param_dict = {
     ),
     'clan_warpreference': commands.Param(
         name="option",
-        description="*optional* options for warpreference returns",
+        description="*optional* options for clan warpreference returns",
         default="overview",
         choices=[
             "overview", "member"
@@ -147,10 +148,26 @@ command_param_dict = {
     ),
     'clan_supertroop': commands.Param(
         name="option",
-        description="*optional* options for supertroop returns",
+        description="*optional* options for clan supertroop returns",
         default="active",
         choices=[
             "active", "donate"
+        ]
+    ),
+    'war_stars': commands.Param(
+        name="option",
+        description="*optional* options for war star returns",
+        default="stars",
+        choices=[
+            "stars", "attacks"
+        ]
+    ),
+    'war_lineup': commands.Param(
+        name="option",
+        description="*optional* options for war lineup returns",
+        default="clan",
+        choices=[
+            "overview", "clan", "members"
         ]
     ),
 }
