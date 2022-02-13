@@ -29,22 +29,20 @@ async def on_ready():
     print(f"RazBot is ready")
 
 
-@bot.slash_command(
-    description="misc parent")
+@bot.slash_command()
 async def misc(inter):
     pass
 
 
-@misc.sub_command(
-    brief='misc', description='misc command'
-)
+@misc.sub_command()
 async def hellothere(inter):
+    """
+        GENERAL KENOBI
+    """
     await inter.response.send_message(content=f'General Kenobi')
 
 
-@misc.sub_command(
-    brief='misc', description="gets the bot ping"
-)
+@misc.sub_command()
 async def ping(inter):
     """
         gets the bot ping
@@ -61,10 +59,7 @@ async def ping(inter):
 
 
 # misc link
-@misc.sub_command_group(
-    brief='misc',
-    description="group for misc link commands"
-)
+@misc.sub_command_group()
 async def link(inter):
     """
         group for misc link commands
@@ -73,26 +68,27 @@ async def link(inter):
     pass
 
 
-@link.sub_command(
-    brief='misc', description="gets a clash of stats link"
-)
-async def clashofstats(inter, player_tag: str):
+@link.sub_command()
+async def clashofstats(
+    inter,
+    tag: str = discord_utils.command_param_dict['tag']
+):
     """
         gets a clash of stats link
 
         Parameters
         ----------
-        player_tag: player tag to search
+        tag (optional): tag to search
     """
 
     await inter.response.defer()
 
-    player = await clash_responder.get_player(player_tag, coc_client)
+    player = await clash_responder.get_player(tag, coc_client)
 
     if player is None:
         embed_list = discord_responder.embed_message(
             icon_url=inter.bot.user.avatar.url,
-            description=f"could not find player with tag {player_tag}",
+            description=f"could not find player with tag {tag}",
             bot_user_name=inter.me.display_name,
             author_display_name=inter.author.display_name,
             author_avatar_url=inter.author.avatar.url
@@ -105,26 +101,27 @@ async def clashofstats(inter, player_tag: str):
         content=(discord_responder.link_clash_of_stats(player)))
 
 
-@link.sub_command(
-    brief='misc', description="gets a ChocolateClash link"
-)
-async def chocolateclash(inter, player_tag: str):
+@link.sub_command()
+async def chocolateclash(
+    inter,
+    tag: str = discord_utils.command_param_dict['tag']
+):
     """
         gets a ChocolateClash link
 
         Parameters
         ----------
-        player_tag: player tag to search
+        tag (optional): tag to search
     """
 
     await inter.response.defer()
 
-    player = await clash_responder.get_player(player_tag, coc_client)
+    player = await clash_responder.get_player(tag, coc_client)
 
     if player is None:
         embed_list = discord_responder.embed_message(
             icon_url=inter.bot.user.avatar.url,
-            description=f"could not find player with tag {player_tag}",
+            description=f"could not find player with tag {tag}",
             bot_user_name=inter.me.display_name,
             author_display_name=inter.author.display_name,
             author_avatar_url=inter.author.avatar.url
@@ -2265,10 +2262,7 @@ async def clan(
 
 # Discord
 
-@bot.slash_command(
-    brief='discord',
-    description="parent for discord commands"
-)
+@bot.slash_command()
 async def discord(inter):
     """
         parent for discord commands
@@ -2278,10 +2272,7 @@ async def discord(inter):
 
 
 # discord help
-@discord.sub_command_group(
-    brief='client',
-    description="group for discord help commands"
-)
+@discord.sub_command_group()
 async def help(inter):
     """
         group for discord help commands
@@ -2291,10 +2282,7 @@ async def help(inter):
     await inter.response.defer()
 
 
-@help.sub_command(
-    brief='discord',
-    description="returns help menu"
-)
+@help.sub_command()
 async def info(inter):
     """
         returns help menu
@@ -2332,10 +2320,7 @@ async def info(inter):
 
 
 # discord announce
-@discord.sub_command_group(
-    brief='client',
-    description="group for discord announce commands"
-)
+@discord.sub_command_group()
 async def announce(inter):
     """
         group for discord announce commands
@@ -2959,10 +2944,7 @@ async def warnoattack(
 
 
 # discord role
-@discord.sub_command_group(
-    brief='client',
-    description="group for discord role commands"
-)
+@discord.sub_command_group()
 async def role(inter):
     """
         group for discord role commands
@@ -2971,10 +2953,7 @@ async def role(inter):
     await inter.response.defer()
 
 
-@role.sub_command(
-    brief='discord',
-    description="update your roles"
-)
+@role.sub_command()
 async def self(inter):
     """
         update your roles
@@ -3006,10 +2985,7 @@ async def self(inter):
         await discord_responder.send_embed_list(embed_list, inter)
 
 
-@role.sub_command(
-    brief='discord',
-    description="*leadership* update mentioned user's roles"
-)
+@role.sub_command()
 async def member(
     inter,
     user: disnake.User = discord_utils.command_param_dict['user']
@@ -3067,10 +3043,7 @@ async def member(
         await discord_responder.send_embed_list(embed_list, inter)
 
 
-@role.sub_command(
-    brief='discord',
-    description="*admin* roles every member in the server"
-)
+@role.sub_command()
 async def all(inter):
     """
         *admin*
@@ -3146,10 +3119,7 @@ async def all(inter):
 
 
 # discord emoji
-@discord.sub_command_group(
-    brief='client',
-    description="group for discord emoji commands"
-)
+@discord.sub_command_group()
 async def emoji(inter):
     """
         group for discord emoji commands
@@ -3158,9 +3128,7 @@ async def emoji(inter):
     await inter.response.defer(ephemeral=True)
 
 
-@emoji.sub_command(
-    brief='discord', description="sends specified emoji"
-)
+@emoji.sub_command()
 async def message(
     inter,
     coc_name: str = discord_utils.command_param_dict['coc_name']
@@ -3189,10 +3157,7 @@ async def message(
 
 
 # discord user
-@discord.sub_command_group(
-    brief='discord',
-    description="group for discord user commands"
-)
+@discord.sub_command_group()
 async def user(inter):
     """
         group for discord user commands
@@ -3201,10 +3166,7 @@ async def user(inter):
     await inter.response.defer()
 
 
-@user.sub_command(
-    brief='discord',
-    description='returns the user linked to a requested player'
-)
+@user.sub_command()
 async def player(
     inter,
     tag: str = discord_utils.command_param_dict['required_tag']
@@ -3247,10 +3209,7 @@ async def player(
     await discord_responder.send_embed_list(embed_list, inter)
 
 
-@user.sub_command(
-    brief='discord',
-    description="returns the users linked to the active player's clan"
-)
+@user.sub_command()
 async def clan(
     inter,
     clan_role: disnake.Role = discord_utils.command_param_dict['clan_role']
@@ -3311,10 +3270,7 @@ async def clan(
 
 # CLIENT
 
-@bot.slash_command(
-    brief='client',
-    description="parent for client commands"
-)
+@bot.slash_command()
 async def client(inter):
     """
         parent for client commands
@@ -3325,10 +3281,7 @@ async def client(inter):
 
 
 # client info
-@client.sub_command_group(
-    brief='client',
-    description="group for client info commands"
-)
+@client.sub_command_group()
 async def info(inter):
     """
         group for client info commands
@@ -3337,10 +3290,7 @@ async def info(inter):
     pass
 
 
-@info.sub_command(
-    brief='client',
-    description="relevant overview for the client"
-)
+@info.sub_command()
 async def overview(inter):
     """
         relevant overview for the client
@@ -3374,10 +3324,7 @@ async def overview(inter):
 
 
 # client user
-@client.sub_command_group(
-    brief='client',
-    description="group for client user commands"
-)
+@client.sub_command_group()
 async def user(inter):
     """
         group for client user commands
@@ -3386,10 +3333,7 @@ async def user(inter):
     pass
 
 
-@user.sub_command(
-    brief='client',
-    description="claim your discord user"
-)
+@user.sub_command()
 async def claim(inter):
     """
         claim your discord user
@@ -3417,10 +3361,7 @@ async def claim(inter):
 
 
 # client player
-@client.sub_command_group(
-    brief='client',
-    description="group for client player commands"
-)
+@client.sub_command_group()
 async def player(inter):
     """
         group for client player commands
@@ -3429,14 +3370,7 @@ async def player(inter):
     pass
 
 
-@player.sub_command(
-    brief='client',
-    description=(
-        "verify and claim a player, "
-        "a player must be claimed to view and run "
-        "many of ClashDiscord commands"
-    )
-)
+@player.sub_command()
 async def claim(
     inter,
     player_tag: str = discord_utils.command_param_dict['required_tag'],
@@ -3556,10 +3490,7 @@ async def claim(
     await discord_responder.send_embed_list(embed_list, inter)
 
 
-@player.sub_command(
-    brief='client',
-    description="shows players claimed by your discord user"
-)
+@player.sub_command()
 async def show(inter):
     """
         shows players claimed by your discord user
@@ -3596,10 +3527,7 @@ async def show(inter):
     await inter.edit_original_message(content=message)
 
 
-@player.sub_command(
-    brief='client',
-    description="updates your active player"
-)
+@player.sub_command()
 async def update(
     inter,
     player_tag: str = discord_utils.command_param_dict['required_tag']
@@ -3690,10 +3618,7 @@ async def update(
         return
 
 
-@player.sub_command(
-    brief='client',
-    description="deletes the user's requested player claim"
-)
+@player.sub_command()
 async def remove(
     inter,
     player_tag: str = discord_utils.command_param_dict['required_tag']
@@ -3881,10 +3806,7 @@ async def remove(
 
 
 # client guild
-@client.sub_command_group(
-    brief='client',
-    description="group for client guild commands"
-)
+@client.sub_command_group()
 async def guild(inter):
     """
         group for client guild commands
@@ -3893,11 +3815,7 @@ async def guild(inter):
     pass
 
 
-@guild.sub_command(
-    brief='client',
-    description=("claim a discord guild and set yourself "
-                 "as the guild admin for ClashDiscord")
-)
+@guild.sub_command()
 async def claim(inter):
     """
         claim a discord guild and set yourself
@@ -3974,10 +3892,7 @@ async def claim(inter):
 
 
 # client clan
-@client.sub_command_group(
-    brief='client',
-    description="group for client clan commands"
-)
+@client.sub_command_group()
 async def clan(inter):
     """
         group for client clan commands
@@ -3986,10 +3901,7 @@ async def clan(inter):
     pass
 
 
-@clan.sub_command(
-    brief='client',
-    description="*admin* claim the requested clan"
-)
+@clan.sub_command()
 async def claim(
     inter,
     clan_tag: str = discord_utils.command_param_dict['required_tag']
@@ -4120,11 +4032,7 @@ async def claim(
     await discord_responder.send_embed_list(embed_list, inter)
 
 
-@clan.sub_command(
-    brief='client',
-    description="*admin* clans claimed by a discord guild",
-    hidden=True
-)
+@clan.sub_command()
 async def show(inter):
     """
         *admin*
@@ -4226,10 +4134,7 @@ async def show(inter):
     await discord_responder.send_embed_list(embed_list, inter)
 
 
-@clan.sub_command(
-    brief='client',
-    description="*admin* deletes the requested clan claim"
-)
+@clan.sub_command()
 async def remove(
     inter,
     clan_tag: str = discord_utils.command_param_dict['required_tag']
@@ -4358,10 +4263,7 @@ async def remove(
 
 
 # client roles
-@client.sub_command_group(
-    brief='client',
-    description="group for client role commands"
-)
+@client.sub_command_group()
 async def role(inter):
     """
         group for client role commands
@@ -4370,10 +4272,7 @@ async def role(inter):
     pass
 
 
-@role.sub_command(
-    brief='client',
-    description="*admin* shows all roles claimed by a discord guild"
-)
+@role.sub_command()
 async def show(inter):
     """
         *admin*
@@ -4507,11 +4406,7 @@ async def show(inter):
     await discord_responder.send_embed_list(embed_list, inter)
 
 
-@role.sub_command(
-    brief='client',
-    description=("*admin* remove the claimed discord role, "
-                 "the role will not be deleted from discord")
-)
+@role.sub_command()
 async def remove(
     inter,
     role: str = discord_utils.command_param_dict['role']
@@ -4659,10 +4554,7 @@ async def remove(
 
 
 # client clan role
-@client.sub_command_group(
-    brief='client',
-    description="group for client clan role commands"
-)
+@client.sub_command_group()
 async def clanrole(inter):
     """
         group for client clan role commands
@@ -4671,10 +4563,7 @@ async def clanrole(inter):
     pass
 
 
-@clanrole.sub_command(
-    brief='client',
-    description="*admin* claim a clan's discord role"
-)
+@clanrole.sub_command()
 async def claim(
     inter,
     role: str = discord_utils.command_param_dict['role'],
@@ -4847,10 +4736,7 @@ async def claim(
 
 
 # client rank role
-@client.sub_command_group(
-    brief='client',
-    description="group for client rank role commands"
-)
+@client.sub_command_group()
 async def rankrole(inter):
     """
         group for client rank role commands
@@ -4859,10 +4745,7 @@ async def rankrole(inter):
     pass
 
 
-@rankrole.sub_command(
-    brief='client',
-    description="*admin* claim a rank's discord role"
-)
+@rankrole.sub_command()
 async def claim(
     inter,
     role: str = discord_utils.command_param_dict['role'],
@@ -5005,10 +4888,7 @@ async def claim(
 
 
 # admin
-@bot.slash_command(
-    brief='admin',
-    description="parent for client admin commands"
-)
+@bot.slash_command()
 async def admin(inter):
     """
         parent for client admin commands
@@ -5019,10 +4899,7 @@ async def admin(inter):
 
 
 # admin player
-@admin.sub_command_group(
-    brief='admin',
-    description="group for admin player commands"
-)
+@admin.sub_command_group()
 async def player(inter):
     """
         group for player commands
@@ -5031,12 +4908,7 @@ async def player(inter):
     pass
 
 
-@player.sub_command(
-    brief='admin',
-    description=(
-        "*admin* claim a player for the mentioned user"
-    )
-)
+@player.sub_command()
 async def claim(
     inter,
     player_tag: str,
@@ -5185,10 +5057,7 @@ async def claim(
     await discord_responder.send_embed_list(embed_list, inter)
 
 
-@player.sub_command(
-    brief='admin',
-    description="*admin* shows players claimed by the mentioned user"
-)
+@player.sub_command()
 async def show(
     inter,
     user: disnake.User = discord_utils.command_param_dict['user']
@@ -5299,10 +5168,7 @@ async def show(
     await inter.edit_original_message(content=message)
 
 
-@player.sub_command(
-    brief='admin',
-    description="*admin* remove a player for the mentioned user"
-)
+@player.sub_command()
 async def remove(
     inter,
     player_tag: str,
@@ -5551,10 +5417,7 @@ async def remove(
 
 
 # super user administration
-@bot.slash_command(
-    brief='superuser',
-    description="parent for client super user commands"
-)
+@bot.slash_command()
 async def superuser(inter):
     """
         parent for client super user commands
@@ -5564,10 +5427,7 @@ async def superuser(inter):
 
 
 # superuser guild
-@superuser.sub_command_group(
-    brief='superuser',
-    description="group for superuser guild commands"
-)
+@superuser.sub_command_group()
 async def guild(inter):
     """
         group for guild commands
@@ -5576,10 +5436,7 @@ async def guild(inter):
     pass
 
 
-@guild.sub_command(
-    brief='superuser',
-    description="*super user* shows all guilds ClashDiscord is in"
-)
+@guild.sub_command()
 async def show(inter):
     """
         *super user*
@@ -5639,10 +5496,7 @@ async def show(inter):
     await discord_responder.send_embed_list(embed_list, inter)
 
 
-@guild.sub_command(
-    brief='superuser',
-    description="*super user* delete a claimed guild from id"
-)
+@guild.sub_command()
 async def remove(inter, guild_id: str):
     """
         *super user*
@@ -5724,10 +5578,7 @@ async def remove(inter, guild_id: str):
     await discord_responder.send_embed_list(embed_list, inter)
 
 
-@guild.sub_command(
-    brief='superuser',
-    description="*super user* force ClashDiscord to leave a guild from id"
-)
+@guild.sub_command()
 async def leave(inter, guild_id: str):
     """
         *super user*
@@ -5816,10 +5667,7 @@ async def leave(inter, guild_id: str):
 
 
 # superuser user
-@superuser.sub_command_group(
-    brief='superuser',
-    description="group for superuser user commands"
-)
+@superuser.sub_command_group()
 async def user(inter):
     """
         group for user commands
@@ -5829,10 +5677,7 @@ async def user(inter):
     await inter.response.defer(ephemeral=True)
 
 
-@user.sub_command(
-    brief='superuser',
-    description="*super user* return a list of all admin users"
-)
+@user.sub_command()
 async def adminshow(inter):
     """
         *super user*
@@ -5921,10 +5766,7 @@ async def adminshow(inter):
     await discord_responder.send_embed_list(embed_list, inter)
 
 
-@user.sub_command(
-    brief='superuser',
-    description="*super user* toggle a user's admin bool"
-)
+@user.sub_command()
 async def admintoggle(
     inter,
     user: disnake.User = discord_utils.command_param_dict['user']
@@ -6021,10 +5863,7 @@ async def admintoggle(
     await discord_responder.send_embed_list(embed_list, inter)
 
 
-@user.sub_command(
-    brief='superuser',
-    description="*super user* delete a claimed user from id"
-)
+@user.sub_command()
 async def remove(
     inter,
     user: disnake.User = discord_utils.command_param_dict['user'],
@@ -6108,10 +5947,7 @@ async def remove(
 
 
 # superuser player
-@superuser.sub_command_group(
-    brief='superuser',
-    description="group for superuser player commands"
-)
+@superuser.sub_command_group()
 async def player(inter):
     """
         group for player commands
@@ -6121,12 +5957,7 @@ async def player(inter):
     await inter.response.defer(ephemeral=True)
 
 
-@player.sub_command(
-    brief='superuser',
-    description=(
-        "*super user* claim a player for the mentioned user"
-    )
-)
+@player.sub_command()
 async def claim(
     inter,
     player_tag: str,
@@ -6248,10 +6079,7 @@ async def claim(
     await discord_responder.send_embed_list(embed_list, inter)
 
 
-@player.sub_command(
-    brief='superuser',
-    description="*super user* remove a player for the mentioned user"
-)
+@player.sub_command()
 async def remove(
     inter,
     player_tag: str,
