@@ -54,7 +54,7 @@ command_param_dict = {
     ),
     'unit_name': commands.Param(
         name="unit_name",
-        description="clash of clans unit name"
+        description="clash of clans unit name to search for"
     ),
     'super_troop': commands.Param(
         name="super_troop",
@@ -112,5 +112,45 @@ command_param_dict = {
     'coc_name': commands.Param(
         name="coc_name",
         description="name of emoji to search for"
+    ),
+    'player_info': commands.Param(
+        name="option",
+        description="*optional* options for player info returns",
+        default="overview",
+        choices=[
+            "overview", "recruit"
+        ]
+    ),
+    'player_unit': commands.Param(
+        name="option",
+        description="*optional* options for player unit returns",
+        default="all",
+        choices=[
+            "all", "find"
+        ]
+    ),
+    'clan_lineup': commands.Param(
+        name="option",
+        description="*optional* options for lineup returns",
+        default="overview",
+        choices=[
+            "overview", "member"
+        ]
+    ),
+    'clan_warpreference': commands.Param(
+        name="option",
+        description="*optional* options for warpreference returns",
+        default="overview",
+        choices=[
+            "overview", "member"
+        ]
+    ),
+    'clan_supertroop': commands.Param(
+        name="option",
+        description="*optional* options for supertroop returns",
+        default="active",
+        choices=[
+            "active", "donate"
+        ]
     ),
 }

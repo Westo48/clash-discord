@@ -23,17 +23,8 @@ class Player(commands.Cog):
         # defer for every command
         await inter.response.defer()
 
-    # player info
-    @player.sub_command_group()
-    async def info(self, inter):
-        """
-            group for player info commands
-        """
-
-        pass
-
-    @info.sub_command()
-    async def overview(
+    @player.sub_command()
+    async def info(
         self,
         inter,
         user: disnake.User = discord_utils.command_param_dict['user'],
@@ -103,7 +94,7 @@ class Player(commands.Cog):
 
         await discord_responder.send_embed_list(embed_list, inter)
 
-    @info.sub_command()
+    @player.sub_command()
     async def recruit(
         self,
         inter,
@@ -199,17 +190,82 @@ class Player(commands.Cog):
 
         await inter.send(content=player_links)
 
-    # player unit
-    @player.sub_command_group()
-    async def unit(self, inter):
+    @player.sub_command()
+    async def unit(
+        self,
+        inter,
+        user: disnake.User = discord_utils.command_param_dict['user'],
+        tag: str = discord_utils.command_param_dict['tag']
+    ):
         """
-            group for player unit commands
+            get all unit levels for a player
+
+            Parameters
+            ----------
+            unit_type (optional): type of unit to return information for
+            user (optional): user to search for active player
+            tag (optional): tag to search
         """
 
-        pass
+        # setting user to author if not specified
+        if user is None:
+            user = inter.author
 
-    @unit.sub_command()
-    async def find(
+        db_player_obj = db_responder.read_player_active(user.id)
+
+        verification_payload = await discord_responder.player_verification(
+            db_player_obj, user, self.coc_client)
+        if not verification_payload['verified']:
+            embed_list = discord_responder.embed_message(
+                icon_url=inter.bot.user.avatar.url,
+                bot_user_name=inter.me.display_name,
+                field_list=verification_payload['field_dict_list'],
+                author_display_name=inter.author.display_name,
+                author_avatar_url=inter.author.avatar.url
+            )
+
+            await discord_responder.send_embed_list(embed_list, inter)
+            return
+
+        player = verification_payload['player_obj']
+
+        # player tag selected
+        if tag is not None:
+            player = await clash_responder.get_player(tag, self.coc_client)
+
+            if player is None:
+                embed_description = f"could not find player with tag {tag}"
+
+                embed_list = discord_responder.embed_message(
+                    icon_url=inter.bot.user.avatar.url,
+                    bot_user_name=inter.me.display_name,
+                    description=embed_description,
+                    author_display_name=inter.author.display_name,
+                    author_avatar_url=inter.author.avatar.url
+                )
+
+                await discord_responder.send_embed_list(embed_list, inter)
+                return
+
+        title_string = f"{player.name} units"
+        field_dict_list = discord_responder.unit_lvl_all(
+            player, inter.client.emojis, self.client_data.emojis
+        )
+
+        embed_list = discord_responder.embed_message(
+            icon_url=inter.bot.user.avatar.url,
+            title=title_string,
+            bot_user_name=inter.me.display_name,
+            thumbnail=player.league.icon,
+            field_list=field_dict_list,
+            author_display_name=inter.author.display_name,
+            author_avatar_url=inter.author.avatar.url
+        )
+
+        await discord_responder.send_embed_list(embed_list, inter)
+
+    @player.sub_command()
+    async def unitfind(
         self,
         inter,
         unit_name: str = commands.Param(
@@ -221,7 +277,7 @@ class Player(commands.Cog):
         tag: str = discord_utils.command_param_dict['tag']
     ):
         """
-            get information about a specified player
+            get unit levels for a player
 
             Parameters
             ----------
@@ -295,112 +351,8 @@ class Player(commands.Cog):
 
         await discord_responder.send_embed_list(embed_list, inter)
 
-    @unit.sub_command()
-    async def all(
-        self,
-        inter,
-        unit_type: str = discord_utils.command_param_dict['unit_type'],
-        user: disnake.User = discord_utils.command_param_dict['user'],
-        tag: str = discord_utils.command_param_dict['tag']
-    ):
-        """
-            get all unit levels
-
-            Parameters
-            ----------
-            unit_type (optional): type of unit to return information for
-            user (optional): user to search for active player
-            tag (optional): tag to search
-        """
-
-        # setting user to author if not specified
-        if user is None:
-            user = inter.author
-
-        db_player_obj = db_responder.read_player_active(user.id)
-
-        verification_payload = await discord_responder.player_verification(
-            db_player_obj, user, self.coc_client)
-        if not verification_payload['verified']:
-            embed_list = discord_responder.embed_message(
-                icon_url=inter.bot.user.avatar.url,
-                bot_user_name=inter.me.display_name,
-                field_list=verification_payload['field_dict_list'],
-                author_display_name=inter.author.display_name,
-                author_avatar_url=inter.author.avatar.url
-            )
-
-            await discord_responder.send_embed_list(embed_list, inter)
-            return
-
-        player = verification_payload['player_obj']
-
-        # player tag selected
-        if tag is not None:
-            player = await clash_responder.get_player(tag, self.coc_client)
-
-            if player is None:
-                embed_description = f"could not find player with tag {tag}"
-
-                embed_list = discord_responder.embed_message(
-                    icon_url=inter.bot.user.avatar.url,
-                    bot_user_name=inter.me.display_name,
-                    description=embed_description,
-                    author_display_name=inter.author.display_name,
-                    author_avatar_url=inter.author.avatar.url
-                )
-
-                await discord_responder.send_embed_list(embed_list, inter)
-                return
-
-        if unit_type == "all":
-            field_dict_list = discord_responder.unit_lvl_all(
-                player, inter.client.emojis, self.client_data.emojis
-            )
-        elif unit_type == "hero":
-            field_dict_list = discord_responder.hero_lvl_all(
-                player, inter.client.emojis, self.client_data.emojis
-            )
-        elif unit_type == "pet":
-            field_dict_list = discord_responder.pet_lvl_all(
-                player, inter.client.emojis, self.client_data.emojis
-            )
-        elif unit_type == "troop":
-            field_dict_list = discord_responder.troop_lvl_all(
-                player, inter.client.emojis, self.client_data.emojis
-            )
-        elif unit_type == "spell":
-            field_dict_list = discord_responder.spell_lvl_all(
-                player, inter.client.emojis, self.client_data.emojis
-            )
-        elif unit_type == "siege":
-            field_dict_list = discord_responder.siege_lvl_all(
-                player, inter.client.emojis, self.client_data.emojis
-            )
-
-        embed_list = discord_responder.embed_message(
-            icon_url=inter.bot.user.avatar.url,
-            title=f"{player.name} units",
-            bot_user_name=inter.me.display_name,
-            thumbnail=player.league.icon,
-            field_list=field_dict_list,
-            author_display_name=inter.author.display_name,
-            author_avatar_url=inter.author.avatar.url
-        )
-
-        await discord_responder.send_embed_list(embed_list, inter)
-
-    # player supertroop
-    @player.sub_command_group()
-    async def supertroop(self, inter):
-        """
-            group for player supertroop commands
-        """
-
-        pass
-
-    @supertroop.sub_command()
-    async def active(
+    @player.sub_command()
+    async def supertroop(
         self,
         inter,
         user: disnake.User = discord_utils.command_param_dict['user'],
