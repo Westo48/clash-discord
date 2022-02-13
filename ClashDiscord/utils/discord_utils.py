@@ -167,7 +167,7 @@ command_param_dict = {
         description="*optional* options for war lineup returns",
         default="clan",
         choices=[
-            "overview", "clan", "members"
+            "overview", "clan", "member"
         ]
     ),
 }

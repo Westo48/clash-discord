@@ -213,7 +213,7 @@ class War(commands.Cog):
     async def scoreuser(
         self,
         inter,
-        user: disnake.Role = discord_utils.command_param_dict['user'],
+        user: disnake.User = discord_utils.command_param_dict['user'],
         war_selection: str = discord_utils.command_param_dict['war_selection']
     ):
         """
@@ -374,7 +374,7 @@ class War(commands.Cog):
             field_dict_list = discord_responder.war_lineup_clan(
                 war_obj, inter.client.emojis, self.client_data.emojis)
 
-        elif option == "members":
+        elif option == "member":
             field_dict_list = await discord_responder.war_lineup_member(
                 war_obj.opponent, self.coc_client,
                 inter.client.emojis, self.client_data.emojis)
