@@ -139,10 +139,7 @@ async def chocolateclash(inter, player_tag: str):
 
 # Player
 
-@bot.slash_command(
-    brief='player',
-    description="parent for player commands"
-)
+@bot.slash_command()
 async def player(inter):
     """
         parent for player commands
@@ -153,10 +150,7 @@ async def player(inter):
 
 
 # player info
-@player.sub_command_group(
-    brief='player',
-    description="group for player info commands"
-)
+@player.sub_command_group()
 async def info(inter):
     """
         group for player info commands
@@ -165,17 +159,19 @@ async def info(inter):
     pass
 
 
-@info.sub_command(
-    brief='player',
-    description="get information about a specified active player"
-)
-async def user(inter, user: disnake.User = None):
+@info.sub_command()
+async def overview(
+    inter,
+    user: disnake.User = discord_utils.command_param_dict['user'],
+    tag: str = discord_utils.command_param_dict['tag']
+):
     """
-        get information about a specified active player
+        get player information
 
         Parameters
         ----------
         user (optional): user to search for active player
+        tag (optional): tag to search
     """
 
     # setting user to author if not specified
@@ -198,16 +194,34 @@ async def user(inter, user: disnake.User = None):
         await discord_responder.send_embed_list(embed_list, inter)
         return
 
-    player_obj = verification_payload['player_obj']
+    player = verification_payload['player_obj']
+
+    # player tag selected
+    if tag is not None:
+        player = await clash_responder.get_player(tag, coc_client)
+
+        if player is None:
+            embed_description = f"could not find player with tag {tag}"
+
+            embed_list = discord_responder.embed_message(
+                icon_url=inter.bot.user.avatar.url,
+                bot_user_name=inter.me.display_name,
+                description=embed_description,
+                author_display_name=inter.author.display_name,
+                author_avatar_url=inter.author.avatar.url
+            )
+
+            await discord_responder.send_embed_list(embed_list, inter)
+            return
 
     field_dict_list = discord_responder.player_info(
-        player_obj, inter.client.emojis, client_data.emojis)
+        player, inter.client.emojis, client_data.emojis)
 
     embed_list = discord_responder.embed_message(
         icon_url=inter.bot.user.avatar.url,
-        title=f"{player_obj.name} {player_obj.tag}",
+        title=f"{player.name} {player.tag}",
         bot_user_name=inter.me.display_name,
-        thumbnail=player_obj.league.icon,
+        thumbnail=player.league.icon,
         field_list=field_dict_list,
         author_display_name=inter.author.display_name,
         author_avatar_url=inter.author.avatar.url
@@ -216,26 +230,34 @@ async def user(inter, user: disnake.User = None):
     await discord_responder.send_embed_list(embed_list, inter)
 
 
-@info.sub_command(
-    brief='player',
-    description="get information about a requested player"
-)
-async def find(inter, player_tag: str):
+@info.sub_command()
+async def recruit(
+    inter,
+    user: disnake.User = discord_utils.command_param_dict['user'],
+    tag: str = discord_utils.command_param_dict['tag']
+):
     """
-        get information about a requested player
+        get player recruitment information
 
         Parameters
         ----------
-        player_tag: player tag to search
+        user (optional): user to search for active player
+        tag (optional): tag to search
     """
 
-    player_obj = await clash_responder.get_player(player_tag, coc_client)
+    # setting user to author if not specified
+    if user is None:
+        user = inter.author
 
-    if player_obj is None:
+    db_player_obj = db_responder.read_player_active(user.id)
+
+    verification_payload = await discord_responder.player_verification(
+        db_player_obj, user, coc_client)
+    if not verification_payload['verified']:
         embed_list = discord_responder.embed_message(
             icon_url=inter.bot.user.avatar.url,
-            description=f"could not find player with tag {player_tag}",
             bot_user_name=inter.me.display_name,
+            field_list=verification_payload['field_dict_list'],
             author_display_name=inter.author.display_name,
             author_avatar_url=inter.author.avatar.url
         )
@@ -243,72 +265,49 @@ async def find(inter, player_tag: str):
         await discord_responder.send_embed_list(embed_list, inter)
         return
 
-    field_dict_list = discord_responder.player_info(
-        player_obj, inter.client.emojis, client_data.emojis)
+    player = verification_payload['player_obj']
 
-    embed_list = discord_responder.embed_message(
-        icon_url=inter.bot.user.avatar.url,
-        title=f"{player_obj.name} {player_obj.tag}",
-        bot_user_name=inter.me.display_name,
-        thumbnail=player_obj.league.icon,
-        field_list=field_dict_list,
-        author_display_name=inter.author.display_name,
-        author_avatar_url=inter.author.avatar.url
-    )
+    # player tag selected
+    if tag is not None:
+        player = await clash_responder.get_player(tag, coc_client)
 
-    await discord_responder.send_embed_list(embed_list, inter)
+        if player is None:
+            embed_description = f"could not find player with tag {tag}"
 
+            embed_list = discord_responder.embed_message(
+                icon_url=inter.bot.user.avatar.url,
+                bot_user_name=inter.me.display_name,
+                description=embed_description,
+                author_display_name=inter.author.display_name,
+                author_avatar_url=inter.author.avatar.url
+            )
 
-@info.sub_command(
-    brief='player',
-    description="get recruitment information about a requested player"
-)
-async def recruit(inter, player_tag: str):
-    """
-        get recruitment information about a requested player
-
-        Parameters
-        ----------
-        player_tag: player tag to search
-    """
-
-    player_obj = await clash_responder.get_player(player_tag, coc_client)
-
-    if player_obj is None:
-        embed_list = discord_responder.embed_message(
-            icon_url=inter.bot.user.avatar.url,
-            description=f"could not find player with tag {player_tag}",
-            bot_user_name=inter.me.display_name,
-            author_display_name=inter.author.display_name,
-            author_avatar_url=inter.author.avatar.url
-        )
-
-        await discord_responder.send_embed_list(embed_list, inter)
-        return
+            await discord_responder.send_embed_list(embed_list, inter)
+            return
 
     player_field_dict_list = discord_responder.player_info(
-        player_obj, inter.client.emojis, client_data.emojis)
+        player, inter.client.emojis, client_data.emojis)
 
     embed_list = []
 
     embed_list.extend(discord_responder.embed_message(
         icon_url=inter.bot.user.avatar.url,
-        title=f"{player_obj.name} {player_obj.tag}",
+        title=f"{player.name} {player.tag}",
         bot_user_name=inter.me.display_name,
-        thumbnail=player_obj.league.icon,
+        thumbnail=player.league.icon,
         field_list=player_field_dict_list,
         author_display_name=inter.author.display_name,
         author_avatar_url=inter.author.avatar.url
     ))
 
     unit_field_dict_list = discord_responder.unit_lvl_all(
-        player_obj, inter.client.emojis, client_data.emojis)
+        player, inter.client.emojis, client_data.emojis)
 
     embed_list.extend(discord_responder.embed_message(
         icon_url=inter.bot.user.avatar.url,
-        title=f"{player_obj.name} units",
+        title=f"{player.name} units",
         bot_user_name=inter.me.display_name,
-        thumbnail=player_obj.league.icon,
+        thumbnail=player.league.icon,
         field_list=unit_field_dict_list,
         author_display_name=inter.author.display_name,
         author_avatar_url=inter.author.avatar.url
@@ -318,20 +317,17 @@ async def recruit(inter, player_tag: str):
 
     player_links = ""
 
-    player_links += discord_responder.link_clash_of_stats(player_obj)
+    player_links += discord_responder.link_clash_of_stats(player)
 
     player_links += "\n\n"
 
-    player_links += discord_responder.link_chocolate_clash(player_obj)
+    player_links += discord_responder.link_chocolate_clash(player)
 
     await inter.send(content=player_links)
 
 
 # player unit
-@player.sub_command_group(
-    brief='player',
-    description="group for player unit commands"
-)
+@player.sub_command_group()
 async def unit(inter):
     """
         group for player unit commands
@@ -340,78 +336,25 @@ async def unit(inter):
     pass
 
 
-@unit.sub_command(
-    brief='player',
-    description='get level information for a specified unit'
-)
-async def find(inter,
-               unit_name: str = commands.Param(
-                   autocomplete=discord_utils.autocomp_donation)):
+@unit.sub_command()
+async def find(
+    inter,
+    unit_name: str = commands.Param(
+        name=discord_utils.command_param_dict['unit_name'].name,
+        description=discord_utils.command_param_dict['unit_name'].description,
+        autocomplete=discord_utils.autocomp_unit
+    ),
+    user: disnake.User = discord_utils.command_param_dict['user'],
+    tag: str = discord_utils.command_param_dict['tag']
+):
     """
         get information about a specified player
 
         Parameters
         ----------
         unit_name: name of the unit you would like information on
-    """
-
-    db_player_obj = db_responder.read_player_active(inter.author.id)
-
-    verification_payload = await discord_responder.player_verification(
-        db_player_obj, inter.author, coc_client)
-    if not verification_payload['verified']:
-        embed_list = discord_responder.embed_message(
-            icon_url=inter.bot.user.avatar.url,
-            bot_user_name=inter.me.display_name,
-            field_list=verification_payload['field_dict_list'],
-            author_display_name=inter.author.display_name,
-            author_avatar_url=inter.author.avatar.url
-        )
-
-        await discord_responder.send_embed_list(embed_list, inter)
-        return
-
-    player_obj = verification_payload['player_obj']
-
-    unit_obj = clash_responder.find_player_unit(player_obj, unit_name)
-    field_dict_list = [discord_responder.unit_lvl(
-        player_obj, unit_obj, unit_name,
-        inter.client.emojis, client_data.emojis)]
-    # unit_obj not found
-    # set title to player name
-    if not unit_obj:
-        title_string = player_obj.name
-    # unit_obj found
-    # set title to player_name unit_name
-    else:
-        title_string = f"{player_obj.name} {unit_obj.name}"
-
-    embed_list = discord_responder.embed_message(
-        icon_url=inter.bot.user.avatar.url,
-        title=title_string,
-        bot_user_name=inter.me.display_name,
-        thumbnail=player_obj.league.icon,
-        field_list=field_dict_list,
-        author_display_name=inter.author.display_name,
-        author_avatar_url=inter.author.avatar.url
-    )
-
-    await discord_responder.send_embed_list(embed_list, inter)
-
-
-@unit.sub_command(
-    brief='player',
-    description="get all unit levels"
-)
-async def all(inter, user: disnake.User = None,
-              unit_type: str = commands.Param(default="all", choices=[
-        "all", "hero", "pet", "troop", "spell", "siege"])):
-    """
-        get all unit levels
-
-        Parameters
-        ----------
         user (optional): user to search for active player
+        tag (optional): tag to search
     """
 
     # setting user to author if not specified
@@ -434,38 +377,44 @@ async def all(inter, user: disnake.User = None,
         await discord_responder.send_embed_list(embed_list, inter)
         return
 
-    player_obj = verification_payload['player_obj']
+    player = verification_payload['player_obj']
 
-    if unit_type == "all":
-        field_dict_list = discord_responder.unit_lvl_all(
-            player_obj, inter.client.emojis, client_data.emojis
-        )
-    elif unit_type == "hero":
-        field_dict_list = discord_responder.hero_lvl_all(
-            player_obj, inter.client.emojis, client_data.emojis
-        )
-    elif unit_type == "pet":
-        field_dict_list = discord_responder.pet_lvl_all(
-            player_obj, inter.client.emojis, client_data.emojis
-        )
-    elif unit_type == "troop":
-        field_dict_list = discord_responder.troop_lvl_all(
-            player_obj, inter.client.emojis, client_data.emojis
-        )
-    elif unit_type == "spell":
-        field_dict_list = discord_responder.spell_lvl_all(
-            player_obj, inter.client.emojis, client_data.emojis
-        )
-    elif unit_type == "siege":
-        field_dict_list = discord_responder.siege_lvl_all(
-            player_obj, inter.client.emojis, client_data.emojis
-        )
+    # player tag selected
+    if tag is not None:
+        player = await clash_responder.get_player(tag, coc_client)
+
+        if player is None:
+            embed_description = f"could not find player with tag {tag}"
+
+            embed_list = discord_responder.embed_message(
+                icon_url=inter.bot.user.avatar.url,
+                bot_user_name=inter.me.display_name,
+                description=embed_description,
+                author_display_name=inter.author.display_name,
+                author_avatar_url=inter.author.avatar.url
+            )
+
+            await discord_responder.send_embed_list(embed_list, inter)
+            return
+
+    unit_obj = clash_responder.find_player_unit(player, unit_name)
+    field_dict_list = [discord_responder.unit_lvl(
+        player, unit_obj, unit_name,
+        inter.client.emojis, client_data.emojis)]
+    # unit_obj not found
+    # set title to player name
+    if not unit_obj:
+        title_string = player.name
+    # unit_obj found
+    # set title to player_name unit_name
+    else:
+        title_string = f"{player.name} {unit_obj.name}"
 
     embed_list = discord_responder.embed_message(
         icon_url=inter.bot.user.avatar.url,
-        title=f"{player_obj.name} units",
+        title=title_string,
         bot_user_name=inter.me.display_name,
-        thumbnail=player_obj.league.icon,
+        thumbnail=player.league.icon,
         field_list=field_dict_list,
         author_display_name=inter.author.display_name,
         author_avatar_url=inter.author.avatar.url
@@ -474,24 +423,36 @@ async def all(inter, user: disnake.User = None,
     await discord_responder.send_embed_list(embed_list, inter)
 
 
-@unit.sub_command(
-    brief='player',
-    description="get all unit levels for the player specified"
-)
-async def alltag(inter, player_tag: str,
-                 unit_type: str = commands.Param(default="all", choices=[
-        "all", "hero", "pet", "troop", "spell", "siege"])):
+@unit.sub_command()
+async def all(
+    inter,
+    unit_type: str = discord_utils.command_param_dict['unit_type'],
+    user: disnake.User = discord_utils.command_param_dict['user'],
+    tag: str = discord_utils.command_param_dict['tag']
+):
     """
-        get all unit levels for the player specified
+        get all unit levels
+
+        Parameters
+        ----------
+        unit_type (optional): type of unit to return information for
+        user (optional): user to search for active player
+        tag (optional): tag to search
     """
 
-    player_obj = await clash_responder.get_player(player_tag, coc_client)
+    # setting user to author if not specified
+    if user is None:
+        user = inter.author
 
-    if player_obj is None:
+    db_player_obj = db_responder.read_player_active(user.id)
+
+    verification_payload = await discord_responder.player_verification(
+        db_player_obj, user, coc_client)
+    if not verification_payload['verified']:
         embed_list = discord_responder.embed_message(
             icon_url=inter.bot.user.avatar.url,
-            description=f"could not find player with tag {player_tag}",
             bot_user_name=inter.me.display_name,
+            field_list=verification_payload['field_dict_list'],
             author_display_name=inter.author.display_name,
             author_avatar_url=inter.author.avatar.url
         )
@@ -499,36 +460,56 @@ async def alltag(inter, player_tag: str,
         await discord_responder.send_embed_list(embed_list, inter)
         return
 
+    player = verification_payload['player_obj']
+
+    # player tag selected
+    if tag is not None:
+        player = await clash_responder.get_player(tag, coc_client)
+
+        if player is None:
+            embed_description = f"could not find player with tag {tag}"
+
+            embed_list = discord_responder.embed_message(
+                icon_url=inter.bot.user.avatar.url,
+                bot_user_name=inter.me.display_name,
+                description=embed_description,
+                author_display_name=inter.author.display_name,
+                author_avatar_url=inter.author.avatar.url
+            )
+
+            await discord_responder.send_embed_list(embed_list, inter)
+            return
+
     if unit_type == "all":
         field_dict_list = discord_responder.unit_lvl_all(
-            player_obj, inter.client.emojis, client_data.emojis
+            player, inter.client.emojis, client_data.emojis
         )
     elif unit_type == "hero":
         field_dict_list = discord_responder.hero_lvl_all(
-            player_obj, inter.client.emojis, client_data.emojis
+            player, inter.client.emojis, client_data.emojis
         )
     elif unit_type == "pet":
         field_dict_list = discord_responder.pet_lvl_all(
-            player_obj, inter.client.emojis, client_data.emojis
+            player, inter.client.emojis, client_data.emojis
         )
     elif unit_type == "troop":
         field_dict_list = discord_responder.troop_lvl_all(
-            player_obj, inter.client.emojis, client_data.emojis
+            player, inter.client.emojis, client_data.emojis
         )
     elif unit_type == "spell":
         field_dict_list = discord_responder.spell_lvl_all(
-            player_obj, inter.client.emojis, client_data.emojis
+            player, inter.client.emojis, client_data.emojis
         )
     elif unit_type == "siege":
         field_dict_list = discord_responder.siege_lvl_all(
-            player_obj, inter.client.emojis, client_data.emojis
+            player, inter.client.emojis, client_data.emojis
         )
 
     embed_list = discord_responder.embed_message(
         icon_url=inter.bot.user.avatar.url,
-        title=f"{player_obj.name} units",
+        title=f"{player.name} units",
         bot_user_name=inter.me.display_name,
-        thumbnail=player_obj.league.icon,
+        thumbnail=player.league.icon,
         field_list=field_dict_list,
         author_display_name=inter.author.display_name,
         author_avatar_url=inter.author.avatar.url
@@ -538,10 +519,7 @@ async def alltag(inter, player_tag: str,
 
 
 # player supertroop
-@player.sub_command_group(
-    brief='player',
-    description="group for player supertroop commands"
-)
+@player.sub_command_group()
 async def supertroop(inter):
     """
         group for player supertroop commands
@@ -550,17 +528,19 @@ async def supertroop(inter):
     pass
 
 
-@supertroop.sub_command(
-    brief='player',
-    description="check to see player's active super troops "
-)
-async def user(inter, user: disnake.User = None):
+@supertroop.sub_command()
+async def active(
+    inter,
+    user: disnake.User = discord_utils.command_param_dict['user'],
+    tag: str = discord_utils.command_param_dict['tag']
+):
     """
         check to see player's active super troops
 
         Parameters
         ----------
         user (optional): user to search for active player
+        tag (optional): tag to search
     """
 
     # setting user to author if not specified
@@ -583,20 +563,38 @@ async def user(inter, user: disnake.User = None):
         await discord_responder.send_embed_list(embed_list, inter)
         return
 
-    player_obj = verification_payload['player_obj']
+    player = verification_payload['player_obj']
+
+    # player tag selected
+    if tag is not None:
+        player = await clash_responder.get_player(tag, coc_client)
+
+        if player is None:
+            embed_description = f"could not find player with tag {tag}"
+
+            embed_list = discord_responder.embed_message(
+                icon_url=inter.bot.user.avatar.url,
+                bot_user_name=inter.me.display_name,
+                description=embed_description,
+                author_display_name=inter.author.display_name,
+                author_avatar_url=inter.author.avatar.url
+            )
+
+            await discord_responder.send_embed_list(embed_list, inter)
+            return
 
     active_super_troop_list = clash_responder.player_active_super_troops(
-        player_obj)
+        player)
 
     field_dict_list = discord_responder.active_super_troops(
-        player_obj, active_super_troop_list,
+        player, active_super_troop_list,
         inter.client.emojis, client_data.emojis
     )
     embed_list = discord_responder.embed_message(
         icon_url=inter.bot.user.avatar.url,
-        title=f"{player_obj.name} super troops",
+        title=f"{player.name} super troops",
         bot_user_name=inter.me.display_name,
-        thumbnail=player_obj.league.icon,
+        thumbnail=player.league.icon,
         field_list=field_dict_list,
         author_display_name=inter.author.display_name,
         author_avatar_url=inter.author.avatar.url
@@ -607,10 +605,7 @@ async def user(inter, user: disnake.User = None):
 
 # Clan
 
-@bot.slash_command(
-    brief='clan',
-    description="parent for clan commands"
-)
+@bot.slash_command()
 async def clan(inter):
     """
         parent for clan commands
@@ -621,10 +616,7 @@ async def clan(inter):
 
 
 # clan info
-@clan.sub_command_group(
-    brief='clan',
-    description="group for clan info commands"
-)
+@clan.sub_command_group()
 async def info(inter):
     """
         group for clan info commands
@@ -633,17 +625,19 @@ async def info(inter):
     pass
 
 
-@info.sub_command(
-    brief='clan',
-    description="get information about your active player's clan"
-)
-async def overview(inter, clan_role: disnake.Role = None):
+@info.sub_command()
+async def overview(
+    inter,
+    clan_role: disnake.Role = discord_utils.command_param_dict['clan_role'],
+    tag: str = discord_utils.command_param_dict['tag']
+):
     """
         get clan information
 
         Parameters
         ----------
         clan_role (optional): clan role to use linked clan
+        tag (optional): tag to search
     """
 
     # role not mentioned
@@ -669,62 +663,35 @@ async def overview(inter, clan_role: disnake.Role = None):
         await discord_responder.send_embed_list(embed_list, inter)
         return
 
-    clan_obj = verification_payload['clan_obj']
+    clan = verification_payload['clan_obj']
+
+    # clan tag selected
+    if tag is not None:
+        clan = await clash_responder.get_clan(tag, coc_client)
+
+        if clan is None:
+            embed_description = f"could not find clan with tag {tag}"
+
+            embed_list = discord_responder.embed_message(
+                icon_url=inter.bot.user.avatar.url,
+                bot_user_name=inter.me.display_name,
+                description=embed_description,
+                author_display_name=inter.author.display_name,
+                author_avatar_url=inter.author.avatar.url
+            )
+
+            await discord_responder.send_embed_list(embed_list, inter)
+            return
 
     field_dict_list = discord_responder.clan_info(
-        clan_obj, inter.client.emojis, client_data.emojis
+        clan, inter.client.emojis, client_data.emojis
     )
 
     embed_list = discord_responder.embed_message(
         icon_url=inter.bot.user.avatar.url,
-        title=f"{clan_obj.name} {clan_obj.tag}",
+        title=f"{clan.name} {clan.tag}",
         bot_user_name=inter.me.display_name,
-        thumbnail=clan_obj.badge,
-        field_list=field_dict_list,
-        author_display_name=inter.author.display_name,
-        author_avatar_url=inter.author.avatar.url
-    )
-
-    await discord_responder.send_embed_list(embed_list, inter)
-
-
-@info.sub_command(
-    brief='clan',
-    description="Enter a clan's tag and get a clan's information"
-)
-async def find(inter, clan_tag: str):
-    """
-        get information about a requested clan
-
-        Parameters
-        ----------
-        clan_tag: clan tag to search
-    """
-
-    clan_obj = await clash_responder.get_clan(clan_tag, coc_client)
-
-    # clan with given tag not found
-    if clan_obj is None:
-        embed_list = discord_responder.embed_message(
-            icon_url=inter.bot.user.avatar.url,
-            description=f"could not find clan with tag {clan_tag}",
-            bot_user_name=inter.me.display_name,
-            author_display_name=inter.author.display_name,
-            author_avatar_url=inter.author.avatar.url
-        )
-
-        await discord_responder.send_embed_list(embed_list, inter)
-        return
-
-    field_dict_list = discord_responder.clan_info(
-        clan_obj, inter.client.emojis, client_data.emojis
-    )
-
-    embed_list = discord_responder.embed_message(
-        icon_url=inter.bot.user.avatar.url,
-        title=f"{clan_obj.name} {clan_obj.tag}",
-        bot_user_name=inter.me.display_name,
-        thumbnail=clan_obj.badge,
+        thumbnail=clan.badge,
         field_list=field_dict_list,
         author_display_name=inter.author.display_name,
         author_avatar_url=inter.author.avatar.url
@@ -734,10 +701,7 @@ async def find(inter, clan_tag: str):
 
 
 # clan lineup
-@clan.sub_command_group(
-    brief='clan',
-    description="group for clan lineup commands"
-)
+@clan.sub_command_group()
 async def lineup(inter):
     """
         group for clan lineup commands
@@ -746,11 +710,12 @@ async def lineup(inter):
     pass
 
 
-@lineup.sub_command(
-    brief='clan',
-    description="*leadership* get clan lineup overview information"
-)
-async def overview(inter, clan_role: disnake.Role = None):
+@lineup.sub_command()
+async def overview(
+    inter,
+    clan_role: disnake.Role = discord_utils.command_param_dict['clan_role'],
+    tag: str = discord_utils.command_param_dict['tag']
+):
     """
         *leadership*
         get clan lineup overview information
@@ -758,6 +723,7 @@ async def overview(inter, clan_role: disnake.Role = None):
         Parameters
         ----------
         clan_role (optional): clan role to use linked clan
+        tag (optional): tag to search
     """
 
     # role not mentioned
@@ -785,16 +751,34 @@ async def overview(inter, clan_role: disnake.Role = None):
         await discord_responder.send_embed_list(embed_list, inter)
         return
 
-    clan_obj = verification_payload['clan_obj']
+    clan = verification_payload['clan_obj']
+
+    # clan tag selected
+    if tag is not None:
+        clan = await clash_responder.get_clan(tag, coc_client)
+
+        if clan is None:
+            embed_description = f"could not find clan with tag {tag}"
+
+            embed_list = discord_responder.embed_message(
+                icon_url=inter.bot.user.avatar.url,
+                bot_user_name=inter.me.display_name,
+                description=embed_description,
+                author_display_name=inter.author.display_name,
+                author_avatar_url=inter.author.avatar.url
+            )
+
+            await discord_responder.send_embed_list(embed_list, inter)
+            return
 
     field_dict_list = await discord_responder.clan_lineup(
-        clan_obj, coc_client, inter.client.emojis, client_data.emojis)
+        clan, coc_client, inter.client.emojis, client_data.emojis)
 
     embed_list = discord_responder.embed_message(
         icon_url=inter.bot.user.avatar.url,
-        title=f"{clan_obj.name} lineup",
+        title=f"{clan.name} lineup",
         bot_user_name=inter.me.display_name,
-        thumbnail=clan_obj.badge,
+        thumbnail=clan.badge,
         field_list=field_dict_list,
         author_display_name=inter.author.display_name,
         author_avatar_url=inter.author.avatar.url
@@ -803,11 +787,12 @@ async def overview(inter, clan_role: disnake.Role = None):
     await discord_responder.send_embed_list(embed_list, inter)
 
 
-@lineup.sub_command(
-    brief='clan',
-    description="*leadership* get clan lineup information for all members"
-)
-async def member(inter, clan_role: disnake.Role = None):
+@lineup.sub_command()
+async def member(
+    inter,
+    clan_role: disnake.Role = discord_utils.command_param_dict['clan_role'],
+    tag: str = discord_utils.command_param_dict['tag']
+):
     """
         *leadership*
         get clan lineup information for all members
@@ -815,6 +800,7 @@ async def member(inter, clan_role: disnake.Role = None):
         Parameters
         ----------
         clan_role (optional): clan role to use linked clan
+        tag (optional): tag to search
     """
 
     # role not mentioned
@@ -842,16 +828,34 @@ async def member(inter, clan_role: disnake.Role = None):
         await discord_responder.send_embed_list(embed_list, inter)
         return
 
-    clan_obj = verification_payload['clan_obj']
+    clan = verification_payload['clan_obj']
+
+    # clan tag selected
+    if tag is not None:
+        clan = await clash_responder.get_clan(tag, coc_client)
+
+        if clan is None:
+            embed_description = f"could not find clan with tag {tag}"
+
+            embed_list = discord_responder.embed_message(
+                icon_url=inter.bot.user.avatar.url,
+                bot_user_name=inter.me.display_name,
+                description=embed_description,
+                author_display_name=inter.author.display_name,
+                author_avatar_url=inter.author.avatar.url
+            )
+
+            await discord_responder.send_embed_list(embed_list, inter)
+            return
 
     field_dict_list = await discord_responder.clan_lineup_member(
-        clan_obj, coc_client, inter.client.emojis, client_data.emojis)
+        clan, coc_client, inter.client.emojis, client_data.emojis)
 
     embed_list = discord_responder.embed_message(
         icon_url=inter.bot.user.avatar.url,
-        title=f"{clan_obj.name} member lineup",
+        title=f"{clan.name} member lineup",
         bot_user_name=inter.me.display_name,
-        thumbnail=clan_obj.badge,
+        thumbnail=clan.badge,
         field_list=field_dict_list,
         author_display_name=inter.author.display_name,
         author_avatar_url=inter.author.avatar.url
@@ -861,10 +865,7 @@ async def member(inter, clan_role: disnake.Role = None):
 
 
 # clan warpreference
-@clan.sub_command_group(
-    brief='clan',
-    description="group for clan war preference commands"
-)
+@clan.sub_command_group()
 async def warpreference(inter):
     """
         group for clan war preference commands
@@ -873,11 +874,12 @@ async def warpreference(inter):
     pass
 
 
-@warpreference.sub_command(
-    brief='clan',
-    description="*leadership* rundown of clan's war preference"
-)
-async def overview(inter, clan_role: disnake.Role = None):
+@warpreference.sub_command()
+async def overview(
+    inter,
+    clan_role: disnake.Role = discord_utils.command_param_dict['clan_role'],
+    tag: str = discord_utils.command_param_dict['tag']
+):
     """
         *leadership*
         rundown of clan's war preference
@@ -912,16 +914,34 @@ async def overview(inter, clan_role: disnake.Role = None):
         await discord_responder.send_embed_list(embed_list, inter)
         return
 
-    clan_obj = verification_payload['clan_obj']
+    clan = verification_payload['clan_obj']
+
+    # clan tag selected
+    if tag is not None:
+        clan = await clash_responder.get_clan(tag, coc_client)
+
+        if clan is None:
+            embed_description = f"could not find clan with tag {tag}"
+
+            embed_list = discord_responder.embed_message(
+                icon_url=inter.bot.user.avatar.url,
+                bot_user_name=inter.me.display_name,
+                description=embed_description,
+                author_display_name=inter.author.display_name,
+                author_avatar_url=inter.author.avatar.url
+            )
+
+            await discord_responder.send_embed_list(embed_list, inter)
+            return
 
     field_dict_list = await discord_responder.war_preference_clan(
-        clan_obj, coc_client, inter.client.emojis, client_data.emojis)
+        clan, coc_client, inter.client.emojis, client_data.emojis)
 
     embed_list = discord_responder.embed_message(
         icon_url=inter.bot.user.avatar.url,
-        title=f"{clan_obj.name} war preference",
+        title=f"{clan.name} war preference",
         bot_user_name=inter.me.display_name,
-        thumbnail=clan_obj.badge,
+        thumbnail=clan.badge,
         field_list=field_dict_list,
         author_display_name=inter.author.display_name,
         author_avatar_url=inter.author.avatar.url
@@ -930,11 +950,12 @@ async def overview(inter, clan_role: disnake.Role = None):
     await discord_responder.send_embed_list(embed_list, inter)
 
 
-@warpreference.sub_command(
-    brief='clan',
-    description="*leadership* rundown of clan member's war preference"
-)
-async def member(inter, clan_role: disnake.Role = None):
+@warpreference.sub_command()
+async def member(
+    inter,
+    clan_role: disnake.Role = discord_utils.command_param_dict['clan_role'],
+    tag: str = discord_utils.command_param_dict['tag']
+):
     """
         *leadership*
         rundown of clan member's war preference
@@ -969,17 +990,35 @@ async def member(inter, clan_role: disnake.Role = None):
         await discord_responder.send_embed_list(embed_list, inter)
         return
 
-    clan_obj = verification_payload['clan_obj']
+    clan = verification_payload['clan_obj']
+
+    # clan tag selected
+    if tag is not None:
+        clan = await clash_responder.get_clan(tag, coc_client)
+
+        if clan is None:
+            embed_description = f"could not find clan with tag {tag}"
+
+            embed_list = discord_responder.embed_message(
+                icon_url=inter.bot.user.avatar.url,
+                bot_user_name=inter.me.display_name,
+                description=embed_description,
+                author_display_name=inter.author.display_name,
+                author_avatar_url=inter.author.avatar.url
+            )
+
+            await discord_responder.send_embed_list(embed_list, inter)
+            return
 
     embed_description = await discord_responder.war_preference_member(
-        clan_obj, coc_client, inter.client.emojis, client_data.emojis)
+        clan, coc_client, inter.client.emojis, client_data.emojis)
 
     embed_list = discord_responder.embed_message(
         icon_url=inter.bot.user.avatar.url,
-        title=f"{clan_obj.name} member war preference",
+        title=f"{clan.name} member war preference",
         description=embed_description,
         bot_user_name=inter.me.display_name,
-        thumbnail=clan_obj.badge,
+        thumbnail=clan.badge,
         author_display_name=inter.author.display_name,
         author_avatar_url=inter.author.avatar.url
     )
@@ -988,10 +1027,7 @@ async def member(inter, clan_role: disnake.Role = None):
 
 
 # clan unit
-@clan.sub_command_group(
-    brief='clan',
-    description="group for clan unit commands"
-)
+@clan.sub_command_group()
 async def unit(inter):
     """
         group for clan unit commands
@@ -1000,15 +1036,17 @@ async def unit(inter):
     pass
 
 
-@unit.sub_command(
-    brief='clan',
-    description='shows who can donate the best requested troop'
-)
+@unit.sub_command()
 async def donate(
-        inter,
-        unit_name: str = commands.Param(
-            autocomplete=discord_utils.autocomp_donation),
-        clan_role: disnake.Role = None):
+    inter,
+    unit_name: str = commands.Param(
+        name=discord_utils.command_param_dict['unit_name'].name,
+        description=discord_utils.command_param_dict['unit_name'].description,
+        autocomplete=discord_utils.autocomp_unit
+    ),
+    clan_role: disnake.Role = discord_utils.command_param_dict['clan_role'],
+    tag: str = discord_utils.command_param_dict['tag']
+):
     """
         get information about mentioned clan
 
@@ -1016,6 +1054,7 @@ async def donate(
         ----------
         unit_name: name of unit to search clan donations
         clan_role (optional): clan role to use linked clan
+        tag (optional): tag to search
     """
 
     # role not mentioned
@@ -1041,21 +1080,39 @@ async def donate(
         await discord_responder.send_embed_list(embed_list, inter)
         return
 
-    clan_obj = verification_payload['clan_obj']
+    clan = verification_payload['clan_obj']
+
+    # clan tag selected
+    if tag is not None:
+        clan = await clash_responder.get_clan(tag, coc_client)
+
+        if clan is None:
+            embed_description = f"could not find clan with tag {tag}"
+
+            embed_list = discord_responder.embed_message(
+                icon_url=inter.bot.user.avatar.url,
+                bot_user_name=inter.me.display_name,
+                description=embed_description,
+                author_display_name=inter.author.display_name,
+                author_avatar_url=inter.author.avatar.url
+            )
+
+            await discord_responder.send_embed_list(embed_list, inter)
+            return
 
     donator_list = await clash_responder.donation(
-        clan_obj, unit_name, coc_client)
+        clan, unit_name, coc_client)
 
     field_dict_list = discord_responder.donation(
-        clan_obj, donator_list, unit_name,
+        clan, donator_list, unit_name,
         inter.client.emojis, client_data.emojis
     )
 
     embed_list = discord_responder.embed_message(
         icon_url=inter.bot.user.avatar.url,
-        title=f"{clan_obj.name} {clan_obj.tag}",
+        title=f"{clan.name} {clan.tag}",
         bot_user_name=inter.me.display_name,
-        thumbnail=clan_obj.badge,
+        thumbnail=clan.badge,
         field_list=field_dict_list,
         author_display_name=inter.author.display_name,
         author_avatar_url=inter.author.avatar.url
@@ -1065,10 +1122,7 @@ async def donate(
 
 
 # clan supertroop
-@clan.sub_command_group(
-    brief='clan',
-    description="group for clan supertroop commands"
-)
+@clan.sub_command_group()
 async def supertroop(inter):
     """
         group for clan supertroop commands
@@ -1077,13 +1131,11 @@ async def supertroop(inter):
     pass
 
 
-@supertroop.sub_command(
-    brief='clan',
-    description="shows all active supertroops in the clan"
-)
+@supertroop.sub_command()
 async def active(
     inter,
-    clan_role: disnake.Role = None
+    clan_role: disnake.Role = discord_utils.command_param_dict['clan_role'],
+    tag: str = discord_utils.command_param_dict['tag']
 ):
     """
         shows all active supertroops in the clan
@@ -1091,30 +1143,13 @@ async def active(
         Parameters
         ----------
         clan_role (optional): clan role to use linked clan
+        tag (optional): tag to search
     """
-
-    db_player_obj = db_responder.read_player_active(inter.author.id)
-
-    verification_payload = await discord_responder.player_verification(
-        db_player_obj, inter.author, coc_client
-    )
-
-    if not verification_payload['verified']:
-        embed_list = discord_responder.embed_message(
-            icon_url=inter.bot.user.avatar.url,
-            bot_user_name=inter.me.display_name,
-            field_list=verification_payload['field_dict_list'],
-            author_display_name=inter.author.display_name,
-            author_avatar_url=inter.author.avatar.url
-        )
-
-        await discord_responder.send_embed_list(embed_list, inter)
-        return
-
-    player_obj = verification_payload['player_obj']
 
     # role not mentioned
     if clan_role is None:
+        db_player_obj = db_responder.read_player_active(inter.author.id)
+
         verification_payload = await discord_responder.clan_verification(
             db_player_obj, inter.author, coc_client)
     # role has been mentioned
@@ -1134,16 +1169,34 @@ async def active(
         await discord_responder.send_embed_list(embed_list, inter)
         return
 
-    clan_obj = verification_payload['clan_obj']
+    clan = verification_payload['clan_obj']
+
+    # clan tag selected
+    if tag is not None:
+        clan = await clash_responder.get_clan(tag, coc_client)
+
+        if clan is None:
+            embed_description = f"could not find clan with tag {tag}"
+
+            embed_list = discord_responder.embed_message(
+                icon_url=inter.bot.user.avatar.url,
+                bot_user_name=inter.me.display_name,
+                description=embed_description,
+                author_display_name=inter.author.display_name,
+                author_avatar_url=inter.author.avatar.url
+            )
+
+            await discord_responder.send_embed_list(embed_list, inter)
+            return
 
     field_dict_list = await discord_responder.clan_super_troop_active(
-        clan_obj, inter.client.emojis, client_data.emojis, coc_client)
+        clan, inter.client.emojis, client_data.emojis, coc_client)
 
     embed_list = discord_responder.embed_message(
         icon_url=inter.bot.user.avatar.url,
-        title=f"{clan_obj.name} active super troops",
+        title=f"{clan.name} active super troops",
         bot_user_name=inter.me.display_name,
-        thumbnail=clan_obj.badge,
+        thumbnail=clan.badge,
         field_list=field_dict_list,
         author_display_name=inter.author.display_name,
         author_avatar_url=inter.author.avatar.url
@@ -1152,46 +1205,31 @@ async def active(
     await discord_responder.send_embed_list(embed_list, inter)
 
 
-@supertroop.sub_command(
-    brief='clan',
-    description="shows who in your clan has a specified super troop active"
-)
+@supertroop.sub_command()
 async def donate(
-        inter,
-        unit_name: str = commands.Param(
-            autocomplete=discord_utils.autocomp_supertroop),
-        clan_role: disnake.Role = None):
+    inter,
+    super_troop: str = commands.Param(
+        name=discord_utils.command_param_dict['super_troop'].name,
+        description=discord_utils.command_param_dict['super_troop'].description,
+        autocomplete=discord_utils.autocomp_supertroop
+    ),
+    clan_role: disnake.Role = discord_utils.command_param_dict['clan_role'],
+    tag: str = discord_utils.command_param_dict['tag']
+):
     """
         shows who in your clan has a specified super troop active
 
         Parameters
         ----------
-        unit_name: name of unit to search clan donations
+        super_troop: name of super troop to search clan donations
         clan_role (optional): clan role to use linked clan
+        tag (optional): tag to search
     """
-
-    db_player_obj = db_responder.read_player_active(inter.author.id)
-
-    verification_payload = await discord_responder.player_verification(
-        db_player_obj, inter.author, coc_client
-    )
-
-    if not verification_payload['verified']:
-        embed_list = discord_responder.embed_message(
-            icon_url=inter.bot.user.avatar.url,
-            bot_user_name=inter.me.display_name,
-            field_list=verification_payload['field_dict_list'],
-            author_display_name=inter.author.display_name,
-            author_avatar_url=inter.author.avatar.url
-        )
-
-        await discord_responder.send_embed_list(embed_list, inter)
-        return
-
-    player_obj = verification_payload['player_obj']
 
     # role not mentioned
     if clan_role is None:
+        db_player_obj = db_responder.read_player_active(inter.author.id)
+
         verification_payload = await discord_responder.clan_verification(
             db_player_obj, inter.author, coc_client)
     # role has been mentioned
@@ -1211,15 +1249,33 @@ async def donate(
         await discord_responder.send_embed_list(embed_list, inter)
         return
 
-    clan_obj = verification_payload['clan_obj']
+    clan = verification_payload['clan_obj']
 
-    super_troop_name = clash_responder.find_super_troop_name(unit_name)
+    # clan tag selected
+    if tag is not None:
+        clan = await clash_responder.get_clan(tag, coc_client)
+
+        if clan is None:
+            embed_description = f"could not find clan with tag {tag}"
+
+            embed_list = discord_responder.embed_message(
+                icon_url=inter.bot.user.avatar.url,
+                bot_user_name=inter.me.display_name,
+                description=embed_description,
+                author_display_name=inter.author.display_name,
+                author_avatar_url=inter.author.avatar.url
+            )
+
+            await discord_responder.send_embed_list(embed_list, inter)
+            return
+
+    super_troop_name = clash_responder.find_super_troop_name(super_troop)
 
     # super troop was not found
     if super_troop_name is None:
         embed_list = discord_responder.embed_message(
             icon_url=inter.bot.user.avatar.url,
-            description=f"{unit_name} is not a viable request",
+            description=f"{super_troop} is not a viable request",
             bot_user_name=inter.me.display_name,
             author_display_name=inter.author.display_name,
             author_avatar_url=inter.author.avatar.url
@@ -1229,18 +1285,18 @@ async def donate(
         return
 
     donor_list = await clash_responder.active_super_troop_search(
-        clan_obj, super_troop_name, coc_client)
+        clan, super_troop_name, coc_client)
 
     field_dict_list = discord_responder.super_troop_search(
-        clan_obj, donor_list, super_troop_name,
+        clan, donor_list, super_troop_name,
         inter.client.emojis, client_data.emojis
     )
 
     embed_list = discord_responder.embed_message(
         icon_url=inter.bot.user.avatar.url,
-        title=f"{clan_obj.name} {clan_obj.tag}",
+        title=f"{clan.name} {clan.tag}",
         bot_user_name=inter.me.display_name,
-        thumbnail=clan_obj.badge,
+        thumbnail=clan.badge,
         field_list=field_dict_list,
         author_display_name=inter.author.display_name,
         author_avatar_url=inter.author.avatar.url
@@ -1251,10 +1307,7 @@ async def donate(
 
 # War
 
-@bot.slash_command(
-    brief='war',
-    description="parent for war commands"
-)
+@bot.slash_command()
 async def war(inter):
     """
         parent for war commands
@@ -1265,10 +1318,7 @@ async def war(inter):
 
 
 # war info
-@war.sub_command_group(
-    brief='war',
-    description="group for war info commands"
-)
+@war.sub_command_group()
 async def info(inter):
     """
         group for war info commands
@@ -1277,15 +1327,11 @@ async def info(inter):
     pass
 
 
-@info.sub_command(
-    brief='war',
-    description="overview of the current war"
-)
+@info.sub_command()
 async def overview(
     inter,
-    clan_role: disnake.Role = None,
-    war_selection: str = commands.Param(default=None, choices=[
-        "previous", "current", "upcoming"])
+    clan_role: disnake.Role = discord_utils.command_param_dict['clan_role'],
+    war_selection: str = discord_utils.command_param_dict['cwl_war_selection']
 ):
     """
         overview of the current war
@@ -1337,15 +1383,11 @@ async def overview(
     await discord_responder.send_embed_list(embed_list, inter)
 
 
-@info.sub_command(
-    brief='war',
-    description="scoreboard for the current war"
-)
+@info.sub_command()
 async def scoreboard(
     inter,
-    clan_role: disnake.Role = None,
-    war_selection: str = commands.Param(default=None, choices=[
-        "previous", "current", "upcoming"])
+    clan_role: disnake.Role = discord_utils.command_param_dict['clan_role'],
+    war_selection: str = discord_utils.command_param_dict['cwl_war_selection']
 ):
     """
         overview of the current war
@@ -1398,10 +1440,7 @@ async def scoreboard(
 
 
 # war clan
-@war.sub_command_group(
-    brief='war',
-    description="group for war clan commands"
-)
+@war.sub_command_group()
 async def clan(inter):
     """
         group for war clan commands
@@ -1410,16 +1449,12 @@ async def clan(inter):
     pass
 
 
-@clan.sub_command(
-    brief='war',
-    description="list of players that missed attacks in the current war"
-)
+@clan.sub_command()
 async def noattack(
     inter,
-    missed_attacks: int = commands.Param(default=None, choices=[1, 2]),
-    clan_role: disnake.Role = None,
-    war_selection: str = commands.Param(default=None, choices=[
-        "previous", "current", "upcoming"])
+    missed_attacks: int = discord_utils.command_param_dict['missed_attacks'],
+    clan_role: disnake.Role = discord_utils.command_param_dict['clan_role'],
+    war_selection: str = discord_utils.command_param_dict['cwl_war_selection']
 ):
     """
         list of players that missed attacks in the current war
@@ -1471,15 +1506,11 @@ async def noattack(
     await discord_responder.send_embed_list(embed_list, inter)
 
 
-@clan.sub_command(
-    brief='war',
-    description="*leadership* overview of all members in war"
-)
+@clan.sub_command()
 async def stars(
     inter,
-    clan_role: disnake.Role = None,
-    war_selection: str = commands.Param(default=None, choices=[
-        "previous", "current", "upcoming"])
+    clan_role: disnake.Role = discord_utils.command_param_dict['clan_role'],
+    war_selection: str = discord_utils.command_param_dict['cwl_war_selection']
 ):
     """
         *leadership*
@@ -1536,15 +1567,11 @@ async def stars(
     await discord_responder.send_embed_list(embed_list, inter)
 
 
-@clan.sub_command(
-    brief='war',
-    description="*leadership* all attacks for every war member"
-)
+@clan.sub_command()
 async def attacks(
     inter,
-    clan_role: disnake.Role = None,
-    war_selection: str = commands.Param(default=None, choices=[
-        "previous", "current", "upcoming"])
+    clan_role: disnake.Role = discord_utils.command_param_dict['clan_role'],
+    war_selection: str = discord_utils.command_param_dict['cwl_war_selection']
 ):
     """
         *leadership*
@@ -1602,10 +1629,7 @@ async def attacks(
 
 
 # war score
-@war.sub_command_group(
-    brief='war',
-    description="group for war score commands"
-)
+@war.sub_command_group()
 async def score(inter):
     """
         group for war score commands
@@ -1614,15 +1638,11 @@ async def score(inter):
     pass
 
 
-@score.sub_command(
-    brief='war',
-    description="your war member score"
-)
+@score.sub_command()
 async def user(
     inter,
-    user: disnake.User = None,
-    war_selection: str = commands.Param(default=None, choices=[
-        "previous", "current", "upcoming"])
+    clan_role: disnake.Role = discord_utils.command_param_dict['clan_role'],
+    war_selection: str = discord_utils.command_param_dict['cwl_war_selection']
 ):
     """
         your war member score
@@ -1671,15 +1691,11 @@ async def user(
     await discord_responder.send_embed_list(embed_list, inter)
 
 
-@score.sub_command(
-    brief='war',
-    description="*leadership* every clanmate's war member score"
-)
+@score.sub_command()
 async def clan(
     inter,
-    clan_role: disnake.Role = None,
-    war_selection: str = commands.Param(default=None, choices=[
-        "previous", "current", "upcoming"])
+    clan_role: disnake.Role = discord_utils.command_param_dict['clan_role'],
+    war_selection: str = discord_utils.command_param_dict['cwl_war_selection']
 ):
     """
         *leadership*
@@ -1736,10 +1752,7 @@ async def clan(
 
 
 # war lineup
-@war.sub_command_group(
-    brief='war',
-    description="group for war lineup commands"
-)
+@war.sub_command_group()
 async def lineup(inter):
     """
         group for war lineup commands
@@ -1748,15 +1761,11 @@ async def lineup(inter):
     pass
 
 
-@lineup.sub_command(
-    brief='war',
-    description="town hall lineup overview for war"
-)
+@lineup.sub_command()
 async def overview(
     inter,
-    clan_role: disnake.Role = None,
-    war_selection: str = commands.Param(default=None, choices=[
-        "previous", "current", "upcoming"])
+    clan_role: disnake.Role = discord_utils.command_param_dict['clan_role'],
+    war_selection: str = discord_utils.command_param_dict['cwl_war_selection']
 ):
     """
         town hall lineup overview for war
@@ -1796,15 +1805,11 @@ async def overview(
         content=discord_responder.war_lineup_overview(war_obj))
 
 
-@lineup.sub_command(
-    brief='war',
-    description="town hall lineup for each war member"
-)
+@lineup.sub_command()
 async def clan(
     inter,
-    clan_role: disnake.Role = None,
-    war_selection: str = commands.Param(default=None, choices=[
-        "previous", "current", "upcoming"])
+    clan_role: disnake.Role = discord_utils.command_param_dict['clan_role'],
+    war_selection: str = discord_utils.command_param_dict['cwl_war_selection']
 ):
     """
         town hall lineup for each war member
@@ -1856,15 +1861,11 @@ async def clan(
     await discord_responder.send_embed_list(embed_list, inter)
 
 
-@lineup.sub_command(
-    brief='war',
-    description="lineup for each war member"
-)
+@lineup.sub_command()
 async def member(
     inter,
-    clan_role: disnake.Role = None,
-    war_selection: str = commands.Param(default=None, choices=[
-        "previous", "current", "upcoming"])
+    clan_role: disnake.Role = discord_utils.command_param_dict['clan_role'],
+    war_selection: str = discord_utils.command_param_dict['cwl_war_selection']
 ):
     """
         lineup for each war member
@@ -1933,10 +1934,7 @@ async def member(
 
 # CWL
 
-@bot.slash_command(
-    brief='cwl',
-    description="parent for cwl commands"
-)
+@bot.slash_command()
 async def cwl(inter):
     """
         parent for cwl commands
@@ -1947,10 +1945,7 @@ async def cwl(inter):
 
 
 # cwl lineup
-@cwl.sub_command_group(
-    brief='cwl',
-    description="group for cwl lineup commands"
-)
+@cwl.sub_command_group()
 async def lineup(inter):
     """
         group for cwl lineup commands
@@ -1959,11 +1954,11 @@ async def lineup(inter):
     pass
 
 
-@lineup.sub_command(
-    brief='cwl',
-    description="returns the CWL group lineup"
-)
-async def overview(inter, clan_role: disnake.Role = None):
+@lineup.sub_command()
+async def overview(
+    inter,
+    clan_role: disnake.Role = discord_utils.command_param_dict['clan_role']
+):
     """
         returns the CWL group lineup
 
@@ -2001,11 +1996,12 @@ async def overview(inter, clan_role: disnake.Role = None):
         content=discord_responder.cwl_lineup(cwl_group_obj))
 
 
-@lineup.sub_command(
-    brief='cwl',
-    description="returns the CWL group clan lineup"
-)
-async def clan(inter, clan_tag: str, clan_role: disnake.Role = None):
+@lineup.sub_command()
+async def clan(
+    inter,
+    clan_tag: str,
+    clan_role: disnake.Role = discord_utils.command_param_dict['clan_role']
+):
     """
         returns the CWL group clan lineup
 
@@ -2090,11 +2086,11 @@ async def clan(inter, clan_tag: str, clan_role: disnake.Role = None):
     await discord_responder.send_embed_list(embed_list, inter)
 
 
-@lineup.sub_command(
-    brief='cwl',
-    description="*leadership* returns the CWL group member lineup"
-)
-async def member(inter, clan_role: disnake.Role = None):
+@lineup.sub_command()
+async def member(
+    inter,
+    clan_role: disnake.Role = discord_utils.command_param_dict['clan_role']
+):
     """
         *leadership*
         returns the CWL group member lineup
@@ -2148,10 +2144,7 @@ async def member(inter, clan_role: disnake.Role = None):
 
 
 # cwl score
-@cwl.sub_command_group(
-    brief='cwl',
-    description="group for cwl score commands"
-)
+@cwl.sub_command_group()
 async def score(inter):
     """
         group for cwl score commands
@@ -2160,11 +2153,11 @@ async def score(inter):
     pass
 
 
-@score.sub_command(
-    brief='cwl',
-    description="lists each score you have in CWL"
-)
-async def user(inter, user: disnake.User = None):
+@score.sub_command()
+async def user(
+    inter,
+    clan_role: disnake.Role = discord_utils.command_param_dict['clan_role']
+):
     """
         returns specified user's active player's cwl score
 
@@ -2211,11 +2204,11 @@ async def user(inter, user: disnake.User = None):
     await discord_responder.send_embed_list(embed_list, inter)
 
 
-@score.sub_command(
-    brief='cwl',
-    description="Lists each member and their score in CWL"
-)
-async def clan(inter, clan_role: disnake.Role = None):
+@score.sub_command()
+async def clan(
+    inter,
+    clan_role: disnake.Role = discord_utils.command_param_dict['clan_role']
+):
     """
         *leadership*
         returns all member scores for the specified clan
@@ -2355,7 +2348,11 @@ async def announce(inter):
     description=("*leadership* "
                  "announces message to specified channel")
 )
-async def message(inter, channel: disnake.TextChannel, message: str):
+async def message(
+    inter,
+    channel: disnake.TextChannel = discord_utils.command_param_dict['channel'],
+    message: str = discord_utils.command_param_dict['message']
+):
     """
         *leadership*
         announces message to specified channel
@@ -2424,8 +2421,10 @@ async def message(inter, channel: disnake.TextChannel, message: str):
                  "pings user with the specified player tag")
 )
 async def player(
-    inter, channel: disnake.TextChannel,
-    message: str, player_tag: str
+    inter,
+    channel: disnake.TextChannel = discord_utils.command_param_dict['channel'],
+    message: str = discord_utils.command_param_dict['message'],
+    tag: str = discord_utils.command_param_dict['required_tag']
 ):
     """
         *leadership*
@@ -2435,8 +2434,8 @@ async def player(
         Parameters
         ----------
         channel: channel to announce the message
-        player_tag: player tag to find and ping user
         message: message to send the specified channel
+        tag: player tag to find and ping user
     """
 
     db_player_obj = db_responder.read_player_active(inter.author.id)
@@ -2456,11 +2455,11 @@ async def player(
         await discord_responder.send_embed_list(embed_list, inter)
         return
 
-    player = await clash_responder.get_player(player_tag, coc_client)
+    player = await clash_responder.get_player(tag, coc_client)
 
     if player is None:
         field_dict_list = [{
-            "name": f"player with tag {player_tag} not found",
+            "name": f"player with tag {tag} not found",
             "value": f"please check the tag and try again"
         }]
         embed_list = discord_responder.embed_message(
@@ -2518,10 +2517,13 @@ async def player(
 )
 async def donate(
     inter,
-    channel: disnake.TextChannel,
-    message: str,
+    channel: disnake.TextChannel = discord_utils.command_param_dict['channel'],
+    message: str = discord_utils.command_param_dict['message'],
     unit_name: str = commands.Param(
-        autocomplete=discord_utils.autocomp_donation),
+        name=discord_utils.command_param_dict['unit_name'].name,
+        description=discord_utils.command_param_dict['unit_name'].description,
+        autocomplete=discord_utils.autocomp_unit
+    ),
     clan_role: disnake.Role = None
 ):
     """
@@ -2633,11 +2635,14 @@ async def donate(
 )
 async def supertroop(
     inter,
-    channel: disnake.TextChannel,
-    message: str,
-    unit_name: str = commands.Param(
-        autocomplete=discord_utils.autocomp_supertroop),
-    clan_role: disnake.Role = None
+    channel: disnake.TextChannel = discord_utils.command_param_dict['channel'],
+    message: str = discord_utils.command_param_dict['message'],
+    super_troop: str = commands.Param(
+        name=discord_utils.command_param_dict['super_troop'].name,
+        description=discord_utils.command_param_dict['super_troop'].description,
+        autocomplete=discord_utils.autocomp_supertroop
+    ),
+    clan_role: disnake.Role = discord_utils.command_param_dict['clan_role']
 ):
     """
         announces message to specified channel,
@@ -2645,9 +2650,9 @@ async def supertroop(
 
         Parameters
         ----------
-        unit_name: name of unit to search clan donations
         channel: channel to announce the message
         message: message to send the specified channel
+        super_troop: name of unit to search clan donations
         clan_role (optional): clan role to use linked clan
     """
 
@@ -2679,11 +2684,11 @@ async def supertroop(
 
     clan = verification_payload['clan_obj']
 
-    super_troop_name = clash_responder.find_super_troop_name(unit_name)
+    super_troop_name = clash_responder.find_super_troop_name(super_troop)
 
     if super_troop_name is None:
         await inter.edit_original_message(
-            content=f"{unit_name} is not super troop")
+            content=f"{super_troop} is not super troop")
         return
 
     donator_list = await clash_responder.active_super_troop_search(
@@ -2692,7 +2697,7 @@ async def supertroop(
     # unit is either hero, pet or is an incorrect unit
     if donator_list is None:
         await inter.edit_original_message(
-            content=f"{unit_name} is not a super troop")
+            content=f"{super_troop} is not a super troop")
         return
 
     unit_emoji = discord_responder.get_emoji(
@@ -2753,10 +2758,11 @@ async def supertroop(
                  "pings all in current war")
 )
 async def war(
-    inter, channel: disnake.TextChannel, message: str,
-    clan_role: disnake.Role = None,
-    war_selection: str = commands.Param(default=None, choices=[
-        "previous", "current", "upcoming"])
+    inter,
+    channel: disnake.TextChannel = discord_utils.command_param_dict['channel'],
+    message: str = discord_utils.command_param_dict['message'],
+    clan_role: disnake.Role = discord_utils.command_param_dict['clan_role'],
+    war_selection: str = discord_utils.command_param_dict['cwl_war_selection']
 ):
     """
         *leadership*
@@ -2849,11 +2855,12 @@ async def war(
                  "pings all in war missing attacks")
 )
 async def warnoattack(
-    inter, channel: disnake.TextChannel, message: str,
-    missed_attacks: int = commands.Param(default=None, choices=[1, 2]),
-    clan_role: disnake.Role = None,
-    war_selection: str = commands.Param(default=None, choices=[
-        "previous", "current", "upcoming"])
+    inter,
+    channel: disnake.TextChannel = discord_utils.command_param_dict['channel'],
+    message: str = discord_utils.command_param_dict['message'],
+    missed_attacks: int = discord_utils.command_param_dict['missed_attacks'],
+    clan_role: disnake.Role = discord_utils.command_param_dict['clan_role'],
+    war_selection: str = discord_utils.command_param_dict['cwl_war_selection']
 ):
     """
         *leadership*
@@ -3003,7 +3010,10 @@ async def self(inter):
     brief='discord',
     description="*leadership* update mentioned user's roles"
 )
-async def member(inter, user: disnake.User):
+async def member(
+    inter,
+    user: disnake.User = discord_utils.command_param_dict['user']
+):
     """
         *leadership*
         update mentioned user's roles
@@ -3151,7 +3161,10 @@ async def emoji(inter):
 @emoji.sub_command(
     brief='discord', description="sends specified emoji"
 )
-async def message(inter, coc_name: str):
+async def message(
+    inter,
+    coc_name: str = discord_utils.command_param_dict['coc_name']
+):
     """
         sends specified emoji
 
@@ -3192,22 +3205,25 @@ async def user(inter):
     brief='discord',
     description='returns the user linked to a requested player'
 )
-async def player(inter, player_tag: str):
+async def player(
+    inter,
+    tag: str = discord_utils.command_param_dict['required_tag']
+):
     """
         returns the user linked to a requested player
 
         Parameters
         ----------
-        player_tag: player tag to search
+        tag: player tag to search
     """
 
-    player_obj = await clash_responder.get_player(player_tag, coc_client)
+    player_obj = await clash_responder.get_player(tag, coc_client)
 
     # player with given tag not found
     if player_obj is None:
         embed_list = discord_responder.embed_message(
             icon_url=inter.bot.user.avatar.url,
-            description=f"could not find player with tag {player_tag}",
+            description=f"could not find player with tag {tag}",
             bot_user_name=inter.me.display_name,
             author_display_name=inter.author.display_name,
             author_avatar_url=inter.author.avatar.url
@@ -3235,7 +3251,10 @@ async def player(inter, player_tag: str):
     brief='discord',
     description="returns the users linked to the active player's clan"
 )
-async def clan(inter, clan_role: disnake.Role = None):
+async def clan(
+    inter,
+    clan_role: disnake.Role = discord_utils.command_param_dict['clan_role']
+):
     """
         returns the users linked to the active player's clan
 
@@ -3418,7 +3437,11 @@ async def player(inter):
         "many of ClashDiscord commands"
     )
 )
-async def claim(inter, player_tag: str, api_key: str):
+async def claim(
+    inter,
+    player_tag: str = discord_utils.command_param_dict['required_tag'],
+    api_key: str = discord_utils.command_param_dict['api_key']
+):
     """
         verify and claim a player,
         a player must be claimed to view and run
@@ -3427,7 +3450,7 @@ async def claim(inter, player_tag: str, api_key: str):
         Parameters
         ----------
         player_tag: player tag to search
-        api_key: api key provide from in game
+        api_key: api key provided from in game
     """
 
     # confirm valid player_tag
@@ -3577,7 +3600,10 @@ async def show(inter):
     brief='client',
     description="updates your active player"
 )
-async def update(inter, player_tag: str):
+async def update(
+    inter,
+    player_tag: str = discord_utils.command_param_dict['required_tag']
+):
     """
         updates author's active player
 
@@ -3668,7 +3694,10 @@ async def update(inter, player_tag: str):
     brief='client',
     description="deletes the user's requested player claim"
 )
-async def remove(inter, player_tag: str):
+async def remove(
+    inter,
+    player_tag: str = discord_utils.command_param_dict['required_tag']
+):
     """
         updates author's active player
 
@@ -3961,7 +3990,10 @@ async def clan(inter):
     brief='client',
     description="*admin* claim the requested clan"
 )
-async def claim(inter, clan_tag: str):
+async def claim(
+    inter,
+    clan_tag: str = discord_utils.command_param_dict['required_tag']
+):
     """
         *admin*
         claim the requested clan
@@ -4198,7 +4230,10 @@ async def show(inter):
     brief='client',
     description="*admin* deletes the requested clan claim"
 )
-async def remove(inter, clan_tag: str):
+async def remove(
+    inter,
+    clan_tag: str = discord_utils.command_param_dict['required_tag']
+):
     """
         *admin*
         deletes the requested clan claim
@@ -4477,7 +4512,10 @@ async def show(inter):
     description=("*admin* remove the claimed discord role, "
                  "the role will not be deleted from discord")
 )
-async def remove(inter, role: disnake.Role):
+async def remove(
+    inter,
+    role: str = discord_utils.command_param_dict['role']
+):
     """
         *admin*
         remove the claimed discord role,
@@ -4637,7 +4675,11 @@ async def clanrole(inter):
     brief='client',
     description="*admin* claim a clan's discord role"
 )
-async def claim(inter, role: disnake.Role, clan_tag: str):
+async def claim(
+    inter,
+    role: str = discord_utils.command_param_dict['role'],
+    clan_tag: str = discord_utils.command_param_dict['required_tag']
+):
     """
         *admin*
         claim a clan's discord role
@@ -4821,9 +4863,10 @@ async def rankrole(inter):
     brief='client',
     description="*admin* claim a rank's discord role"
 )
-async def claim(inter, role: disnake.Role,
-                rank_name: str = commands.Param(choices=[
-        "leader", "co-leader", "elder", "member", "uninitiated"])
+async def claim(
+    inter,
+    role: str = discord_utils.command_param_dict['role'],
+    rank_name: str = discord_utils.command_param_dict['rank_name']
 ):
     """
         *admin*
@@ -4994,7 +5037,11 @@ async def player(inter):
         "*admin* claim a player for the mentioned user"
     )
 )
-async def claim(inter, player_tag: str, user: disnake.User):
+async def claim(
+    inter,
+    player_tag: str,
+    user: disnake.User = discord_utils.command_param_dict['user']
+):
     """
         *admin*
         claim a player for the mentioned user
@@ -5142,7 +5189,10 @@ async def claim(inter, player_tag: str, user: disnake.User):
     brief='admin',
     description="*admin* shows players claimed by the mentioned user"
 )
-async def show(inter, user: disnake.User):
+async def show(
+    inter,
+    user: disnake.User = discord_utils.command_param_dict['user']
+):
     """
         *admin*
         shows players claimed by the mentioned user
@@ -5253,7 +5303,11 @@ async def show(inter, user: disnake.User):
     brief='admin',
     description="*admin* remove a player for the mentioned user"
 )
-async def remove(inter, player_tag: str, user: disnake.User):
+async def remove(
+    inter,
+    player_tag: str,
+    user: disnake.User = discord_utils.command_param_dict['user']
+):
     """
         *admin*
         remove a player for the mentioned user
@@ -5871,7 +5925,10 @@ async def adminshow(inter):
     brief='superuser',
     description="*super user* toggle a user's admin bool"
 )
-async def admintoggle(inter, user: disnake.User):
+async def admintoggle(
+    inter,
+    user: disnake.User = discord_utils.command_param_dict['user']
+):
     """
         *super user*
         toggle a user's admin bool
@@ -5968,7 +6025,10 @@ async def admintoggle(inter, user: disnake.User):
     brief='superuser',
     description="*super user* delete a claimed user from id"
 )
-async def remove(inter, user: disnake.User):
+async def remove(
+    inter,
+    user: disnake.User = discord_utils.command_param_dict['user'],
+):
     """
         *super user*
         claim a clan's discord role
@@ -6067,7 +6127,11 @@ async def player(inter):
         "*super user* claim a player for the mentioned user"
     )
 )
-async def claim(inter, player_tag: str, user: disnake.User):
+async def claim(
+    inter,
+    player_tag: str,
+    user: disnake.User = discord_utils.command_param_dict['user']
+):
     """
         *super user*
         claim a player for the mentioned user
@@ -6188,7 +6252,11 @@ async def claim(inter, player_tag: str, user: disnake.User):
     brief='superuser',
     description="*super user* remove a player for the mentioned user"
 )
-async def remove(inter, player_tag: str, user: disnake.User):
+async def remove(
+    inter,
+    player_tag: str,
+    user: disnake.User = discord_utils.command_param_dict['user']
+):
     """
         *super user*
         remove a player for the mentioned user
@@ -6527,19 +6595,19 @@ async def on_slash_command_error(inter, exception):
     elif hasattr(exception.original, "text"):
         await inter.send(
             content=(f"there was an error that I have not accounted for, "
-                     f"please let Razgriz know.\n\n"
+                     f"please let {client_data.author} know.\n\n"
                      f"error text: `{exception.original.text}`"))
 
     elif hasattr(exception.original, "args"):
         await inter.send(
             content=(f"there was an error that I have not accounted for, "
-                     f"please let Razgriz know.\n\n"
+                     f"please let {client_data.author} know.\n\n"
                      f"error text: `{exception.original.args[0]}`"))
 
     else:
         await inter.send(
             content=(f"there was an error that I have not accounted for, "
-                     f"please let Razgriz know"))
+                     f"please let {client_data.author} know"))
 
 
 if __name__ == "__main__":
