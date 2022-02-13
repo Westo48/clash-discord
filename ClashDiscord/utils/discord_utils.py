@@ -108,5 +108,9 @@ command_param_dict = {
         choices=[
             "leader", "co-leader", "elder", "member", "uninitiated"
         ]
-    )
+    ),
+    'coc_name': commands.Param(
+        name="coc_name",
+        description="name of emoji to search for"
+    ),
 }

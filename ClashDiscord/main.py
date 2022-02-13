@@ -3161,7 +3161,10 @@ async def emoji(inter):
 @emoji.sub_command(
     brief='discord', description="sends specified emoji"
 )
-async def message(inter, coc_name: str):
+async def message(
+    inter,
+    coc_name: str = discord_utils.command_param_dict['coc_name']
+):
     """
         sends specified emoji
 
@@ -6592,19 +6595,19 @@ async def on_slash_command_error(inter, exception):
     elif hasattr(exception.original, "text"):
         await inter.send(
             content=(f"there was an error that I have not accounted for, "
-                     f"please let Razgriz know.\n\n"
+                     f"please let {client_data.author} know.\n\n"
                      f"error text: `{exception.original.text}`"))
 
     elif hasattr(exception.original, "args"):
         await inter.send(
             content=(f"there was an error that I have not accounted for, "
-                     f"please let Razgriz know.\n\n"
+                     f"please let {client_data.author} know.\n\n"
                      f"error text: `{exception.original.args[0]}`"))
 
     else:
         await inter.send(
             content=(f"there was an error that I have not accounted for, "
-                     f"please let Razgriz know"))
+                     f"please let {client_data.author} know"))
 
 
 if __name__ == "__main__":
