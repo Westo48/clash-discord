@@ -41,7 +41,7 @@ class Misc(commands.Cog):
 
     # misc link
     @misc.sub_command_group()
-    async def link(self, inter):
+    async def link(inter):
         """
             group for misc link commands
         """
