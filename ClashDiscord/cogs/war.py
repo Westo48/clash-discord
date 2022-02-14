@@ -186,12 +186,15 @@ class War(commands.Cog):
         war_obj = verification_payload['war_obj']
 
         if option == "stars":
+            embed_title = f"{war_obj.clan.name} vs. {war_obj.opponent.name}"
             field_dict_list = discord_responder.war_clan_stars(
                 war_obj, inter.client.emojis, self.client_data.emojis)
         elif option == "attacks":
+            embed_title = f"{war_obj.clan.name} vs. {war_obj.opponent.name}"
             field_dict_list = discord_responder.war_all_attacks(
                 war_obj, inter.client.emojis, self.client_data.emojis)
         else:
+            embed_title = None
             field_dict_list = [{
                 'name': "incorrect option selected",
                 'value': "please select a different option"
@@ -199,7 +202,7 @@ class War(commands.Cog):
 
         embed_list = discord_responder.embed_message(
             icon_url=inter.bot.user.avatar.url,
-            title=f"{war_obj.clan.name} vs. {war_obj.opponent.name}",
+            title=embed_title,
             bot_user_name=inter.me.display_name,
             thumbnail=war_obj.clan.badge,
             field_list=field_dict_list,
@@ -209,8 +212,16 @@ class War(commands.Cog):
 
         await discord_responder.send_embed_list(embed_list, inter)
 
-    @war.sub_command()
-    async def scoreuser(
+    @war.sub_command_group()
+    async def score(self, inter):
+        """
+            parent for war score commands
+        """
+
+        pass
+
+    @score.sub_command()
+    async def user(
         self,
         inter,
         user: disnake.User = discord_utils.command_param_dict['user'],
@@ -262,8 +273,8 @@ class War(commands.Cog):
 
         await discord_responder.send_embed_list(embed_list, inter)
 
-    @war.sub_command()
-    async def scoreclan(
+    @score.sub_command()
+    async def clan(
         self,
         inter,
         clan_role: disnake.Role = discord_utils.command_param_dict['clan_role'],
@@ -371,14 +382,17 @@ class War(commands.Cog):
             return
 
         elif option == "clan":
+            embed_title = f"{war_obj.clan.name} vs. {war_obj.opponent.name}"
             field_dict_list = discord_responder.war_lineup_clan(
                 war_obj, inter.client.emojis, self.client_data.emojis)
 
         elif option == "member":
+            embed_title = f"{war_obj.clan.name} vs. {war_obj.opponent.name}"
             field_dict_list = await discord_responder.war_lineup_member(
                 war_obj.opponent, self.coc_client,
                 inter.client.emojis, self.client_data.emojis)
         else:
+            embed_title = None
             field_dict_list = [{
                 'name': "incorrect option selected",
                 'value': "please select a different option"
@@ -386,7 +400,7 @@ class War(commands.Cog):
 
         embed_list = discord_responder.embed_message(
             icon_url=inter.bot.user.avatar.url,
-            title=f"{war_obj.clan.name} vs. {war_obj.opponent.name}",
+            title=embed_title,
             bot_user_name=inter.me.display_name,
             thumbnail=war_obj.clan.badge,
             field_list=field_dict_list,

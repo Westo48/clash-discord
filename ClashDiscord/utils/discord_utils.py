@@ -1,6 +1,7 @@
 import utils.coc_utils as coc_utils
 from disnake import ApplicationCommandInteraction
 from disnake.ext import commands
+from data.ClashDiscord_Client_Data import ClashDiscord_Data
 
 
 async def autocomp_unit(
@@ -34,6 +35,24 @@ async def autocomp_supertroop(
 
     del autocomp_list[25:]
     return [unit for unit in autocomp_list]
+
+
+async def autocomp_emoji_name(
+    inter: ApplicationCommandInteraction,
+    user_input: str
+):
+    emoji_name_list = []
+    emoji_list = ClashDiscord_Data().emojis
+    for emoji in emoji_list:
+        emoji_name_list.append(emoji.coc_name)
+
+    autocomp_list = []
+    for emoji_name in emoji_name_list:
+        if user_input.lower() in emoji_name.lower():
+            autocomp_list.append(emoji_name)
+
+    del autocomp_list[25:]
+    return [emoji_name for emoji_name in autocomp_list]
 
 
 command_param_dict = {
@@ -169,5 +188,22 @@ command_param_dict = {
         choices=[
             "overview", "clan", "member"
         ]
+    ),
+    'coc_name': commands.Param(
+        name="emoji_name",
+        description="*optional* options for emoji name"
+    ),
+    'discord_user': commands.Param(
+        name="option",
+        description="*optional* options for discord user returns",
+        default="player",
+        choices=[
+            "player", "clan"
+        ]
+    ),
+    'discord_user_tag': commands.Param(
+        name="player_tag",
+        description="*optional* player tag to search linked user",
+        default=None
     ),
 }

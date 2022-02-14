@@ -190,8 +190,16 @@ class Player(commands.Cog):
 
         await inter.send(content=player_links)
 
-    @player.sub_command()
-    async def unit(
+    @player.sub_command_group()
+    async def unit(self, inter):
+        """
+            parent for player unit commands
+        """
+
+        pass
+
+    @unit.sub_command()
+    async def all(
         self,
         inter,
         user: disnake.User = discord_utils.command_param_dict['user'],
@@ -264,8 +272,8 @@ class Player(commands.Cog):
 
         await discord_responder.send_embed_list(embed_list, inter)
 
-    @player.sub_command()
-    async def unitfind(
+    @unit.sub_command()
+    async def find(
         self,
         inter,
         unit_name: str = commands.Param(

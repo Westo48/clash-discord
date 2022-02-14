@@ -163,12 +163,15 @@ class Clan(commands.Cog):
                 return
 
         if option == "overview":
+            embed_title = f"{clan.name} lineup"
             field_dict_list = await discord_responder.clan_lineup(
                 clan, self.coc_client, inter.client.emojis, self.client_data.emojis)
         elif option == "member":
+            embed_title = f"{clan.name} lineup"
             field_dict_list = await discord_responder.clan_lineup_member(
                 clan, self.coc_client, inter.client.emojis, self.client_data.emojis)
         else:
+            embed_title = None
             field_dict_list = [{
                 'name': "incorrect option selected",
                 'value': "please select a different option"
@@ -176,7 +179,7 @@ class Clan(commands.Cog):
 
         embed_list = discord_responder.embed_message(
             icon_url=inter.bot.user.avatar.url,
-            title=f"{clan.name} lineup",
+            title=embed_title,
             bot_user_name=inter.me.display_name,
             thumbnail=clan.badge,
             field_list=field_dict_list,
@@ -248,22 +251,22 @@ class Clan(commands.Cog):
                 await discord_responder.send_embed_list(embed_list, inter)
                 return
 
+        # initializing embed default values
+        embed_title = None
+        embed_description = None
+        field_dict_list = []
+
         if option == "overview":
+            embed_title = f"{clan.name} war preference"
             field_dict_list = await discord_responder.war_preference_clan(
                 clan, self.coc_client, inter.client.emojis, self.client_data.emojis)
 
-            # getting embed description of none
-            # both methods return different value types
-            embed_description = None
         elif option == "member":
+            embed_title = f"{clan.name} war preference"
             embed_description = await discord_responder.war_preference_member(
                 clan, self.coc_client, inter.client.emojis, self.client_data.emojis)
 
-            # getting field dict list of empty list
-            # both methods return different value types
-            field_dict_list = []
         else:
-            embed_description = None
             field_dict_list = [{
                 'name': "incorrect option selected",
                 'value': "please select a different option"
@@ -271,7 +274,7 @@ class Clan(commands.Cog):
 
         embed_list = discord_responder.embed_message(
             icon_url=inter.bot.user.avatar.url,
-            title=f"{clan.name} war preference",
+            title=embed_title,
             description=embed_description,
             bot_user_name=inter.me.display_name,
             thumbnail=clan.badge,

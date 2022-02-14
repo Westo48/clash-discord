@@ -77,7 +77,7 @@ class CWL(commands.Cog):
 
                 embed_list = discord_responder.embed_message(
                     icon_url=inter.bot.user.avatar.url,
-                    title=f"{clan.name} {clan.tag}",
+                    title=f"{clan.name} {clan.tag} CWL Lineup",
                     bot_user_name=inter.me.display_name,
                     thumbnail=clan.badge,
                     field_list=field_dict_list,
@@ -96,7 +96,7 @@ class CWL(commands.Cog):
 
                 embed_list = discord_responder.embed_message(
                     icon_url=inter.bot.user.avatar.url,
-                    title=f"{clan.name} {clan.tag}",
+                    title=f"{clan.name} {clan.tag} CWL Lineup",
                     bot_user_name=inter.me.display_name,
                     thumbnail=clan.badge,
                     field_list=field_dict_list,
@@ -124,8 +124,16 @@ class CWL(commands.Cog):
 
         await discord_responder.send_embed_list(embed_list, inter)
 
-    @cwl.sub_command()
-    async def scoreuser(
+    @cwl.sub_command_group()
+    async def score(self, inter):
+        """
+            parent for cwl score commands
+        """
+
+        pass
+
+    @score.sub_command()
+    async def user(
         self,
         inter,
         user: disnake.User = discord_utils.command_param_dict['user']
@@ -175,8 +183,8 @@ class CWL(commands.Cog):
 
         await discord_responder.send_embed_list(embed_list, inter)
 
-    @cwl.sub_command()
-    async def scoreclan(
+    @score.sub_command()
+    async def clan(
         self,
         inter,
         clan_role: disnake.Role = discord_utils.command_param_dict['clan_role']
