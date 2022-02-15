@@ -116,7 +116,8 @@ command_param_dict = {
     ),
     'api_key': commands.Param(
         name="api_key",
-        description="api key provided from in game"
+        description="api key provided from in game",
+        default=None
     ),
     'role': commands.Param(
         name="role",
@@ -125,6 +126,7 @@ command_param_dict = {
     'rank_name': commands.Param(
         name="rank_name",
         description="requested rank to link to role",
+        default=None,
         choices=[
             "leader", "co-leader", "elder", "member", "uninitiated"
         ]
@@ -191,7 +193,7 @@ command_param_dict = {
     ),
     'coc_name': commands.Param(
         name="emoji_name",
-        description="*optional* options for emoji name"
+        description="options for emoji name"
     ),
     'discord_user': commands.Param(
         name="option",
@@ -205,5 +207,63 @@ command_param_dict = {
         name="player_tag",
         description="*optional* player tag to search linked user",
         default=None
+    ),
+    'client_user': commands.Param(
+        name="option",
+        description="*optional* options for client user returns",
+        default="claim",
+        choices=[
+            "claim"
+        ]
+    ),
+    'client_player': commands.Param(
+        name="option",
+        description="*optional* options for client player returns",
+        default="show",
+        choices=[
+            "claim", "show", "update", "remove"
+        ]
+    ),
+    'client_player_tag': commands.Param(
+        name="player_tag",
+        description="*optional* player tag",
+        default=None
+    ),
+    'client_guild': commands.Param(
+        name="option",
+        description="*optional* options for client guild returns",
+        default="claim",
+        choices=[
+            "claim"
+        ]
+    ),
+    'client_clan': commands.Param(
+        name="option",
+        description="*optional* options for client clan returns",
+        default="show",
+        choices=[
+            "claim", "show", "remove"
+        ]
+    ),
+    'client_role': commands.Param(
+        name="option",
+        description="*optional* options for client role returns",
+        default="show",
+        choices=[
+            "show", "remove"
+        ]
+    ),
+    'client_role_mention': commands.Param(
+        name="role",
+        description="mentioned discord role",
+        default=None
+    ),
+    'client_clan_rank_role': commands.Param(
+        name="option",
+        description="*optional* options for client clan and rank role returns",
+        default="claim",
+        choices=[
+            "claim"
+        ]
     ),
 }
