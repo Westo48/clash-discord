@@ -61,6 +61,10 @@ command_param_dict = {
         description="*optional* user to search for active player",
         default=None
     ),
+    'required_user': commands.Param(
+        name="user",
+        description="user mention"
+    ),
     'clan_role': commands.Param(
         name="clan_role",
         description="*optional* clan role to use linked clan",
@@ -264,6 +268,14 @@ command_param_dict = {
         default="claim",
         choices=[
             "claim"
+        ]
+    ),
+    'admin_player': commands.Param(
+        name="option",
+        description="*optional* options for admin player returns",
+        default="show",
+        choices=[
+            "claim", "show", "remove"
         ]
     ),
 }
