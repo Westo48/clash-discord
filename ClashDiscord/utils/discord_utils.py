@@ -278,4 +278,33 @@ command_param_dict = {
             "claim", "show", "remove"
         ]
     ),
+    'superuser_guild': commands.Param(
+        name="option",
+        description="*optional* options for superuser guild returns",
+        default="show",
+        choices=[
+            "show", "remove", "leave"
+        ]
+    ),
+    'guild_id': commands.Param(
+        name="guild_id",
+        description="*optional* id for guild",
+        default=None
+    ),
+    'superuser_admin': commands.Param(
+        name="option",
+        description="*optional* options for superuser admin returns",
+        default="show",
+        choices=[
+            "show", "toggle", "remove"
+        ]
+    ),
+    'superuser_player': commands.Param(
+        name="option",
+        description="*optional* options for superuser player returns",
+        default="claim",
+        choices=[
+            "claim", "remove"
+        ]
+    ),
 }
