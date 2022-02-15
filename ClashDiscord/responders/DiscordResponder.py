@@ -3110,15 +3110,43 @@ def help_command_dict_list(parent):
 
     # repeating for each child
     for group in parent.children.values():
+        if hasattr(group, 'children'):
+            for child in group.children.values():
+                option_string = ""
+                for param in child.option.options:
+                    if param.name == "option":
+                        for choice in param.choices:
+                            option_string += f"{choice.name}, "
 
-        for child in group.children.values():
+                value_string = child.docstring["description"]
 
-            field_name = child.qualified_name
-            for param in child.docstring["params"]:
-                field_name += f" <{param}>"
+                # command options found
+                if option_string != "":
+                    value_string = (f"command options: `{option_string[:-2]}`\n"
+                                    + value_string)
+
+                field_dict_list.append({
+                    'name': child.qualified_name,
+                    'value': value_string
+                })
+
+        else:
+            option_string = ""
+            for param in group.option.options:
+                if param.name == "option":
+                    for choice in param.choices:
+                        option_string += f"{choice.name}, "
+
+            value_string = group.docstring["description"]
+
+            # command options found
+            if option_string != "":
+                value_string = (f"command options: `{option_string[:-2]}`\n"
+                                + value_string)
+
             field_dict_list.append({
-                'name': field_name,
-                'value': child.docstring["description"]
+                'name': group.qualified_name,
+                'value': value_string
             })
     return field_dict_list
 

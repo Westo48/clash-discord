@@ -32,7 +32,7 @@ class SuperUser(commands.Cog):
     ):
         """
             *super user*
-            "*super user* shows all guilds ClashDiscord is in
+            *super user* shows all guilds ClashDiscord is in
         """
 
         await inter.response.defer()

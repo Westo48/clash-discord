@@ -28,6 +28,8 @@ class Discord(commands.Cog):
             returns help menu
         """
 
+        await inter.response.defer()
+
         db_guild_obj = db_responder.read_guild(inter.guild.id)
         db_player_obj = db_responder.read_player_active(inter.author.id)
 
@@ -885,6 +887,8 @@ class Discord(commands.Cog):
             tag (optional): player tag to search
             clan_role (optional): clan role to use linked clan
         """
+
+        await inter.response.defer()
 
         if option == "player":
             # player selected and no tag specified
