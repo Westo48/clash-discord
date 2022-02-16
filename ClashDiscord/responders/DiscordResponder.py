@@ -474,7 +474,7 @@ def player_info(player_obj, discord_emoji_list, client_emoji_list):
         })
         if player_obj.legend_statistics.best_season:
             legend_league_emoji = get_emoji(
-                player_obj.league.name, discord_emoji_list, client_emoji_list)
+                "Legend League", discord_emoji_list, client_emoji_list)
             field_dict_list.append({
                 'name': f"**{legend_league_emoji} Best Rank | Trophies**",
                 'value': (
@@ -485,7 +485,7 @@ def player_info(player_obj, discord_emoji_list, client_emoji_list):
             })
         if player_obj.legend_statistics.current_season:
             legend_league_emoji = get_emoji(
-                player_obj.league.name, discord_emoji_list, client_emoji_list)
+                "Legend League", discord_emoji_list, client_emoji_list)
             field_dict_list.append({
                 'name': f"**{legend_league_emoji} Current Rank | Trophies**",
                 'value': (
@@ -496,7 +496,7 @@ def player_info(player_obj, discord_emoji_list, client_emoji_list):
             })
         if player_obj.legend_statistics.previous_season:
             legend_league_emoji = get_emoji(
-                player_obj.league.name, discord_emoji_list, client_emoji_list)
+                "Legend League", discord_emoji_list, client_emoji_list)
             field_dict_list.append({
                 'name': f"**{legend_league_emoji} Previous Rank | Trophies**",
                 'value': (
@@ -524,20 +524,19 @@ def player_info(player_obj, discord_emoji_list, client_emoji_list):
             'value': player_obj.role.in_game_name,
             'inline': True
         })
+        war_preference_emoji = get_emoji(
+            player_obj.war_opted_in, discord_emoji_list, client_emoji_list)
+        field_dict_list.append({
+            'name': '**War Preference**',
+            'value': war_preference_emoji,
+            'inline': True
+        })
     else:
         field_dict_list.append({
             'name': '**Clan**',
             'value': f"{player_obj.name} is not in a clan",
             'inline': True
         })
-
-    war_preference_emoji = get_emoji(
-        player_obj.war_opted_in, discord_emoji_list, client_emoji_list)
-    field_dict_list.append({
-        'name': '**War Preference**',
-        'value': war_preference_emoji,
-        'inline': True
-    })
 
     hero_value = ""
     for hero in player_obj.heroes:
@@ -3110,15 +3109,43 @@ def help_command_dict_list(parent):
 
     # repeating for each child
     for group in parent.children.values():
+        if hasattr(group, 'children'):
+            for child in group.children.values():
+                option_string = ""
+                for param in child.option.options:
+                    if param.name == "option":
+                        for choice in param.choices:
+                            option_string += f"{choice.name}, "
 
-        for child in group.children.values():
+                value_string = child.docstring["description"]
 
-            field_name = child.qualified_name
-            for param in child.docstring["params"]:
-                field_name += f" <{param}>"
+                # command options found
+                if option_string != "":
+                    value_string = (f"command options: `{option_string[:-2]}`\n"
+                                    + value_string)
+
+                field_dict_list.append({
+                    'name': child.qualified_name,
+                    'value': value_string
+                })
+
+        else:
+            option_string = ""
+            for param in group.option.options:
+                if param.name == "option":
+                    for choice in param.choices:
+                        option_string += f"{choice.name}, "
+
+            value_string = group.docstring["description"]
+
+            # command options found
+            if option_string != "":
+                value_string = (f"command options: `{option_string[:-2]}`\n"
+                                + value_string)
+
             field_dict_list.append({
-                'name': field_name,
-                'value': child.docstring["description"]
+                'name': group.qualified_name,
+                'value': value_string
             })
     return field_dict_list
 

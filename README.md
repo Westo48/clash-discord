@@ -14,8 +14,7 @@ Discord bot for Clash of Clans discord servers written in Python
   - [Player](#command-list-player)
   - [Clan](#command-list-clan)
   - [War](#command-list-war)
-  - [CWL Group](#command-list-cwl-group)
-  - [CWL War](#command-list-cwl-war)
+  - [CWL](#command-list-cwl)
 - [Contributing](#contributing)
 - [Requirements](#requirements)
 - [Links and Contact](#links-and-contact)
@@ -36,49 +35,46 @@ Getting ClashDiscord set up in your discord server can be somewhat confusing, bu
 
 2. claim your user in ClashDiscord
 
-   - `client user claim`
+   - `client user` `claim`
      - this will claim you as a user
-     - _this can be done in any claimed guild_
 
 3. claim your discord server
 
-   - `client guild claim`
+   - `client guild` `claim`
      - this will claim your discord server and add you as the guild admin within ClashDiscord
-     - guild is what the discord API calls a server
+      - _guild is what the discord API calls a server_
 
 4. link a player to your user
 
-   - `client player claim` `player tag` `api key`
+   - `client player` `claim` `player tag` `api key`
      - claims the requested player and links it to your discord user
-     - _this can be done in any claimed guild_
-     - getting your api key is annoying, but for everyone’s security this is necessary
+     - _getting your api key is annoying, but for everyone’s security this is necessary_
 
 5. link a clan to your guild
 
-   - `client clan claim` `clan tag`
-     - claims a clan and links it to the claimed guild
-     - your active player **must** be in the clan
-     - _this is also for security_
+    - `client clan` `claim` `clan tag`
+      - claims a clan and links it to the claimed guild
+      - a linked player **must** be in the clan
+        - _this is also for security_
 
 6. link existing roles to your server
 
-   - claim clan roles
-     - `client clanrole claim` `clan tag` `role mention`
-       - links the clan role to a claimed clan
-       - _mentionrole means you have to @mention the role_
+    A. claim clan roles
+      - `client clanrole` `claim` `clan tag` `role mention`
+        - links the clan role to a claimed clan
 
-   B. claim rank roles
+    B. claim rank roles
 
-   - `client rankrole claim` `rank` `role mention`
-     - links the rank role to a discord role
-       - leader
-       - co-leader
-       - elder
-       - member
-       - uninitiated
-         - _this means they aren't verified or they aren't in a claimed clan_
+      - `client rankrole` `claim` `rank name` `role mention`
+        - links the rank role to a discord role
+          - leader
+          - co-leader
+          - elder
+          - member
+          - uninitiated
+            - _this means they aren't verified or they aren't in a claimed clan_
 
-7. use clash discord, you are set up
+7. Use ClashDiscord, you are set up!
 
 # <a id="setup-summary"></a>Setup Summary
 
@@ -99,186 +95,277 @@ Once setup is complete you will be able to interact with ClashDiscord using the 
 
 - ## <a id="command-list-clashdiscord"></a>ClashDiscord
 
-  - ### Info
-    - client info overview
-      - gives a relevant overview for the client
-  - ### User
-    - client user claim
-      - claims the user by discord user id within ClashDiscord
-  - ### Player
-    - client player claim `player tag` `api key`
-      - links a player to your claimed user
-      - if there are no other claimed players for your user, then sets this claimed player as active for you
-    - client player show
-      - shows all claimed players for your user and which is set as active
-    - client player update `player tag`
-      - sets the requested player as your active player
-    - client player remove `player tag`
-      - removes the claimed player from your user
-  - ### Guild
-    - client guild claim
-      - claims the guild by discord guild id within ClashDiscord
-      - sets the user who called the command as the guild admin within ClashDiscord
-  - ### Clan
-    - client clan claim `clan tag`
-      - claims the clan and links it to the claimed guild
-      - user _must_ be guild admin
-      - claimed guilds can claim multiple different clans
-      - multiple guilds can claim the same clan
-    - client clans show
-      - shows all claimed clans for the guild
-    - client removeclan `clan tag`
-      - removes the claimed clan from your guild
-  - ### Role
-    - client role show
-      - shows all claimed roles for the guild
-    - client role remove `role mention`
-      - removes claim on the mentioned role
-  - ### Clan Role
-    - client clanrole claim `clan tag` `role mention`
-      - links the mentioned role to a claimed clan
-  - ### Rank Role
-    - client rankrole claim `rank` `role mention`
-      - claims the mentioned role as a specific clan rank
-      - list of ranks
-        - leader
-        - co-leader
-        - elder
-        - member
-        - uninitiated
-          - _this means they aren't verified or they aren't in a claimed clan_
+  - client info
+    - overview for the client
+
+  - client user
+    - claims the user by discord user id within ClashDiscord
+
+  - client player
+    - _client player options_
+      - options for `client player` command
+      - `claim` - links a specified player to your user
+        - _values needed_ - `player tag` `api key`
+      - `show` _default_ - return all claimed players
+      - `update` - updates the requested player as your active player
+        - _values needed_ - `player tag`
+      - `remove` - removes the linked player from your user
+        - _values needed_ - `player tag`
+
+  - client guild
+    - claims the guild by discord guild id within ClashDiscord
+    - _sets the user who called the command as the guild admin within ClashDiscord_
+      - _if the guild has already been claimed, then nothing will happen_
+
+  - client clan
+    - _client clan options_
+      - options for `client clan` command
+      - `claim` - links a specified clan to your guild
+        - _values needed_ - `clan tag`
+      - `show` _default_ - return all claimed clans
+      - `remove` - removes the linked clan from your guild
+        - _values needed_ - `clan tag`
+
+  - client role
+    - _client role options_
+      - options for `client role` command
+      - `show` _default_ - return all linked roles
+      - `remove` - removes claim on the mentioned role
+        - _values needed_ - `role mention`
+
+  - client clanrole
+    - _client clanrole options_
+      - options for `client clanrole` command
+      - `claim` - links a specified clanrole the specified guild's claimed clan
+        - _values needed_ - `role mention` `clan tag`
+
+  - client rankrole
+    - _client rankrole options_
+      - options for `client rankrole` command
+      - `claim` - links a specified rankrole the specified Clash of Clans rank
+        - _values needed_ - `role mention` `rank name`
+        - _rank names_
+          - leader
+          - co-leader
+          - elder
+          - member
+          - uninitiated
+            - _this means they aren't verified or they aren't in a claimed clan_
 
 - ## <a id="command-list-discord"></a>Discord
 
-  - discord help info
+  - discord help
     - displays relevant help-text regarding what commands can be run
+    - react to the help message to parse through command groups
+
   - discord announce message `channel` `message`
-    - *restricted to leaders and co-leaders*
     - announces message to specified channel
-  - discord announce player `channel` `message` `player tag`
     - *restricted to leaders and co-leaders*
+
+  - discord announce player `channel` `message` `player tag`
     - announces message to specified channel, pings the requested player's user
+    - *restricted to leaders and co-leaders*
+
   - discord announce donate `channel` `message` `unit name`
-    - announces message to specified channel, pings all users that can donate the requested unit
+    - announces message to specified channel, pings all users that can donate the requested
+    - _discord announce donate options_
+      - options for `discord announce donate` command
+        - `clan_role` - mention a role linked to a clan to get that clan's information
+          - _if no clan role is specified, then the user's active player's clan will be used_
+
   - discord announce supertroop `channel` `message` `super troop name`
     - announces message to specified channel, pings all users that have the requested super troop active
+    - _discord announce supertroop options_
+      - options for `discord announce supertroop` command
+        - `clan_role` - mention a role linked to a clan to get that clan's information
+          - _if no clan role is specified, then the user's active player's clan will be used_
+
   - discord announce war `channel` `message`
-    - *restricted to leaders and co-leaders*
     - announces message to specified channel, pings all in current war
+    - *restricted to leaders and co-leaders*
+    - _discord announce war options_
+      - options for `discord announce war` command
+        - `clan_role` - mention a role linked to a clan to get that clan's information
+          - _if no clan role is specified, then the user's active player's clan will be used_
+        - `cwl_war_selection` - *only for cwl* specify whether to look for the previous, current, or upcoming war
+          - _defaults to current_
+
   - discord announce warnoatk `channel` `message`
-    - *restricted to leaders and co-leaders*
     - announces message to channel, pings all in war missing attacks
-  - discord role 
-    - adds and removes necessary roles in discord based on claimed players clan and role in that clan
+    - *restricted to leaders and co-leaders*
+    - _discord announce warnoattack options_
+      - options for `discord announce warnoattack` command
+        - `clan_role` - mention a role linked to a clan to get that clan's information
+          - _if no clan role is specified, then the user's active player's clan will be used_
+        - `missed_attacks` - returns players who missed exactly the specified missed attack count
+          - _if not specified, then it will simply return all who are or have missed attacks_
+        - `cwl_war_selection` - *only for cwl* specify whether to look for the previous, current, or upcoming war
+          - _defaults to current_
+
+  - discord role me
+    - update your roles
+
   - discord role member `membermention`
+    - update mentioned user's roles
     - *restricted to leaders and co-leaders*
-    - adds and removes necessary roles in discord based on claimed players clan and role in that clan for mentioned discord user
+
   - discord role all
-    - *restricted to leaders and co-leaders*
-    - adds and removes necessary roles in discord based on claimed players clan and role in that clan for all users in guild
-  - discord user player `player tag`
+    - update roles for every member in the server
+    - *restricted to ClashDiscord server admin*
+
+  - discord emoji `coc_name`
+    - sends specified emoji
+
+  - discord user
     - returns the user linked to a requested player
-    - example
-      - `/player user find #RGQ8RGU9`
-  - discord user clan
-    - finds the users linked to the active player's clan
+    - _discord user options_
+      - options for `discord user` command
+      - `player` - finding the linked user to the specified player
+        - _player tag must be specified_
+      - `clan` _default_ - finding the linked user for each member in the clan
+        - *restricted to leaders and co-leaders*
+        - _if no clan role is specified, then the user's active player's clan will be used_
 
 - ## <a id="command-list-player"></a>Player
 
-  - player info user
-    - shows player information based on your _or mentioned user's_ active player
-  - player info find `player tag`
-    - displays player information for requested player tag
-    - example
-      - `/player info find #RGQ8RGU9`
-      - `/player info find RGQ8RGU9`
-  - player info recruit `player tag`
+  - ### _player options_
+    - options for player commands
+    - `user` - mention a user to get their active player's information
+      - _if no user is specified, then the user's active player will be used_
+    - `tag` - specify a player's tag for that player's information
+      - _if no tag is specified, then the user's active player will be used_
+
+  - player info
+    - shows player information based on your active player
+
+  - player recruit
     - displays player recruit information for requested player tag
+    
+  - player unit all
+    - shows the level your units based on the specified type
+
   - player unit find `unit name`
     - shows the level, town hall max, and overall max levels for the requested unit
     - you can search troops, spells, and heroes
     - example
-      - `/player unit level hog rider`
-      - `/player unit level jump spell`
-      - `/player unit level archer queen`
-  - player all `unit type`
-    - shows the level your units based on the specified type
-  - player supertroop active
+      - `/player unit find hog rider`
+      - `/player unit find jump spell`
+      - `/player unit find archer queen`
+
+  - player supertroop
     - shows the super troops you have active
 
 - ## <a id="command-list-clan"></a>Clan
 
-  - clan info self
-    - displays clan information for clan active player is in
-  - clan info find `clan tag`
-    - displays clan information for requested clan tag
-    - example
-      - `/clan info find #JJRJGVR0`
-      - `/clan info find JJRJGVR0`
-  - clan info mention `clan role`
-    - displays clan information for clan linked to the clan role mentioned
-  - clan lineup overview
+  - ### _clan options_
+    - options for clan commands
+    - `clan_role` - mention a role linked to a clan to get that clan's information
+      - _if no clan role is specified, then the user's active player's clan will be used_
+    - `tag` - specify a clan's tag for that clan's information
+      - _if no tag is specified, then the user's active player's clan will be used_
+
+  - clan info
+    - displays clan information
+
+  - clan lineup
+    - displays clan town hall lineup
     - *restricted to leaders and co-leaders*
-    - displays clan's town hall lineup
-  - clan lineup member
-    - *restricted to leaders and co-leaders*
-    - displays clan's lineup for each member
-  - clan warpreference overview
-    - *restricted to leaders and co-leaders*
+    - _clan lineup options_
+      - options for `clan lineup` command
+      - `overview` _default_ - returns an overview of the clan's town hall lineup
+      - `member` - returns each member of the clan and their town hall and their hero levels
+
+  - clan warpreference
     - displays rundown of clan member's war preference
-  - clan warpreference member
     - *restricted to leaders and co-leaders*
-    - displays each clan member's war preference
-  - clan unit donate `unit name`
-    - shows who can donate the best of a specified unit
-    - uses active player's clan for all clan commands
-    - example
+    - _clan warpreference options_
+      - options for `clan warpreference` command
+      - `overview` _default_ - returns an overview of the clan's war preference
+      - `member` - returns each member of the clan and their war preference
+
+  - clan donate `unit name`
+    - search the clan for available donors for a specified unit
+    - _examples_
       - `/clan donate hog rider`
       - `/clan donate freeze spell`
-  - clan supertroop donate `super troop name`
-    - shows players in your clan that have a specified super troop activated
-      - `/clan supertroop donate sneaky goblin`
+
+  - clan supertroop
+    - shows all active super troops in the clan
+    - _clan supertroop option_
+      - option for `clan supertroop` command
+      - `super_troop` - if a super troop is specified, then it will search the clan and show who has the specified super troop active
 
 - ## <a id="command-list-war"></a>War
 
-  - war info overview
+  - ### _war options_
+    - options for war commands
+    - `clan_role` - mention a role linked to a clan to get that clan's war information
+      - _if no clan role is specified, then the user's active player's clan will be used_
+    - `cwl_war_selection` - *only for cwl* specify whether to look for the previous, current, or upcoming war
+      - _defaults to current_
+
+  - war info
     - displays war information
-    - uses active player's clan unless a linked clan role is mentioned
-  - war info scoreboard
-    - displays the scoreboard for the current war
-  - war clan noattack
-    - displays players that are missing attacks in war
-  - war clan stars
-    - overview of all members in war
-  - war clan attacks
-    - shows all attacks for every member
-  - war score self
-    - shows your member score for war
-  - war score member `user mention`
-    - displays the requested member score for war
+
+  - war noattack
+    - lists players that missed attacks in war
+    - _war noattack option_
+      - option for `war noattack` command
+      - `missed_attacks` - returns players who missed exactly the specified missed attack count
+        - _if not specified, then it will simply return all who are or have missed attacks_
+
+  - war stars
+    - show all war members and their stars
+    - *restricted to leaders and co-leaders*
+    - _war stars options_
+      - options for `war stars` command
+      - `stars` _default_ - returns all war members and their stars
+      - `member` - show all war members and their attacks
+
+  - war score user
+    - user's active player's war score
+    - _war score user option_
+      - option for `war score user` command
+      - `user` - returns the mentioned user's active player's war score
+        - _if not specified, then it will return the author's active player's war score_
+
   - war score clan
-    - displays every war member's score for war
-  - war lineup overview
-    - displays a lineup overview for your clan and your opponent
-  - war lineup clan
-    - displays a lineup for your clan and your opponent
-  - war lineup member
-    - displays a lineup for each member in your clan and your opponent
-
-- ## <a id="command-list-cwl-group"></a>CWL Group
-
-  - cwl lineup overview
-    - displays a lineup for clans in your cwl group
-  - cwl lineup clan `clan tag`
-    - displays a lineup for the requested clan in cwl
-  - cwl lineup member
+    - every clan member's war score
     - *restricted to leaders and co-leaders*
-    - displays a lineup each member of each clan in cwl
+
+  - war lineup
+    - war town hall lineup
+    - _war lineup options_
+      - options for `war lineup` command
+      - `overview` - short overview of the war's lineup
+      - `clan` _default_ - war lineup for each clan
+      - `member` - lineup for every member in war
+
+- ## <a id="command-list-cwl"></a>CWL
+
+  - ### _cwl options_
+    - options for cwl commands
+    - `clan_role` - mention a role linked to a clan to get that clan's cwl information
+      - _if no clan role is specified, then the user's active player's clan will be used_
+
+  - cwl lineup
+    - CWL town hall lineup
+    - _cwl lineup options_
+      - options for `cwl lineup` command
+      - `overview` - short overview of the cwl's lineup
+      - `clan` _default_ - cwl lineup for each clan
+      - `member` - lineup for every member in each clan in cwl
+
   - cwl score user
-    - lists your _or the mentioned user's_ active player's score for each war in cwl
-  - cwl clan score
+    - user's active player's cwl score
+    - _cwl score user option_
+      - option for `cwl score user` command
+      - `user` - returns the mentioned user's active player's cwl score
+        - _if not specified, then it will return the author's active player's cwl score_
+
+  - cwl score clan
+    - every clan member's cwl score
     - *restricted to leaders and co-leaders*
-    - displays every cwl member's score
 
 # <a id="contributing"></a>Contributing
 
@@ -289,11 +376,9 @@ If you would _like_ to contribute to this project please message me on discord _
 There aren't many required packages, but here are the few that are required and the versions I am using.
 
 - [disnake](https://github.com/DisnakeDev/disnake)
-  - 2.0.0
+  - 2.3.2
 - [coc.py](https://github.com/mathsman5133/coc.py)
-  - Version 2.0.0
-- requests
-  - 2.24.0
+  - 2.0.0
 - PyMySQL
   - 1.0.2
 
