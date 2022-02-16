@@ -210,7 +210,6 @@ class Player(commands.Cog):
 
             Parameters
             ----------
-            unit_type (optional): type of unit to return information for
             user (optional): user to search for active player
             tag (optional): tag to search
         """
@@ -285,11 +284,11 @@ class Player(commands.Cog):
         tag: str = discord_utils.command_param_dict['tag']
     ):
         """
-            get unit levels for a player
+            get specified unit levels for a player
 
             Parameters
             ----------
-            unit_name: name of the unit you would like information on
+            unit_name: clash of clans unit name to search for
             user (optional): user to search for active player
             tag (optional): tag to search
         """

@@ -185,25 +185,29 @@ Once setup is complete you will be able to interact with ClashDiscord using the 
 
 - ## <a id="command-list-player"></a>Player
 
-  - player info user
-    - shows player information based on your _or mentioned user's_ active player
-  - player info find `player tag`
-    - displays player information for requested player tag
-    - example
-      - `/player info find #RGQ8RGU9`
-      - `/player info find RGQ8RGU9`
-  - player info recruit `player tag`
+  - _player options_
+    - options for player commands
+    - `user` - mention a user to get their active player's information
+    - `tag` - specify a player's tag for that player's information
+
+  - player info
+    - shows player information based on your active player
+
+  - player recruit
     - displays player recruit information for requested player tag
+    
+  - player unit all
+    - shows the level your units based on the specified type
+
   - player unit find `unit name`
     - shows the level, town hall max, and overall max levels for the requested unit
     - you can search troops, spells, and heroes
     - example
-      - `/player unit level hog rider`
-      - `/player unit level jump spell`
-      - `/player unit level archer queen`
-  - player all `unit type`
-    - shows the level your units based on the specified type
-  - player supertroop active
+      - `/player unit find hog rider`
+      - `/player unit find jump spell`
+      - `/player unit find archer queen`
+
+  - player supertroop
     - shows the super troops you have active
 
 - ## <a id="command-list-clan"></a>Clan
