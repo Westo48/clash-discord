@@ -129,7 +129,7 @@ command_param_dict = {
     ),
     'rank_name': commands.Param(
         name="rank_name",
-        description="requested rank to link to role",
+        description="*optional* requested rank to link to role",
         default=None,
         choices=[
             "leader", "co-leader", "elder", "member", "uninitiated"
@@ -259,7 +259,7 @@ command_param_dict = {
     ),
     'client_role_mention': commands.Param(
         name="role",
-        description="mentioned discord role",
+        description="*optional* mentioned discord role",
         default=None
     ),
     'client_clan_rank_role': commands.Param(

@@ -99,54 +99,62 @@ Once setup is complete you will be able to interact with ClashDiscord using the 
 
 - ## <a id="command-list-clashdiscord"></a>ClashDiscord
 
-  - ### Info
-    - client info overview
-      - gives a relevant overview for the client
-  - ### User
-    - client user claim
-      - claims the user by discord user id within ClashDiscord
-  - ### Player
-    - client player claim `player tag` `api key`
-      - links a player to your claimed user
-      - if there are no other claimed players for your user, then sets this claimed player as active for you
-    - client player show
-      - shows all claimed players for your user and which is set as active
-    - client player update `player tag`
-      - sets the requested player as your active player
-    - client player remove `player tag`
-      - removes the claimed player from your user
-  - ### Guild
-    - client guild claim
-      - claims the guild by discord guild id within ClashDiscord
-      - sets the user who called the command as the guild admin within ClashDiscord
-  - ### Clan
-    - client clan claim `clan tag`
-      - claims the clan and links it to the claimed guild
-      - user _must_ be guild admin
-      - claimed guilds can claim multiple different clans
-      - multiple guilds can claim the same clan
-    - client clans show
-      - shows all claimed clans for the guild
-    - client removeclan `clan tag`
-      - removes the claimed clan from your guild
-  - ### Role
-    - client role show
-      - shows all claimed roles for the guild
-    - client role remove `role mention`
-      - removes claim on the mentioned role
-  - ### Clan Role
-    - client clanrole claim `clan tag` `role mention`
-      - links the mentioned role to a claimed clan
-  - ### Rank Role
-    - client rankrole claim `rank` `role mention`
-      - claims the mentioned role as a specific clan rank
-      - list of ranks
-        - leader
-        - co-leader
-        - elder
-        - member
-        - uninitiated
-          - _this means they aren't verified or they aren't in a claimed clan_
+  - client info
+    - overview for the client
+
+  - client user
+    - claims the user by discord user id within ClashDiscord
+
+  - client player
+    - _client player options_
+      - options for `client player` command
+      - `claim` - links a specified player to your user
+        - _values needed_ - `player tag` `api key`
+      - `show` _default_ - return all claimed players
+      - `update` - updates the requested player as your active player
+        - _values needed_ - `player tag`
+      - `remove` - removes the linked player from your user
+        - _values needed_ - `player tag`
+
+  - client guild
+    - claims the guild by discord guild id within ClashDiscord
+    - _sets the user who called the command as the guild admin within ClashDiscord_
+      - _if the guild has already been claimed, then nothing will happen_
+
+  - client clan
+    - _client clan options_
+      - options for `client clan` command
+      - `claim` - links a specified clan to your guild
+        - _values needed_ - `clan tag`
+      - `show` _default_ - return all claimed clans
+      - `remove` - removes the linked clan from your guild
+        - _values needed_ - `clan tag`
+
+  - client role
+    - _client role options_
+      - options for `client role` command
+      - `show` _default_ - return all linked roles
+      - `remove` - removes claim on the mentioned role
+        - _values needed_ - `role mention`
+
+  - client clanrole
+    - _client clanrole options_
+      - options for `client clanrole` command
+      - `claim` - links a specified clanrole the specified guild's claimed clan
+        - _values needed_ - `role mention` `clan tag`
+
+  - client rankrole
+    - _client rankrole options_
+      - options for `client rankrole` command
+      - `claim` - links a specified rankrole the specified Clash of Clans rank
+        - _values needed_ - `role mention` `rank name`
+        - _rank names_
+          - leader
+          - co-leader
+          - elder
+          - member
+          - uninitiated
+            - _this means they aren't verified or they aren't in a claimed clan_
 
 - ## <a id="command-list-discord"></a>Discord
 
