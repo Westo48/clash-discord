@@ -39,7 +39,7 @@ class Admin(commands.Cog):
         user: disnake.User = discord_utils.command_param_dict['required_user']
     ):
         """
-            *admin*
+            *admin* 
             claim a player for the mentioned user
 
             Parameters
@@ -187,7 +187,7 @@ class Admin(commands.Cog):
         user: disnake.User = discord_utils.command_param_dict['required_user']
     ):
         """
-            *admin*
+            *admin* 
             shows players claimed by the mentioned user
 
             Parameters
@@ -299,7 +299,7 @@ class Admin(commands.Cog):
         user: disnake.User = discord_utils.command_param_dict['required_user']
     ):
         """
-            *admin*
+            *admin* 
             remove a player for the mentioned user
 
             Parameters
