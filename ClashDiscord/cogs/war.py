@@ -392,9 +392,43 @@ class War(commands.Cog):
 
         elif option == "member":
             embed_title = f"{war_obj.clan.name} vs. {war_obj.opponent.name}"
+
+            # running clan's members
+            field_dict_list = await discord_responder.war_lineup_member(
+                war_obj.clan, self.coc_client,
+                inter.client.emojis, self.client_data.emojis)
+
+            embed_list = discord_responder.embed_message(
+                icon_url=inter.bot.user.avatar.url,
+                title=embed_title,
+                bot_user_name=inter.me.display_name,
+                thumbnail=war_obj.clan.badge,
+                field_list=field_dict_list,
+                author_display_name=inter.author.display_name,
+                author_avatar_url=inter.author.avatar.url
+            )
+
+            await discord_responder.send_embed_list(embed_list, inter)
+
+            # running opponent's members
             field_dict_list = await discord_responder.war_lineup_member(
                 war_obj.opponent, self.coc_client,
                 inter.client.emojis, self.client_data.emojis)
+
+            embed_list = discord_responder.embed_message(
+                icon_url=inter.bot.user.avatar.url,
+                title=embed_title,
+                bot_user_name=inter.me.display_name,
+                thumbnail=war_obj.clan.badge,
+                field_list=field_dict_list,
+                author_display_name=inter.author.display_name,
+                author_avatar_url=inter.author.avatar.url
+            )
+
+            await discord_responder.send_embed_list(embed_list, inter)
+
+            return
+
         else:
             embed_title = None
             field_dict_list = [{

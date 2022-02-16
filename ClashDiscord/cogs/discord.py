@@ -69,10 +69,7 @@ class Discord(commands.Cog):
 
         await inter.response.defer(ephemeral=True)
 
-    @announce.sub_command(
-        description=("*leadership* "
-                     "announces message to specified channel")
-    )
+    @announce.sub_command()
     async def message(
         self,
         inter,
