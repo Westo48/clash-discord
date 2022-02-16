@@ -31,7 +31,7 @@ class War(commands.Cog):
         war_selection: str = discord_utils.command_param_dict['war_selection']
     ):
         """
-            war info
+            displays war information
 
             Parameters
             ----------
@@ -88,7 +88,7 @@ class War(commands.Cog):
         war_selection: str = discord_utils.command_param_dict['war_selection']
     ):
         """
-            list of players that missed attacks in the current war
+            lists players that missed attacks in war
 
             Parameters
             ----------
@@ -148,10 +148,12 @@ class War(commands.Cog):
     ):
         """
             *leadership*
-            overview of all members in war
+            show all war members and their stars 
+            *default option is stars*
 
             Parameters
             ----------
+            option (optional): options for war star returns
             clan_role (optional): clan role to use linked clan
             war_selection (optional): cwl war selection
         """
@@ -228,7 +230,7 @@ class War(commands.Cog):
         war_selection: str = discord_utils.command_param_dict['war_selection']
     ):
         """
-            your war member score
+            user's player war score
 
             Parameters
             ----------
@@ -281,8 +283,8 @@ class War(commands.Cog):
         war_selection: str = discord_utils.command_param_dict['war_selection']
     ):
         """
-            *leadership*
-            every clanmate's war member score
+            *leadership* 
+            every clan member's war score
 
             Parameters
             ----------
@@ -342,10 +344,12 @@ class War(commands.Cog):
         war_selection: str = discord_utils.command_param_dict['war_selection']
     ):
         """
-            town hall lineup overview for war
+            war town hall lineup 
+            *default option is clan*
 
             Parameters
             ----------
+            option (optional): options for war lineup returns
             clan_role (optional): clan role to use linked clan
             war_selection (optional): cwl war selection
         """

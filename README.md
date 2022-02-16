@@ -188,7 +188,9 @@ Once setup is complete you will be able to interact with ClashDiscord using the 
   - ### _player options_
     - options for player commands
     - `user` - mention a user to get their active player's information
+      - _if no user is specified, then the user's active player will be used_
     - `tag` - specify a player's tag for that player's information
+      - _if no tag is specified, then the user's active player will be used_
 
   - player info
     - shows player information based on your active player
@@ -215,7 +217,9 @@ Once setup is complete you will be able to interact with ClashDiscord using the 
   - ### _clan options_
     - options for clan commands
     - `clan_role` - mention a role linked to a clan to get that clan's information
+      - _if no clan role is specified, then the user's active player's clan will be used_
     - `tag` - specify a clan's tag for that clan's information
+      - _if no tag is specified, then the user's active player's clan will be used_
 
   - clan info
     - displays clan information
@@ -245,34 +249,54 @@ Once setup is complete you will be able to interact with ClashDiscord using the 
   - clan supertroop
     - shows all active super troops in the clan
     - _clan supertroop option_
-      - options for `clan supertroop` command
+      - option for `clan supertroop` command
       - `super_troop` - if a super troop is specified, then it will search the clan and show who has the specified super troop active
 
 - ## <a id="command-list-war"></a>War
 
-  - war info overview
+  - ### _war options_
+    - options for war commands
+    - `clan_role` - mention a role linked to a clan to get that clan's war information
+      - _if no clan role is specified, then the user's active player's clan will be used_
+    - `cwl_war_selection` - *only for cwl* specify whether to look for the previous, current, or upcoming war
+      - _defaults to current_
+
+  - war info
     - displays war information
-    - uses active player's clan unless a linked clan role is mentioned
-  - war info scoreboard
-    - displays the scoreboard for the current war
-  - war clan noattack
-    - displays players that are missing attacks in war
-  - war clan stars
-    - overview of all members in war
-  - war clan attacks
-    - shows all attacks for every member
-  - war score self
-    - shows your member score for war
-  - war score member `user mention`
-    - displays the requested member score for war
+
+  - war noattack
+    - lists players that missed attacks in war
+    - _war noattack option_
+      - option for `war noattack` command
+      - `missed_attacks` - returns players who missed exactly the specified missed attack count
+        - _if not specified, then it will simply return all who are or have missed attacks_
+
+  - war stars
+    - show all war members and their stars
+    - *restricted to leaders and co-leaders*
+    - _war stars options_
+      - options for `clan lineup` command
+      - `stars` _default_ - returns all war members and their stars
+      - `member` - show all war members and their attacks
+
+  - war score user
+    - user's active player's war score
+    - _war score user option_
+      - option for `war score user` command
+      - `user` - returns the mentioned user's active player's war score
+        - _if not specified, then it will return the author's active player's war score_
+
   - war score clan
-    - displays every war member's score for war
-  - war lineup overview
-    - displays a lineup overview for your clan and your opponent
-  - war lineup clan
-    - displays a lineup for your clan and your opponent
-  - war lineup member
-    - displays a lineup for each member in your clan and your opponent
+    - every clan member's war score
+    - *restricted to leaders and co-leaders*
+
+  - war lineup
+    - war town hall lineup
+    - _war stars options_
+      - options for `clan lineup` command
+      - `overview` - short overview of the war's lineup
+      - `clan` _default_ - war lineup for each clan
+      - `member` - lineup for every member in war
 
 - ## <a id="command-list-cwl-group"></a>CWL Group
 
