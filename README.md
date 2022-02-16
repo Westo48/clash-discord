@@ -15,7 +15,6 @@ Discord bot for Clash of Clans discord servers written in Python
   - [Clan](#command-list-clan)
   - [War](#command-list-war)
   - [CWL](#command-list-cwl)
-  - [CWL War](#command-list-cwl-war)
 - [Contributing](#contributing)
 - [Requirements](#requirements)
 - [Links and Contact](#links-and-contact)
@@ -36,49 +35,46 @@ Getting ClashDiscord set up in your discord server can be somewhat confusing, bu
 
 2. claim your user in ClashDiscord
 
-   - `client user claim`
+   - `client user` `claim`
      - this will claim you as a user
-     - _this can be done in any claimed guild_
 
 3. claim your discord server
 
-   - `client guild claim`
+   - `client guild` `claim`
      - this will claim your discord server and add you as the guild admin within ClashDiscord
-     - guild is what the discord API calls a server
+      - _guild is what the discord API calls a server_
 
 4. link a player to your user
 
-   - `client player claim` `player tag` `api key`
+   - `client player` `claim` `player tag` `api key`
      - claims the requested player and links it to your discord user
-     - _this can be done in any claimed guild_
-     - getting your api key is annoying, but for everyone’s security this is necessary
+     - _getting your api key is annoying, but for everyone’s security this is necessary_
 
 5. link a clan to your guild
 
-   - `client clan claim` `clan tag`
-     - claims a clan and links it to the claimed guild
-     - your active player **must** be in the clan
-     - _this is also for security_
+    - `client clan` `claim` `clan tag`
+      - claims a clan and links it to the claimed guild
+      - a linked player **must** be in the clan
+        - _this is also for security_
 
 6. link existing roles to your server
 
-   - claim clan roles
-     - `client clanrole claim` `clan tag` `role mention`
-       - links the clan role to a claimed clan
-       - _mentionrole means you have to @mention the role_
+    A. claim clan roles
+      - `client clanrole` `claim` `clan tag` `role mention`
+        - links the clan role to a claimed clan
 
-   B. claim rank roles
+    B. claim rank roles
 
-   - `client rankrole claim` `rank` `role mention`
-     - links the rank role to a discord role
-       - leader
-       - co-leader
-       - elder
-       - member
-       - uninitiated
-         - _this means they aren't verified or they aren't in a claimed clan_
+      - `client rankrole` `claim` `rank name` `role mention`
+        - links the rank role to a discord role
+          - leader
+          - co-leader
+          - elder
+          - member
+          - uninitiated
+            - _this means they aren't verified or they aren't in a claimed clan_
 
-7. use clash discord, you are set up
+7. Use ClashDiscord, you are set up!
 
 # <a id="setup-summary"></a>Setup Summary
 
@@ -380,11 +376,9 @@ If you would _like_ to contribute to this project please message me on discord _
 There aren't many required packages, but here are the few that are required and the versions I am using.
 
 - [disnake](https://github.com/DisnakeDev/disnake)
-  - 2.0.0
+  - 2.3.2
 - [coc.py](https://github.com/mathsman5133/coc.py)
-  - Version 2.0.0
-- requests
-  - 2.24.0
+  - 2.0.0
 - PyMySQL
   - 1.0.2
 
