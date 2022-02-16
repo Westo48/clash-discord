@@ -107,8 +107,9 @@ class Clan(commands.Cog):
         tag: str = discord_utils.command_param_dict['tag']
     ):
         """
-            *leadership*
-            get clan lineup information
+            *leadership* 
+            get clan town hall lineup information 
+            *default option is overview*
 
             Parameters
             ----------
@@ -198,12 +199,15 @@ class Clan(commands.Cog):
         tag: str = discord_utils.command_param_dict['tag']
     ):
         """
-            *leadership*
-            rundown of clan's war preference
+            *leadership* 
+            rundown of clan's war preference 
+            *default option is overview*
 
             Parameters
             ----------
+            option (optional): options for clan warpreference returns
             clan_role (optional): clan role to use linked clan
+            tag (optional): tag to search
         """
 
         # role not mentioned
@@ -286,7 +290,7 @@ class Clan(commands.Cog):
         await discord_responder.send_embed_list(embed_list, inter)
 
     @clan.sub_command()
-    async def unit(
+    async def donate(
         self,
         inter,
         unit_name: str = commands.Param(
@@ -298,7 +302,7 @@ class Clan(commands.Cog):
         tag: str = discord_utils.command_param_dict['tag']
     ):
         """
-            get information about mentioned clan
+            search the clan for available donors for a specified unit
 
             Parameters
             ----------
@@ -384,10 +388,11 @@ class Clan(commands.Cog):
         tag: str = discord_utils.command_param_dict['tag']
     ):
         """
-            shows all active supertroops in the clan
+            shows all active super troops in the clan
 
             Parameters
             ----------
+            super_troop (optional): super troop name to search clan donations
             clan_role (optional): clan role to use linked clan
             tag (optional): tag to search
         """

@@ -26,7 +26,7 @@ class Client(commands.Cog):
     @client.sub_command()
     async def info(self, inter):
         """
-            relevant overview for the client
+            overview for the client
         """
 
         field_dict_list = []
@@ -63,6 +63,10 @@ class Client(commands.Cog):
     ):
         """
             claim your discord user
+
+            Parameters
+            ----------
+            option (optional): options for client user returns
         """
 
         # initializing embed default values
@@ -109,12 +113,13 @@ class Client(commands.Cog):
         api_key: str = discord_utils.command_param_dict['api_key']
     ):
         """
-            verify and claim a player,
-            a player must be claimed to view and run
+            client player commands, 
+            a player must be claimed to view and run 
             many of ClashDiscord commands
 
             Parameters
             ----------
+            option (optional): options for client player returns
             player_tag: player tag to search
             api_key: api key provided from in game
         """
@@ -578,8 +583,12 @@ class Client(commands.Cog):
         option: str = discord_utils.command_param_dict['client_guild']
     ):
         """
-            claim a discord guild and set yourself
+            claim a discord guild and set yourself 
             as the guild admin for ClashDiscord
+
+            Parameters
+            ----------
+            option (optional): options for client guild returns
         """
 
         # initializing embed default values
@@ -672,12 +681,13 @@ class Client(commands.Cog):
         clan_tag: str = discord_utils.command_param_dict['tag']
     ):
         """
-            *admin*
-            claim the requested clan
+            *ClashDiscord server admin* 
+            client clan commands
 
             Parameters
             ----------
-            clan_tag: clan tag to claim
+            option (optional): options for client clan returns
+            clan_tag (optional): tag for clan to claim
         """
 
         # initializing embed default values
@@ -1037,8 +1047,13 @@ class Client(commands.Cog):
         role: str = discord_utils.command_param_dict['client_role_mention']
     ):
         """
-            *admin*
-            shows all roles claimed by a discord guild
+            *ClashDiscord server admin* 
+            client role commands
+
+            Parameters
+            ----------
+            option (optional): options for client role returns
+            role (optional): mentioned discord role
         """
 
         # initializing embed default values
@@ -1330,13 +1345,14 @@ class Client(commands.Cog):
         clan_tag: str = discord_utils.command_param_dict['tag']
     ):
         """
-            *admin*
-            claim a clan's discord role
+            *ClashDiscord server admin* 
+            client clan role commands
 
             Parameters
             ----------
-            role: role object to claim and link to claimed clan
-            clan_tag: clan tag to link to role
+            option (optional): options for client clan role returns
+            role (optional): role object to claim and link to claimed clan
+            clan_tag (optional): clan tag to link to role
         """
 
         # initializing embed default values
@@ -1533,12 +1549,12 @@ class Client(commands.Cog):
         rank_name: str = discord_utils.command_param_dict['rank_name']
     ):
         """
-            *admin*
-            claim a rank's discord role
+            *ClashDiscord server admin* 
+            client rank role commands
 
             Parameters
             ----------
-            role: role object to claim and link to client rank
+            option (optional): options for client rank role returns
             rank_name: requested rank to link to role
         """
 

@@ -31,8 +31,13 @@ class SuperUser(commands.Cog):
         guild_id: int = discord_utils.command_param_dict['guild_id']
     ):
         """
-            *super user*
-            *super user* shows all guilds ClashDiscord is in
+            *super user* 
+            super user guild commands
+
+            Parameters
+            ----------
+            option (optional): options for superuser guild commands
+            guild_id (optional): guild id for removal
         """
 
         await inter.response.defer()
@@ -203,8 +208,13 @@ class SuperUser(commands.Cog):
         user: disnake.User = discord_utils.command_param_dict['user']
     ):
         """
-            *super user*
-            return a list of all admin users
+            *super user* 
+            super user admin commands
+
+            Parameters
+            ----------
+            option (optional): options for superuser admin commands
+            user (optional): user for admin toggle and user removal
         """
 
         # defer for every superuser admin command
@@ -417,13 +427,14 @@ class SuperUser(commands.Cog):
         user: disnake.User = discord_utils.command_param_dict['required_user']
     ):
         """
-            *super user*
-            claim a player for the mentioned user
+            *super user* 
+            super user player commands
 
             Parameters
             ----------
-            player_tag: player tag link user to
-            user: user to link player to
+            option (optional): options for superuser player commands
+            player_tag: player tag create or remove link
+            user: user to create or remove player link
         """
 
         # defer for every superuser player command

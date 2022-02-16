@@ -474,7 +474,7 @@ def player_info(player_obj, discord_emoji_list, client_emoji_list):
         })
         if player_obj.legend_statistics.best_season:
             legend_league_emoji = get_emoji(
-                player_obj.league.name, discord_emoji_list, client_emoji_list)
+                "Legend League", discord_emoji_list, client_emoji_list)
             field_dict_list.append({
                 'name': f"**{legend_league_emoji} Best Rank | Trophies**",
                 'value': (
@@ -485,7 +485,7 @@ def player_info(player_obj, discord_emoji_list, client_emoji_list):
             })
         if player_obj.legend_statistics.current_season:
             legend_league_emoji = get_emoji(
-                player_obj.league.name, discord_emoji_list, client_emoji_list)
+                "Legend League", discord_emoji_list, client_emoji_list)
             field_dict_list.append({
                 'name': f"**{legend_league_emoji} Current Rank | Trophies**",
                 'value': (
@@ -496,7 +496,7 @@ def player_info(player_obj, discord_emoji_list, client_emoji_list):
             })
         if player_obj.legend_statistics.previous_season:
             legend_league_emoji = get_emoji(
-                player_obj.league.name, discord_emoji_list, client_emoji_list)
+                "Legend League", discord_emoji_list, client_emoji_list)
             field_dict_list.append({
                 'name': f"**{legend_league_emoji} Previous Rank | Trophies**",
                 'value': (
@@ -524,20 +524,19 @@ def player_info(player_obj, discord_emoji_list, client_emoji_list):
             'value': player_obj.role.in_game_name,
             'inline': True
         })
+        war_preference_emoji = get_emoji(
+            player_obj.war_opted_in, discord_emoji_list, client_emoji_list)
+        field_dict_list.append({
+            'name': '**War Preference**',
+            'value': war_preference_emoji,
+            'inline': True
+        })
     else:
         field_dict_list.append({
             'name': '**Clan**',
             'value': f"{player_obj.name} is not in a clan",
             'inline': True
         })
-
-    war_preference_emoji = get_emoji(
-        player_obj.war_opted_in, discord_emoji_list, client_emoji_list)
-    field_dict_list.append({
-        'name': '**War Preference**',
-        'value': war_preference_emoji,
-        'inline': True
-    })
 
     hero_value = ""
     for hero in player_obj.heroes:
