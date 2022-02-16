@@ -81,7 +81,7 @@ command_param_dict = {
     ),
     'super_troop': commands.Param(
         name="super_troop",
-        description="*optional* name of super troop to search clan donations",
+        description="*optional* super troop name to search clan donations",
         default=None
     ),
     'unit_type': commands.Param(

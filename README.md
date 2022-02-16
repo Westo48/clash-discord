@@ -185,7 +185,7 @@ Once setup is complete you will be able to interact with ClashDiscord using the 
 
 - ## <a id="command-list-player"></a>Player
 
-  - _player options_
+  - ### _player options_
     - options for player commands
     - `user` - mention a user to get their active player's information
     - `tag` - specify a player's tag for that player's information
@@ -212,36 +212,41 @@ Once setup is complete you will be able to interact with ClashDiscord using the 
 
 - ## <a id="command-list-clan"></a>Clan
 
-  - clan info self
-    - displays clan information for clan active player is in
-  - clan info find `clan tag`
-    - displays clan information for requested clan tag
-    - example
-      - `/clan info find #JJRJGVR0`
-      - `/clan info find JJRJGVR0`
-  - clan info mention `clan role`
-    - displays clan information for clan linked to the clan role mentioned
-  - clan lineup overview
+  - ### _clan options_
+    - options for clan commands
+    - `clan_role` - mention a role linked to a clan to get that clan's information
+    - `tag` - specify a clan's tag for that clan's information
+
+  - clan info
+    - displays clan information
+
+  - clan lineup
+    - displays clan town hall lineup
     - *restricted to leaders and co-leaders*
-    - displays clan's town hall lineup
-  - clan lineup member
-    - *restricted to leaders and co-leaders*
-    - displays clan's lineup for each member
-  - clan warpreference overview
-    - *restricted to leaders and co-leaders*
+    - _clan lineup options_
+      - options for `clan lineup` command
+      - `overview` _default_ - returns an overview of the clan's town hall lineup
+      - `member` - returns each member of the clan and their town hall and their hero levels
+
+  - clan warpreference
     - displays rundown of clan member's war preference
-  - clan warpreference member
     - *restricted to leaders and co-leaders*
-    - displays each clan member's war preference
-  - clan unit donate `unit name`
-    - shows who can donate the best of a specified unit
-    - uses active player's clan for all clan commands
-    - example
+    - _clan warpreference options_
+      - options for `clan warpreference` command
+      - `overview` _default_ - returns an overview of the clan's war preference
+      - `member` - returns each member of the clan and their war preference
+
+  - clan donate `unit name`
+    - search the clan for available donors for a specified unit
+    - _examples_
       - `/clan donate hog rider`
       - `/clan donate freeze spell`
-  - clan supertroop donate `super troop name`
-    - shows players in your clan that have a specified super troop activated
-      - `/clan supertroop donate sneaky goblin`
+
+  - clan supertroop
+    - shows all active super troops in the clan
+    - _clan supertroop option_
+      - options for `clan supertroop` command
+      - `super_troop` - if a super troop is specified, then it will search the clan and show who has the specified super troop active
 
 - ## <a id="command-list-war"></a>War
 
