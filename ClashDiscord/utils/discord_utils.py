@@ -202,7 +202,7 @@ command_param_dict = {
     'discord_user': commands.Param(
         name="option",
         description="*optional* options for discord user returns",
-        default="player",
+        default="clan",
         choices=[
             "player", "clan"
         ]

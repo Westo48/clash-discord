@@ -150,38 +150,77 @@ Once setup is complete you will be able to interact with ClashDiscord using the 
 
 - ## <a id="command-list-discord"></a>Discord
 
-  - discord help info
+  - discord help
     - displays relevant help-text regarding what commands can be run
+    - react to the help message to parse through command groups
+
   - discord announce message `channel` `message`
-    - *restricted to leaders and co-leaders*
     - announces message to specified channel
-  - discord announce player `channel` `message` `player tag`
     - *restricted to leaders and co-leaders*
+
+  - discord announce player `channel` `message` `player tag`
     - announces message to specified channel, pings the requested player's user
+    - *restricted to leaders and co-leaders*
+
   - discord announce donate `channel` `message` `unit name`
-    - announces message to specified channel, pings all users that can donate the requested unit
+    - announces message to specified channel, pings all users that can donate the requested
+    - _discord announce donate options_
+      - options for `discord announce donate` command
+        - `clan_role` - mention a role linked to a clan to get that clan's information
+          - _if no clan role is specified, then the user's active player's clan will be used_
+
   - discord announce supertroop `channel` `message` `super troop name`
     - announces message to specified channel, pings all users that have the requested super troop active
+    - _discord announce supertroop options_
+      - options for `discord announce supertroop` command
+        - `clan_role` - mention a role linked to a clan to get that clan's information
+          - _if no clan role is specified, then the user's active player's clan will be used_
+
   - discord announce war `channel` `message`
-    - *restricted to leaders and co-leaders*
     - announces message to specified channel, pings all in current war
+    - *restricted to leaders and co-leaders*
+    - _discord announce war options_
+      - options for `discord announce war` command
+        - `clan_role` - mention a role linked to a clan to get that clan's information
+          - _if no clan role is specified, then the user's active player's clan will be used_
+        - `cwl_war_selection` - *only for cwl* specify whether to look for the previous, current, or upcoming war
+          - _defaults to current_
+
   - discord announce warnoatk `channel` `message`
-    - *restricted to leaders and co-leaders*
     - announces message to channel, pings all in war missing attacks
-  - discord role 
-    - adds and removes necessary roles in discord based on claimed players clan and role in that clan
+    - *restricted to leaders and co-leaders*
+    - _discord announce warnoattack options_
+      - options for `discord announce warnoattack` command
+        - `clan_role` - mention a role linked to a clan to get that clan's information
+          - _if no clan role is specified, then the user's active player's clan will be used_
+        - `missed_attacks` - returns players who missed exactly the specified missed attack count
+          - _if not specified, then it will simply return all who are or have missed attacks_
+        - `cwl_war_selection` - *only for cwl* specify whether to look for the previous, current, or upcoming war
+          - _defaults to current_
+
+  - discord role me
+    - update your roles
+
   - discord role member `membermention`
+    - update mentioned user's roles
     - *restricted to leaders and co-leaders*
-    - adds and removes necessary roles in discord based on claimed players clan and role in that clan for mentioned discord user
+
   - discord role all
-    - *restricted to leaders and co-leaders*
-    - adds and removes necessary roles in discord based on claimed players clan and role in that clan for all users in guild
-  - discord user player `player tag`
+    - update roles for every member in the server
+    - *restricted to ClashDiscord server admin*
+
+  - discord emoji `coc_name`
+    - sends specified emoji
+
+  - discord user
     - returns the user linked to a requested player
-    - example
-      - `/player user find #RGQ8RGU9`
-  - discord user clan
-    - finds the users linked to the active player's clan
+    - _discord user options_
+      - options for `discord user` command
+      - `player` - finding the linked user to the specified player
+        - _player tag must be specified_
+      - `clan` _default_ - finding the linked user for each member in the clan
+        - *restricted to leaders and co-leaders*
+        - _if no clan role is specified, then the user's active player's clan will be used_
 
 - ## <a id="command-list-player"></a>Player
 

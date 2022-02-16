@@ -80,7 +80,7 @@ class Discord(commands.Cog):
         message: str = discord_utils.command_param_dict['message']
     ):
         """
-            *leadership*
+            *leadership* 
             announces message to specified channel
 
             Parameters
@@ -149,8 +149,8 @@ class Discord(commands.Cog):
         tag: str = discord_utils.command_param_dict['required_tag']
     ):
         """
-            *leadership*
-            announces message to specified channel,
+            *leadership* 
+            announces message to specified channel, 
             pings user with the specified player tag
 
             Parameters
@@ -243,10 +243,10 @@ class Discord(commands.Cog):
             description=discord_utils.command_param_dict['unit_name'].description,
             autocomplete=discord_utils.autocomp_unit
         ),
-        clan_role: disnake.Role = None
+        clan_role: disnake.Role = discord_utils.command_param_dict['clan_role'],
     ):
         """
-            announces message to specified channel,
+            announces message to specified channel, 
             pings all that can donate the requested unit
 
             Parameters
@@ -361,7 +361,7 @@ class Discord(commands.Cog):
         clan_role: disnake.Role = discord_utils.command_param_dict['clan_role']
     ):
         """
-            announces message to specified channel,
+            announces message to specified channel, 
             pings all that have the requested super troop active
 
             Parameters
@@ -378,8 +378,7 @@ class Discord(commands.Cog):
 
             verification_payload = (
                 await discord_responder.clan_verification(
-                    db_player_obj, inter.author, self.coc_client)
-            )
+                    db_player_obj, inter.author, self.coc_client))
         # role has been mentioned
         else:
             verification_payload = (
@@ -477,8 +476,8 @@ class Discord(commands.Cog):
         war_selection: str = discord_utils.command_param_dict['war_selection']
     ):
         """
-            *leadership*
-            announces message to specified channel,
+            *leadership* 
+            announces message to specified channel, 
             pings all in current war
 
             Parameters
@@ -571,8 +570,8 @@ class Discord(commands.Cog):
         war_selection: str = discord_utils.command_param_dict['war_selection']
     ):
         """
-            *leadership*
-            announces message to channel,
+            *leadership* 
+            announces message to channel, 
             pings all in war missing attacks
 
             Parameters
@@ -712,7 +711,7 @@ class Discord(commands.Cog):
         user: disnake.User = discord_utils.command_param_dict['user']
     ):
         """
-            *leadership*
+            *leadership* 
             update mentioned user's roles
 
             Parameters
@@ -766,8 +765,8 @@ class Discord(commands.Cog):
     @role.sub_command()
     async def all(self, inter):
         """
-            *admin*
-            update roles every member in the server
+            *ClashDiscord server admin* 
+            update roles for every member in the server
         """
 
         db_guild_obj = db_responder.read_guild(inter.guild.id)
@@ -880,10 +879,12 @@ class Discord(commands.Cog):
         clan_role: disnake.Role = discord_utils.command_param_dict['clan_role']
     ):
         """
-            returns the user linked to a requested player
+            returns the user linked to a requested player 
+            *default option is clan*
 
             Parameters
             ----------
+            option (optional): options for discord user returns
             tag (optional): player tag to search
             clan_role (optional): clan role to use linked clan
         """
@@ -921,6 +922,7 @@ class Discord(commands.Cog):
 
             embed_title = None
             field_dict_list = []
+            embed_thumbnail = player_obj.league.icon
 
             field_dict_list.append(
                 discord_responder.find_user_from_tag(
@@ -958,6 +960,7 @@ class Discord(commands.Cog):
 
             embed_title = f"{clan_obj.name} {clan_obj.tag} linked users"
             field_dict_list = []
+            embed_thumbnail = clan_obj.badge
 
             # finding the user for each member in the clan
             for member_obj in clan_obj.members:
@@ -966,6 +969,7 @@ class Discord(commands.Cog):
 
         else:
             embed_title = None
+            embed_thumbnail = None
             field_dict_list = [{
                 'name': "incorrect option selected",
                 'value': "please select a different option"
@@ -975,7 +979,7 @@ class Discord(commands.Cog):
             icon_url=inter.bot.user.avatar.url,
             bot_user_name=inter.me.display_name,
             title=embed_title,
-            thumbnail=player_obj.league.icon,
+            thumbnail=embed_thumbnail,
             field_list=field_dict_list,
             author_display_name=inter.author.display_name,
             author_avatar_url=inter.author.avatar.url
