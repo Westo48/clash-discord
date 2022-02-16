@@ -14,7 +14,7 @@ Discord bot for Clash of Clans discord servers written in Python
   - [Player](#command-list-player)
   - [Clan](#command-list-clan)
   - [War](#command-list-war)
-  - [CWL Group](#command-list-cwl-group)
+  - [CWL](#command-list-cwl)
   - [CWL War](#command-list-cwl-war)
 - [Contributing](#contributing)
 - [Requirements](#requirements)
@@ -275,7 +275,7 @@ Once setup is complete you will be able to interact with ClashDiscord using the 
     - show all war members and their stars
     - *restricted to leaders and co-leaders*
     - _war stars options_
-      - options for `clan lineup` command
+      - options for `war stars` command
       - `stars` _default_ - returns all war members and their stars
       - `member` - show all war members and their attacks
 
@@ -292,26 +292,37 @@ Once setup is complete you will be able to interact with ClashDiscord using the 
 
   - war lineup
     - war town hall lineup
-    - _war stars options_
-      - options for `clan lineup` command
+    - _war lineup options_
+      - options for `war lineup` command
       - `overview` - short overview of the war's lineup
       - `clan` _default_ - war lineup for each clan
       - `member` - lineup for every member in war
 
-- ## <a id="command-list-cwl-group"></a>CWL Group
+- ## <a id="command-list-cwl"></a>CWL
 
-  - cwl lineup overview
-    - displays a lineup for clans in your cwl group
-  - cwl lineup clan `clan tag`
-    - displays a lineup for the requested clan in cwl
-  - cwl lineup member
-    - *restricted to leaders and co-leaders*
-    - displays a lineup each member of each clan in cwl
+  - ### _cwl options_
+    - options for cwl commands
+    - `clan_role` - mention a role linked to a clan to get that clan's cwl information
+      - _if no clan role is specified, then the user's active player's clan will be used_
+
+  - cwl lineup
+    - CWL town hall lineup
+    - _cwl lineup options_
+      - options for `cwl lineup` command
+      - `overview` - short overview of the cwl's lineup
+      - `clan` _default_ - cwl lineup for each clan
+      - `member` - lineup for every member in each clan in cwl
+
   - cwl score user
-    - lists your _or the mentioned user's_ active player's score for each war in cwl
-  - cwl clan score
+    - user's active player's cwl score
+    - _cwl score user option_
+      - option for `cwl score user` command
+      - `user` - returns the mentioned user's active player's cwl score
+        - _if not specified, then it will return the author's active player's cwl score_
+
+  - cwl score clan
+    - every clan member's cwl score
     - *restricted to leaders and co-leaders*
-    - displays every cwl member's score
 
 # <a id="contributing"></a>Contributing
 

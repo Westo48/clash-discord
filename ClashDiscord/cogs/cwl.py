@@ -32,7 +32,7 @@ class CWL(commands.Cog):
         clan_role: disnake.Role = discord_utils.command_param_dict['clan_role']
     ):
         """
-            returns the CWL group lineup
+            CWL town hall lineup
 
             Parameters
             ----------
@@ -139,7 +139,7 @@ class CWL(commands.Cog):
         user: disnake.User = discord_utils.command_param_dict['user']
     ):
         """
-            returns specified user's active player's cwl score
+            user's player cwl score
 
             Parameters
             ----------
