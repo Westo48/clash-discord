@@ -28,7 +28,7 @@ class SuperUser(commands.Cog):
         self,
         inter,
         option: str = discord_utils.command_param_dict['superuser_guild'],
-        guild_id: int = discord_utils.command_param_dict['guild_id']
+        guild_id: str = discord_utils.command_param_dict['guild_id']
     ):
         """
             *super user* 
@@ -105,6 +105,8 @@ class SuperUser(commands.Cog):
                 await discord_responder.send_embed_list(embed_list, inter)
                 return
 
+            guild_id = int(guild_id)
+
             # confirm guild is claimed
             db_guild_obj = db_responder.read_guild(guild_id)
 
@@ -149,6 +151,8 @@ class SuperUser(commands.Cog):
 
                 await discord_responder.send_embed_list(embed_list, inter)
                 return
+
+            guild_id = int(guild_id)
 
             # confirm bot is in guild
             guild = disnake.utils.get(inter.bot.guilds, id=guild_id)

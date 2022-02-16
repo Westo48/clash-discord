@@ -1044,7 +1044,7 @@ class Client(commands.Cog):
         self,
         inter,
         option: str = discord_utils.command_param_dict['client_role'],
-        role: str = discord_utils.command_param_dict['client_role_mention']
+        role: disnake.Role = discord_utils.command_param_dict['client_role_mention']
     ):
         """
             *ClashDiscord server admin* 
@@ -1545,7 +1545,7 @@ class Client(commands.Cog):
         self,
         inter,
         option: str = discord_utils.command_param_dict['client_clan_rank_role'],
-        role: str = discord_utils.command_param_dict['client_role_mention'],
+        role: disnake.Role = discord_utils.command_param_dict['client_role_mention'],
         rank_name: str = discord_utils.command_param_dict['rank_name']
     ):
         """
