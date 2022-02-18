@@ -4,6 +4,7 @@ import data.RazBot_Data as RazBot_Data
 import data.ClashDiscord_Client_Data as ClashDiscord_Client_Data
 import responders.ClashResponder as clash_responder
 import responders.RazBotDB_Responder as db_responder
+from data.th_urls import get_th_url
 from utils import coc_utils
 from disnake.utils import get
 from disnake import Embed, Color
@@ -447,8 +448,15 @@ def player_info(player_obj, discord_emoji_list, client_emoji_list):
     th_emoji = get_emoji(
         player_obj.town_hall, discord_emoji_list, client_emoji_list)
     field_dict_list.append({
-        'name': '**TH Lvl**',
-        'value': th_emoji,
+        'name': th_emoji,
+        'value': "Town Hall Level",
+        'inline': True
+    })
+    league_emoji = get_emoji(
+        player_obj.league.name, discord_emoji_list, client_emoji_list)
+    field_dict_list.append({
+        'name': league_emoji,
+        'value': "League",
         'inline': True
     })
     trophy_emoji = get_emoji(
@@ -484,16 +492,18 @@ def player_info(player_obj, discord_emoji_list, client_emoji_list):
                 'inline': True
             })
         if player_obj.legend_statistics.current_season:
-            legend_league_emoji = get_emoji(
-                "Legend League", discord_emoji_list, client_emoji_list)
-            field_dict_list.append({
-                'name': f"**{legend_league_emoji} Current Rank | Trophies**",
-                'value': (
-                    f"{player_obj.legend_statistics.current_season.rank} | "
-                    f"{player_obj.legend_statistics.current_season.trophies}"
-                ),
-                'inline': True
-            })
+            if (player_obj.legend_statistics.current_season.rank is not None and
+                    player_obj.legend_statistics.current_season.trophies is not None):
+                legend_league_emoji = get_emoji(
+                    "Legend League", discord_emoji_list, client_emoji_list)
+                field_dict_list.append({
+                    'name': f"**{legend_league_emoji} Current Rank | Trophies**",
+                    'value': (
+                        f"{player_obj.legend_statistics.current_season.rank} | "
+                        f"{player_obj.legend_statistics.current_season.trophies}"
+                    ),
+                    'inline': True
+                })
         if player_obj.legend_statistics.previous_season:
             legend_league_emoji = get_emoji(
                 "Legend League", discord_emoji_list, client_emoji_list)
@@ -2791,7 +2801,16 @@ async def send_embed_list(embed_list, inter):
         await inter.send(embeds=embeds)
 
 
+# town hall urls
+def get_town_hall_url(player):
+    thumbnail_url = get_th_url(player.town_hall)
+    if thumbnail_url is None:
+        thumbnail_url = player.league.icon.small
+    return thumbnail_url
+
+
 # emojis
+
 def get_emoji(coc_name, discord_emoji_list, client_emoji_list):
     client_emoji = get_base_emoji(
         coc_name, discord_emoji_list, client_emoji_list)
