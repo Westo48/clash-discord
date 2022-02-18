@@ -919,7 +919,7 @@ class Discord(commands.Cog):
 
             embed_title = None
             field_dict_list = []
-            embed_thumbnail = player_obj.league.icon
+            embed_thumbnail = player_obj.league.icon.small
 
             field_dict_list.append(
                 discord_responder.find_user_from_tag(
@@ -957,7 +957,7 @@ class Discord(commands.Cog):
 
             embed_title = f"{clan_obj.name} {clan_obj.tag} linked users"
             field_dict_list = []
-            embed_thumbnail = clan_obj.badge
+            embed_thumbnail = clan_obj.badge.small
 
             # finding the user for each member in the clan
             for member_obj in clan_obj.members:

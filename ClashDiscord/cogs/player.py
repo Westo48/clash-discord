@@ -86,7 +86,7 @@ class Player(commands.Cog):
             icon_url=inter.bot.user.avatar.url,
             title=f"{player.name} {player.tag}",
             bot_user_name=inter.me.display_name,
-            thumbnail=player.league.icon,
+            thumbnail=player.league.icon.small,
             field_list=field_dict_list,
             author_display_name=inter.author.display_name,
             author_avatar_url=inter.author.avatar.url
@@ -159,7 +159,7 @@ class Player(commands.Cog):
             icon_url=inter.bot.user.avatar.url,
             title=f"{player.name} {player.tag}",
             bot_user_name=inter.me.display_name,
-            thumbnail=player.league.icon,
+            thumbnail=player.league.icon.small,
             field_list=player_field_dict_list,
             author_display_name=inter.author.display_name,
             author_avatar_url=inter.author.avatar.url
@@ -172,7 +172,7 @@ class Player(commands.Cog):
             icon_url=inter.bot.user.avatar.url,
             title=f"{player.name} units",
             bot_user_name=inter.me.display_name,
-            thumbnail=player.league.icon,
+            thumbnail=player.league.icon.small,
             field_list=unit_field_dict_list,
             author_display_name=inter.author.display_name,
             author_avatar_url=inter.author.avatar.url
@@ -263,7 +263,7 @@ class Player(commands.Cog):
             icon_url=inter.bot.user.avatar.url,
             title=title_string,
             bot_user_name=inter.me.display_name,
-            thumbnail=player.league.icon,
+            thumbnail=player.league.icon.small,
             field_list=field_dict_list,
             author_display_name=inter.author.display_name,
             author_avatar_url=inter.author.avatar.url
@@ -350,7 +350,7 @@ class Player(commands.Cog):
             icon_url=inter.bot.user.avatar.url,
             title=title_string,
             bot_user_name=inter.me.display_name,
-            thumbnail=player.league.icon,
+            thumbnail=player.league.icon.small,
             field_list=field_dict_list,
             author_display_name=inter.author.display_name,
             author_avatar_url=inter.author.avatar.url
@@ -425,7 +425,7 @@ class Player(commands.Cog):
             icon_url=inter.bot.user.avatar.url,
             title=f"{player.name} super troops",
             bot_user_name=inter.me.display_name,
-            thumbnail=player.league.icon,
+            thumbnail=player.league.icon.small,
             field_list=field_dict_list,
             author_display_name=inter.author.display_name,
             author_avatar_url=inter.author.avatar.url

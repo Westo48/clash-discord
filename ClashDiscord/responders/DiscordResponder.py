@@ -2721,7 +2721,7 @@ def initialize_embed(
     # thumbnail is not null
     if thumbnail is not None:
         embed.set_thumbnail(
-            url=thumbnail.small)
+            url=thumbnail)
 
     # image url is not null
     if image_url is not None:
@@ -3287,7 +3287,7 @@ async def update_roles(user, guild, coc_client):
                     "name": f"{player_obj.clan.name} {player_obj.clan.tag}",
                     "value": f"not claimed in {guild.name} server"
                 }],
-                "thumbnail": player_obj.league.icon
+                "thumbnail": player_obj.league.icon.small
             })
             continue
 
@@ -3305,7 +3305,7 @@ async def update_roles(user, guild, coc_client):
                              f"{player_obj.clan.tag}"),
                     "value": f"not claimed"
                 }],
-                "thumbnail": player_obj.clan.badge
+                "thumbnail": player_obj.clan.badge.small
             })
             continue
 

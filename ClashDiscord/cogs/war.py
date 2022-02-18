@@ -71,7 +71,7 @@ class War(commands.Cog):
             icon_url=inter.bot.user.avatar.url,
             title=f"{war_obj.clan.name} vs. {war_obj.opponent.name}",
             bot_user_name=inter.me.display_name,
-            thumbnail=war_obj.clan.badge,
+            thumbnail=war_obj.clan.badge.small,
             field_list=field_dict_list,
             author_display_name=inter.author.display_name,
             author_avatar_url=inter.author.avatar.url
@@ -130,7 +130,7 @@ class War(commands.Cog):
             icon_url=inter.bot.user.avatar.url,
             title=f"{war_obj.clan.name} vs. {war_obj.opponent.name}",
             bot_user_name=inter.me.display_name,
-            thumbnail=war_obj.clan.badge,
+            thumbnail=war_obj.clan.badge.small,
             field_list=field_dict_list,
             author_display_name=inter.author.display_name,
             author_avatar_url=inter.author.avatar.url
@@ -206,7 +206,7 @@ class War(commands.Cog):
             icon_url=inter.bot.user.avatar.url,
             title=embed_title,
             bot_user_name=inter.me.display_name,
-            thumbnail=war_obj.clan.badge,
+            thumbnail=war_obj.clan.badge.small,
             field_list=field_dict_list,
             author_display_name=inter.author.display_name,
             author_avatar_url=inter.author.avatar.url
@@ -267,7 +267,7 @@ class War(commands.Cog):
             icon_url=inter.bot.user.avatar.url,
             title=f"{player_obj.name} war score",
             bot_user_name=inter.me.display_name,
-            thumbnail=player_obj.clan.badge,
+            thumbnail=player_obj.clan.badge.small,
             field_list=field_dict_list,
             author_display_name=inter.author.display_name,
             author_avatar_url=inter.author.avatar.url
@@ -327,7 +327,7 @@ class War(commands.Cog):
             icon_url=inter.bot.user.avatar.url,
             title=f"{war_obj.clan.name} vs. {war_obj.opponent.name}",
             bot_user_name=inter.me.display_name,
-            thumbnail=war_obj.clan.badge,
+            thumbnail=war_obj.clan.badge.small,
             field_list=field_dict_list,
             author_display_name=inter.author.display_name,
             author_avatar_url=inter.author.avatar.url
@@ -402,7 +402,7 @@ class War(commands.Cog):
                 icon_url=inter.bot.user.avatar.url,
                 title=embed_title,
                 bot_user_name=inter.me.display_name,
-                thumbnail=war_obj.clan.badge,
+                thumbnail=war_obj.clan.badge.small,
                 field_list=field_dict_list,
                 author_display_name=inter.author.display_name,
                 author_avatar_url=inter.author.avatar.url
@@ -419,7 +419,7 @@ class War(commands.Cog):
                 icon_url=inter.bot.user.avatar.url,
                 title=embed_title,
                 bot_user_name=inter.me.display_name,
-                thumbnail=war_obj.clan.badge,
+                thumbnail=war_obj.clan.badge.small,
                 field_list=field_dict_list,
                 author_display_name=inter.author.display_name,
                 author_avatar_url=inter.author.avatar.url
@@ -440,7 +440,7 @@ class War(commands.Cog):
             icon_url=inter.bot.user.avatar.url,
             title=embed_title,
             bot_user_name=inter.me.display_name,
-            thumbnail=war_obj.clan.badge,
+            thumbnail=war_obj.clan.badge.small,
             field_list=field_dict_list,
             author_display_name=inter.author.display_name,
             author_avatar_url=inter.author.avatar.url
