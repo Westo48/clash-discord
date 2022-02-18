@@ -2721,7 +2721,7 @@ def initialize_embed(
     # thumbnail is not null
     if thumbnail is not None:
         embed.set_thumbnail(
-            url=thumbnail.small)
+            url=thumbnail)
 
     # image url is not null
     if image_url is not None:
