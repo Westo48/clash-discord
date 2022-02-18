@@ -90,7 +90,7 @@ class Clan(commands.Cog):
             icon_url=inter.bot.user.avatar.url,
             title=f"{clan.name} {clan.tag}",
             bot_user_name=inter.me.display_name,
-            thumbnail=clan.badge,
+            thumbnail=clan.badge.small,
             field_list=field_dict_list,
             author_display_name=inter.author.display_name,
             author_avatar_url=inter.author.avatar.url
@@ -182,7 +182,7 @@ class Clan(commands.Cog):
             icon_url=inter.bot.user.avatar.url,
             title=embed_title,
             bot_user_name=inter.me.display_name,
-            thumbnail=clan.badge,
+            thumbnail=clan.badge.small,
             field_list=field_dict_list,
             author_display_name=inter.author.display_name,
             author_avatar_url=inter.author.avatar.url
@@ -281,7 +281,7 @@ class Clan(commands.Cog):
             title=embed_title,
             description=embed_description,
             bot_user_name=inter.me.display_name,
-            thumbnail=clan.badge,
+            thumbnail=clan.badge.small,
             field_list=field_dict_list,
             author_display_name=inter.author.display_name,
             author_avatar_url=inter.author.avatar.url
@@ -366,7 +366,7 @@ class Clan(commands.Cog):
             icon_url=inter.bot.user.avatar.url,
             title=f"{clan.name} {clan.tag}",
             bot_user_name=inter.me.display_name,
-            thumbnail=clan.badge,
+            thumbnail=clan.badge.small,
             field_list=field_dict_list,
             author_display_name=inter.author.display_name,
             author_avatar_url=inter.author.avatar.url
@@ -479,7 +479,7 @@ class Clan(commands.Cog):
             icon_url=inter.bot.user.avatar.url,
             title=embed_title,
             bot_user_name=inter.me.display_name,
-            thumbnail=clan.badge,
+            thumbnail=clan.badge.small,
             field_list=field_dict_list,
             author_display_name=inter.author.display_name,
             author_avatar_url=inter.author.avatar.url
