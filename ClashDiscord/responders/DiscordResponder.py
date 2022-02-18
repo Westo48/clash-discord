@@ -3287,7 +3287,7 @@ async def update_roles(user, guild, coc_client):
                     "name": f"{player_obj.clan.name} {player_obj.clan.tag}",
                     "value": f"not claimed in {guild.name} server"
                 }],
-                "thumbnail": player_obj.league.icon
+                "thumbnail": player_obj.league.icon.small
             })
             continue
 
@@ -3305,7 +3305,7 @@ async def update_roles(user, guild, coc_client):
                              f"{player_obj.clan.tag}"),
                     "value": f"not claimed"
                 }],
-                "thumbnail": player_obj.clan.badge
+                "thumbnail": player_obj.clan.badge.small
             })
             continue
 
