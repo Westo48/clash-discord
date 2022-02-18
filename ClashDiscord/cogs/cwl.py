@@ -79,7 +79,7 @@ class CWL(commands.Cog):
                     icon_url=inter.bot.user.avatar.url,
                     title=f"{clan.name} {clan.tag} CWL Lineup",
                     bot_user_name=inter.me.display_name,
-                    thumbnail=clan.badge,
+                    thumbnail=clan.badge.small,
                     field_list=field_dict_list,
                     author_display_name=inter.author.display_name,
                     author_avatar_url=inter.author.avatar.url
@@ -98,7 +98,7 @@ class CWL(commands.Cog):
                     icon_url=inter.bot.user.avatar.url,
                     title=f"{clan.name} {clan.tag} CWL Lineup",
                     bot_user_name=inter.me.display_name,
-                    thumbnail=clan.badge,
+                    thumbnail=clan.badge.small,
                     field_list=field_dict_list,
                     author_display_name=inter.author.display_name,
                     author_avatar_url=inter.author.avatar.url
@@ -175,7 +175,7 @@ class CWL(commands.Cog):
             icon_url=inter.bot.user.avatar.url,
             title=f"{player_obj.name} CWL score",
             bot_user_name=inter.me.display_name,
-            thumbnail=player_obj.league.icon,
+            thumbnail=player_obj.league.icon.small,
             field_list=field_dict_list,
             author_display_name=inter.author.display_name,
             author_avatar_url=inter.author.avatar.url
@@ -234,7 +234,7 @@ class CWL(commands.Cog):
             icon_url=inter.bot.user.avatar.url,
             title=f"{clan_obj.name} CWL scores",
             bot_user_name=inter.me.display_name,
-            thumbnail=player_obj.clan.badge,
+            thumbnail=player_obj.clan.badge.small,
             field_list=field_dict_list,
             author_display_name=inter.author.display_name,
             author_avatar_url=inter.author.avatar.url
