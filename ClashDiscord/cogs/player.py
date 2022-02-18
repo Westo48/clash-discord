@@ -79,6 +79,8 @@ class Player(commands.Cog):
                 await discord_responder.send_embed_list(embed_list, inter)
                 return
 
+        embed_thumbnail = discord_responder.get_town_hall_url(player)
+
         field_dict_list = discord_responder.player_info(
             player, inter.client.emojis, self.client_data.emojis)
 
@@ -86,7 +88,7 @@ class Player(commands.Cog):
             icon_url=inter.bot.user.avatar.url,
             title=f"{player.name} {player.tag}",
             bot_user_name=inter.me.display_name,
-            thumbnail=player.league.icon.small,
+            thumbnail=embed_thumbnail,
             field_list=field_dict_list,
             author_display_name=inter.author.display_name,
             author_avatar_url=inter.author.avatar.url
@@ -150,6 +152,8 @@ class Player(commands.Cog):
                 await discord_responder.send_embed_list(embed_list, inter)
                 return
 
+        embed_thumbnail = discord_responder.get_town_hall_url(player)
+
         player_field_dict_list = discord_responder.player_info(
             player, inter.client.emojis, self.client_data.emojis)
 
@@ -159,7 +163,7 @@ class Player(commands.Cog):
             icon_url=inter.bot.user.avatar.url,
             title=f"{player.name} {player.tag}",
             bot_user_name=inter.me.display_name,
-            thumbnail=player.league.icon.small,
+            thumbnail=embed_thumbnail,
             field_list=player_field_dict_list,
             author_display_name=inter.author.display_name,
             author_avatar_url=inter.author.avatar.url
@@ -172,7 +176,7 @@ class Player(commands.Cog):
             icon_url=inter.bot.user.avatar.url,
             title=f"{player.name} units",
             bot_user_name=inter.me.display_name,
-            thumbnail=player.league.icon.small,
+            thumbnail=embed_thumbnail,
             field_list=unit_field_dict_list,
             author_display_name=inter.author.display_name,
             author_avatar_url=inter.author.avatar.url
@@ -255,6 +259,8 @@ class Player(commands.Cog):
                 return
 
         title_string = f"{player.name} units"
+        embed_thumbnail = discord_responder.get_town_hall_url(player)
+
         field_dict_list = discord_responder.unit_lvl_all(
             player, inter.client.emojis, self.client_data.emojis
         )
@@ -263,7 +269,7 @@ class Player(commands.Cog):
             icon_url=inter.bot.user.avatar.url,
             title=title_string,
             bot_user_name=inter.me.display_name,
-            thumbnail=player.league.icon.small,
+            thumbnail=embed_thumbnail,
             field_list=field_dict_list,
             author_display_name=inter.author.display_name,
             author_avatar_url=inter.author.avatar.url
@@ -346,11 +352,13 @@ class Player(commands.Cog):
         else:
             title_string = f"{player.name} {unit_obj.name}"
 
+        embed_thumbnail = discord_responder.get_town_hall_url(player)
+
         embed_list = discord_responder.embed_message(
             icon_url=inter.bot.user.avatar.url,
             title=title_string,
             bot_user_name=inter.me.display_name,
-            thumbnail=player.league.icon.small,
+            thumbnail=embed_thumbnail,
             field_list=field_dict_list,
             author_display_name=inter.author.display_name,
             author_avatar_url=inter.author.avatar.url
@@ -417,6 +425,8 @@ class Player(commands.Cog):
         active_super_troop_list = clash_responder.player_active_super_troops(
             player)
 
+        embed_thumbnail = discord_responder.get_town_hall_url(player)
+
         field_dict_list = discord_responder.active_super_troops(
             player, active_super_troop_list,
             inter.client.emojis, self.client_data.emojis
@@ -425,7 +435,7 @@ class Player(commands.Cog):
             icon_url=inter.bot.user.avatar.url,
             title=f"{player.name} super troops",
             bot_user_name=inter.me.display_name,
-            thumbnail=player.league.icon.small,
+            thumbnail=embed_thumbnail,
             field_list=field_dict_list,
             author_display_name=inter.author.display_name,
             author_avatar_url=inter.author.avatar.url
