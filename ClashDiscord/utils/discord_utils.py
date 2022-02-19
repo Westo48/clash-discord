@@ -195,6 +195,14 @@ command_param_dict = {
             "overview", "clan", "member"
         ]
     ),
+    'cwl_scoreboard': commands.Param(
+        name="option",
+        description="*optional* options for cwl scoreboard returns",
+        default="group",
+        choices=[
+            "group", "rounds", "clan"
+        ]
+    ),
     'coc_name': commands.Param(
         name="emoji_name",
         description="options for emoji name"

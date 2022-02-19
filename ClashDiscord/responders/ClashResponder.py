@@ -772,6 +772,38 @@ def cwl_member_score(cwl_wars, cwl_member):
     return scored_member
 
 
+async def cwl_clan_scoreboard(cwl_group, clan):
+    class CWLScoreboardClan(object):
+        """
+            ScoredWarMember
+                Instance Attributes
+                    name (str): clan's name
+                    stars (int): clan's stars in cwl
+                    destruction (int): clan's desctruction in cwl
+        """
+
+        def __init__(self, name, stars, destruction):
+            self.name = name
+            self.stars = stars
+            self.destruction = destruction
+
+    clan_stars = 0
+    clan_destruction = 0
+    async for war in cwl_group.get_wars(clan.tag):
+        if war.state == "warEnded":
+            clan_stars += war.clan.stars
+            clan_destruction += war.clan.destruction
+
+        # adding 10 stars if war won
+        if war.clan.status == "won":
+            clan_stars += 10
+
+    return CWLScoreboardClan(
+        name=clan.name,
+        stars=clan_stars,
+        destruction=clan_destruction)
+
+
 # CWL War
 
 
