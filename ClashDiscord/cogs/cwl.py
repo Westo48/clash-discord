@@ -124,6 +124,94 @@ class CWL(commands.Cog):
 
         await discord_responder.send_embed_list(embed_list, inter)
 
+    @cwl.sub_command()
+    async def scoreboard(
+        self,
+        inter,
+        option: str = discord_utils.command_param_dict['cwl_scoreboard'],
+        clan_role: disnake.Role = discord_utils.command_param_dict['clan_role']
+    ):
+        """
+            CWL scoreboard
+
+            Parameters
+            ----------
+            option (optional): options for cwl scoreboard returns
+            clan_role (optional): clan role to use linked clan
+        """
+
+        # role not mentioned
+        if clan_role is None:
+            db_player_obj = db_responder.read_player_active(inter.author.id)
+
+            verification_payload = await discord_responder.cwl_group_verification(
+                db_player_obj, inter.author, self.coc_client)
+        # role has been mentioned
+        else:
+            verification_payload = await discord_responder.clan_role_cwl_group_verification(
+                clan_role, self.coc_client)
+
+        if not verification_payload['verified']:
+            embed_list = discord_responder.embed_message(
+                icon_url=inter.bot.user.avatar.url,
+                bot_user_name=inter.me.display_name,
+                field_list=verification_payload['field_dict_list'],
+                author_display_name=inter.author.display_name,
+                author_avatar_url=inter.author.avatar.url
+            )
+
+            await discord_responder.send_embed_list(embed_list, inter)
+            return
+
+        cwl_group = verification_payload['cwl_group_obj']
+
+        if "clan_obj" in verification_payload:
+            clan = verification_payload['clan_obj']
+
+        elif "player_obj" in verification_payload:
+            clan = await verification_payload['player_obj'].get_detailed_clan()
+
+        # initializing embed default values
+        embed_title = None
+        embed_description = None
+        field_dict_list = []
+        embed_thumbnail = None
+
+        if option == "group":
+            embed_title = f"CWL {clan.war_league.name} Group"
+            embed_thumbnail = discord_responder.get_emoji(
+                f"Clan War {clan.war_league.name}",
+                inter.client.emojis,
+                self.client_data.emojis)
+
+            field_dict_list = await discord_responder.cwl_scoreboard_group(
+                cwl_group, inter.client.emojis, self.client_data.emojis)
+
+        elif option == "rounds":
+            pass
+
+        elif option == "clan":
+            pass
+
+        else:
+            field_dict_list = [{
+                'name': "incorrect option selected",
+                'value': "please select a different option"
+            }]
+
+        embed_list = discord_responder.embed_message(
+            icon_url=inter.bot.user.avatar.url,
+            bot_user_name=inter.me.display_name,
+            title=embed_title,
+            description=embed_description,
+            field_list=field_dict_list,
+            thumbnail=embed_thumbnail,
+            author_display_name=inter.author.display_name,
+            author_avatar_url=inter.author.avatar.url
+        )
+
+        await discord_responder.send_embed_list(embed_list, inter)
+
     @cwl.sub_command_group()
     async def score(self, inter):
         """

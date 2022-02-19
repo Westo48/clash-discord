@@ -2389,6 +2389,38 @@ async def cwl_member_score(player_obj, cwl_group, clan_tag):
     return field_dict_list
 
 
+async def cwl_scoreboard_group(
+    cwl_group, discord_emoji_list, client_emoji_list):
+    field_dict_list = []
+
+    clan_scoreboards = []
+
+    for clan in cwl_group.clans:
+        clan_scoreboard = await clash_responder.cwl_clan_scoreboard(
+            cwl_group, clan)
+
+        clan_scoreboards.append(clan_scoreboard)
+
+    clan_scoreboards.sort(key=lambda x: (x.stars, x.destruction))
+    star_emoji = get_emoji(
+        "War Star", discord_emoji_list, client_emoji_list)
+    position_index = 0
+    
+    for clan_scoreboard in clan_scoreboards:
+        position_index += 1
+        
+        field_name = f"**{position_index}: {clan_scoreboard.name}**"
+        field_value = (f"{clan_scoreboard.stars} {star_emoji}\n"
+            f"{clan_scoreboard.destruction} destruction")
+        
+        field_dict_list.append({
+            'name': field_name,
+            'value': field_value
+        })
+        
+    return field_dict_list
+
+
 # CWL WAR
 
 async def cwl_war_verification(db_player_obj, user_obj, coc_client):
