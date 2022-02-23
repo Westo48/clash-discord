@@ -705,7 +705,7 @@ class Discord(commands.Cog):
     async def member(
         self,
         inter,
-        user: disnake.User = discord_utils.command_param_dict['user']
+        user: disnake.User = discord_utils.command_param_dict['required_user']
     ):
         """
             *leadership* 
