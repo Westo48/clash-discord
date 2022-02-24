@@ -165,6 +165,7 @@ class CWL(commands.Cog):
 
         cwl_group = verification_payload['cwl_group_obj']
 
+        # get the clan object from player or clan
         if "clan_obj" in verification_payload:
             clan = verification_payload['clan_obj']
 
@@ -250,7 +251,16 @@ class CWL(commands.Cog):
                 ))
 
         elif option == "clan":
-            pass
+            embed_title = f"CWL {clan.war_league.name} Group"
+            embed_thumbnail = discord_responder.get_emoji(
+                f"Clan War {clan.war_league.name}",
+                inter.client.emojis,
+                self.client_data.emojis)
+
+            field_dict_list = await discord_responder.cwl_scoreboard_clan(
+                inter, cwl_group, clan, self.coc_client,
+                inter.client.emojis, self.client_data.emojis
+            )
 
         else:
             field_dict_list = [{

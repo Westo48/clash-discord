@@ -3,7 +3,16 @@ from disnake import (
     TextChannel
 )
 
-from coc import WarRound, NotFound, Maintenance, PrivateWarLog, GatewayError
+from coc import (
+    Client as CocClient,
+    WarRound,
+    NotFound,
+    Maintenance,
+    PrivateWarLog,
+    GatewayError,
+    Clan,
+    ClanWarLeagueGroup
+)
 import data.RazBot_Data as RazBot_Data
 import data.ClashDiscord_Client_Data as ClashDiscord_Client_Data
 import responders.ClashResponder as clash_responder
@@ -2283,7 +2292,7 @@ def cwl_lineup(cwl_group):
     return message
 
 
-async def cwl_clan_score(clan_obj, cwl_group):
+async def cwl_clan_score(clan_obj, cwl_group: ClanWarLeagueGroup):
     if not cwl_group:
         return [{
             'name': f"{clan_obj.name} is not in CWL",
@@ -2426,7 +2435,7 @@ async def cwl_scoreboard_group(
 
 
 async def cwl_scoreboard_round(
-        cwl_group, cwl_round, round_index,
+        cwl_group: ClanWarLeagueGroup, cwl_round, round_index,
         discord_emoji_list, client_emoji_list, coc_client):
 
     field_dict_list = []
@@ -2445,6 +2454,67 @@ async def cwl_scoreboard_round(
                 f"| {war.opponent.stars} {star_emoji}"
                 f"\n"
                 f"{war.clan.destruction}% | {war.opponent.destruction}%"
+            )
+        })
+
+    return field_dict_list
+
+
+async def cwl_scoreboard_clan(
+    inter: ApplicationCommandInteraction,
+    cwl_group: ClanWarLeagueGroup,
+    clan: Clan, coc_client: CocClient,
+    discord_emoji_list, client_emoji_list
+):
+    field_dict_list = []
+
+    for cwl_clan in cwl_group.clans:
+        # specified clan is found
+        if cwl_clan.tag == clan.tag:
+            break
+
+    # making sure clan was found in cwl_group
+    if cwl_clan.tag != clan.tag:
+        field_dict_list.append({
+            "name": f"{clan.name} {clan.tag}",
+            "value": "not found in given CWL group"
+        })
+        return field_dict_list
+
+    # get a list of all CWLWar objects
+    cwl_wars = []
+    async for war in cwl_group.get_wars_for_clan(clan.tag):
+        if war.state == "warEnded":
+            cwl_wars.append(war)
+
+    # get a list of all CWLWarMembers their scores
+    scored_members = []
+    for member in cwl_clan.members:
+        scored_member = clash_responder.cwl_member_score(cwl_wars, member)
+        scored_members.append(scored_member)
+
+    scored_members.sort(key=lambda x: (x.stars, x.destruction))
+
+    position_index = 0
+    for scored_member in scored_members:
+        position_index += 1
+
+        player = await coc_client.get_player(scored_member.tag)
+        th_emoji = get_th_emoji(
+            player.town_hall, discord_emoji_list, client_emoji_list)
+        star_emoji = get_emoji(
+            "War Star", discord_emoji_list, client_emoji_list)
+
+        field_dict_list.append({
+            "name": (
+                f"{position_index}: {th_emoji} {scored_member.name}"
+            ),
+            "value": (
+                f"{scored_member.stars} {star_emoji}\n"
+                f"{scored_member.destruction} destruction\n"
+                f"{scored_member.attack_count}/"
+                f"{scored_member.potential_attack_count} attacks\n"
+                f"{scored_member.score} {inter.me.display_name} score"
             )
         })
 
