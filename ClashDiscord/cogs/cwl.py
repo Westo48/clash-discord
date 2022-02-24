@@ -188,7 +188,66 @@ class CWL(commands.Cog):
                 cwl_group, inter.client.emojis, self.client_data.emojis)
 
         elif option == "rounds":
-            pass
+            embed_list = []
+            embed_thumbnail = discord_responder.get_emoji(
+                f"Clan War {clan.war_league.name}",
+                inter.client.emojis,
+                self.client_data.emojis)
+            embed_title = f"CWL {clan.war_league.name} Group"
+
+            round_index = 0
+
+            embed_list.extend(discord_responder.embed_message(
+                icon_url=inter.bot.user.avatar.url,
+                bot_user_name=inter.me.display_name,
+                title=embed_title,
+                thumbnail=embed_thumbnail,
+                author_display_name=inter.author.display_name,
+                author_avatar_url=inter.author.avatar.url
+            ))
+
+            for cwl_round in cwl_group.rounds:
+
+                # checking if war has ended
+                war = await self.coc_client.get_league_war(cwl_round[0])
+                if war.state != "warEnded":
+                    break
+
+                field_dict_list = discord_responder.cwl_scoreboard_round(
+                    cwl_group, cwl_round, round_index,
+                    inter.client.emojis, self.client_data.emojis,
+                    self.coc_client)
+
+                # update round index
+                round_index += 1
+                embed_title = f"Round: {round_index}"
+
+                embed_list.extend(discord_responder.embed_message(
+                    icon_url=inter.bot.user.avatar.url,
+                    bot_user_name=inter.me.display_name,
+                    title=embed_title,
+                    description=embed_description,
+                    field_list=field_dict_list,
+                    thumbnail=embed_thumbnail,
+                    author_display_name=inter.author.display_name,
+                    author_avatar_url=inter.author.avatar.url
+                ))
+
+            if len(embed_list) == 0:
+                field_dict_list = [{
+                    "name": f"no rounds have ended",
+                    "value": f"please wait till after the first round is over"
+                }]
+                embed_list.extend(discord_responder.embed_message(
+                    icon_url=inter.bot.user.avatar.url,
+                    bot_user_name=inter.me.display_name,
+                    title=embed_title,
+                    description=embed_description,
+                    field_list=field_dict_list,
+                    thumbnail=embed_thumbnail,
+                    author_display_name=inter.author.display_name,
+                    author_avatar_url=inter.author.avatar.url
+                ))
 
         elif option == "clan":
             pass

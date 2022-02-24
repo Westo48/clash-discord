@@ -2390,7 +2390,7 @@ async def cwl_member_score(player_obj, cwl_group, clan_tag):
 
 
 async def cwl_scoreboard_group(
-    cwl_group, discord_emoji_list, client_emoji_list):
+        cwl_group, discord_emoji_list, client_emoji_list):
     field_dict_list = []
 
     clan_scoreboards = []
@@ -2405,19 +2405,45 @@ async def cwl_scoreboard_group(
     star_emoji = get_emoji(
         "War Star", discord_emoji_list, client_emoji_list)
     position_index = 0
-    
+
     for clan_scoreboard in clan_scoreboards:
         position_index += 1
-        
+
         field_name = f"**{position_index}: {clan_scoreboard.name}**"
         field_value = (f"{clan_scoreboard.stars} {star_emoji}\n"
-            f"{clan_scoreboard.destruction} destruction")
-        
+                       f"{clan_scoreboard.destruction} destruction")
+
         field_dict_list.append({
             'name': field_name,
             'value': field_value
         })
+
+    return field_dict_list
+
+
+async def cwl_scoreboard_round(
+        cwl_group, cwl_round, round_index,
+        discord_emoji_list, client_emoji_list, coc_client):
+
+    field_dict_list = []
+    star_emoji = get_emoji(
+        "War Star", discord_emoji_list, client_emoji_list)
+
+    for war_tag in cwl_round:
+        war = await coc_client.get_league_war(war_tag)
         
+        field_dict_list.append({
+            "name": f"{war.clan.name} | {war.opponent.name}",
+            "value": (
+                f"{war.clan.status} | {war.opponent.status}"
+                f"\n"
+                f"{war.clan.stars} {star_emoji} "
+                f"| {war.opponent.stars} {star_emoji}"
+                f"\n"
+                f"{war.clan.destruction}% | {war.opponent.destruction}%"
+            )
+        })
+
     return field_dict_list
 
 
