@@ -2874,14 +2874,14 @@ async def send_embed_list(
             await channel.send(embeds=embeds)
 
             # edit original message if the message was sent to channel
-            field_dict_list = [{
-                "name": "message sent",
-                "value": f"channel {channel.mention}"
-            }]
+            embed_title = "message sent"
+            embed_description = f"channel {channel.mention}"
+
             embed_list = embed_message(
                 icon_url=inter.bot.user.avatar.url,
                 bot_user_name=inter.me.display_name,
-                field_list=field_dict_list,
+                title=embed_title,
+                description=embed_description,
                 author_display_name=inter.author.display_name,
                 author_avatar_url=inter.author.avatar.url)
 
@@ -2891,17 +2891,17 @@ async def send_embed_list(
         # could not send embeds to specified channel
         # possible that bot does not have access for that
         except:
-            field_dict_list = [{
-                "name": "message could not be sent",
-                "value": f"please ensure bot is in channel {channel.mention}"
-            }]
+            embed_title = "message could not be sent"
+            embed_description = (f"please ensure bot is in "
+                                 f"channel {channel.mention}")
+
             embed_list = embed_message(
                 icon_url=inter.bot.user.avatar.url,
                 bot_user_name=inter.me.display_name,
-                field_list=field_dict_list,
+                title=embed_title,
+                description=embed_description,
                 author_display_name=inter.author.display_name,
-                author_avatar_url=inter.author.avatar.url
-            )
+                author_avatar_url=inter.author.avatar.url)
 
             await inter.edit_original_message(embeds=embed_list)
 
@@ -2921,34 +2921,32 @@ async def send_embed_list(
         await channel.send(content=content)
 
         # edit original message if the message was sent to channel
-        field_dict_list = [{
-            "name": "message sent",
-            "value": f"channel {channel.mention}"
-        }]
+        embed_title = "message sent"
+        embed_description = f"channel {channel.mention}"
+
         embed_list = embed_message(
             icon_url=inter.bot.user.avatar.url,
             bot_user_name=inter.me.display_name,
-            field_list=field_dict_list,
+            title=embed_title,
+            description=embed_description,
             author_display_name=inter.author.display_name,
             author_avatar_url=inter.author.avatar.url)
-
-        await inter.edit_original_message(embeds=embed_list)
         return
 
     # could not send content to specified channel
     # possible that bot does not have access for that
     except:
-        field_dict_list = [{
-            "name": "message could not be sent",
-            "value": f"please ensure bot is in channel {channel.mention}"
-        }]
+        embed_title = "message could not be sent"
+        embed_description = (f"please ensure bot is in "
+                             f"channel {channel.mention}")
+
         embed_list = embed_message(
             icon_url=inter.bot.user.avatar.url,
             bot_user_name=inter.me.display_name,
-            field_list=field_dict_list,
+            title=embed_title,
+            description=embed_description,
             author_display_name=inter.author.display_name,
-            author_avatar_url=inter.author.avatar.url
-        )
+            author_avatar_url=inter.author.avatar.url)
 
         await inter.send(embeds=embed_list)
 

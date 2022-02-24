@@ -103,15 +103,13 @@ class Discord(commands.Cog):
             await discord_responder.xx(embed_list, inter)
             return
 
-        field_dict_list = [{
-            "name": f"**ANNOUNCEMENT**",
-            "value": message
-        }]
+        embed_title = f"**ANNOUNCEMENT**"
 
         embed_list = discord_responder.embed_message(
             icon_url=inter.bot.user.avatar.url,
             bot_user_name=inter.me.display_name,
-            field_list=field_dict_list,
+            title=embed_title,
+            description=message,
             author_display_name=inter.author.display_name,
             author_avatar_url=inter.author.avatar.url)
 
@@ -172,17 +170,15 @@ class Discord(commands.Cog):
             await discord_responder.send_embed_list(inter, embed_list)
             return
 
-        field_dict_list = [{
-            "name": f"**{player.name} {player.tag}**",
-            "value": message
-        }]
+        embed_title = f"**{player.name} {player.tag}**"
 
         embed_thumbnail = discord_responder.get_town_hall_url(player)
 
         embed_list = discord_responder.embed_message(
             icon_url=inter.bot.user.avatar.url,
             bot_user_name=inter.me.display_name,
-            field_list=field_dict_list,
+            title=embed_title,
+            description=message,
             thumbnail=embed_thumbnail,
             author_display_name=inter.author.display_name,
             author_avatar_url=inter.author.avatar.url)
@@ -275,15 +271,13 @@ class Discord(commands.Cog):
             # cuts the last two characters from the string ', '
             content = content[:-2]
 
-        field_dict_list = [{
-            "name": f"{unit_emoji} **{formatted_unit_name} DONORS**",
-            "value": message
-        }]
+        embed_title = f"{unit_emoji} **{formatted_unit_name} DONORS**"
 
         embed_list = discord_responder.embed_message(
             icon_url=inter.bot.user.avatar.url,
             bot_user_name=inter.me.display_name,
-            field_list=field_dict_list,
+            title=embed_title,
+            description=message,
             thumbnail=clan.badge.small,
             author_display_name=inter.author.display_name,
             author_avatar_url=inter.author.avatar.url)
@@ -377,15 +371,14 @@ class Discord(commands.Cog):
             # cuts the last two characters from the string ', '
             content = content[:-2]
 
-        field_dict_list = [{
-            "name": f"{unit_emoji} **{super_troop_name} DONORS**",
-            "value": message
-        }]
+        embed_title = f"{unit_emoji} **{super_troop_name} DONORS**"
+        embed_description = message
 
         embed_list = discord_responder.embed_message(
             icon_url=inter.bot.user.avatar.url,
             bot_user_name=inter.me.display_name,
-            field_list=field_dict_list,
+            title=embed_title,
+            description=embed_description,
             thumbnail=clan.badge.small,
             author_display_name=inter.author.display_name,
             author_avatar_url=inter.author.avatar.url)
@@ -453,15 +446,14 @@ class Discord(commands.Cog):
         # cuts the last two characters from the string ', '
         content = content[:-2]
 
-        field_dict_list = [{
-            "name": f"**WAR ANNOUNCEMENT**",
-            "value": message
-        }]
+        embed_title = f"**WAR ANNOUNCEMENT**"
+        embed_description = message
 
         embed_list = discord_responder.embed_message(
             icon_url=inter.bot.user.avatar.url,
             bot_user_name=inter.me.display_name,
-            field_list=field_dict_list,
+            title=embed_title,
+            description=embed_description,
             thumbnail=war.clan.badge.small,
             author_display_name=inter.author.display_name,
             author_avatar_url=inter.author.avatar.url)
@@ -523,12 +515,12 @@ class Discord(commands.Cog):
         war = verification_payload['war_obj']
 
         if missed_attacks is None:
-            field_name = "**MISSING WAR ATTACKS**"
+            embed_title = "**MISSING WAR ATTACKS**"
         else:
             if missed_attacks == 1:
-                field_name = "**MISSING 1 ATTACK**"
+                embed_title = "**MISSING 1 ATTACK**"
             else:
-                field_name = "**MISSING 2 ATTACKS**"
+                embed_title = "**MISSING 2 ATTACKS**"
 
         war_member_no_attack_list = clash_responder.war_no_attack(
             war, missed_attacks)
@@ -542,15 +534,11 @@ class Discord(commands.Cog):
         # cuts the last two characters from the string ', '
         content = content[:-2]
 
-        field_dict_list = [{
-            "name": field_name,
-            "value": message
-        }]
-
         embed_list = discord_responder.embed_message(
             icon_url=inter.bot.user.avatar.url,
             bot_user_name=inter.me.display_name,
-            field_list=field_dict_list,
+            title=embed_title,
+            description=message,
             thumbnail=war.clan.badge.small,
             author_display_name=inter.author.display_name,
             author_avatar_url=inter.author.avatar.url)
