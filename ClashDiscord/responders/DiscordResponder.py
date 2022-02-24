@@ -1,4 +1,8 @@
-import math
+from disnake import (
+    ApplicationCommandInteraction,
+    TextChannel
+)
+
 from coc import WarRound, NotFound, Maintenance, PrivateWarLog, GatewayError
 import data.RazBot_Data as RazBot_Data
 import data.ClashDiscord_Client_Data as ClashDiscord_Client_Data
@@ -2431,7 +2435,7 @@ async def cwl_scoreboard_round(
 
     for war_tag in cwl_round:
         war = await coc_client.get_league_war(war_tag)
-        
+
         field_dict_list.append({
             "name": f"{war.clan.name} | {war.opponent.name}",
             "value": (
@@ -2807,7 +2811,11 @@ def initialize_embed(
     return embed
 
 
-async def send_embed_list(embed_list, inter):
+async def send_embed_list(
+        inter: ApplicationCommandInteraction,
+        embed_list: list = [],
+        content: str = None,
+        channel: TextChannel = None):
     # embed limit is 10
     # embed char limit is 6000
     # embed field limit is 25
@@ -2856,10 +2864,99 @@ async def send_embed_list(embed_list, inter):
 
     # send all embeds
     for embeds in send_list:
-        await inter.send(embeds=embeds)
+        # respond to interaction if channel is not provided
+        if channel is None:
+            await inter.send(embeds=embeds)
+            continue
 
+        # try to send the embeds to specified channel
+        try:
+            await channel.send(embeds=embeds)
+
+            # edit original message if the message was sent to channel
+            field_dict_list = [{
+                "name": "message sent",
+                "value": f"channel {channel.mention}"
+            }]
+            embed_list = embed_message(
+                icon_url=inter.bot.user.avatar.url,
+                bot_user_name=inter.me.display_name,
+                field_list=field_dict_list,
+                author_display_name=inter.author.display_name,
+                author_avatar_url=inter.author.avatar.url)
+
+            await inter.edit_original_message(embeds=embed_list)
+            continue
+
+        # could not send embeds to specified channel
+        # possible that bot does not have access for that
+        except:
+            field_dict_list = [{
+                "name": "message could not be sent",
+                "value": f"please ensure bot is in channel {channel.mention}"
+            }]
+            embed_list = embed_message(
+                icon_url=inter.bot.user.avatar.url,
+                bot_user_name=inter.me.display_name,
+                field_list=field_dict_list,
+                author_display_name=inter.author.display_name,
+                author_avatar_url=inter.author.avatar.url
+            )
+
+            await inter.edit_original_message(embeds=embed_list)
+
+            return
+
+    # end by sending content if provided
+    if content is None:
+        return
+
+    # respond to interaction if channel is not provided
+    if channel is None:
+        await inter.send(content=content)
+        return
+
+    # try to send the content to specified channel
+    try:
+        await channel.send(content=content)
+
+        # edit original message if the message was sent to channel
+        field_dict_list = [{
+            "name": "message sent",
+            "value": f"channel {channel.mention}"
+        }]
+        embed_list = embed_message(
+            icon_url=inter.bot.user.avatar.url,
+            bot_user_name=inter.me.display_name,
+            field_list=field_dict_list,
+            author_display_name=inter.author.display_name,
+            author_avatar_url=inter.author.avatar.url)
+
+        await inter.edit_original_message(embeds=embed_list)
+        return
+
+    # could not send content to specified channel
+    # possible that bot does not have access for that
+    except:
+        field_dict_list = [{
+            "name": "message could not be sent",
+            "value": f"please ensure bot is in channel {channel.mention}"
+        }]
+        embed_list = embed_message(
+            icon_url=inter.bot.user.avatar.url,
+            bot_user_name=inter.me.display_name,
+            field_list=field_dict_list,
+            author_display_name=inter.author.display_name,
+            author_avatar_url=inter.author.avatar.url
+        )
+
+        await inter.send(embeds=embed_list)
+
+        return
 
 # town hall urls
+
+
 def get_town_hall_url(player):
     thumbnail_url = get_th_url(player.town_hall)
     if thumbnail_url is None:

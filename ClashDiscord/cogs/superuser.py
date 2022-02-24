@@ -55,7 +55,7 @@ class SuperUser(commands.Cog):
                 author_avatar_url=inter.author.avatar.url
             )
 
-            await discord_responder.send_embed_list(embed_list, inter)
+            await discord_responder.send_embed_list(inter, embed_list)
             return
 
         # author is not super user
@@ -70,7 +70,7 @@ class SuperUser(commands.Cog):
                 author_avatar_url=inter.author.avatar.url
             )
 
-            await discord_responder.send_embed_list(embed_list, inter)
+            await discord_responder.send_embed_list(inter, embed_list)
             return
 
         # initializing embed default values
@@ -102,7 +102,7 @@ class SuperUser(commands.Cog):
                     author_avatar_url=inter.author.avatar.url
                 )
 
-                await discord_responder.send_embed_list(embed_list, inter)
+                await discord_responder.send_embed_list(inter, embed_list)
                 return
 
             guild_id = int(guild_id)
@@ -122,7 +122,7 @@ class SuperUser(commands.Cog):
                     author_avatar_url=inter.author.avatar.url
                 )
 
-                await discord_responder.send_embed_list(embed_list, inter)
+                await discord_responder.send_embed_list(inter, embed_list)
                 return
 
             deleted_guild_obj = db_responder.delete_guild(guild_id)
@@ -149,7 +149,7 @@ class SuperUser(commands.Cog):
                     author_avatar_url=inter.author.avatar.url
                 )
 
-                await discord_responder.send_embed_list(embed_list, inter)
+                await discord_responder.send_embed_list(inter, embed_list)
                 return
 
             guild_id = int(guild_id)
@@ -170,7 +170,7 @@ class SuperUser(commands.Cog):
                     author_avatar_url=inter.author.avatar.url
                 )
 
-                await discord_responder.send_embed_list(embed_list, inter)
+                await discord_responder.send_embed_list(inter, embed_list)
                 return
 
             await guild.leave()
@@ -202,7 +202,7 @@ class SuperUser(commands.Cog):
             author_avatar_url=inter.author.avatar.url
         )
 
-        await discord_responder.send_embed_list(embed_list, inter)
+        await discord_responder.send_embed_list(inter, embed_list)
 
     @superuser.sub_command()
     async def admin(
@@ -237,7 +237,7 @@ class SuperUser(commands.Cog):
                 author_avatar_url=inter.author.avatar.url
             )
 
-            await discord_responder.send_embed_list(embed_list, inter)
+            await discord_responder.send_embed_list(inter, embed_list)
             return
 
         # author is not super user
@@ -252,7 +252,7 @@ class SuperUser(commands.Cog):
                 author_avatar_url=inter.author.avatar.url
             )
 
-            await discord_responder.send_embed_list(embed_list, inter)
+            await discord_responder.send_embed_list(inter, embed_list)
             return
 
         # initializing embed default values
@@ -274,7 +274,7 @@ class SuperUser(commands.Cog):
                     author_avatar_url=inter.author.avatar.url
                 )
 
-                await discord_responder.send_embed_list(embed_list, inter)
+                await discord_responder.send_embed_list(inter, embed_list)
                 return
 
             embed_title = f"{inter.me.display_name} admin users"
@@ -316,7 +316,7 @@ class SuperUser(commands.Cog):
                     author_avatar_url=inter.author.avatar.url
                 )
 
-                await discord_responder.send_embed_list(embed_list, inter)
+                await discord_responder.send_embed_list(inter, embed_list)
                 return
 
             # confirm user is claimed
@@ -333,7 +333,7 @@ class SuperUser(commands.Cog):
                     author_avatar_url=inter.author.avatar.url
                 )
 
-                await discord_responder.send_embed_list(embed_list, inter)
+                await discord_responder.send_embed_list(inter, embed_list)
                 return
 
             updated_user_obj = db_responder.update_toggle_user_admin(user.id)
@@ -349,7 +349,7 @@ class SuperUser(commands.Cog):
                     author_avatar_url=inter.author.avatar.url
                 )
 
-                await discord_responder.send_embed_list(embed_list, inter)
+                await discord_responder.send_embed_list(inter, embed_list)
                 return
 
             # user was updated and is now an admin
@@ -374,7 +374,7 @@ class SuperUser(commands.Cog):
                     author_avatar_url=inter.author.avatar.url
                 )
 
-                await discord_responder.send_embed_list(embed_list, inter)
+                await discord_responder.send_embed_list(inter, embed_list)
                 return
 
             # confirm user is claimed
@@ -391,7 +391,7 @@ class SuperUser(commands.Cog):
                     author_avatar_url=inter.author.avatar.url
                 )
 
-                await discord_responder.send_embed_list(embed_list, inter)
+                await discord_responder.send_embed_list(inter, embed_list)
                 return
 
             deleted_user_obj = db_responder.delete_user(user.id)
@@ -420,7 +420,7 @@ class SuperUser(commands.Cog):
             author_avatar_url=inter.author.avatar.url
         )
 
-        await discord_responder.send_embed_list(embed_list, inter)
+        await discord_responder.send_embed_list(inter, embed_list)
 
     @superuser.sub_command()
     async def player(
@@ -457,7 +457,7 @@ class SuperUser(commands.Cog):
                 author_avatar_url=inter.author.avatar.url
             )
 
-            await discord_responder.send_embed_list(embed_list, inter)
+            await discord_responder.send_embed_list(inter, embed_list)
             return
 
         # author is not super user
@@ -472,7 +472,7 @@ class SuperUser(commands.Cog):
                 author_avatar_url=inter.author.avatar.url
             )
 
-            await discord_responder.send_embed_list(embed_list, inter)
+            await discord_responder.send_embed_list(inter, embed_list)
             return
 
         # confirm valid player_tag
@@ -491,7 +491,7 @@ class SuperUser(commands.Cog):
                 author_avatar_url=inter.author.avatar.url
             )
 
-            await discord_responder.send_embed_list(embed_list, inter)
+            await discord_responder.send_embed_list(inter, embed_list)
             return
 
         # initializing embed default values
@@ -526,7 +526,7 @@ class SuperUser(commands.Cog):
                     author_avatar_url=inter.author.avatar.url
                 )
 
-                await discord_responder.send_embed_list(embed_list, inter)
+                await discord_responder.send_embed_list(inter, embed_list)
                 return
 
             # user claimed
@@ -560,7 +560,7 @@ class SuperUser(commands.Cog):
                     author_display_name=inter.author.display_name,
                     author_avatar_url=inter.author.avatar.url)
 
-                await discord_responder.send_embed_list(embed_list, inter)
+                await discord_responder.send_embed_list(inter, embed_list)
                 return
 
             db_del_player_obj = db_responder.delete_player(
@@ -580,7 +580,7 @@ class SuperUser(commands.Cog):
                     author_display_name=inter.author.display_name,
                     author_avatar_url=inter.author.avatar.url)
 
-                await discord_responder.send_embed_list(embed_list, inter)
+                await discord_responder.send_embed_list(inter, embed_list)
                 return
 
             db_active_player_obj = db_responder.read_player_active(user.id)
@@ -600,7 +600,7 @@ class SuperUser(commands.Cog):
                     author_display_name=inter.author.display_name,
                     author_avatar_url=inter.author.avatar.url)
 
-                await discord_responder.send_embed_list(embed_list, inter)
+                await discord_responder.send_embed_list(inter, embed_list)
                 return
 
             # no active player found
@@ -622,7 +622,7 @@ class SuperUser(commands.Cog):
                     author_display_name=inter.author.display_name,
                     author_avatar_url=inter.author.avatar.url)
 
-                await discord_responder.send_embed_list(embed_list, inter)
+                await discord_responder.send_embed_list(inter, embed_list)
                 return
 
             # additional players claimed by user
@@ -644,7 +644,7 @@ class SuperUser(commands.Cog):
                     author_display_name=inter.author.display_name,
                     author_avatar_url=inter.author.avatar.url)
 
-                await discord_responder.send_embed_list(embed_list, inter)
+                await discord_responder.send_embed_list(inter, embed_list)
                 return
 
             # update was successful
@@ -686,4 +686,4 @@ class SuperUser(commands.Cog):
             author_display_name=inter.author.display_name,
             author_avatar_url=inter.author.avatar.url)
 
-        await discord_responder.send_embed_list(embed_list, inter)
+        await discord_responder.send_embed_list(inter, embed_list)
