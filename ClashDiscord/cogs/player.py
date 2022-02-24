@@ -56,7 +56,7 @@ class Player(commands.Cog):
                 author_avatar_url=inter.author.avatar.url
             )
 
-            await discord_responder.send_embed_list(embed_list, inter)
+            await discord_responder.send_embed_list(inter, embed_list)
             return
 
         player = verification_payload['player_obj']
@@ -76,7 +76,7 @@ class Player(commands.Cog):
                     author_avatar_url=inter.author.avatar.url
                 )
 
-                await discord_responder.send_embed_list(embed_list, inter)
+                await discord_responder.send_embed_list(inter, embed_list)
                 return
 
         embed_thumbnail = discord_responder.get_town_hall_url(player)
@@ -94,7 +94,7 @@ class Player(commands.Cog):
             author_avatar_url=inter.author.avatar.url
         )
 
-        await discord_responder.send_embed_list(embed_list, inter)
+        await discord_responder.send_embed_list(inter, embed_list)
 
     @player.sub_command()
     async def recruit(
@@ -129,7 +129,7 @@ class Player(commands.Cog):
                 author_avatar_url=inter.author.avatar.url
             )
 
-            await discord_responder.send_embed_list(embed_list, inter)
+            await discord_responder.send_embed_list(inter, embed_list)
             return
 
         player = verification_payload['player_obj']
@@ -149,7 +149,7 @@ class Player(commands.Cog):
                     author_avatar_url=inter.author.avatar.url
                 )
 
-                await discord_responder.send_embed_list(embed_list, inter)
+                await discord_responder.send_embed_list(inter, embed_list)
                 return
 
         embed_thumbnail = discord_responder.get_town_hall_url(player)
@@ -182,7 +182,7 @@ class Player(commands.Cog):
             author_avatar_url=inter.author.avatar.url
         ))
 
-        await discord_responder.send_embed_list(embed_list, inter)
+        await discord_responder.send_embed_list(inter, embed_list)
 
         player_links = ""
 
@@ -235,7 +235,7 @@ class Player(commands.Cog):
                 author_avatar_url=inter.author.avatar.url
             )
 
-            await discord_responder.send_embed_list(embed_list, inter)
+            await discord_responder.send_embed_list(inter, embed_list)
             return
 
         player = verification_payload['player_obj']
@@ -255,7 +255,7 @@ class Player(commands.Cog):
                     author_avatar_url=inter.author.avatar.url
                 )
 
-                await discord_responder.send_embed_list(embed_list, inter)
+                await discord_responder.send_embed_list(inter, embed_list)
                 return
 
         title_string = f"{player.name} units"
@@ -275,7 +275,7 @@ class Player(commands.Cog):
             author_avatar_url=inter.author.avatar.url
         )
 
-        await discord_responder.send_embed_list(embed_list, inter)
+        await discord_responder.send_embed_list(inter, embed_list)
 
     @unit.sub_command()
     async def find(
@@ -316,7 +316,7 @@ class Player(commands.Cog):
                 author_avatar_url=inter.author.avatar.url
             )
 
-            await discord_responder.send_embed_list(embed_list, inter)
+            await discord_responder.send_embed_list(inter, embed_list)
             return
 
         player = verification_payload['player_obj']
@@ -336,7 +336,7 @@ class Player(commands.Cog):
                     author_avatar_url=inter.author.avatar.url
                 )
 
-                await discord_responder.send_embed_list(embed_list, inter)
+                await discord_responder.send_embed_list(inter, embed_list)
                 return
 
         unit_obj = clash_responder.find_player_unit(player, unit_name)
@@ -364,7 +364,7 @@ class Player(commands.Cog):
             author_avatar_url=inter.author.avatar.url
         )
 
-        await discord_responder.send_embed_list(embed_list, inter)
+        await discord_responder.send_embed_list(inter, embed_list)
 
     @player.sub_command()
     async def supertroop(
@@ -399,7 +399,7 @@ class Player(commands.Cog):
                 author_avatar_url=inter.author.avatar.url
             )
 
-            await discord_responder.send_embed_list(embed_list, inter)
+            await discord_responder.send_embed_list(inter, embed_list)
             return
 
         player = verification_payload['player_obj']
@@ -419,7 +419,7 @@ class Player(commands.Cog):
                     author_avatar_url=inter.author.avatar.url
                 )
 
-                await discord_responder.send_embed_list(embed_list, inter)
+                await discord_responder.send_embed_list(inter, embed_list)
                 return
 
         active_super_troop_list = clash_responder.player_active_super_troops(
@@ -441,4 +441,4 @@ class Player(commands.Cog):
             author_avatar_url=inter.author.avatar.url
         )
 
-        await discord_responder.send_embed_list(embed_list, inter)
+        await discord_responder.send_embed_list(inter, embed_list)

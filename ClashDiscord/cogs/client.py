@@ -53,7 +53,7 @@ class Client(commands.Cog):
             author_avatar_url=inter.author.avatar.url
         )
 
-        await discord_responder.send_embed_list(embed_list, inter)
+        await discord_responder.send_embed_list(inter, embed_list)
 
     @client.sub_command()
     async def user(
@@ -102,7 +102,7 @@ class Client(commands.Cog):
             author_avatar_url=inter.author.avatar.url
         )
 
-        await discord_responder.send_embed_list(embed_list, inter)
+        await discord_responder.send_embed_list(inter, embed_list)
 
     @client.sub_command()
     async def player(
@@ -143,7 +143,7 @@ class Client(commands.Cog):
                     author_avatar_url=inter.author.avatar.url
                 )
 
-                await discord_responder.send_embed_list(embed_list, inter)
+                await discord_responder.send_embed_list(inter, embed_list)
                 return
 
             # confirm valid player_tag
@@ -162,7 +162,7 @@ class Client(commands.Cog):
                     author_avatar_url=inter.author.avatar.url
                 )
 
-                await discord_responder.send_embed_list(embed_list, inter)
+                await discord_responder.send_embed_list(inter, embed_list)
                 return
 
             # confirm user has been claimed
@@ -182,7 +182,7 @@ class Client(commands.Cog):
                         author_avatar_url=inter.author.avatar.url
                     )
 
-                    await discord_responder.send_embed_list(embed_list, inter)
+                    await discord_responder.send_embed_list(inter, embed_list)
                     return
 
             # confirm player has not been claimed
@@ -200,7 +200,7 @@ class Client(commands.Cog):
                     author_avatar_url=inter.author.avatar.url
                 )
 
-                await discord_responder.send_embed_list(embed_list, inter)
+                await discord_responder.send_embed_list(inter, embed_list)
                 return
 
             # authenticate player api key
@@ -219,7 +219,7 @@ class Client(commands.Cog):
                     author_avatar_url=inter.author.avatar.url
                 )
 
-                await discord_responder.send_embed_list(embed_list, inter)
+                await discord_responder.send_embed_list(inter, embed_list)
                 return
 
             # user claimed
@@ -256,7 +256,7 @@ class Client(commands.Cog):
                     author_avatar_url=inter.author.avatar.url
                 )
 
-                await discord_responder.send_embed_list(embed_list, inter)
+                await discord_responder.send_embed_list(inter, embed_list)
                 return
 
             message = f"{inter.author.mention} has claimed "
@@ -285,7 +285,7 @@ class Client(commands.Cog):
                     author_avatar_url=inter.author.avatar.url
                 )
 
-                await discord_responder.send_embed_list(embed_list, inter)
+                await discord_responder.send_embed_list(inter, embed_list)
                 return
 
             player_obj = await clash_responder.get_player(player_tag, self.coc_client)
@@ -302,7 +302,7 @@ class Client(commands.Cog):
                     author_avatar_url=inter.author.avatar.url
                 )
 
-                await discord_responder.send_embed_list(embed_list, inter)
+                await discord_responder.send_embed_list(inter, embed_list)
                 return
 
             db_player_obj = db_responder.read_player(
@@ -324,7 +324,7 @@ class Client(commands.Cog):
                     author_avatar_url=inter.author.avatar.url
                 )
 
-                await discord_responder.send_embed_list(embed_list, inter)
+                await discord_responder.send_embed_list(inter, embed_list)
                 return
 
             # if requested player is the active player
@@ -343,7 +343,7 @@ class Client(commands.Cog):
                     author_avatar_url=inter.author.avatar.url
                 )
 
-                await discord_responder.send_embed_list(embed_list, inter)
+                await discord_responder.send_embed_list(inter, embed_list)
                 return
 
             else:
@@ -363,7 +363,7 @@ class Client(commands.Cog):
                     author_avatar_url=inter.author.avatar.url
                 )
 
-                await discord_responder.send_embed_list(embed_list, inter)
+                await discord_responder.send_embed_list(inter, embed_list)
                 return
 
         elif option == "remove":
@@ -380,7 +380,7 @@ class Client(commands.Cog):
                     author_avatar_url=inter.author.avatar.url
                 )
 
-                await discord_responder.send_embed_list(embed_list, inter)
+                await discord_responder.send_embed_list(inter, embed_list)
                 return
 
             player_obj = await clash_responder.get_player(player_tag, self.coc_client)
@@ -397,7 +397,7 @@ class Client(commands.Cog):
                     author_avatar_url=inter.author.avatar.url
                 )
 
-                await discord_responder.send_embed_list(embed_list, inter)
+                await discord_responder.send_embed_list(inter, embed_list)
                 return
 
             db_player_obj = db_responder.read_player(
@@ -416,7 +416,7 @@ class Client(commands.Cog):
                     author_avatar_url=inter.author.avatar.url
                 )
 
-                await discord_responder.send_embed_list(embed_list, inter)
+                await discord_responder.send_embed_list(inter, embed_list)
                 return
 
             db_del_player_obj = db_responder.delete_player(
@@ -438,7 +438,7 @@ class Client(commands.Cog):
                     author_avatar_url=inter.author.avatar.url
                 )
 
-                await discord_responder.send_embed_list(embed_list, inter)
+                await discord_responder.send_embed_list(inter, embed_list)
                 return
 
             db_active_player_obj = db_responder.read_player_active(
@@ -461,7 +461,7 @@ class Client(commands.Cog):
                     author_avatar_url=inter.author.avatar.url
                 )
 
-                await discord_responder.send_embed_list(embed_list, inter)
+                await discord_responder.send_embed_list(inter, embed_list)
                 return
 
             # no active player found
@@ -485,7 +485,7 @@ class Client(commands.Cog):
                     author_avatar_url=inter.author.avatar.url
                 )
 
-                await discord_responder.send_embed_list(embed_list, inter)
+                await discord_responder.send_embed_list(inter, embed_list)
                 return
 
             # additional players claimed by user
@@ -509,7 +509,7 @@ class Client(commands.Cog):
                     author_avatar_url=inter.author.avatar.url
                 )
 
-                await discord_responder.send_embed_list(embed_list, inter)
+                await discord_responder.send_embed_list(inter, embed_list)
                 return
 
             # update was successful
@@ -534,7 +534,7 @@ class Client(commands.Cog):
                     author_avatar_url=inter.author.avatar.url
                 )
 
-                await discord_responder.send_embed_list(embed_list, inter)
+                await discord_responder.send_embed_list(inter, embed_list)
                 return
 
             # player deleted
@@ -556,7 +556,7 @@ class Client(commands.Cog):
                 author_avatar_url=inter.author.avatar.url
             )
 
-            await discord_responder.send_embed_list(embed_list, inter)
+            await discord_responder.send_embed_list(inter, embed_list)
 
         else:
             field_dict_list = [{
@@ -574,7 +574,7 @@ class Client(commands.Cog):
             author_avatar_url=inter.author.avatar.url
         )
 
-        await discord_responder.send_embed_list(embed_list, inter)
+        await discord_responder.send_embed_list(inter, embed_list)
 
     @client.sub_command()
     async def guild(
@@ -612,7 +612,7 @@ class Client(commands.Cog):
                     author_avatar_url=inter.author.avatar.url
                 )
 
-                await discord_responder.send_embed_list(embed_list, inter)
+                await discord_responder.send_embed_list(inter, embed_list)
                 return
 
             db_guild_obj = db_responder.read_guild(inter.guild.id)
@@ -629,7 +629,7 @@ class Client(commands.Cog):
                     author_avatar_url=inter.author.avatar.url
                 )
 
-                await discord_responder.send_embed_list(embed_list, inter)
+                await discord_responder.send_embed_list(inter, embed_list)
                 return
 
             db_claimed_guild = db_responder.claim_guild(
@@ -647,7 +647,7 @@ class Client(commands.Cog):
                     author_avatar_url=inter.author.avatar.url
                 )
 
-                await discord_responder.send_embed_list(embed_list, inter)
+                await discord_responder.send_embed_list(inter, embed_list)
                 return
 
             field_dict_list = [{
@@ -671,7 +671,7 @@ class Client(commands.Cog):
             author_avatar_url=inter.author.avatar.url
         )
 
-        await discord_responder.send_embed_list(embed_list, inter)
+        await discord_responder.send_embed_list(inter, embed_list)
 
     @client.sub_command()
     async def clan(
@@ -709,7 +709,7 @@ class Client(commands.Cog):
                     author_avatar_url=inter.author.avatar.url
                 )
 
-                await discord_responder.send_embed_list(embed_list, inter)
+                await discord_responder.send_embed_list(inter, embed_list)
                 return
 
             db_guild_obj = db_responder.read_guild(inter.guild.id)
@@ -726,7 +726,7 @@ class Client(commands.Cog):
                     author_avatar_url=inter.author.avatar.url
                 )
 
-                await discord_responder.send_embed_list(embed_list, inter)
+                await discord_responder.send_embed_list(inter, embed_list)
                 return
 
             db_user_obj = db_responder.read_user(inter.author.id)
@@ -743,7 +743,7 @@ class Client(commands.Cog):
                     author_avatar_url=inter.author.avatar.url
                 )
 
-                await discord_responder.send_embed_list(embed_list, inter)
+                await discord_responder.send_embed_list(inter, embed_list)
                 return
 
             # user is not guild admin and is not super user
@@ -759,7 +759,7 @@ class Client(commands.Cog):
                     author_avatar_url=inter.author.avatar.url
                 )
 
-                await discord_responder.send_embed_list(embed_list, inter)
+                await discord_responder.send_embed_list(inter, embed_list)
                 return
 
             clan_obj = await clash_responder.get_clan(clan_tag, self.coc_client)
@@ -776,7 +776,7 @@ class Client(commands.Cog):
                     author_avatar_url=inter.author.avatar.url
                 )
 
-                await discord_responder.send_embed_list(embed_list, inter)
+                await discord_responder.send_embed_list(inter, embed_list)
                 return
 
             claimed_clan_obj = db_responder.read_clan(
@@ -797,7 +797,7 @@ class Client(commands.Cog):
                     author_avatar_url=inter.author.avatar.url
                 )
 
-                await discord_responder.send_embed_list(embed_list, inter)
+                await discord_responder.send_embed_list(inter, embed_list)
                 return
 
             db_clan_obj = db_responder.claim_clan(inter.guild.id, clan_obj.tag)
@@ -814,7 +814,7 @@ class Client(commands.Cog):
                     author_avatar_url=inter.author.avatar.url
                 )
 
-                await discord_responder.send_embed_list(embed_list, inter)
+                await discord_responder.send_embed_list(inter, embed_list)
                 return
 
             embed_description = f"{clan_obj.name} has been claimed"
@@ -834,7 +834,7 @@ class Client(commands.Cog):
                     author_avatar_url=inter.author.avatar.url
                 )
 
-                await discord_responder.send_embed_list(embed_list, inter)
+                await discord_responder.send_embed_list(inter, embed_list)
                 return
 
             db_user_obj = db_responder.read_user(inter.author.id)
@@ -851,7 +851,7 @@ class Client(commands.Cog):
                     author_avatar_url=inter.author.avatar.url
                 )
 
-                await discord_responder.send_embed_list(embed_list, inter)
+                await discord_responder.send_embed_list(inter, embed_list)
                 return
 
             # user is not guild admin and is not super user
@@ -867,7 +867,7 @@ class Client(commands.Cog):
                     author_avatar_url=inter.author.avatar.url
                 )
 
-                await discord_responder.send_embed_list(embed_list, inter)
+                await discord_responder.send_embed_list(inter, embed_list)
                 return
 
             db_clan_obj_list = db_responder.read_clan_list_from_guild(
@@ -885,7 +885,7 @@ class Client(commands.Cog):
                     author_avatar_url=inter.author.avatar.url
                 )
 
-                await discord_responder.send_embed_list(embed_list, inter)
+                await discord_responder.send_embed_list(inter, embed_list)
                 return
 
             embed_title = f"{inter.guild.name} claimed clans"
@@ -914,7 +914,7 @@ class Client(commands.Cog):
                     author_avatar_url=inter.author.avatar.url
                 )
 
-                await discord_responder.send_embed_list(embed_list, inter)
+                await discord_responder.send_embed_list(inter, embed_list)
                 return
 
             db_guild_obj = db_responder.read_guild(inter.guild.id)
@@ -931,7 +931,7 @@ class Client(commands.Cog):
                     author_avatar_url=inter.author.avatar.url
                 )
 
-                await discord_responder.send_embed_list(embed_list, inter)
+                await discord_responder.send_embed_list(inter, embed_list)
                 return
 
             db_user_obj = db_responder.read_user(inter.author.id)
@@ -948,7 +948,7 @@ class Client(commands.Cog):
                     author_avatar_url=inter.author.avatar.url
                 )
 
-                await discord_responder.send_embed_list(embed_list, inter)
+                await discord_responder.send_embed_list(inter, embed_list)
                 return
 
             # user is not guild admin and is not super user
@@ -964,7 +964,7 @@ class Client(commands.Cog):
                     author_avatar_url=inter.author.avatar.url
                 )
 
-                await discord_responder.send_embed_list(embed_list, inter)
+                await discord_responder.send_embed_list(inter, embed_list)
                 return
 
             clan_obj = await clash_responder.get_clan(clan_tag, self.coc_client)
@@ -981,7 +981,7 @@ class Client(commands.Cog):
                     author_avatar_url=inter.author.avatar.url
                 )
 
-                await discord_responder.send_embed_list(embed_list, inter)
+                await discord_responder.send_embed_list(inter, embed_list)
                 return
 
             db_clan_obj = db_responder.read_clan(inter.guild.id, clan_obj.tag)
@@ -998,7 +998,7 @@ class Client(commands.Cog):
                     author_avatar_url=inter.author.avatar.url
                 )
 
-                await discord_responder.send_embed_list(embed_list, inter)
+                await discord_responder.send_embed_list(inter, embed_list)
                 return
 
             db_clan_deletion = db_responder.delete_clan(
@@ -1015,7 +1015,7 @@ class Client(commands.Cog):
                     author_avatar_url=inter.author.avatar.url
                 )
 
-                await discord_responder.send_embed_list(embed_list, inter)
+                await discord_responder.send_embed_list(inter, embed_list)
                 return
 
             embed_description = (f"{clan_obj.name} has been deleted "
@@ -1037,7 +1037,7 @@ class Client(commands.Cog):
             author_avatar_url=inter.author.avatar.url
         )
 
-        await discord_responder.send_embed_list(embed_list, inter)
+        await discord_responder.send_embed_list(inter, embed_list)
 
     @client.sub_command()
     async def role(
@@ -1077,7 +1077,7 @@ class Client(commands.Cog):
                     author_avatar_url=inter.author.avatar.url
                 )
 
-                await discord_responder.send_embed_list(embed_list, inter)
+                await discord_responder.send_embed_list(inter, embed_list)
                 return
 
             # user not claimed
@@ -1092,7 +1092,7 @@ class Client(commands.Cog):
                     author_avatar_url=inter.author.avatar.url
                 )
 
-                await discord_responder.send_embed_list(embed_list, inter)
+                await discord_responder.send_embed_list(inter, embed_list)
                 return
 
             # user is not guild admin and is not super user
@@ -1108,7 +1108,7 @@ class Client(commands.Cog):
                     author_avatar_url=inter.author.avatar.url
                 )
 
-                await discord_responder.send_embed_list(embed_list, inter)
+                await discord_responder.send_embed_list(inter, embed_list)
                 return
 
             embed_title = f"{inter.guild.name} claimed roles"
@@ -1194,7 +1194,7 @@ class Client(commands.Cog):
                     author_avatar_url=inter.author.avatar.url
                 )
 
-                await discord_responder.send_embed_list(embed_list, inter)
+                await discord_responder.send_embed_list(inter, embed_list)
                 return
 
             db_user_obj = db_responder.read_user(inter.author.id)
@@ -1212,7 +1212,7 @@ class Client(commands.Cog):
                     author_avatar_url=inter.author.avatar.url
                 )
 
-                await discord_responder.send_embed_list(embed_list, inter)
+                await discord_responder.send_embed_list(inter, embed_list)
                 return
 
             # user not claimed
@@ -1227,7 +1227,7 @@ class Client(commands.Cog):
                     author_avatar_url=inter.author.avatar.url
                 )
 
-                await discord_responder.send_embed_list(embed_list, inter)
+                await discord_responder.send_embed_list(inter, embed_list)
                 return
 
             # user is not guild admin and is not super user
@@ -1243,7 +1243,7 @@ class Client(commands.Cog):
                     author_avatar_url=inter.author.avatar.url
                 )
 
-                await discord_responder.send_embed_list(embed_list, inter)
+                await discord_responder.send_embed_list(inter, embed_list)
                 return
 
             db_clan_role_obj = db_responder.read_clan_role(role.id)
@@ -1264,7 +1264,7 @@ class Client(commands.Cog):
                         author_avatar_url=inter.author.avatar.url
                     )
 
-                    await discord_responder.send_embed_list(embed_list, inter)
+                    await discord_responder.send_embed_list(inter, embed_list)
                     return
 
                 # clan role deleted
@@ -1278,7 +1278,7 @@ class Client(commands.Cog):
                     author_avatar_url=inter.author.avatar.url
                 )
 
-                await discord_responder.send_embed_list(embed_list, inter)
+                await discord_responder.send_embed_list(inter, embed_list)
                 return
 
             db_rank_role_obj = db_responder.read_rank_role(role.id)
@@ -1299,7 +1299,7 @@ class Client(commands.Cog):
                         author_avatar_url=inter.author.avatar.url
                     )
 
-                    await discord_responder.send_embed_list(embed_list, inter)
+                    await discord_responder.send_embed_list(inter, embed_list)
                     return
 
                 # rank role deleted
@@ -1313,7 +1313,7 @@ class Client(commands.Cog):
                     author_avatar_url=inter.author.avatar.url
                 )
 
-                await discord_responder.send_embed_list(embed_list, inter)
+                await discord_responder.send_embed_list(inter, embed_list)
                 return
 
             embed_description = f"{role.mention} is not claimed"
@@ -1334,7 +1334,7 @@ class Client(commands.Cog):
             author_avatar_url=inter.author.avatar.url
         )
 
-        await discord_responder.send_embed_list(embed_list, inter)
+        await discord_responder.send_embed_list(inter, embed_list)
 
     @client.sub_command()
     async def clanrole(
@@ -1374,7 +1374,7 @@ class Client(commands.Cog):
                     author_avatar_url=inter.author.avatar.url
                 )
 
-                await discord_responder.send_embed_list(embed_list, inter)
+                await discord_responder.send_embed_list(inter, embed_list)
                 return
 
             clan_obj = await clash_responder.get_clan(clan_tag, self.coc_client)
@@ -1391,7 +1391,7 @@ class Client(commands.Cog):
                     author_avatar_url=inter.author.avatar.url
                 )
 
-                await discord_responder.send_embed_list(embed_list, inter)
+                await discord_responder.send_embed_list(inter, embed_list)
                 return
 
             db_guild_obj = db_responder.read_guild(inter.guild.id)
@@ -1408,7 +1408,7 @@ class Client(commands.Cog):
                     author_avatar_url=inter.author.avatar.url
                 )
 
-                await discord_responder.send_embed_list(embed_list, inter)
+                await discord_responder.send_embed_list(inter, embed_list)
                 return
 
             db_user_obj = db_responder.read_user(inter.author.id)
@@ -1425,7 +1425,7 @@ class Client(commands.Cog):
                     author_avatar_url=inter.author.avatar.url
                 )
 
-                await discord_responder.send_embed_list(embed_list, inter)
+                await discord_responder.send_embed_list(inter, embed_list)
                 return
 
             # user is not guild admin and is not super user
@@ -1441,7 +1441,7 @@ class Client(commands.Cog):
                     author_avatar_url=inter.author.avatar.url
                 )
 
-                await discord_responder.send_embed_list(embed_list, inter)
+                await discord_responder.send_embed_list(inter, embed_list)
                 return
 
             db_clan_obj = db_responder.read_clan(inter.guild.id, clan_obj.tag)
@@ -1459,7 +1459,7 @@ class Client(commands.Cog):
                     author_avatar_url=inter.author.avatar.url
                 )
 
-                await discord_responder.send_embed_list(embed_list, inter)
+                await discord_responder.send_embed_list(inter, embed_list)
                 return
 
             # confirm clan role has not been claimed
@@ -1478,7 +1478,7 @@ class Client(commands.Cog):
                     author_avatar_url=inter.author.avatar.url
                 )
 
-                await discord_responder.send_embed_list(embed_list, inter)
+                await discord_responder.send_embed_list(inter, embed_list)
                 return
 
             # confirm rank role has not been claimed
@@ -1497,7 +1497,7 @@ class Client(commands.Cog):
                     author_avatar_url=inter.author.avatar.url
                 )
 
-                await discord_responder.send_embed_list(embed_list, inter)
+                await discord_responder.send_embed_list(inter, embed_list)
                 return
 
             # claim clan role
@@ -1517,7 +1517,7 @@ class Client(commands.Cog):
                     author_avatar_url=inter.author.avatar.url
                 )
 
-                await discord_responder.send_embed_list(embed_list, inter)
+                await discord_responder.send_embed_list(inter, embed_list)
                 return
 
             embed_description = f"{role.mention} has been claimed for clan {clan_obj.tag}"
@@ -1538,7 +1538,7 @@ class Client(commands.Cog):
             author_avatar_url=inter.author.avatar.url
         )
 
-        await discord_responder.send_embed_list(embed_list, inter)
+        await discord_responder.send_embed_list(inter, embed_list)
 
     @client.sub_command()
     async def rankrole(
@@ -1577,7 +1577,7 @@ class Client(commands.Cog):
                     author_avatar_url=inter.author.avatar.url
                 )
 
-                await discord_responder.send_embed_list(embed_list, inter)
+                await discord_responder.send_embed_list(inter, embed_list)
                 return
 
             # validate given role name with model
@@ -1595,7 +1595,7 @@ class Client(commands.Cog):
                     author_avatar_url=inter.author.avatar.url
                 )
 
-                await discord_responder.send_embed_list(embed_list, inter)
+                await discord_responder.send_embed_list(inter, embed_list)
                 return
 
             db_guild_obj = db_responder.read_guild(inter.guild.id)
@@ -1611,7 +1611,7 @@ class Client(commands.Cog):
                     author_avatar_url=inter.author.avatar.url
                 )
 
-                await discord_responder.send_embed_list(embed_list, inter)
+                await discord_responder.send_embed_list(inter, embed_list)
                 return
 
             db_user_obj = db_responder.read_user(inter.author.id)
@@ -1627,7 +1627,7 @@ class Client(commands.Cog):
                     author_avatar_url=inter.author.avatar.url
                 )
 
-                await discord_responder.send_embed_list(embed_list, inter)
+                await discord_responder.send_embed_list(inter, embed_list)
                 return
 
             # user is not guild admin and is not super user
@@ -1643,7 +1643,7 @@ class Client(commands.Cog):
                     author_avatar_url=inter.author.avatar.url
                 )
 
-                await discord_responder.send_embed_list(embed_list, inter)
+                await discord_responder.send_embed_list(inter, embed_list)
                 return
 
             # confirm clan role has not been claimed
@@ -1661,7 +1661,7 @@ class Client(commands.Cog):
                     author_avatar_url=inter.author.avatar.url
                 )
 
-                await discord_responder.send_embed_list(embed_list, inter)
+                await discord_responder.send_embed_list(inter, embed_list)
                 return
 
             # confirm rank role has not been claimed
@@ -1679,7 +1679,7 @@ class Client(commands.Cog):
                     author_avatar_url=inter.author.avatar.url
                 )
 
-                await discord_responder.send_embed_list(embed_list, inter)
+                await discord_responder.send_embed_list(inter, embed_list)
                 return
 
             # claim rank role
@@ -1711,4 +1711,4 @@ class Client(commands.Cog):
             author_avatar_url=inter.author.avatar.url
         )
 
-        await discord_responder.send_embed_list(embed_list, inter)
+        await discord_responder.send_embed_list(inter, embed_list)

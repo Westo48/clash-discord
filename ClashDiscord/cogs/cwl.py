@@ -59,7 +59,7 @@ class CWL(commands.Cog):
                 author_avatar_url=inter.author.avatar.url
             )
 
-            await discord_responder.send_embed_list(embed_list, inter)
+            await discord_responder.send_embed_list(inter, embed_list)
             return
 
         cwl_group_obj = verification_payload['cwl_group_obj']
@@ -85,7 +85,7 @@ class CWL(commands.Cog):
                     author_avatar_url=inter.author.avatar.url
                 )
 
-                await discord_responder.send_embed_list(embed_list, inter)
+                await discord_responder.send_embed_list(inter, embed_list)
 
             return
 
@@ -104,7 +104,7 @@ class CWL(commands.Cog):
                     author_avatar_url=inter.author.avatar.url
                 )
 
-                await discord_responder.send_embed_list(embed_list, inter)
+                await discord_responder.send_embed_list(inter, embed_list)
 
             return
 
@@ -122,7 +122,7 @@ class CWL(commands.Cog):
             author_avatar_url=inter.author.avatar.url
         )
 
-        await discord_responder.send_embed_list(embed_list, inter)
+        await discord_responder.send_embed_list(inter, embed_list)
 
     @cwl.sub_command()
     async def scoreboard(
@@ -160,11 +160,12 @@ class CWL(commands.Cog):
                 author_avatar_url=inter.author.avatar.url
             )
 
-            await discord_responder.send_embed_list(embed_list, inter)
+            await discord_responder.send_embed_list(inter, embed_list)
             return
 
         cwl_group = verification_payload['cwl_group_obj']
 
+        # get the clan object from player or clan
         if "clan_obj" in verification_payload:
             clan = verification_payload['clan_obj']
 
@@ -250,7 +251,16 @@ class CWL(commands.Cog):
                 ))
 
         elif option == "clan":
-            pass
+            embed_title = f"CWL {clan.war_league.name} Group"
+            embed_thumbnail = discord_responder.get_emoji(
+                f"Clan War {clan.war_league.name}",
+                inter.client.emojis,
+                self.client_data.emojis)
+
+            field_dict_list = await discord_responder.cwl_scoreboard_clan(
+                inter, cwl_group, clan, self.coc_client,
+                inter.client.emojis, self.client_data.emojis
+            )
 
         else:
             field_dict_list = [{
@@ -269,7 +279,7 @@ class CWL(commands.Cog):
             author_avatar_url=inter.author.avatar.url
         )
 
-        await discord_responder.send_embed_list(embed_list, inter)
+        await discord_responder.send_embed_list(inter, embed_list)
 
     @cwl.sub_command_group()
     async def score(self, inter):
@@ -310,7 +320,7 @@ class CWL(commands.Cog):
                 author_avatar_url=inter.author.avatar.url
             )
 
-            await discord_responder.send_embed_list(embed_list, inter)
+            await discord_responder.send_embed_list(inter, embed_list)
             return
 
         player_obj = verification_payload['player_obj']
@@ -328,7 +338,7 @@ class CWL(commands.Cog):
             author_avatar_url=inter.author.avatar.url
         )
 
-        await discord_responder.send_embed_list(embed_list, inter)
+        await discord_responder.send_embed_list(inter, embed_list)
 
     @score.sub_command()
     async def clan(
@@ -368,7 +378,7 @@ class CWL(commands.Cog):
                 author_avatar_url=inter.author.avatar.url
             )
 
-            await discord_responder.send_embed_list(embed_list, inter)
+            await discord_responder.send_embed_list(inter, embed_list)
             return
 
         player_obj = verification_payload['player_obj']
@@ -387,4 +397,4 @@ class CWL(commands.Cog):
             author_avatar_url=inter.author.avatar.url
         )
 
-        await discord_responder.send_embed_list(embed_list, inter)
+        await discord_responder.send_embed_list(inter, embed_list)

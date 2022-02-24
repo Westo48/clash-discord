@@ -53,7 +53,7 @@ class Discord(commands.Cog):
             author_avatar_url=inter.author.avatar.url
         )
 
-        await discord_responder.send_embed_list(embed_list, inter)
+        await discord_responder.send_embed_list(inter, embed_list)
 
         original_message = await inter.original_message()
 
@@ -100,42 +100,21 @@ class Discord(commands.Cog):
                 author_avatar_url=inter.author.avatar.url
             )
 
-            await discord_responder.send_embed_list(embed_list, inter)
+            await discord_responder.xx(embed_list, inter)
             return
 
-        message = "**ANNOUNCEMENT**\n\n" + message
+        embed_title = f"**ANNOUNCEMENT**"
 
-        try:
-            await channel.send(content=message)
-        except:
-            field_dict_list = [{
-                "name": "message could not be sent",
-                "value": f"please ensure bot is in channel {channel.mention}"
-            }]
-            embed_list = discord_responder.embed_message(
-                icon_url=inter.bot.user.avatar.url,
-                bot_user_name=inter.me.display_name,
-                field_list=field_dict_list,
-                author_display_name=inter.author.display_name,
-                author_avatar_url=inter.author.avatar.url
-            )
-
-            await discord_responder.send_embed_list(embed_list, inter)
-            return
-
-        field_dict_list = [{
-            "name": "message sent",
-            "value": f"channel {channel.mention}"
-        }]
         embed_list = discord_responder.embed_message(
             icon_url=inter.bot.user.avatar.url,
             bot_user_name=inter.me.display_name,
-            field_list=field_dict_list,
+            title=embed_title,
+            description=message,
             author_display_name=inter.author.display_name,
-            author_avatar_url=inter.author.avatar.url
-        )
+            author_avatar_url=inter.author.avatar.url)
 
-        await discord_responder.send_embed_list(embed_list, inter)
+        await discord_responder.send_embed_list(
+            inter, embed_list, channel=channel)
 
     @announce.sub_command()
     async def player(
@@ -168,10 +147,9 @@ class Discord(commands.Cog):
                 bot_user_name=inter.me.display_name,
                 field_list=verification_payload['field_dict_list'],
                 author_display_name=inter.author.display_name,
-                author_avatar_url=inter.author.avatar.url
-            )
+                author_avatar_url=inter.author.avatar.url)
 
-            await discord_responder.send_embed_list(embed_list, inter)
+            await discord_responder.send_embed_list(inter, embed_list)
             return
 
         player = await clash_responder.get_player(tag, self.coc_client)
@@ -189,45 +167,27 @@ class Discord(commands.Cog):
                 author_avatar_url=inter.author.avatar.url
             )
 
-            await discord_responder.send_embed_list(embed_list, inter)
+            await discord_responder.send_embed_list(inter, embed_list)
             return
 
-        message = f"**{player.name} {player.tag}**\n\n" + message
-        message += "\n\n"
+        embed_title = f"**{player.name} {player.tag}**"
 
-        message += discord_responder.user_player_ping(
-            player, inter.guild.members)
+        embed_thumbnail = discord_responder.get_town_hall_url(player)
 
-        try:
-            await channel.send(content=message)
-        except:
-            field_dict_list = [{
-                "name": "message could not be sent",
-                "value": f"please ensure bot is in channel {channel.mention}"
-            }]
-            embed_list = discord_responder.embed_message(
-                icon_url=inter.bot.user.avatar.url,
-                bot_user_name=inter.me.display_name,
-                field_list=field_dict_list,
-                author_display_name=inter.author.display_name,
-                author_avatar_url=inter.author.avatar.url
-            )
-            await discord_responder.send_embed_list(embed_list, inter)
-
-            return
-
-        field_dict_list = [{
-            "name": "message sent",
-            "value": f"channel {channel.mention}"
-        }]
         embed_list = discord_responder.embed_message(
             icon_url=inter.bot.user.avatar.url,
             bot_user_name=inter.me.display_name,
-            field_list=field_dict_list,
+            title=embed_title,
+            description=message,
+            thumbnail=embed_thumbnail,
             author_display_name=inter.author.display_name,
-            author_avatar_url=inter.author.avatar.url
-        )
-        await discord_responder.send_embed_list(embed_list, inter)
+            author_avatar_url=inter.author.avatar.url)
+
+        content = discord_responder.user_player_ping(
+            player, inter.guild.members)
+
+        await discord_responder.send_embed_list(
+            inter, embed_list, content=content, channel=channel)
 
     @announce.sub_command()
     async def donate(
@@ -277,7 +237,7 @@ class Discord(commands.Cog):
                 author_avatar_url=inter.author.avatar.url
             )
 
-            await discord_responder.send_embed_list(embed_list, inter)
+            await discord_responder.send_embed_list(inter, embed_list)
             return
 
         clan = verification_payload['clan_obj']
@@ -296,53 +256,34 @@ class Discord(commands.Cog):
         unit_emoji = discord_responder.get_emoji(
             formatted_unit_name, inter.client.emojis, self.client_data.emojis)
 
-        message = f"{unit_emoji} **DONORS**\n\n" + message
-        message += "\n\n"
-
         # nobody in the clan can donate the requested unit
         if len(donator_list) == 0:
-            message += f"{clan.name} is unable to donate {unit_emoji}"
+            message = f"{clan.name} is unable to donate {unit_emoji}"
+            content = None
 
         else:
-
+            content = ""
             for donor in donator_list:
                 donor_ping = discord_responder.user_player_ping(
                     donor.player_obj, inter.guild.members)
-                message += (f"{donor_ping}, ")
+                content += (f"{donor_ping}, ")
 
             # cuts the last two characters from the string ', '
-            message = message[:-2]
+            content = content[:-2]
 
-        try:
-            await channel.send(content=(message))
-        except:
-            field_dict_list = [{
-                "name": "message could not be sent",
-                "value": f"please ensure bot is in channel {channel.mention}"
-            }]
-            embed_list = discord_responder.embed_message(
-                icon_url=inter.bot.user.avatar.url,
-                bot_user_name=inter.me.display_name,
-                field_list=field_dict_list,
-                author_display_name=inter.author.display_name,
-                author_avatar_url=inter.author.avatar.url
-            )
-            await discord_responder.send_embed_list(embed_list, inter)
+        embed_title = f"{unit_emoji} **{formatted_unit_name} DONORS**"
 
-            return
-
-        field_dict_list = [{
-            "name": "message sent",
-            "value": f"channel {channel.mention}"
-        }]
         embed_list = discord_responder.embed_message(
             icon_url=inter.bot.user.avatar.url,
             bot_user_name=inter.me.display_name,
-            field_list=field_dict_list,
+            title=embed_title,
+            description=message,
+            thumbnail=clan.badge.small,
             author_display_name=inter.author.display_name,
-            author_avatar_url=inter.author.avatar.url
-        )
-        await discord_responder.send_embed_list(embed_list, inter)
+            author_avatar_url=inter.author.avatar.url)
+
+        await discord_responder.send_embed_list(
+            inter, embed_list, content=content, channel=channel)
 
     @announce.sub_command()
     async def supertroop(
@@ -391,7 +332,7 @@ class Discord(commands.Cog):
                 author_avatar_url=inter.author.avatar.url
             )
 
-            await discord_responder.send_embed_list(embed_list, inter)
+            await discord_responder.send_embed_list(inter, embed_list)
             return
 
         clan = verification_payload['clan_obj']
@@ -415,53 +356,35 @@ class Discord(commands.Cog):
         unit_emoji = discord_responder.get_emoji(
             super_troop_name, inter.client.emojis, self.client_data.emojis)
 
-        message = f"{unit_emoji} **DONORS**\n\n" + message
-        message += "\n\n"
-
         # nobody in the clan can donate the requested unit
         if len(donator_list) == 0:
-            message += f"{clan.name} is unable to donate {unit_emoji}"
+            message = f"{clan.name} is unable to donate {unit_emoji}"
+            content = None
 
         else:
-
+            content = ""
             for donor in donator_list:
                 donor_ping = discord_responder.user_player_ping(
                     donor, inter.guild.members)
-                message += (f"{donor_ping}, ")
+                content += (f"{donor_ping}, ")
 
             # cuts the last two characters from the string ', '
-            message = message[:-2]
+            content = content[:-2]
 
-        try:
-            await channel.send(content=message)
-        except:
-            field_dict_list = [{
-                "name": "message could not be sent",
-                "value": f"please ensure bot is in channel {channel.mention}"
-            }]
-            embed_list = discord_responder.embed_message(
-                icon_url=inter.bot.user.avatar.url,
-                bot_user_name=inter.me.display_name,
-                field_list=field_dict_list,
-                author_display_name=inter.author.display_name,
-                author_avatar_url=inter.author.avatar.url
-            )
-            await discord_responder.send_embed_list(embed_list, inter)
+        embed_title = f"{unit_emoji} **{super_troop_name} DONORS**"
+        embed_description = message
 
-            return
-
-        field_dict_list = [{
-            "name": "message sent",
-            "value": f"channel {channel.mention}"
-        }]
         embed_list = discord_responder.embed_message(
             icon_url=inter.bot.user.avatar.url,
             bot_user_name=inter.me.display_name,
-            field_list=field_dict_list,
+            title=embed_title,
+            description=embed_description,
+            thumbnail=clan.badge.small,
             author_display_name=inter.author.display_name,
-            author_avatar_url=inter.author.avatar.url
-        )
-        await discord_responder.send_embed_list(embed_list, inter)
+            author_avatar_url=inter.author.avatar.url)
+
+        await discord_responder.send_embed_list(
+            inter, embed_list, content=content, channel=channel)
 
     @announce.sub_command()
     async def war(
@@ -509,52 +432,34 @@ class Discord(commands.Cog):
                 author_avatar_url=inter.author.avatar.url
             )
 
-            await discord_responder.send_embed_list(embed_list, inter)
+            await discord_responder.send_embed_list(inter, embed_list)
             return
 
         war = verification_payload['war_obj']
 
-        message = "**WAR ANNOUNCEMENT**\n\n" + message
-        message += "\n\n"
-
+        content = ""
         for war_member in war.clan.members:
             member_message = discord_responder.user_player_ping(
                 war_member, inter.guild.members)
-            message += (f"{member_message}, ")
+            content += (f"{member_message}, ")
 
         # cuts the last two characters from the string ', '
-        message = message[:-2]
+        content = content[:-2]
 
-        try:
-            await channel.send(content=message)
-        except:
-            field_dict_list = [{
-                "name": "message could not be sent",
-                "value": f"please ensure bot is in channel {channel.mention}"
-            }]
-            embed_list = discord_responder.embed_message(
-                icon_url=inter.bot.user.avatar.url,
-                bot_user_name=inter.me.display_name,
-                field_list=field_dict_list,
-                author_display_name=inter.author.display_name,
-                author_avatar_url=inter.author.avatar.url
-            )
-            await discord_responder.send_embed_list(embed_list, inter)
+        embed_title = f"**WAR ANNOUNCEMENT**"
+        embed_description = message
 
-            return
-
-        field_dict_list = [{
-            "name": "message sent",
-            "value": f"channel {channel.mention}"
-        }]
         embed_list = discord_responder.embed_message(
             icon_url=inter.bot.user.avatar.url,
             bot_user_name=inter.me.display_name,
-            field_list=field_dict_list,
+            title=embed_title,
+            description=embed_description,
+            thumbnail=war.clan.badge.small,
             author_display_name=inter.author.display_name,
-            author_avatar_url=inter.author.avatar.url
-        )
-        await discord_responder.send_embed_list(embed_list, inter)
+            author_avatar_url=inter.author.avatar.url)
+
+        await discord_responder.send_embed_list(
+            inter, embed_list, content=content, channel=channel)
 
     @announce.sub_command()
     async def warnoattack(
@@ -604,62 +509,42 @@ class Discord(commands.Cog):
                 author_avatar_url=inter.author.avatar.url
             )
 
-            await discord_responder.send_embed_list(embed_list, inter)
+            await discord_responder.send_embed_list(inter, embed_list)
             return
 
         war = verification_payload['war_obj']
 
         if missed_attacks is None:
-            message = "**MISSING WAR ATTACKS**\n\n" + message
+            embed_title = "**MISSING WAR ATTACKS**"
         else:
             if missed_attacks == 1:
-                message = "**MISSING 1 ATTACK**\n\n" + message
+                embed_title = "**MISSING 1 ATTACK**"
             else:
-                message = "**MISSING 2 ATTACKS**\n\n" + message
-
-        message += "\n\n"
+                embed_title = "**MISSING 2 ATTACKS**"
 
         war_member_no_attack_list = clash_responder.war_no_attack(
             war, missed_attacks)
 
+        content = ""
         for war_member in war_member_no_attack_list:
             member_message = discord_responder.user_player_ping(
                 war_member, inter.guild.members)
-            message += (f"{member_message}, ")
+            content += (f"{member_message}, ")
 
         # cuts the last two characters from the string ', '
-        message = message[:-2]
+        content = content[:-2]
 
-        try:
-            await channel.send(content=message)
-        except:
-            field_dict_list = [{
-                "name": "message could not be sent",
-                "value": f"please ensure bot is in channel {channel.mention}"
-            }]
-            embed_list = discord_responder.embed_message(
-                icon_url=inter.bot.user.avatar.url,
-                bot_user_name=inter.me.display_name,
-                field_list=field_dict_list,
-                author_display_name=inter.author.display_name,
-                author_avatar_url=inter.author.avatar.url
-            )
-            await discord_responder.send_embed_list(embed_list, inter)
-
-            return
-
-        field_dict_list = [{
-            "name": "message sent",
-            "value": f"channel {channel.mention}"
-        }]
         embed_list = discord_responder.embed_message(
             icon_url=inter.bot.user.avatar.url,
             bot_user_name=inter.me.display_name,
-            field_list=field_dict_list,
+            title=embed_title,
+            description=message,
+            thumbnail=war.clan.badge.small,
             author_display_name=inter.author.display_name,
-            author_avatar_url=inter.author.avatar.url
-        )
-        await discord_responder.send_embed_list(embed_list, inter)
+            author_avatar_url=inter.author.avatar.url)
+
+        await discord_responder.send_embed_list(
+            inter, embed_list, content=content, channel=channel)
 
     # discord role
     @discord.sub_command_group()
@@ -699,7 +584,7 @@ class Discord(commands.Cog):
                 author_avatar_url=inter.author.avatar.url
             )
 
-            await discord_responder.send_embed_list(embed_list, inter)
+            await discord_responder.send_embed_list(inter, embed_list)
 
     @role.sub_command()
     async def member(
@@ -739,7 +624,7 @@ class Discord(commands.Cog):
                 author_avatar_url=inter.author.avatar.url
             )
 
-            await discord_responder.send_embed_list(embed_list, inter)
+            await discord_responder.send_embed_list(inter, embed_list)
             return
 
         embed_dict_list = await discord_responder.update_roles(
@@ -757,7 +642,7 @@ class Discord(commands.Cog):
                 author_avatar_url=inter.author.avatar.url
             )
 
-            await discord_responder.send_embed_list(embed_list, inter)
+            await discord_responder.send_embed_list(inter, embed_list)
 
     @role.sub_command()
     async def all(self, inter):
@@ -799,7 +684,7 @@ class Discord(commands.Cog):
             author_avatar_url=inter.author.avatar.url
         )
 
-        await discord_responder.send_embed_list(embed_list, inter)
+        await discord_responder.send_embed_list(inter, embed_list)
 
         for user in inter.guild.members:
             if user.bot:
@@ -820,7 +705,7 @@ class Discord(commands.Cog):
                     author_avatar_url=inter.author.avatar.url
                 )
 
-                await discord_responder.send_embed_list(embed_list, inter)
+                await discord_responder.send_embed_list(inter, embed_list)
 
         # telling the user that the bot is done updating roles
         embed_list = discord_responder.embed_message(
@@ -831,7 +716,7 @@ class Discord(commands.Cog):
             author_avatar_url=inter.author.avatar.url
         )
 
-        await discord_responder.send_embed_list(embed_list, inter)
+        await discord_responder.send_embed_list(inter, embed_list)
 
     @discord.sub_command()
     async def emoji(
@@ -899,7 +784,7 @@ class Discord(commands.Cog):
                     author_avatar_url=inter.author.avatar.url
                 )
 
-                await discord_responder.send_embed_list(embed_list, inter)
+                await discord_responder.send_embed_list(inter, embed_list)
                 return
 
             player_obj = await clash_responder.get_player(tag, self.coc_client)
@@ -914,7 +799,7 @@ class Discord(commands.Cog):
                     author_avatar_url=inter.author.avatar.url
                 )
 
-                await discord_responder.send_embed_list(embed_list, inter)
+                await discord_responder.send_embed_list(inter, embed_list)
                 return
 
             embed_title = None
@@ -950,7 +835,7 @@ class Discord(commands.Cog):
                     author_avatar_url=inter.author.avatar.url
                 )
 
-                await discord_responder.send_embed_list(embed_list, inter)
+                await discord_responder.send_embed_list(inter, embed_list)
                 return
 
             clan_obj = verification_payload['clan_obj']
@@ -982,4 +867,4 @@ class Discord(commands.Cog):
             author_avatar_url=inter.author.avatar.url
         )
 
-        await discord_responder.send_embed_list(embed_list, inter)
+        await discord_responder.send_embed_list(inter, embed_list)
