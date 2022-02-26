@@ -2,7 +2,6 @@ from disnake import (
     ApplicationCommandInteraction,
     TextChannel
 )
-
 from coc import (
     Client as CocClient,
     WarRound,
@@ -11,6 +10,7 @@ from coc import (
     PrivateWarLog,
     GatewayError,
     Clan,
+    ClanWar,
     ClanWarLeagueGroup
 )
 import data.RazBot_Data as RazBot_Data
@@ -1943,6 +1943,82 @@ def war_all_attacks(war_obj, discord_emoji_list, client_emoji_list):
             ),
             'value': field_value
         })
+    return field_dict_list
+
+
+def war_open_bases(
+        war: ClanWar, star_count: int,
+        discord_emoji_list, client_emoji_list):
+    if war is None:
+        return [{
+            'name': f"not in war",
+            'value': f"you are not in war"
+        }]
+
+    if war.state == "preparation":
+        time_string = clash_responder.string_date_time(war)
+
+        return [{
+            'name': f"{time_string}",
+            'value': f"left before war starts, nobody has attacked"
+        }]
+
+    field_dict_list = []
+
+    star_emoji = get_emoji(
+        "War Star", discord_emoji_list, client_emoji_list)
+
+    position_index = 0
+    for opponent in war.opponent.members:
+        position_index += 1
+
+        # there is no opponent attack
+        if opponent.best_opponent_attack is None:
+            opponent_th_emoji = get_emoji(
+                opponent.town_hall, discord_emoji_list, client_emoji_list)
+
+            field_dict_list.append({
+                "name": (
+                    f"{position_index}: {opponent_th_emoji} "
+                    f"{opponent.name} {opponent.tag}"
+                ),
+                "value": (
+                    f"0 {star_emoji}"
+                )
+            })
+
+            continue
+
+        if opponent.best_opponent_attack.stars <= star_count:
+            opponent_th_emoji = get_emoji(
+                opponent.town_hall, discord_emoji_list, client_emoji_list)
+
+            if opponent.best_opponent_attack.stars == 0:
+                star_string = f"0 {star_emoji}"
+
+            else:
+                star_string = star_emoji * opponent.best_opponent_attack.stars
+
+            field_dict_list.append({
+                "name": (
+                    f"{position_index}: {opponent_th_emoji} "
+                    f"{opponent.name} {opponent.tag}"
+                ),
+                "value": (
+                    f"{opponent.best_opponent_attack.destruction}%\n"
+                    f"{star_string}"
+                )
+            })
+
+            continue
+
+    # no open bases
+    if len(field_dict_list) == 0:
+        field_dict_list.append({
+            "name": f"no open bases",
+            "value": f"with less than {star_count+1} {star_emoji}"
+        })
+
     return field_dict_list
 
 
