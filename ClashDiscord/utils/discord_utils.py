@@ -180,6 +180,14 @@ command_param_dict = {
             "active", "donate"
         ]
     ),
+    'star_count': commands.Param(
+        name="star_count",
+        description="*optional* star count selection for open bases",
+        default=2,
+        choices=[
+            0, 1, 2
+        ]
+    ),
     'war_stars': commands.Param(
         name="option",
         description="*optional* options for war star returns",
