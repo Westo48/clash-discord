@@ -741,8 +741,6 @@ class Discord(commands.Cog):
 
         await inter.response.defer(ephemeral=True)
 
-        # await inter.edit_original_message(content="getting emoji")
-
         emoji = discord_responder.get_emoji(
             coc_name, inter.client.emojis, self.client_data.emojis)
 

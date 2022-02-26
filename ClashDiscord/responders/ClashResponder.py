@@ -825,6 +825,17 @@ async def cwl_clan_scoreboard(cwl_group, clan):
         destruction=clan_destruction)
 
 
+def cwl_current_round(cwl_group, cwl_war):
+    round_index = 0
+    for cwl_round in cwl_group:
+        round_index += 1
+        
+        if cwl_war.war_tag in cwl_round:
+            return round_index
+    
+    return None
+            
+
 # CWL War
 
 

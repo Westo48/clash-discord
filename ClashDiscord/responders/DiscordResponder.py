@@ -2265,6 +2265,18 @@ async def cwl_group_leadership_verification(db_player_obj, user_obj, guild_id, c
     return verification_payload
 
 
+def cwl_info(cwl_group: ClanWarLeagueGroup):
+    """
+        embed
+            title
+                clan name, tag, league name
+            description
+                current round
+            current war status
+                    
+    """
+
+
 def cwl_lineup(cwl_group):
     message = (
         "```\n"
