@@ -39,7 +39,7 @@ class CWL(commands.Cog):
         """
 
         # getting the cwl group
-        
+
         # role not mentioned
         if clan_role is None:
             db_player_obj = db_responder.read_player_active(inter.author.id)
@@ -63,7 +63,7 @@ class CWL(commands.Cog):
             await discord_responder.send_embed_list(inter, embed_list)
             return
 
-        cwl_group_obj = verification_payload['cwl_group_obj']
+        cwl_group = verification_payload['cwl_group_obj']
 
         # get the clan object from player or clan
         if "clan_obj" in verification_payload:
@@ -73,7 +73,8 @@ class CWL(commands.Cog):
             clan = await verification_payload['player_obj'].get_detailed_clan()
 
         # getting the war
-        
+
+        war_selection = None
         # role not mentioned
         if clan_role is None:
             db_player_obj = db_responder.read_player_active(inter.author.id)
@@ -97,23 +98,23 @@ class CWL(commands.Cog):
             await discord_responder.send_embed_list(inter, embed_list)
             return
 
-        war = verification_payload['war_obj']
+        cwl_war = verification_payload['war_obj']
 
         league_emoji = discord_responder.get_emoji(
-                f"Clan War {clan.war_league.name}",
-                inter.client.emojis,
-                self.client_data.emojis)
-        
+            f"Clan War {clan.war_league.name}",
+            inter.client.emojis,
+            self.client_data.emojis)
+
         embed_title = f"CWL {league_emoji} {clan.war_league.name} Group"
-        
+
         # get current round number
         round_number = clash_responder.cwl_current_round(
             cwl_group, cwl_war)
-            
+
         embed_description = f"Round {round_number}/{cwl_group.number_of_rounds}"
 
         field_dict_list = discord_responder.war_scoreboard(
-            war, inter.client.emojis, self.client_data.emojis)
+            cwl_war, inter.client.emojis, self.client_data.emojis)
 
         embed_list = discord_responder.embed_message(
             icon_url=inter.bot.user.avatar.url,
@@ -126,7 +127,6 @@ class CWL(commands.Cog):
             author_avatar_url=inter.author.avatar.url)
 
         await discord_responder.send_embed_list(inter, embed_list)
-
 
     @cwl.sub_command()
     async def lineup(
@@ -253,8 +253,8 @@ class CWL(commands.Cog):
         # role has been mentioned
         else:
             verification_payload = await (
-            discord_responder.clan_role_cwl_group_verification(
-                clan_role, self.coc_client))
+                discord_responder.clan_role_cwl_group_verification(
+                    clan_role, self.coc_client))
 
         if not verification_payload['verified']:
             embed_list = discord_responder.embed_message(
@@ -281,7 +281,6 @@ class CWL(commands.Cog):
         embed_title = None
         embed_description = None
         field_dict_list = []
-        embed_thumbnail = None
 
         if option == "group":
             league_emoji = discord_responder.get_emoji(

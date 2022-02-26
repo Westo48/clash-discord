@@ -348,6 +348,9 @@ Once setup is complete you will be able to interact with ClashDiscord using the 
     - `clan_role` - mention a role linked to a clan to get that clan's cwl information
       - _if no clan role is specified, then the user's active player's clan will be used_
 
+  - cwl info
+    - CWL info
+
   - cwl lineup
     - CWL town hall lineup
     - _cwl lineup options_
@@ -355,6 +358,14 @@ Once setup is complete you will be able to interact with ClashDiscord using the 
       - `overview` - short overview of the cwl's lineup
       - `clan` _default_ - cwl lineup for each clan
       - `member` - lineup for every member in each clan in cwl
+
+  - cwl scoreboard
+    - CWL scoreboard
+    - _cwl scoreboard options_
+      - options for `cwl scoreboard` command
+      - `group` _default_ - cwl scoreboard for the group
+      - `rounds` - cwl scoreboard for each round
+      - `clan` - cwl scoreboard for each clan member
 
   - cwl score user
     - user's active player's cwl score
