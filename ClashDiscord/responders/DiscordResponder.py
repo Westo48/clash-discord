@@ -2975,16 +2975,16 @@ async def send_embed_list(
 
             await inter.edit_original_message(embeds=embed_list)
 
-            return
+            return False
 
     # end by sending content if provided
     if content is None:
-        return
+        return True
 
     # respond to interaction if channel is not provided
     if channel is None:
         await inter.send(content=content)
-        return
+        return True
 
     # try to send the content to specified channel
     try:
@@ -3001,7 +3001,7 @@ async def send_embed_list(
             description=embed_description,
             author_display_name=inter.author.display_name,
             author_avatar_url=inter.author.avatar.url)
-        return
+        return True
 
     # could not send content to specified channel
     # possible that bot does not have access for that
@@ -3020,7 +3020,7 @@ async def send_embed_list(
 
         await inter.send(embeds=embed_list)
 
-        return
+        return False
 
 # town hall urls
 

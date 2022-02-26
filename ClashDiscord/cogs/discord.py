@@ -1,4 +1,7 @@
 import disnake
+from disnake import (
+    ApplicationCommandInteraction
+)
 from disnake.ext import commands
 from responders import (
     DiscordResponder as discord_responder,
@@ -721,7 +724,7 @@ class Discord(commands.Cog):
     @discord.sub_command()
     async def emoji(
         self,
-        inter,
+        inter: ApplicationCommandInteraction,
         coc_name: str = commands.Param(
             name=discord_utils.command_param_dict['coc_name'].name,
             description=discord_utils.command_param_dict['coc_name'].description,
@@ -738,7 +741,7 @@ class Discord(commands.Cog):
 
         await inter.response.defer(ephemeral=True)
 
-        await inter.edit_original_message(content="getting emoji")
+        # await inter.edit_original_message(content="getting emoji")
 
         emoji = discord_responder.get_emoji(
             coc_name, inter.client.emojis, self.client_data.emojis)
@@ -748,9 +751,11 @@ class Discord(commands.Cog):
                 content=f"{coc_name} emoji not found")
             return
 
-        await inter.send(content=emoji)
+        message_sent=await discord_responder.send_embed_list(
+            inter, content=emoji, channel=inter.channel)
 
-        await inter.edit_original_message(content=f"{emoji} emoji sent")
+        if message_sent:
+            await inter.edit_original_message(content=f"{emoji} emoji sent")
 
     @discord.sub_command()
     async def user(
