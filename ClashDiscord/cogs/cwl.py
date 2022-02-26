@@ -74,7 +74,7 @@ class CWL(commands.Cog):
 
         # getting the war
 
-        war_selection = "current"
+        war_selection = None
         # role not mentioned
         if clan_role is None:
             db_player_obj = db_responder.read_player_active(inter.author.id)
