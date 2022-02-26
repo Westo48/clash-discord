@@ -281,7 +281,6 @@ class CWL(commands.Cog):
         embed_title = None
         embed_description = None
         field_dict_list = []
-        embed_thumbnail = None
 
         if option == "group":
             league_emoji = discord_responder.get_emoji(
