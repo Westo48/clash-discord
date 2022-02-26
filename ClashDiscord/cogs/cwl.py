@@ -24,7 +24,7 @@ class CWL(commands.Cog):
         # defer for every command
         await inter.response.defer()
 
-    @commands.sub_command()
+    @cwl.sub_command()
     async def info(
         self,
         inter: disnake.ApplicationCommandInteraction,

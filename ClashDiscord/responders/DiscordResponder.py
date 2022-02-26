@@ -2273,7 +2273,7 @@ def cwl_info(cwl_group: ClanWarLeagueGroup):
             description
                 current round
             current war status
-                    
+
     """
 
 
@@ -2995,11 +2995,27 @@ async def send_embed_list(
 
     # respond to interaction if channel is not provided
     if channel is None:
+        if len(content) >= 2000:
+            while len(content) >= 2000:
+                # send the first 2K characters of the string
+                await inter.send(content=content[:2000])
+
+                # remove the first 2K characters of the string
+                content = content[2000:]
+
         await inter.send(content=content)
         return True
 
     # try to send the content to specified channel
     try:
+        if len(content) >= 2000:
+            while len(content) >= 2000:
+                # send the first 2K characters of the string
+                await channel.send(content=content[:2000])
+
+                # remove the first 2K characters of the string
+                content = content[2000:]
+
         await channel.send(content=content)
 
         # edit original message if the message was sent to channel
@@ -3013,6 +3029,8 @@ async def send_embed_list(
             description=embed_description,
             author_display_name=inter.author.display_name,
             author_avatar_url=inter.author.avatar.url)
+
+        await inter.edit_original_message(embeds=embed_list)
         return True
 
     # could not send content to specified channel
@@ -3030,7 +3048,7 @@ async def send_embed_list(
             author_display_name=inter.author.display_name,
             author_avatar_url=inter.author.avatar.url)
 
-        await inter.send(embeds=embed_list)
+        await inter.edit_original_message(embeds=embed_list)
 
         return False
 

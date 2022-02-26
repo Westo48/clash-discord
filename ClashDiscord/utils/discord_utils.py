@@ -108,7 +108,8 @@ command_param_dict = {
     ),
     'channel': commands.Param(
         name="channel",
-        description="channel to announce the message"
+        description="*optional* channel to announce the message",
+        default=None
     ),
     'message': commands.Param(
         name="message",
