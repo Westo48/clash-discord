@@ -3309,6 +3309,8 @@ def help_switch(db_guild_obj, db_player_obj, player_obj, user_id, emoji,
         return help_client(db_guild_obj, user_id, bot_category, all_commands)
     if bot_category.brief == "discord":
         return help_discord(player_obj, bot_category, all_commands)
+    if bot_category.brief == "announce":
+        return help_announce(player_obj, bot_category, all_commands)
     if bot_category.brief == "player":
         return help_player(player_obj, bot_category, all_commands)
     if (bot_category.brief == "clan" or
@@ -3378,6 +3380,23 @@ def help_client(db_guild_obj, user_id, bot_category, all_commands):
 
 
 def help_discord(player_obj, bot_category, all_commands):
+    help_dict = {
+        'field_dict_list': [],
+        'emoji_list': []
+    }
+
+    for parent in all_commands.values():
+        # command is not in the correct category
+        if not bot_category.brief == parent.name:
+            continue
+
+        field_dict_list = help_command_dict_list(parent)
+        help_dict["field_dict_list"] = field_dict_list
+
+    return help_dict
+
+
+def help_announce(player_obj, bot_category, all_commands):
     help_dict = {
         'field_dict_list': [],
         'emoji_list': []

@@ -67,6 +67,8 @@ class ClashDiscord_Data(object):
         ClashDiscord_Category(
             'Discord', 'discord', 'Discord based commands', '💻'),
         ClashDiscord_Category(
+            'Announce', 'announce', 'Announce based commands', '📣'),
+        ClashDiscord_Category(
             'Player', 'player', 'Player based commands', '😎'),
         ClashDiscord_Category(
             'Clan', 'clan', 'Clan based commands', '🏠'),
