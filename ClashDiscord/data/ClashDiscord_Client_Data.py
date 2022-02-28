@@ -500,6 +500,30 @@ class ClashDiscord_Data(object):
             coc_name="Base Designing"
         ),
         ClashDiscord_Emoji(
+            display_name="International",
+            discord_id=947989987503276033,
+            discord_name="label_international",
+            coc_name="International"
+        ),
+        ClashDiscord_Emoji(
+            display_name="Relaxed",
+            discord_id=947993343776940103,
+            discord_name="label_relaxed",
+            coc_name="Relaxed"
+        ),
+        ClashDiscord_Emoji(
+            display_name="Newbie Friendly",
+            discord_id=947993267872616458,
+            discord_name="label_newbie_friendly",
+            coc_name="Newbie Friendly"
+        ),
+        ClashDiscord_Emoji(
+            display_name="Underdog",
+            discord_id=947993350378749992,
+            discord_name="label_underdog",
+            coc_name="Underdog"
+        ),
+        ClashDiscord_Emoji(
             display_name="Farming",
             discord_id=929214100909727815,
             discord_name="label_farming",
