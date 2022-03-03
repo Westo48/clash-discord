@@ -1,5 +1,5 @@
 ---
-name: nee command issue template
+name: new command issue template
 about: Issue template for adding a new command.
 title: new command name
 labels: enhancement, new command
