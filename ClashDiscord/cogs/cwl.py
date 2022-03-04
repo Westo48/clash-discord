@@ -300,16 +300,17 @@ class CWL(commands.Cog):
                 self.client_data.emojis)
             embed_title = f"CWL {league_emoji} {clan.war_league.name} Group"
 
-            round_index = 0
-
             embed_list.extend(discord_responder.embed_message(
                 icon_url=inter.bot.user.avatar.url,
                 bot_user_name=inter.me.display_name,
                 title=embed_title,
+                description=embed_description,
                 thumbnail=clan.badge.small,
                 author_display_name=inter.author.display_name,
                 author_avatar_url=inter.author.avatar.url
             ))
+
+            round_index = 0
 
             for cwl_round in cwl_group.rounds:
 
@@ -318,7 +319,7 @@ class CWL(commands.Cog):
                 if war.state != "warEnded":
                     break
 
-                field_dict_list = discord_responder.cwl_scoreboard_round(
+                field_dict_list = await discord_responder.cwl_scoreboard_round(
                     cwl_group, cwl_round, round_index,
                     inter.client.emojis, self.client_data.emojis,
                     self.coc_client)
@@ -337,12 +338,13 @@ class CWL(commands.Cog):
                     author_avatar_url=inter.author.avatar.url
                 ))
 
-            if len(embed_list) == 0:
+            if len(embed_list) == 1:
                 field_dict_list = [{
                     "name": f"no rounds have ended",
                     "value": f"please wait till after the first round is over"
                 }]
-                embed_list.extend(discord_responder.embed_message(
+
+                embed_list = discord_responder.embed_message(
                     icon_url=inter.bot.user.avatar.url,
                     bot_user_name=inter.me.display_name,
                     title=embed_title,
@@ -351,7 +353,12 @@ class CWL(commands.Cog):
                     thumbnail=clan.badge.small,
                     author_display_name=inter.author.display_name,
                     author_avatar_url=inter.author.avatar.url
-                ))
+                )
+
+            await discord_responder.send_embed_list(
+                inter, embed_list=embed_list)
+
+            return
 
         elif option == "clan":
             league_emoji = discord_responder.get_emoji(

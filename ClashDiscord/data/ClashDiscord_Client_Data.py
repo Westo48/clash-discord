@@ -718,6 +718,12 @@ class ClashDiscord_Data(object):
             coc_name="Legend Trophy"
         ),
         ClashDiscord_Emoji(
+            display_name="League Medal",
+            discord_id=949138029698744430,
+            discord_name="icon_league_medal",
+            coc_name="League Medal"
+        ),
+        ClashDiscord_Emoji(
             display_name="Shield",
             discord_id=929407832191811615,
             discord_name="icon_shield",
@@ -734,6 +740,12 @@ class ClashDiscord_Data(object):
             discord_id=930307229872181289,
             discord_name="icon_war_star",
             coc_name="War Star"
+        ),
+        ClashDiscord_Emoji(
+            display_name="Empty War Star",
+            discord_id=948833337705898004,
+            discord_name="icon_empty_war_star",
+            coc_name="Empty War Star"
         ),
         ClashDiscord_Emoji(
             display_name="Clan Exp",

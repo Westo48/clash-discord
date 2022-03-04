@@ -25,44 +25,6 @@ class Discord(commands.Cog):
 
         pass
 
-    @discord.sub_command()
-    async def help(self, inter):
-        """
-            returns help menu
-        """
-
-        await inter.response.defer()
-
-        db_guild_obj = db_responder.read_guild(inter.guild.id)
-        db_player_obj = db_responder.read_player_active(inter.author.id)
-
-        if db_player_obj:
-            player_obj = await clash_responder.get_player(
-                db_player_obj.player_tag, self.coc_client)
-        else:
-            player_obj = None
-
-        help_dict = discord_responder.help_main(
-            db_guild_obj, inter.author.id, player_obj, self.client_data.bot_categories)
-        field_dict_list = help_dict['field_dict_list']
-        emoji_list = help_dict['emoji_list']
-
-        embed_list = discord_responder.embed_message(
-            icon_url=inter.bot.user.avatar.url,
-            title=f"{inter.me.display_name} help menu",
-            bot_user_name=inter.me.display_name,
-            field_list=field_dict_list,
-            author_display_name=inter.author.display_name,
-            author_avatar_url=inter.author.avatar.url
-        )
-
-        await discord_responder.send_embed_list(inter, embed_list)
-
-        original_message = await inter.original_message()
-
-        for emoji in emoji_list:
-            await original_message.add_reaction(emoji)
-
     # discord role
     @discord.sub_command_group()
     async def role(self, inter):

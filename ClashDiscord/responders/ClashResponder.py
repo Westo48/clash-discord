@@ -751,7 +751,15 @@ def cwl_member_score(cwl_wars, cwl_member):
             self.score = score
 
     scored_member = ScoredCWLMember(
-        cwl_member.tag, cwl_member.name, 0, 0, 0, 0, [], 0)
+        tag=cwl_member.tag,
+        name=cwl_member.name,
+        participated_wars=0,
+        potential_attack_count=0,
+        attack_count=0,
+        stars=0,
+        destruction=0,
+        round_scores=[],
+        score=0)
     # for each war getting that war score and war count
     for war in cwl_wars:
         # do not include wars that are not even in preparation
@@ -787,8 +795,16 @@ def cwl_member_score(cwl_wars, cwl_member):
         score_sum += round_score
 
     avg_score = score_sum / scored_member.participated_wars
-    participation_multiplier = math.log(
-        scored_member.participated_wars, len(cwl_wars))
+
+    # there have been 2 or more completed wars
+    if len(cwl_wars) >= 2:
+        participation_multiplier = math.log(
+            scored_member.participated_wars, len(cwl_wars))
+
+    # there have only been 0-1 wars
+    else:
+        participation_multiplier = 1
+
     scored_member.score = avg_score * participation_multiplier
     return scored_member
 
@@ -798,43 +814,43 @@ async def cwl_clan_scoreboard(cwl_group, clan):
         """
             ScoredWarMember
                 Instance Attributes
-                    name (str): clan's name
+                    clan (str): coc.py clan object
                     stars (int): clan's stars in cwl
                     destruction (int): clan's desctruction in cwl
         """
 
-        def __init__(self, name, stars, destruction):
-            self.name = name
+        def __init__(self, clan, stars, destruction):
+            self.clan = clan
             self.stars = stars
             self.destruction = destruction
 
     clan_stars = 0
     clan_destruction = 0
-    async for war in cwl_group.get_wars(clan.tag):
+    async for war in cwl_group.get_wars_for_clan(clan.tag):
         if war.state == "warEnded":
             clan_stars += war.clan.stars
             clan_destruction += war.clan.destruction
 
         # adding 10 stars if war won
-        if war.clan.status == "won":
+        if war.status == "won":
             clan_stars += 10
 
     return CWLScoreboardClan(
-        name=clan.name,
+        clan=clan,
         stars=clan_stars,
         destruction=clan_destruction)
 
 
 def cwl_current_round(cwl_group, cwl_war):
     round_index = 0
-    for cwl_round in cwl_group:
+    for cwl_round in cwl_group.rounds:
         round_index += 1
-        
+
         if cwl_war.war_tag in cwl_round:
             return round_index
-    
+
     return None
-            
+
 
 # CWL War
 

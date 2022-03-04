@@ -3,6 +3,7 @@ import coc
 from asyncio.tasks import sleep
 from disnake.ext import commands
 from cogs import (
+    help as help_cog,
     misc as misc_cog,
     player as player_cog,
     clan as clan_cog,
@@ -42,6 +43,7 @@ async def on_ready():
     print(f"RazBot is ready")
 
 
+bot.add_cog(help_cog.Help(bot, coc_client, client_data))
 bot.add_cog(misc_cog.Misc(bot, coc_client, client_data))
 bot.add_cog(player_cog.Player(bot, coc_client, client_data))
 bot.add_cog(clan_cog.Clan(bot, coc_client, client_data))

@@ -1386,9 +1386,12 @@ async def war_verification(
 
         # specifically for last day of CWl
         if cwl_group is not None:
-            if cwl_group.state == "inWar":
-                # last war is the current war
-                if war_obj.state != "inWar":
+            # amount of rounds matches the number of rounds
+            if len(cwl_group.rounds) == cwl_group.number_of_rounds:
+                last_round_war = await coc_client.get_league_war(cwl_group.rounds[-1][0])
+
+                # last war is either in war or war ended
+                if last_round_war.state != "preparation":
                     # change current to prep
                     if cwl_enum_round == WarRound.current_war:
                         cwl_enum_round = WarRound.current_preparation
@@ -1524,9 +1527,12 @@ async def war_leadership_verification(
 
         # specifically for last day of CWl
         if cwl_group is not None:
-            if cwl_group.state == "inWar":
-                # last war is the current war
-                if war_obj.state != "inWar":
+            # amount of rounds matches the number of rounds
+            if len(cwl_group.rounds) == cwl_group.number_of_rounds:
+                last_round_war = await coc_client.get_league_war(cwl_group.rounds[-1][0])
+
+                # last war is either in war or war ended
+                if last_round_war.state != "preparation":
                     # change current to prep
                     if cwl_enum_round == WarRound.current_war:
                         cwl_enum_round = WarRound.current_preparation
@@ -1834,8 +1840,8 @@ def war_clan_stars(war_obj, discord_emoji_list, client_emoji_list):
 
     for member_obj in war_obj.clan.members:
 
-        if member_obj.star_count <= 3:
-            star_string = star_emoji*member_obj.star_count
+        if member_obj.star_count > 0 and member_obj.star_count <= 3:
+            star_string = star_emoji * member_obj.star_count
         else:
             star_string = f"{member_obj.star_count} {star_emoji}"
 
@@ -1885,6 +1891,8 @@ def war_all_attacks(war_obj, discord_emoji_list, client_emoji_list):
 
     star_emoji = get_emoji(
         "War Star", discord_emoji_list, client_emoji_list)
+    empty_star_emoji = get_emoji(
+        "Empty War Star", discord_emoji_list, client_emoji_list)
     field_dict_list = []
 
     for member_obj in war_obj.clan.members:
@@ -1917,19 +1925,20 @@ def war_all_attacks(war_obj, discord_emoji_list, client_emoji_list):
                 defender_obj.town_hall, discord_emoji_list, client_emoji_list)
 
             star_string = star_emoji*attack_obj.stars
+            star_string += empty_star_emoji*(3-attack_obj.stars)
 
             if attack_obj.stars == 3:
                 field_value += (
                     f"{defender_obj.map_position}. "
-                    f"{defender_obj.name} {defender_th_emoji}\n"
+                    f"{defender_obj.name} {defender_th_emoji} "
                     f"{star_string}\n\n"
                 )
             else:
                 field_value += (
                     f"{defender_obj.map_position}. "
                     f"{defender_obj.name} {defender_th_emoji}\n"
-                    f"{round(attack_obj.destruction, 2)}%\n"
-                    f"{star_string}\n\n"
+                    f"{star_string} "
+                    f"{round(attack_obj.destruction, 2)}%\n\n"
                 )
 
         # remove trailing space in field value
@@ -1967,6 +1976,8 @@ def war_open_bases(
 
     star_emoji = get_emoji(
         "War Star", discord_emoji_list, client_emoji_list)
+    empty_star_emoji = get_emoji(
+        "Empty War Star", discord_emoji_list, client_emoji_list)
 
     position_index = 0
     for opponent in war.opponent.members:
@@ -1983,7 +1994,7 @@ def war_open_bases(
                     f"{opponent.name} {opponent.tag}"
                 ),
                 "value": (
-                    f"0 {star_emoji}"
+                    f"not attacked"
                 )
             })
 
@@ -1993,11 +2004,10 @@ def war_open_bases(
             opponent_th_emoji = get_emoji(
                 opponent.town_hall, discord_emoji_list, client_emoji_list)
 
-            if opponent.best_opponent_attack.stars == 0:
-                star_string = f"0 {star_emoji}"
+            opp_star_count = opponent.best_opponent_attack.stars
 
-            else:
-                star_string = star_emoji * opponent.best_opponent_attack.stars
+            star_string = star_emoji*opp_star_count
+            star_string += empty_star_emoji*(3-opp_star_count)
 
             field_dict_list.append({
                 "name": (
@@ -2005,8 +2015,8 @@ def war_open_bases(
                     f"{opponent.name} {opponent.tag}"
                 ),
                 "value": (
-                    f"{opponent.best_opponent_attack.destruction}%\n"
-                    f"{star_string}"
+                    f"{star_string} "
+                    f"{opponent.best_opponent_attack.destruction}%"
                 )
             })
 
@@ -2393,12 +2403,6 @@ async def cwl_clan_score(clan_obj, cwl_group: ClanWarLeagueGroup):
         if war.state == "warEnded":
             cwl_wars.append(war)
 
-    if len(cwl_wars) < 2:
-        return [{
-            'name': "not enough wars",
-            'value': "please wait till round two has ended to score members"
-        }]
-
     # get the cwl clan
     for clan in cwl_group.clans:
         if clan.tag == clan_obj.tag:
@@ -2435,12 +2439,6 @@ async def cwl_member_score(player_obj, cwl_group, clan_tag):
     async for war in cwl_group.get_wars_for_clan(clan_tag):
         if war.state == "warEnded":
             cwl_wars.append(war)
-
-    if len(cwl_wars) < 2:
-        return [{
-            'name': "not enough wars",
-            'value': "please wait till round two has ended to score members"
-        }]
 
     # find your clan
     found = False
@@ -2502,7 +2500,7 @@ async def cwl_scoreboard_group(
 
         clan_scoreboards.append(clan_scoreboard)
 
-    clan_scoreboards.sort(key=lambda x: (x.stars, x.destruction))
+    clan_scoreboards.sort(reverse=True, key=lambda x: (x.stars, x.destruction))
     star_emoji = get_emoji(
         "War Star", discord_emoji_list, client_emoji_list)
     position_index = 0
@@ -2510,9 +2508,9 @@ async def cwl_scoreboard_group(
     for clan_scoreboard in clan_scoreboards:
         position_index += 1
 
-        field_name = f"**{position_index}: {clan_scoreboard.name}**"
+        field_name = f"**{position_index}: {clan_scoreboard.clan.name}**"
         field_value = (f"{clan_scoreboard.stars} {star_emoji}\n"
-                       f"{clan_scoreboard.destruction} destruction")
+                       f"{round(clan_scoreboard.destruction, 2)}% destruction")
 
         field_dict_list.append({
             'name': field_name,
@@ -2533,15 +2531,26 @@ async def cwl_scoreboard_round(
     for war_tag in cwl_round:
         war = await coc_client.get_league_war(war_tag)
 
+        # set opponent war status
+        if war.status == "lost":
+            opponent_status = "won"
+
+        if war.status == "won":
+            opponent_status = "lost"
+
+        if war.status == "tied":
+            opponent_status = "tied"
+
         field_dict_list.append({
             "name": f"{war.clan.name} | {war.opponent.name}",
             "value": (
-                f"{war.clan.status} | {war.opponent.status}"
+                f"{war.status} | {opponent_status}"
                 f"\n"
                 f"{war.clan.stars} {star_emoji} "
                 f"| {war.opponent.stars} {star_emoji}"
                 f"\n"
-                f"{war.clan.destruction}% | {war.opponent.destruction}%"
+                f"{round(war.clan.destruction, 2)}% "
+                f"| {round(war.opponent.destruction, 2)}%"
             )
         })
 
@@ -2579,9 +2588,14 @@ async def cwl_scoreboard_clan(
     scored_members = []
     for member in cwl_clan.members:
         scored_member = clash_responder.cwl_member_score(cwl_wars, member)
+
+        if scored_member.participated_wars == 0:
+            continue
+
         scored_members.append(scored_member)
 
-    scored_members.sort(key=lambda x: (x.stars, x.destruction))
+    scored_members.sort(reverse=True, key=lambda x: (
+        x.stars, x.destruction, x.score))
 
     position_index = 0
     for scored_member in scored_members:
@@ -2599,10 +2613,11 @@ async def cwl_scoreboard_clan(
             ),
             "value": (
                 f"{scored_member.stars} {star_emoji}\n"
-                f"{scored_member.destruction} destruction\n"
+                f"{round(scored_member.destruction, 2)} destruction\n"
                 f"{scored_member.attack_count}/"
                 f"{scored_member.potential_attack_count} attacks\n"
-                f"{scored_member.score} {inter.me.display_name} score"
+                f"{round(scored_member.score, 2)} "
+                f"{inter.me.display_name} score"
             )
         })
 
