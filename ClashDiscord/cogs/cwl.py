@@ -290,7 +290,7 @@ class CWL(commands.Cog):
             embed_title = f"CWL {league_emoji} {clan.war_league.name} Group"
 
             field_dict_list = await discord_responder.cwl_scoreboard_group(
-                cwl_group, inter.client.emojis, self.client_data.emojis)
+                cwl_group, inter.client.emojis, self.client_data.emojis, self.coc_client)
 
         elif option == "rounds":
             embed_list = []

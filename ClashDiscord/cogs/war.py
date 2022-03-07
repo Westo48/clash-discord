@@ -190,10 +190,12 @@ class War(commands.Cog):
         embed_title = f"{war.clan.name} vs. {war.opponent.name}"
 
         star_string = star_emoji * (star_count + 1)
-        embed_description = f"bases with less than {star_string}"
 
         field_dict_list = discord_responder.war_open_bases(
             war, star_count, inter.client.emojis, self.client_data.emojis)
+            
+        embed_description = (f"{len(field_dict_list)} "
+                             f"bases with less than {star_string}")
 
         embed_list = discord_responder.embed_message(
             icon_url=inter.bot.user.avatar.url,

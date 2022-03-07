@@ -1115,6 +1115,32 @@ def clan_info(
 
 
 async def clan_lineup(
+    clan_obj, coc_client, discord_emoji_list, client_emoji_list
+):
+    field_dict_list = []
+    return_string = ""
+
+    for member in clan_obj.members:
+        player = await clash_responder.get_player(member.tag, coc_client)
+
+        # just in case player returned None
+        if player is None:
+            continue
+
+        th_emoji = get_th_emoji(
+            player.town_hall, discord_emoji_list, client_emoji_list)
+
+        return_string += f"{member.clan_rank}: {th_emoji} {player.name}"
+        return_string += "\n"
+
+    # remove the last 1 character of the string
+    # removing "\n"
+    return_string = return_string[:-1]
+
+    return return_string
+
+
+async def clan_lineup_count(
         clan_obj, coc_client, discord_emoji_list, client_emoji_list):
     clan_lineup_dict = await clash_responder.clan_lineup(clan_obj, coc_client)
 
@@ -1145,12 +1171,13 @@ async def clan_lineup_member(
         if player is None:
             continue
 
-        field_name = (f"{member.clan_rank}: {player.name} {player.tag} "
-                      f"{player.role.in_game_name}")
-
         th_emoji = get_th_emoji(
             player.town_hall, discord_emoji_list, client_emoji_list)
-        field_value = f"{th_emoji} {player.town_hall}"
+
+        field_name = (f"{member.clan_rank}: {th_emoji} {player.name} "
+                      f"{player.tag} {player.role.in_game_name}")
+
+        field_value = ""
 
         for hero in player.heroes:
             if not hero.is_home_base:
@@ -1162,10 +1189,14 @@ async def clan_lineup_member(
             max_level_for_townhall = hero.get_max_level_for_townhall(
                 player.town_hall)
 
-            field_value += f"\n"
             field_value += f"{hero_emoji} {hero.level}"
             field_value += f"|{max_level_for_townhall}"
             field_value += f"|{hero.max_level}"
+            field_value += f"\n"
+
+        # remove the last 1 character of the string
+        # removing "\n"
+        field_value = field_value[:-1]
 
         field_dict_list.append({
             'name': field_name,
@@ -2489,10 +2520,21 @@ async def cwl_member_score(player_obj, cwl_group, clan_tag):
 
 
 async def cwl_scoreboard_group(
-        cwl_group, discord_emoji_list, client_emoji_list):
+        cwl_group, discord_emoji_list, client_emoji_list, coc_client):
     field_dict_list = []
 
     clan_scoreboards = []
+
+    ended_war_count = 0
+    # getting the ended war count
+    for war_round in cwl_group.rounds:
+        war = await coc_client.get_league_war(war_round[0])
+
+        if war.state == "warEnded":
+            ended_war_count += 1
+            continue
+
+        break
 
     for clan in cwl_group.clans:
         clan_scoreboard = await clash_responder.cwl_clan_scoreboard(
@@ -2508,9 +2550,16 @@ async def cwl_scoreboard_group(
     for clan_scoreboard in clan_scoreboards:
         position_index += 1
 
+        # getting the avg destruction %
+        if ended_war_count == 0:
+            destruction = clan_scoreboard.destruction
+
+        else:
+            destruction = clan_scoreboard.destruction / ended_war_count
+
         field_name = f"**{position_index}: {clan_scoreboard.clan.name}**"
         field_value = (f"{clan_scoreboard.stars} {star_emoji}\n"
-                       f"{round(clan_scoreboard.destruction, 2)}% destruction")
+                       f"{round(destruction, 2)}% destruction")
 
         field_dict_list.append({
             'name': field_name,
@@ -2607,13 +2656,21 @@ async def cwl_scoreboard_clan(
         star_emoji = get_emoji(
             "War Star", discord_emoji_list, client_emoji_list)
 
+        # getting the avg destruction %
+        if scored_member.participated_wars == 0:
+            destruction = scored_member.destruction
+
+        else:
+            destruction = (scored_member.destruction
+                           / scored_member.participated_wars)
+
         field_dict_list.append({
             "name": (
                 f"{position_index}: {th_emoji} {scored_member.name}"
             ),
             "value": (
                 f"{scored_member.stars} {star_emoji}\n"
-                f"{round(scored_member.destruction, 2)} destruction\n"
+                f"{round(destruction, 2)}% destruction\n"
                 f"{scored_member.attack_count}/"
                 f"{scored_member.potential_attack_count} attacks\n"
                 f"{round(scored_member.score, 2)} "
@@ -3802,17 +3859,49 @@ async def update_roles(user, guild, coc_client):
         })
 
         # adding added roles to field dict list
-        for role in add_role_obj_list:
+        if len(add_role_obj_list) != 0:
+            field_value = ""
+
+            # setting the title for singular or plural
+            if len(add_role_obj_list) == 1:
+                field_name = "added role"
+            else:
+                field_name = "added roles"
+
+            for role in add_role_obj_list:
+                field_value += f"{role.mention}"
+                field_value += "\n"
+
+            # remove the last 1 character of the string
+            # removing "\n"
+            field_value = field_value[:-1]
+
             field_dict_list.append({
-                "name": f"added role",
-                "value": role.mention
+                "name": field_name,
+                "value": field_value
             })
 
         # adding removed roles to field dict list
-        for role in remove_role_obj_list:
+        if len(remove_role_obj_list) != 0:
+            field_value = ""
+
+            # setting the title for singular or plural
+            if len(remove_role_obj_list) == 1:
+                field_name = "removed role"
+            else:
+                field_name = "removed roles"
+
+            for role in remove_role_obj_list:
+                field_value += f"{role.mention}"
+                field_value += "\n"
+
+            # remove the last 1 character of the string
+            # removing "\n"
+            field_value = field_value[:-1]
+
             field_dict_list.append({
-                "name": f"removed role",
-                "value": role.mention
+                "name": field_name,
+                "value": field_value
             })
 
         embed_dict_list.append({

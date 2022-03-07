@@ -163,14 +163,26 @@ class Clan(commands.Cog):
                 await discord_responder.send_embed_list(inter, embed_list)
                 return
 
+        # initializing embed default values
+        embed_title = None
+        embed_description = None
+        field_dict_list = []
+
         if option == "overview":
             embed_title = f"{clan.name} lineup"
-            field_dict_list = await discord_responder.clan_lineup(
+            embed_description = await discord_responder.clan_lineup(
                 clan, self.coc_client, inter.client.emojis, self.client_data.emojis)
+
         elif option == "member":
-            embed_title = f"{clan.name} lineup"
+            embed_title = f"{clan.name} member lineup"
             field_dict_list = await discord_responder.clan_lineup_member(
                 clan, self.coc_client, inter.client.emojis, self.client_data.emojis)
+
+        elif option == "count":
+            embed_title = f"{clan.name} lineup count"
+            field_dict_list = await discord_responder.clan_lineup_count(
+                clan, self.coc_client, inter.client.emojis, self.client_data.emojis)
+
         else:
             embed_title = None
             field_dict_list = [{
@@ -181,6 +193,7 @@ class Clan(commands.Cog):
         embed_list = discord_responder.embed_message(
             icon_url=inter.bot.user.avatar.url,
             title=embed_title,
+            description=embed_description,
             bot_user_name=inter.me.display_name,
             thumbnail=clan.badge.small,
             field_list=field_dict_list,

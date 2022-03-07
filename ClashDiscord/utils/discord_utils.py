@@ -161,7 +161,7 @@ command_param_dict = {
         description="*optional* options for clan lineup returns",
         default="overview",
         choices=[
-            "overview", "member"
+            "overview", "member", "count"
         ]
     ),
     'clan_warpreference': commands.Param(
