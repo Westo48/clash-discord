@@ -326,6 +326,7 @@ Once setup is complete you will be able to interact with ClashDiscord using the 
       - options for `clan lineup` command
       - `overview` _default_ - returns an overview of the clan's town hall lineup
       - `member` - returns each member of the clan and their town hall and their hero levels
+      - `count` - returns a count of the clan's town hall lineup
 
   - clan warpreference
     - displays rundown of clan member's war preference
