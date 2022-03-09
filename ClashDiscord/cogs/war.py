@@ -219,7 +219,6 @@ class War(commands.Cog):
         war_selection: str = discord_utils.command_param_dict['war_selection']
     ):
         """
-            *leadership*
             show all war members and their stars 
             *default option is stars*
 

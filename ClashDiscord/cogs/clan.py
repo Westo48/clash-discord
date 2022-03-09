@@ -107,7 +107,6 @@ class Clan(commands.Cog):
         tag: str = discord_utils.command_param_dict['tag']
     ):
         """
-            *leadership* 
             get clan town hall lineup information 
             *default option is overview*
 
@@ -212,7 +211,6 @@ class Clan(commands.Cog):
         tag: str = discord_utils.command_param_dict['tag']
     ):
         """
-            *leadership* 
             rundown of clan's war preference 
             *default option is overview*
 

@@ -4604,22 +4604,18 @@ async def clan_role_cwl_group_leadership_verification(
 
 
 def guild_admin_verification(
-    inter:ApplicationCommandInteraction
+    inter: ApplicationCommandInteraction
 ):
     """
-        verifying a cwl group from clan role
+        verifying author is a guild admin
         and returning verification payload
         Args:
-            db_player_obj (obj): player object from db
-            user_obj (obj): discord user obj
-            guild_id (obj): discord guild id
-            coc_client (obj): coc.py client
+            inter (obj): disnake ApplicationCommandInteraction 
         Returns:
             dict: verification_payload
-                (verified, field_dict_list, player_obj, clan_obj, cwl_group_obj)
+                (verified, embed_list, db_guild, db_author)
     """
 
-    
     db_guild = db_responder.read_guild(inter.guild.id)
     # guild not claimed
     if not db_guild:
@@ -4659,7 +4655,7 @@ def guild_admin_verification(
             'db_author': None
         }
 
-    is_guild_admin=db_guild.admin_user_id == inter.author.id
+    is_guild_admin = db_guild.admin_user_id == inter.author.id
 
     # user is not guild admin and is not super user
     if (not is_guild_admin

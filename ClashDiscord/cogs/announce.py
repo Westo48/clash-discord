@@ -84,7 +84,6 @@ class Announce(commands.Cog):
         tag: str = discord_utils.command_param_dict['required_tag']
     ):
         """
-            *leadership* 
             announces message to specified channel, 
             pings user with the specified player tag
 
