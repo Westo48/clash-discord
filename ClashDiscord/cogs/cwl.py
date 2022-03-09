@@ -439,9 +439,9 @@ class CWL(commands.Cog):
 
         # player tag specified
         if tag is not None:
-            player = await clash_responder.get_player(tag, self.coc_client)
+            player_obj = await clash_responder.get_player(tag, self.coc_client)
 
-            if player is None:
+            if player_obj is None:
                 embed_description = f"could not find player with tag {tag}"
 
                 embed_list = discord_responder.embed_message(
@@ -455,13 +455,14 @@ class CWL(commands.Cog):
                 await discord_responder.send_embed_list(inter, embed_list)
                 return
 
+        embed_thumbnail = discord_responder.get_town_hall_url(player_obj)
         field_dict_list = await discord_responder.cwl_member_score(
             player_obj, cwl_group_obj, player_obj.clan.tag)
         embed_list = discord_responder.embed_message(
             icon_url=inter.bot.user.avatar.url,
             title=f"{player_obj.name} CWL score",
             bot_user_name=inter.me.display_name,
-            thumbnail=player_obj.league.icon.small,
+            thumbnail=embed_thumbnail,
             field_list=field_dict_list,
             author_display_name=inter.author.display_name,
             author_avatar_url=inter.author.avatar.url
