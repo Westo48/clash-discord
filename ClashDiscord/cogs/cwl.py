@@ -326,7 +326,7 @@ class CWL(commands.Cog):
 
                 # update round index
                 round_index += 1
-                embed_title = f"Round: {round_index}"
+                embed_title = f"**Round: {round_index}**"
 
                 embed_list.extend(discord_responder.embed_message(
                     icon_url=inter.bot.user.avatar.url,
