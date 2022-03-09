@@ -193,7 +193,7 @@ class War(commands.Cog):
 
         field_dict_list = discord_responder.war_open_bases(
             war, star_count, inter.client.emojis, self.client_data.emojis)
-            
+
         embed_description = (f"{len(field_dict_list)} "
                              f"bases with less than {star_string}")
 
@@ -235,15 +235,15 @@ class War(commands.Cog):
             db_player_obj = db_responder.read_player_active(inter.author.id)
 
             verification_payload = (
-                await discord_responder.war_leadership_verification(
+                await discord_responder.war_verification(
                     db_player_obj, war_selection,
-                    inter.author, inter.guild.id, self.coc_client))
+                    inter.author, self.coc_client))
         # role has been mentioned
         else:
             verification_payload = (
-                await discord_responder.clan_role_war_leadership_verification(
+                await discord_responder.clan_role_war_verification(
                     clan_role, war_selection,
-                    inter.author, inter.guild.id, self.coc_client))
+                    self.coc_client))
 
         if not verification_payload['verified']:
             embed_list = discord_responder.embed_message(

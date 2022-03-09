@@ -98,8 +98,8 @@ class Announce(commands.Cog):
         db_player_obj = db_responder.read_player_active(inter.author.id)
 
         verification_payload = (
-            await discord_responder.player_leadership_verification(
-                db_player_obj, inter.author, inter.guild.id, self.coc_client))
+            await discord_responder.player_verification(
+                db_player_obj, inter.author, self.coc_client))
         if not verification_payload['verified']:
             embed_list = discord_responder.embed_message(
                 icon_url=inter.bot.user.avatar.url,

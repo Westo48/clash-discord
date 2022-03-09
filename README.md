@@ -281,7 +281,6 @@ Once setup is complete you will be able to interact with ClashDiscord using the 
 
   - clan lineup
     - displays clan town hall lineup
-    - *restricted to leaders and co-leaders*
     - _clan lineup options_
       - options for `clan lineup` command
       - `overview` _default_ - returns an overview of the clan's town hall lineup
@@ -290,7 +289,6 @@ Once setup is complete you will be able to interact with ClashDiscord using the 
 
   - clan warpreference
     - displays rundown of clan member's war preference
-    - *restricted to leaders and co-leaders*
     - _clan warpreference options_
       - options for `clan warpreference` command
       - `overview` _default_ - returns an overview of the clan's war preference
@@ -335,7 +333,6 @@ Once setup is complete you will be able to interact with ClashDiscord using the 
 
   - war stars
     - show all war members and their stars
-    - *restricted to leaders and co-leaders*
     - _war stars options_
       - options for `war stars` command
       - `stars` _default_ - returns all war members and their stars

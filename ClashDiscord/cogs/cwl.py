@@ -403,7 +403,8 @@ class CWL(commands.Cog):
     async def user(
         self,
         inter,
-        user: disnake.User = discord_utils.command_param_dict['user']
+        user: disnake.User = discord_utils.command_param_dict['user'],
+        tag: str = discord_utils.command_param_dict['tag']
     ):
         """
             user's player cwl score
@@ -435,6 +436,24 @@ class CWL(commands.Cog):
 
         player_obj = verification_payload['player_obj']
         cwl_group_obj = verification_payload['cwl_group_obj']
+
+        # player tag specified
+        if tag is not None:
+            player = await clash_responder.get_player(tag, self.coc_client)
+
+            if player is None:
+                embed_description = f"could not find player with tag {tag}"
+
+                embed_list = discord_responder.embed_message(
+                    icon_url=inter.bot.user.avatar.url,
+                    bot_user_name=inter.me.display_name,
+                    description=embed_description,
+                    author_display_name=inter.author.display_name,
+                    author_avatar_url=inter.author.avatar.url
+                )
+
+                await discord_responder.send_embed_list(inter, embed_list)
+                return
 
         field_dict_list = await discord_responder.cwl_member_score(
             player_obj, cwl_group_obj, player_obj.clan.tag)

@@ -123,12 +123,12 @@ class Clan(commands.Cog):
             db_player_obj = db_responder.read_player_active(inter.author.id)
 
             verification_payload = (
-                await discord_responder.clan_leadership_verification(
-                    db_player_obj, inter.author, inter.guild.id, self.coc_client))
+                await discord_responder.clan_verification(
+                    db_player_obj, inter.author, self.coc_client))
         # role has been mentioned
         else:
             verification_payload = (
-                await discord_responder.clan_role_player_leadership_verification(
+                await discord_responder.clan_role_player_verification(
                     clan_role, inter.author, inter.guild.id, self.coc_client))
 
         if not verification_payload['verified']:
@@ -228,12 +228,12 @@ class Clan(commands.Cog):
             db_player_obj = db_responder.read_player_active(inter.author.id)
 
             verification_payload = (
-                await discord_responder.clan_leadership_verification(
-                    db_player_obj, inter.author, inter.guild.id, self.coc_client))
+                await discord_responder.clan_verification(
+                    db_player_obj, inter.author, self.coc_client))
         # role has been mentioned
         else:
             verification_payload = (
-                await discord_responder.clan_role_player_leadership_verification(
+                await discord_responder.clan_role_player_verification(
                     clan_role, inter.author, inter.guild.id, self.coc_client))
 
         if not verification_payload['verified']:

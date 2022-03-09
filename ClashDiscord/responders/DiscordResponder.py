@@ -13,6 +13,11 @@ from coc import (
     ClanWar,
     ClanWarLeagueGroup
 )
+
+from responders import (
+    RazBotDB_Responder as db_responder
+)
+
 import data.RazBot_Data as RazBot_Data
 import data.ClashDiscord_Client_Data as ClashDiscord_Client_Data
 import responders.ClashResponder as clash_responder
@@ -4594,5 +4599,92 @@ async def clan_role_cwl_group_leadership_verification(
         'player_obj': player_obj,
         'clan_obj': clan_obj,
         'cwl_group_obj': cwl_group_obj
+    }
+    return verification_payload
+
+
+def guild_admin_verification(
+    inter:ApplicationCommandInteraction
+):
+    """
+        verifying a cwl group from clan role
+        and returning verification payload
+        Args:
+            db_player_obj (obj): player object from db
+            user_obj (obj): discord user obj
+            guild_id (obj): discord guild id
+            coc_client (obj): coc.py client
+        Returns:
+            dict: verification_payload
+                (verified, field_dict_list, player_obj, clan_obj, cwl_group_obj)
+    """
+
+    
+    db_guild = db_responder.read_guild(inter.guild.id)
+    # guild not claimed
+    if not db_guild:
+        embed_description = f"{inter.guild.name} has not been claimed"
+
+        embed_list = embed_message(
+            icon_url=inter.bot.user.avatar.url,
+            description=embed_description,
+            bot_user_name=inter.me.display_name,
+            author_display_name=inter.author.display_name,
+            author_avatar_url=inter.author.avatar.url)
+
+        return {
+            'verified': False,
+            'embed_list': embed_list,
+            'db_guild': None,
+            'db_author': None
+        }
+
+    db_author = db_responder.read_user(inter.author.id)
+    # author not claimed
+    if not db_author:
+        embed_description = f"{inter.author.mention} has not been claimed"
+
+        embed_list = embed_message(
+            icon_url=inter.bot.user.avatar.url,
+            description=embed_description,
+            bot_user_name=inter.me.display_name,
+            author_display_name=inter.author.display_name,
+            author_avatar_url=inter.author.avatar.url
+        )
+
+        return {
+            'verified': False,
+            'embed_list': embed_list,
+            'db_guild': db_guild,
+            'db_author': None
+        }
+
+    is_guild_admin=db_guild.admin_user_id == inter.author.id
+
+    # user is not guild admin and is not super user
+    if (not is_guild_admin
+            and not db_author.super_user):
+        embed_description = f"{inter.author.mention} is not guild's admin"
+
+        embed_list = embed_message(
+            icon_url=inter.bot.user.avatar.url,
+            description=embed_description,
+            bot_user_name=inter.me.display_name,
+            author_display_name=inter.author.display_name,
+            author_avatar_url=inter.author.avatar.url
+        )
+
+        return {
+            'verified': False,
+            'embed_list': embed_list,
+            'db_guild': db_guild,
+            'db_author': db_author
+        }
+
+    verification_payload = {
+        'verified': True,
+        'embed_list': None,
+        'db_guild': db_guild,
+        'db_author': db_author
     }
     return verification_payload

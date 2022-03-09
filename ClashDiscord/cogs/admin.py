@@ -48,35 +48,15 @@ class Admin(commands.Cog):
             user: user to link player to
         """
 
-        db_author_obj = db_responder.read_user(inter.author.id)
-        # author is not claimed
-        if not db_author_obj:
-            embed_description = f"{inter.author.mention} is not claimed"
+        verification_payload = (
+            discord_responder.guild_admin_verification(inter))
 
-            embed_list = discord_responder.embed_message(
-                icon_url=inter.bot.user.avatar.url,
-                description=embed_description,
-                bot_user_name=inter.me.display_name,
-                author_display_name=inter.author.display_name,
-                author_avatar_url=inter.author.avatar.url
-            )
+        if not verification_payload['verified']:
+
+            embed_list = verification_payload["embed_list"]
 
             await discord_responder.send_embed_list(inter, embed_list)
-            return
 
-        # author is not admin
-        if not db_author_obj.admin:
-            embed_description = f"{inter.author.mention} is not admin"
-
-            embed_list = discord_responder.embed_message(
-                icon_url=inter.bot.user.avatar.url,
-                description=embed_description,
-                bot_user_name=inter.me.display_name,
-                author_display_name=inter.author.display_name,
-                author_avatar_url=inter.author.avatar.url
-            )
-
-            await discord_responder.send_embed_list(inter, embed_list)
             return
 
         # confirm user has been claimed
@@ -99,9 +79,11 @@ class Admin(commands.Cog):
                 await discord_responder.send_embed_list(inter, embed_list)
                 return
 
+        db_author = verification_payload["db_author"]
+
         # admin is not a super user and author is not the user
-        if (not db_author_obj.super_user
-                and db_author_obj.discord_id != db_user_obj.discord_id):
+        if (not db_author.super_user
+                and db_author.discord_id != db_user_obj.discord_id):
             # admin users are not allowed to update admins or super users
             if db_user_obj.admin or db_user_obj.super_user:
                 embed_description = (f"admins are not allowed to update "
@@ -195,35 +177,15 @@ class Admin(commands.Cog):
             user: user to show player tags
         """
 
-        db_author_obj = db_responder.read_user(inter.author.id)
-        # author is not claimed
-        if not db_author_obj:
-            embed_description = f"{inter.author.mention} is not claimed"
+        verification_payload = (
+            discord_responder.guild_admin_verification(inter))
 
-            embed_list = discord_responder.embed_message(
-                icon_url=inter.bot.user.avatar.url,
-                description=embed_description,
-                bot_user_name=inter.me.display_name,
-                author_display_name=inter.author.display_name,
-                author_avatar_url=inter.author.avatar.url
-            )
+        if not verification_payload['verified']:
+
+            embed_list = verification_payload["embed_list"]
 
             await discord_responder.send_embed_list(inter, embed_list)
-            return
 
-        # author is not admin
-        if not db_author_obj.admin:
-            embed_description = f"{inter.author.mention} is not admin"
-
-            embed_list = discord_responder.embed_message(
-                icon_url=inter.bot.user.avatar.url,
-                description=embed_description,
-                bot_user_name=inter.me.display_name,
-                author_display_name=inter.author.display_name,
-                author_avatar_url=inter.author.avatar.url
-            )
-
-            await discord_responder.send_embed_list(inter, embed_list)
             return
 
         # confirm db user exists
@@ -242,9 +204,11 @@ class Admin(commands.Cog):
             await discord_responder.send_embed_list(inter, embed_list)
             return
 
+        db_author = verification_payload["db_author"]
+
         # admin is not a super user and author is not the user
-        if (not db_author_obj.super_user
-                and db_author_obj.discord_id != db_user_obj.discord_id):
+        if (not db_author.super_user
+                and db_author.discord_id != db_user_obj.discord_id):
             # admin users are not allowed to update admins or super users
             if db_user_obj.admin or db_user_obj.super_user:
                 embed_description = (f"admins are not allowed to update "
@@ -308,35 +272,15 @@ class Admin(commands.Cog):
             user: user to remove player from
         """
 
-        db_author_obj = db_responder.read_user(inter.author.id)
-        # author is not claimed
-        if not db_author_obj:
-            embed_description = f"{inter.author.mention} is not claimed"
+        verification_payload = (
+            discord_responder.guild_admin_verification(inter))
 
-            embed_list = discord_responder.embed_message(
-                icon_url=inter.bot.user.avatar.url,
-                description=embed_description,
-                bot_user_name=inter.me.display_name,
-                author_display_name=inter.author.display_name,
-                author_avatar_url=inter.author.avatar.url
-            )
+        if not verification_payload['verified']:
+
+            embed_list = verification_payload["embed_list"]
 
             await discord_responder.send_embed_list(inter, embed_list)
-            return
 
-        # author is not admin
-        if not db_author_obj.admin:
-            embed_description = f"{inter.author.mention} is not admin"
-
-            embed_list = discord_responder.embed_message(
-                icon_url=inter.bot.user.avatar.url,
-                description=embed_description,
-                bot_user_name=inter.me.display_name,
-                author_display_name=inter.author.display_name,
-                author_avatar_url=inter.author.avatar.url
-            )
-
-            await discord_responder.send_embed_list(inter, embed_list)
             return
 
         # confirm db user exists
@@ -355,9 +299,11 @@ class Admin(commands.Cog):
             await discord_responder.send_embed_list(inter, embed_list)
             return
 
+        db_author = verification_payload["db_author"]
+
         # admin is not a super user and author is not the user
-        if (not db_author_obj.super_user
-                and db_author_obj.discord_id != db_user_obj.discord_id):
+        if (not db_author.super_user
+                and db_author.discord_id != db_user_obj.discord_id):
             # admin users are not allowed to update admins or super users
             if db_user_obj.admin or db_user_obj.super_user:
                 embed_description = (f"admins are not allowed to update "
