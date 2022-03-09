@@ -9,6 +9,7 @@ Discord bot for Clash of Clans discord servers written in Python
   - [Setup Summary](#setup-summary)
 - [Usage](#usage)
 - [Command List](#command-list)
+  - [Help](#command-list-help)
   - [ClashDiscord](#command-list-clashdiscord)
   - [Discord](#command-list-discord)
   - [Announce](#command-list-announce)
@@ -94,6 +95,13 @@ Once setup is complete you will be able to interact with ClashDiscord using the 
 
 # <a id="command-list"></a>Command List
 
+
+- ## <a id="command-list-help"></a>Help
+
+  - help
+    - displays relevant help-text regarding what commands can be run
+    - react to the help message to parse through command groups
+
 - ## <a id="command-list-clashdiscord"></a>ClashDiscord
 
   - client info
@@ -154,54 +162,6 @@ Once setup is complete you will be able to interact with ClashDiscord using the 
             - _this means they aren't verified or they aren't in a claimed clan_
 
 - ## <a id="command-list-discord"></a>Discord
-
-  - discord help
-    - displays relevant help-text regarding what commands can be run
-    - react to the help message to parse through command groups
-
-  - discord announce message `channel` `message`
-    - announces message to specified channel
-    - *restricted to leaders and co-leaders*
-
-  - discord announce player `channel` `message` `player tag`
-    - announces message to specified channel, pings the requested player's user
-    - *restricted to leaders and co-leaders*
-
-  - discord announce donate `channel` `message` `unit name`
-    - announces message to specified channel, pings all users that can donate the requested
-    - _discord announce donate options_
-      - options for `discord announce donate` command
-        - `clan_role` - mention a role linked to a clan to get that clan's information
-          - _if no clan role is specified, then the user's active player's clan will be used_
-
-  - discord announce supertroop `channel` `message` `super troop name`
-    - announces message to specified channel, pings all users that have the requested super troop active
-    - _discord announce supertroop options_
-      - options for `discord announce supertroop` command
-        - `clan_role` - mention a role linked to a clan to get that clan's information
-          - _if no clan role is specified, then the user's active player's clan will be used_
-
-  - discord announce war `channel` `message`
-    - announces message to specified channel, pings all in current war
-    - *restricted to leaders and co-leaders*
-    - _discord announce war options_
-      - options for `discord announce war` command
-        - `clan_role` - mention a role linked to a clan to get that clan's information
-          - _if no clan role is specified, then the user's active player's clan will be used_
-        - `cwl_war_selection` - *only for cwl* specify whether to look for the previous, current, or upcoming war
-          - _defaults to current_
-
-  - discord announce warnoatk `channel` `message`
-    - announces message to channel, pings all in war missing attacks
-    - *restricted to leaders and co-leaders*
-    - _discord announce warnoattack options_
-      - options for `discord announce warnoattack` command
-        - `clan_role` - mention a role linked to a clan to get that clan's information
-          - _if no clan role is specified, then the user's active player's clan will be used_
-        - `missed_attacks` - returns players who missed exactly the specified missed attack count
-          - _if not specified, then it will simply return all who are or have missed attacks_
-        - `cwl_war_selection` - *only for cwl* specify whether to look for the previous, current, or upcoming war
-          - _defaults to current_
 
   - discord role me
     - update your roles
