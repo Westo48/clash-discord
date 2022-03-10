@@ -4234,9 +4234,12 @@ async def clan_role_war_verification(
 
         # specifically for last day of CWl
         if cwl_group is not None:
-            if cwl_group.state == "inWar":
-                # last war is the current war
-                if war_obj.state != "inWar":
+            # amount of rounds matches the number of rounds
+            if len(cwl_group.rounds) == cwl_group.number_of_rounds:
+                last_round_war = await coc_client.get_league_war(cwl_group.rounds[-1][0])
+
+                # last war is either in war or war ended
+                if last_round_war.state != "preparation":
                     # change current to prep
                     if cwl_enum_round == WarRound.current_war:
                         cwl_enum_round = WarRound.current_preparation
