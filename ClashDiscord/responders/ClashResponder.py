@@ -726,18 +726,40 @@ def cwl_member_score(cwl_wars, cwl_member):
                     tag (str): WarMember's player tag
                     name (str): WarMember's player name
                     participated_wars (int): rounds participated
+                    potential_attack_count (int): potential attacks
+                    attack_count (int): attacks made
+                    stars (int): stars earned
+                    destruction (int): destruction percentage earned
                     round_scores (list[int]): scores for each round
                     score (int): WarMember's war score
         """
 
-        def __init__(self, tag, name, participated_wars, round_scores, score):
+        def __init__(
+            self, tag, name, participated_wars,
+            potential_attack_count, attack_count,
+            stars, destruction,
+            round_scores, score
+        ):
             self.tag = tag
             self.name = name
             self.participated_wars = participated_wars
+            self.potential_attack_count = potential_attack_count
+            self.attack_count = attack_count
+            self.stars = stars
+            self.destruction = destruction
             self.round_scores = round_scores
             self.score = score
 
-    scored_member = ScoredCWLMember(cwl_member.tag, cwl_member.name, 0, [], 0)
+    scored_member = ScoredCWLMember(
+        tag=cwl_member.tag,
+        name=cwl_member.name,
+        participated_wars=0,
+        potential_attack_count=0,
+        attack_count=0,
+        stars=0,
+        destruction=0,
+        round_scores=[],
+        score=0)
     # for each war getting that war score and war count
     for war in cwl_wars:
         # do not include wars that are not even in preparation
@@ -752,7 +774,14 @@ def cwl_member_score(cwl_wars, cwl_member):
         for war_member in war.clan.members:
             if war_member.tag == cwl_member.tag:
                 scored_member.participated_wars += 1
-                round_score = member_score(war_member, war).score
+                scored_member.potential_attack_count += 1
+
+                war_member_score = member_score(war_member, war)
+                round_score = war_member_score.score
+                scored_member.attack_count += war_member_score.attack_count
+                scored_member.stars += war_member_score.stars
+                scored_member.destruction += war_member_score.destruction
+
                 break
 
         scored_member.round_scores.append(round_score)
@@ -766,10 +795,61 @@ def cwl_member_score(cwl_wars, cwl_member):
         score_sum += round_score
 
     avg_score = score_sum / scored_member.participated_wars
-    participation_multiplier = math.log(
-        scored_member.participated_wars, len(cwl_wars))
+
+    # there have been 2 or more completed wars
+    if len(cwl_wars) >= 2:
+        participation_multiplier = math.log(
+            scored_member.participated_wars, len(cwl_wars))
+
+    # there have only been 0-1 wars
+    else:
+        participation_multiplier = 1
+
     scored_member.score = avg_score * participation_multiplier
     return scored_member
+
+
+async def cwl_clan_scoreboard(cwl_group, clan):
+    class CWLScoreboardClan(object):
+        """
+            ScoredWarMember
+                Instance Attributes
+                    clan (str): coc.py clan object
+                    stars (int): clan's stars in cwl
+                    destruction (int): clan's desctruction in cwl
+        """
+
+        def __init__(self, clan, stars, destruction):
+            self.clan = clan
+            self.stars = stars
+            self.destruction = destruction
+
+    clan_stars = 0
+    clan_destruction = 0
+    async for war in cwl_group.get_wars_for_clan(clan.tag):
+        if war.state == "warEnded":
+            clan_stars += war.clan.stars
+            clan_destruction += war.clan.destruction
+
+        # adding 10 stars if war won
+        if war.status == "won":
+            clan_stars += 10
+
+    return CWLScoreboardClan(
+        clan=clan,
+        stars=clan_stars,
+        destruction=clan_destruction)
+
+
+def cwl_current_round(cwl_group, cwl_war):
+    round_index = 0
+    for cwl_round in cwl_group.rounds:
+        round_index += 1
+
+        if cwl_war.war_tag in cwl_round:
+            return round_index
+
+    return None
 
 
 # CWL War
@@ -784,33 +864,59 @@ def member_score(war_member, war_obj):
                 Instance Attributes
                     tag (str): WarMember's player tag
                     name (str): WarMember's player name
+                    potential_attack_count (int): potential attacks
+                    attack_count (int): attacks made
+                    stars (int): stars earned
+                    destruction (int): destruction percentage earned
                     score (int): WarMember's war score
         """
 
-        def __init__(self, tag, name, score):
+        def __init__(
+            self, tag, name,
+            potential_attack_count, attack_count,
+            stars, destruction, score
+        ):
             self.tag = tag
             self.name = name
+            self.potential_attack_count = potential_attack_count
+            self.attack_count = attack_count
+            self.stars = stars
+            self.destruction = destruction
             self.score = score
 
     # each missed attack should be -100
     if war_obj.is_cwl:
-        attacks_per_member = 1
+        potential_attack_count = 1
     else:
-        attacks_per_member = 2
-    # reactivate below code when coc.py returns correct attacks_per_member
-    # member_score = war_obj.attacks_per_member*(-100)
-    member_score = attacks_per_member*(-100)
+        potential_attack_count = 2
+
+    attack_count = 0
+    stars = 0
+    destruction = 0
+
+    # reactivate below code when coc.py returns correct potential_attack_count
+    # member_score = war_obj.potential_attack_count*(-100)
+    member_score = potential_attack_count*(-100)
     for attack in war_member.attacks:
         # add 100 since the member attacked
         member_score += 100
 
         scored_attack = attack_score(attack, war_member, war_obj)
 
+        attack_count += 1
+        stars += scored_attack.stars
+        destruction += scored_attack.destruction
         member_score += scored_attack.score
-    member_score = member_score/attacks_per_member
-    # reactivate below code when coc.py returns correct attacks_per_member
-    # member_score = member_score/war_obj.attacks_per_member
-    return ScoredWarMember(war_member.tag, war_member.name, member_score)
+
+    member_score = member_score/potential_attack_count
+    # reactivate below code when coc.py returns correct potential_attack_count
+    # member_score = member_score/war_obj.potential_attack_count
+    return ScoredWarMember(
+        war_member.tag, war_member.name,
+        potential_attack_count, attack_count,
+        stars, destruction,
+        member_score
+    )
 
 
 def attack_score(attack, war_member, war_obj):

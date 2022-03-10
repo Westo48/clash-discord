@@ -3,12 +3,14 @@ import coc
 from asyncio.tasks import sleep
 from disnake.ext import commands
 from cogs import (
+    help as help_cog,
     misc as misc_cog,
     player as player_cog,
     clan as clan_cog,
     war as war_cog,
     cwl as cwl_cog,
     discord as discord_cog,
+    announce as announce_cog,
     client as client_cog,
     admin as admin_cog,
     superuser as superuser_cog,
@@ -41,12 +43,14 @@ async def on_ready():
     print(f"RazBot is ready")
 
 
+bot.add_cog(help_cog.Help(bot, coc_client, client_data))
 bot.add_cog(misc_cog.Misc(bot, coc_client, client_data))
 bot.add_cog(player_cog.Player(bot, coc_client, client_data))
 bot.add_cog(clan_cog.Clan(bot, coc_client, client_data))
 bot.add_cog(war_cog.War(bot, coc_client, client_data))
 bot.add_cog(cwl_cog.CWL(bot, coc_client, client_data))
 bot.add_cog(discord_cog.Discord(bot, coc_client, client_data))
+bot.add_cog(announce_cog.Announce(bot, coc_client, client_data))
 bot.add_cog(client_cog.Client(bot, coc_client, client_data))
 bot.add_cog(admin_cog.Admin(bot, coc_client, client_data))
 bot.add_cog(superuser_cog.SuperUser(bot, coc_client, client_data))

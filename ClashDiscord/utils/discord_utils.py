@@ -108,7 +108,8 @@ command_param_dict = {
     ),
     'channel': commands.Param(
         name="channel",
-        description="channel to announce the message"
+        description="*optional* channel to announce the message",
+        default=None
     ),
     'message': commands.Param(
         name="message",
@@ -160,7 +161,7 @@ command_param_dict = {
         description="*optional* options for clan lineup returns",
         default="overview",
         choices=[
-            "overview", "member"
+            "overview", "member", "count"
         ]
     ),
     'clan_warpreference': commands.Param(
@@ -179,6 +180,14 @@ command_param_dict = {
             "active", "donate"
         ]
     ),
+    'star_count': commands.Param(
+        name="star_count",
+        description="*optional* star count selection for open bases",
+        default=2,
+        choices=[
+            0, 1, 2
+        ]
+    ),
     'war_stars': commands.Param(
         name="option",
         description="*optional* options for war star returns",
@@ -193,6 +202,14 @@ command_param_dict = {
         default="clan",
         choices=[
             "overview", "clan", "member"
+        ]
+    ),
+    'cwl_scoreboard': commands.Param(
+        name="option",
+        description="*optional* options for cwl scoreboard returns",
+        default="group",
+        choices=[
+            "group", "rounds", "clan"
         ]
     ),
     'coc_name': commands.Param(

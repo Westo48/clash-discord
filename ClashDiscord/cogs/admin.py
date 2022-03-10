@@ -48,35 +48,15 @@ class Admin(commands.Cog):
             user: user to link player to
         """
 
-        db_author_obj = db_responder.read_user(inter.author.id)
-        # author is not claimed
-        if not db_author_obj:
-            embed_description = f"{inter.author.mention} is not claimed"
+        verification_payload = (
+            discord_responder.guild_admin_verification(inter))
 
-            embed_list = discord_responder.embed_message(
-                icon_url=inter.bot.user.avatar.url,
-                description=embed_description,
-                bot_user_name=inter.me.display_name,
-                author_display_name=inter.author.display_name,
-                author_avatar_url=inter.author.avatar.url
-            )
+        if not verification_payload['verified']:
 
-            await discord_responder.send_embed_list(embed_list, inter)
-            return
+            embed_list = verification_payload["embed_list"]
 
-        # author is not admin
-        if not db_author_obj.admin:
-            embed_description = f"{inter.author.mention} is not admin"
+            await discord_responder.send_embed_list(inter, embed_list)
 
-            embed_list = discord_responder.embed_message(
-                icon_url=inter.bot.user.avatar.url,
-                description=embed_description,
-                bot_user_name=inter.me.display_name,
-                author_display_name=inter.author.display_name,
-                author_avatar_url=inter.author.avatar.url
-            )
-
-            await discord_responder.send_embed_list(embed_list, inter)
             return
 
         # confirm user has been claimed
@@ -96,12 +76,14 @@ class Admin(commands.Cog):
                     author_avatar_url=inter.author.avatar.url
                 )
 
-                await discord_responder.send_embed_list(embed_list, inter)
+                await discord_responder.send_embed_list(inter, embed_list)
                 return
 
+        db_author = verification_payload["db_author"]
+
         # admin is not a super user and author is not the user
-        if (not db_author_obj.super_user
-                and db_author_obj.discord_id != db_user_obj.discord_id):
+        if (not db_author.super_user
+                and db_author.discord_id != db_user_obj.discord_id):
             # admin users are not allowed to update admins or super users
             if db_user_obj.admin or db_user_obj.super_user:
                 embed_description = (f"admins are not allowed to update "
@@ -115,7 +97,7 @@ class Admin(commands.Cog):
                     author_avatar_url=inter.author.avatar.url
                 )
 
-                await discord_responder.send_embed_list(embed_list, inter)
+                await discord_responder.send_embed_list(inter, embed_list)
                 return
 
         # confirm valid player_tag
@@ -134,7 +116,7 @@ class Admin(commands.Cog):
                 author_avatar_url=inter.author.avatar.url
             )
 
-            await discord_responder.send_embed_list(embed_list, inter)
+            await discord_responder.send_embed_list(inter, embed_list)
             return
 
         # confirm player has not been claimed
@@ -152,7 +134,7 @@ class Admin(commands.Cog):
                 author_avatar_url=inter.author.avatar.url
             )
 
-            await discord_responder.send_embed_list(embed_list, inter)
+            await discord_responder.send_embed_list(inter, embed_list)
             return
 
         # user claimed
@@ -178,7 +160,7 @@ class Admin(commands.Cog):
             author_avatar_url=inter.author.avatar.url
         )
 
-        await discord_responder.send_embed_list(embed_list, inter)
+        await discord_responder.send_embed_list(inter, embed_list)
 
     @player.sub_command()
     async def show(
@@ -195,35 +177,15 @@ class Admin(commands.Cog):
             user: user to show player tags
         """
 
-        db_author_obj = db_responder.read_user(inter.author.id)
-        # author is not claimed
-        if not db_author_obj:
-            embed_description = f"{inter.author.mention} is not claimed"
+        verification_payload = (
+            discord_responder.guild_admin_verification(inter))
 
-            embed_list = discord_responder.embed_message(
-                icon_url=inter.bot.user.avatar.url,
-                description=embed_description,
-                bot_user_name=inter.me.display_name,
-                author_display_name=inter.author.display_name,
-                author_avatar_url=inter.author.avatar.url
-            )
+        if not verification_payload['verified']:
 
-            await discord_responder.send_embed_list(embed_list, inter)
-            return
+            embed_list = verification_payload["embed_list"]
 
-        # author is not admin
-        if not db_author_obj.admin:
-            embed_description = f"{inter.author.mention} is not admin"
+            await discord_responder.send_embed_list(inter, embed_list)
 
-            embed_list = discord_responder.embed_message(
-                icon_url=inter.bot.user.avatar.url,
-                description=embed_description,
-                bot_user_name=inter.me.display_name,
-                author_display_name=inter.author.display_name,
-                author_avatar_url=inter.author.avatar.url
-            )
-
-            await discord_responder.send_embed_list(embed_list, inter)
             return
 
         # confirm db user exists
@@ -239,12 +201,14 @@ class Admin(commands.Cog):
                 author_avatar_url=inter.author.avatar.url
             )
 
-            await discord_responder.send_embed_list(embed_list, inter)
+            await discord_responder.send_embed_list(inter, embed_list)
             return
 
+        db_author = verification_payload["db_author"]
+
         # admin is not a super user and author is not the user
-        if (not db_author_obj.super_user
-                and db_author_obj.discord_id != db_user_obj.discord_id):
+        if (not db_author.super_user
+                and db_author.discord_id != db_user_obj.discord_id):
             # admin users are not allowed to update admins or super users
             if db_user_obj.admin or db_user_obj.super_user:
                 embed_description = (f"admins are not allowed to update "
@@ -258,7 +222,7 @@ class Admin(commands.Cog):
                     author_avatar_url=inter.author.avatar.url
                 )
 
-                await discord_responder.send_embed_list(embed_list, inter)
+                await discord_responder.send_embed_list(inter, embed_list)
                 return
 
         db_player_obj_list = db_responder.read_player_list(user.id)
@@ -276,7 +240,7 @@ class Admin(commands.Cog):
                 author_avatar_url=inter.author.avatar.url
             )
 
-            await discord_responder.send_embed_list(embed_list, inter)
+            await discord_responder.send_embed_list(inter, embed_list)
             return
 
         message = f"{user.mention} has claimed "
@@ -308,35 +272,15 @@ class Admin(commands.Cog):
             user: user to remove player from
         """
 
-        db_author_obj = db_responder.read_user(inter.author.id)
-        # author is not claimed
-        if not db_author_obj:
-            embed_description = f"{inter.author.mention} is not claimed"
+        verification_payload = (
+            discord_responder.guild_admin_verification(inter))
 
-            embed_list = discord_responder.embed_message(
-                icon_url=inter.bot.user.avatar.url,
-                description=embed_description,
-                bot_user_name=inter.me.display_name,
-                author_display_name=inter.author.display_name,
-                author_avatar_url=inter.author.avatar.url
-            )
+        if not verification_payload['verified']:
 
-            await discord_responder.send_embed_list(embed_list, inter)
-            return
+            embed_list = verification_payload["embed_list"]
 
-        # author is not admin
-        if not db_author_obj.admin:
-            embed_description = f"{inter.author.mention} is not admin"
+            await discord_responder.send_embed_list(inter, embed_list)
 
-            embed_list = discord_responder.embed_message(
-                icon_url=inter.bot.user.avatar.url,
-                description=embed_description,
-                bot_user_name=inter.me.display_name,
-                author_display_name=inter.author.display_name,
-                author_avatar_url=inter.author.avatar.url
-            )
-
-            await discord_responder.send_embed_list(embed_list, inter)
             return
 
         # confirm db user exists
@@ -352,12 +296,14 @@ class Admin(commands.Cog):
                 author_avatar_url=inter.author.avatar.url
             )
 
-            await discord_responder.send_embed_list(embed_list, inter)
+            await discord_responder.send_embed_list(inter, embed_list)
             return
 
+        db_author = verification_payload["db_author"]
+
         # admin is not a super user and author is not the user
-        if (not db_author_obj.super_user
-                and db_author_obj.discord_id != db_user_obj.discord_id):
+        if (not db_author.super_user
+                and db_author.discord_id != db_user_obj.discord_id):
             # admin users are not allowed to update admins or super users
             if db_user_obj.admin or db_user_obj.super_user:
                 embed_description = (f"admins are not allowed to update "
@@ -371,7 +317,7 @@ class Admin(commands.Cog):
                     author_avatar_url=inter.author.avatar.url
                 )
 
-                await discord_responder.send_embed_list(embed_list, inter)
+                await discord_responder.send_embed_list(inter, embed_list)
                 return
 
         # confirm valid player_tag
@@ -390,7 +336,7 @@ class Admin(commands.Cog):
                 author_avatar_url=inter.author.avatar.url
             )
 
-            await discord_responder.send_embed_list(embed_list, inter)
+            await discord_responder.send_embed_list(inter, embed_list)
             return
 
         db_player_obj = db_responder.read_player(user.id, player_obj.tag)
@@ -408,7 +354,7 @@ class Admin(commands.Cog):
                 author_avatar_url=inter.author.avatar.url
             )
 
-            await discord_responder.send_embed_list(embed_list, inter)
+            await discord_responder.send_embed_list(inter, embed_list)
             return
 
         db_del_player_obj = db_responder.delete_player(
@@ -430,7 +376,7 @@ class Admin(commands.Cog):
                 author_avatar_url=inter.author.avatar.url
             )
 
-            await discord_responder.send_embed_list(embed_list, inter)
+            await discord_responder.send_embed_list(inter, embed_list)
             return
 
         db_active_player_obj = db_responder.read_player_active(user.id)
@@ -452,7 +398,7 @@ class Admin(commands.Cog):
                 author_avatar_url=inter.author.avatar.url
             )
 
-            await discord_responder.send_embed_list(embed_list, inter)
+            await discord_responder.send_embed_list(inter, embed_list)
             return
 
         # no active player found
@@ -476,7 +422,7 @@ class Admin(commands.Cog):
                 author_avatar_url=inter.author.avatar.url
             )
 
-            await discord_responder.send_embed_list(embed_list, inter)
+            await discord_responder.send_embed_list(inter, embed_list)
             return
 
         # additional players claimed by user
@@ -500,7 +446,7 @@ class Admin(commands.Cog):
                 author_avatar_url=inter.author.avatar.url
             )
 
-            await discord_responder.send_embed_list(embed_list, inter)
+            await discord_responder.send_embed_list(inter, embed_list)
             return
 
         # update was successful
@@ -537,4 +483,4 @@ class Admin(commands.Cog):
             author_avatar_url=inter.author.avatar.url
         )
 
-        await discord_responder.send_embed_list(embed_list, inter)
+        await discord_responder.send_embed_list(inter, embed_list)

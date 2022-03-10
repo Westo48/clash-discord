@@ -9,8 +9,10 @@ Discord bot for Clash of Clans discord servers written in Python
   - [Setup Summary](#setup-summary)
 - [Usage](#usage)
 - [Command List](#command-list)
+  - [Help](#command-list-help)
   - [ClashDiscord](#command-list-clashdiscord)
   - [Discord](#command-list-discord)
+  - [Announce](#command-list-announce)
   - [Player](#command-list-player)
   - [Clan](#command-list-clan)
   - [War](#command-list-war)
@@ -93,6 +95,13 @@ Once setup is complete you will be able to interact with ClashDiscord using the 
 
 # <a id="command-list"></a>Command List
 
+
+- ## <a id="command-list-help"></a>Help
+
+  - help
+    - displays relevant help-text regarding what commands can be run
+    - react to the help message to parse through command groups
+
 - ## <a id="command-list-clashdiscord"></a>ClashDiscord
 
   - client info
@@ -154,54 +163,6 @@ Once setup is complete you will be able to interact with ClashDiscord using the 
 
 - ## <a id="command-list-discord"></a>Discord
 
-  - discord help
-    - displays relevant help-text regarding what commands can be run
-    - react to the help message to parse through command groups
-
-  - discord announce message `channel` `message`
-    - announces message to specified channel
-    - *restricted to leaders and co-leaders*
-
-  - discord announce player `channel` `message` `player tag`
-    - announces message to specified channel, pings the requested player's user
-    - *restricted to leaders and co-leaders*
-
-  - discord announce donate `channel` `message` `unit name`
-    - announces message to specified channel, pings all users that can donate the requested
-    - _discord announce donate options_
-      - options for `discord announce donate` command
-        - `clan_role` - mention a role linked to a clan to get that clan's information
-          - _if no clan role is specified, then the user's active player's clan will be used_
-
-  - discord announce supertroop `channel` `message` `super troop name`
-    - announces message to specified channel, pings all users that have the requested super troop active
-    - _discord announce supertroop options_
-      - options for `discord announce supertroop` command
-        - `clan_role` - mention a role linked to a clan to get that clan's information
-          - _if no clan role is specified, then the user's active player's clan will be used_
-
-  - discord announce war `channel` `message`
-    - announces message to specified channel, pings all in current war
-    - *restricted to leaders and co-leaders*
-    - _discord announce war options_
-      - options for `discord announce war` command
-        - `clan_role` - mention a role linked to a clan to get that clan's information
-          - _if no clan role is specified, then the user's active player's clan will be used_
-        - `cwl_war_selection` - *only for cwl* specify whether to look for the previous, current, or upcoming war
-          - _defaults to current_
-
-  - discord announce warnoatk `channel` `message`
-    - announces message to channel, pings all in war missing attacks
-    - *restricted to leaders and co-leaders*
-    - _discord announce warnoattack options_
-      - options for `discord announce warnoattack` command
-        - `clan_role` - mention a role linked to a clan to get that clan's information
-          - _if no clan role is specified, then the user's active player's clan will be used_
-        - `missed_attacks` - returns players who missed exactly the specified missed attack count
-          - _if not specified, then it will simply return all who are or have missed attacks_
-        - `cwl_war_selection` - *only for cwl* specify whether to look for the previous, current, or upcoming war
-          - _defaults to current_
-
   - discord role me
     - update your roles
 
@@ -225,6 +186,57 @@ Once setup is complete you will be able to interact with ClashDiscord using the 
       - `clan` _default_ - finding the linked user for each member in the clan
         - *restricted to leaders and co-leaders*
         - _if no clan role is specified, then the user's active player's clan will be used_
+
+- ## <a id="command-list-announce"></a>Announce
+
+  - ### _announce options_
+    - options for announce commands
+    - `channel` - specify a channel to send the announcement to that channel
+      - _if no channel is specified, then the announcement will be sent to the current channel_
+
+  - announce message `channel` `message`
+    - announces message to specified channel
+    - *restricted to leaders and co-leaders*
+
+  - announce player `channel` `message` `player tag`
+    - announces message to specified channel, pings the requested player's user
+    - *restricted to leaders and co-leaders*
+
+  - announce donate `channel` `message` `unit name`
+    - announces message to specified channel, pings all users that can donate the requested
+    - _announce donate options_
+      - options for `announce donate` command
+        - `clan_role` - mention a role linked to a clan to get that clan's information
+          - _if no clan role is specified, then the user's active player's clan will be used_
+
+  - announce supertroop `channel` `message` `super troop name`
+    - announces message to specified channel, pings all users that have the requested super troop active
+    - _announce supertroop options_
+      - options for `announce supertroop` command
+        - `clan_role` - mention a role linked to a clan to get that clan's information
+          - _if no clan role is specified, then the user's active player's clan will be used_
+
+  - announce war `channel` `message`
+    - announces message to specified channel, pings all in current war
+    - *restricted to leaders and co-leaders*
+    - _announce war options_
+      - options for `announce war` command
+        - `clan_role` - mention a role linked to a clan to get that clan's information
+          - _if no clan role is specified, then the user's active player's clan will be used_
+        - `cwl_war_selection` - *only for cwl* specify whether to look for the previous, current, or upcoming war
+          - _defaults to current_
+
+  - announce warnoatk `channel` `message`
+    - announces message to channel, pings all in war missing attacks
+    - *restricted to leaders and co-leaders*
+    - _announce warnoattack options_
+      - options for `announce warnoattack` command
+        - `clan_role` - mention a role linked to a clan to get that clan's information
+          - _if no clan role is specified, then the user's active player's clan will be used_
+        - `missed_attacks` - returns players who missed exactly the specified missed attack count
+          - _if not specified, then it will simply return all who are or have missed attacks_
+        - `cwl_war_selection` - *only for cwl* specify whether to look for the previous, current, or upcoming war
+          - _defaults to current_
 
 - ## <a id="command-list-player"></a>Player
 
@@ -269,15 +281,14 @@ Once setup is complete you will be able to interact with ClashDiscord using the 
 
   - clan lineup
     - displays clan town hall lineup
-    - *restricted to leaders and co-leaders*
     - _clan lineup options_
       - options for `clan lineup` command
       - `overview` _default_ - returns an overview of the clan's town hall lineup
       - `member` - returns each member of the clan and their town hall and their hero levels
+      - `count` - returns a count of the clan's town hall lineup
 
   - clan warpreference
     - displays rundown of clan member's war preference
-    - *restricted to leaders and co-leaders*
     - _clan warpreference options_
       - options for `clan warpreference` command
       - `overview` _default_ - returns an overview of the clan's war preference
@@ -314,9 +325,14 @@ Once setup is complete you will be able to interact with ClashDiscord using the 
       - `missed_attacks` - returns players who missed exactly the specified missed attack count
         - _if not specified, then it will simply return all who are or have missed attacks_
 
+  - war open
+    - show opponent bases that are open
+    - _war open option_
+      - `star_count` - star count selection for open bases
+        - _if not specified, then it show all open bases that haven't been 3 starred_
+
   - war stars
     - show all war members and their stars
-    - *restricted to leaders and co-leaders*
     - _war stars options_
       - options for `war stars` command
       - `stars` _default_ - returns all war members and their stars
@@ -348,6 +364,9 @@ Once setup is complete you will be able to interact with ClashDiscord using the 
     - `clan_role` - mention a role linked to a clan to get that clan's cwl information
       - _if no clan role is specified, then the user's active player's clan will be used_
 
+  - cwl info
+    - CWL info
+
   - cwl lineup
     - CWL town hall lineup
     - _cwl lineup options_
@@ -355,6 +374,14 @@ Once setup is complete you will be able to interact with ClashDiscord using the 
       - `overview` - short overview of the cwl's lineup
       - `clan` _default_ - cwl lineup for each clan
       - `member` - lineup for every member in each clan in cwl
+
+  - cwl scoreboard
+    - CWL scoreboard
+    - _cwl scoreboard options_
+      - options for `cwl scoreboard` command
+      - `group` _default_ - cwl scoreboard for the group
+      - `rounds` - cwl scoreboard for each round
+      - `clan` - cwl scoreboard for each clan member
 
   - cwl score user
     - user's active player's cwl score

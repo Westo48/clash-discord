@@ -1,9 +1,28 @@
-import math
-from coc import WarRound, NotFound, Maintenance, PrivateWarLog, GatewayError
+from disnake import (
+    ApplicationCommandInteraction,
+    TextChannel
+)
+from coc import (
+    Client as CocClient,
+    WarRound,
+    NotFound,
+    Maintenance,
+    PrivateWarLog,
+    GatewayError,
+    Clan,
+    ClanWar,
+    ClanWarLeagueGroup
+)
+
+from responders import (
+    RazBotDB_Responder as db_responder
+)
+
 import data.RazBot_Data as RazBot_Data
 import data.ClashDiscord_Client_Data as ClashDiscord_Client_Data
 import responders.ClashResponder as clash_responder
 import responders.RazBotDB_Responder as db_responder
+from data.th_urls import get_th_url
 from utils import coc_utils
 from disnake.utils import get
 from disnake import Embed, Color
@@ -447,8 +466,15 @@ def player_info(player_obj, discord_emoji_list, client_emoji_list):
     th_emoji = get_emoji(
         player_obj.town_hall, discord_emoji_list, client_emoji_list)
     field_dict_list.append({
-        'name': '**TH Lvl**',
-        'value': th_emoji,
+        'name': th_emoji,
+        'value': "Town Hall Level",
+        'inline': True
+    })
+    league_emoji = get_emoji(
+        player_obj.league.name, discord_emoji_list, client_emoji_list)
+    field_dict_list.append({
+        'name': league_emoji,
+        'value': "League",
         'inline': True
     })
     trophy_emoji = get_emoji(
@@ -484,16 +510,18 @@ def player_info(player_obj, discord_emoji_list, client_emoji_list):
                 'inline': True
             })
         if player_obj.legend_statistics.current_season:
-            legend_league_emoji = get_emoji(
-                "Legend League", discord_emoji_list, client_emoji_list)
-            field_dict_list.append({
-                'name': f"**{legend_league_emoji} Current Rank | Trophies**",
-                'value': (
-                    f"{player_obj.legend_statistics.current_season.rank} | "
-                    f"{player_obj.legend_statistics.current_season.trophies}"
-                ),
-                'inline': True
-            })
+            if (player_obj.legend_statistics.current_season.rank is not None and
+                    player_obj.legend_statistics.current_season.trophies is not None):
+                legend_league_emoji = get_emoji(
+                    "Legend League", discord_emoji_list, client_emoji_list)
+                field_dict_list.append({
+                    'name': f"**{legend_league_emoji} Current Rank | Trophies**",
+                    'value': (
+                        f"{player_obj.legend_statistics.current_season.rank} | "
+                        f"{player_obj.legend_statistics.current_season.trophies}"
+                    ),
+                    'inline': True
+                })
         if player_obj.legend_statistics.previous_season:
             legend_league_emoji = get_emoji(
                 "Legend League", discord_emoji_list, client_emoji_list)
@@ -1092,6 +1120,32 @@ def clan_info(
 
 
 async def clan_lineup(
+    clan_obj, coc_client, discord_emoji_list, client_emoji_list
+):
+    field_dict_list = []
+    return_string = ""
+
+    for member in clan_obj.members:
+        player = await clash_responder.get_player(member.tag, coc_client)
+
+        # just in case player returned None
+        if player is None:
+            continue
+
+        th_emoji = get_th_emoji(
+            player.town_hall, discord_emoji_list, client_emoji_list)
+
+        return_string += f"{member.clan_rank}: {th_emoji} {player.name}"
+        return_string += "\n"
+
+    # remove the last 1 character of the string
+    # removing "\n"
+    return_string = return_string[:-1]
+
+    return return_string
+
+
+async def clan_lineup_count(
         clan_obj, coc_client, discord_emoji_list, client_emoji_list):
     clan_lineup_dict = await clash_responder.clan_lineup(clan_obj, coc_client)
 
@@ -1122,12 +1176,13 @@ async def clan_lineup_member(
         if player is None:
             continue
 
-        field_name = (f"{member.clan_rank}: {player.name} {player.tag} "
-                      f"{player.role.in_game_name}")
-
         th_emoji = get_th_emoji(
             player.town_hall, discord_emoji_list, client_emoji_list)
-        field_value = f"{th_emoji} {player.town_hall}"
+
+        field_name = (f"{member.clan_rank}: {th_emoji} {player.name} "
+                      f"{player.tag} {player.role.in_game_name}")
+
+        field_value = ""
 
         for hero in player.heroes:
             if not hero.is_home_base:
@@ -1139,10 +1194,14 @@ async def clan_lineup_member(
             max_level_for_townhall = hero.get_max_level_for_townhall(
                 player.town_hall)
 
-            field_value += f"\n"
             field_value += f"{hero_emoji} {hero.level}"
             field_value += f"|{max_level_for_townhall}"
             field_value += f"|{hero.max_level}"
+            field_value += f"\n"
+
+        # remove the last 1 character of the string
+        # removing "\n"
+        field_value = field_value[:-1]
 
         field_dict_list.append({
             'name': field_name,
@@ -1363,9 +1422,12 @@ async def war_verification(
 
         # specifically for last day of CWl
         if cwl_group is not None:
-            if cwl_group.state == "inWar":
-                # last war is the current war
-                if war_obj.state != "inWar":
+            # amount of rounds matches the number of rounds
+            if len(cwl_group.rounds) == cwl_group.number_of_rounds:
+                last_round_war = await coc_client.get_league_war(cwl_group.rounds[-1][0])
+
+                # last war is either in war or war ended
+                if last_round_war.state != "preparation":
                     # change current to prep
                     if cwl_enum_round == WarRound.current_war:
                         cwl_enum_round = WarRound.current_preparation
@@ -1501,9 +1563,12 @@ async def war_leadership_verification(
 
         # specifically for last day of CWl
         if cwl_group is not None:
-            if cwl_group.state == "inWar":
-                # last war is the current war
-                if war_obj.state != "inWar":
+            # amount of rounds matches the number of rounds
+            if len(cwl_group.rounds) == cwl_group.number_of_rounds:
+                last_round_war = await coc_client.get_league_war(cwl_group.rounds[-1][0])
+
+                # last war is either in war or war ended
+                if last_round_war.state != "preparation":
                     # change current to prep
                     if cwl_enum_round == WarRound.current_war:
                         cwl_enum_round = WarRound.current_preparation
@@ -1811,8 +1876,8 @@ def war_clan_stars(war_obj, discord_emoji_list, client_emoji_list):
 
     for member_obj in war_obj.clan.members:
 
-        if member_obj.star_count <= 3:
-            star_string = star_emoji*member_obj.star_count
+        if member_obj.star_count > 0 and member_obj.star_count <= 3:
+            star_string = star_emoji * member_obj.star_count
         else:
             star_string = f"{member_obj.star_count} {star_emoji}"
 
@@ -1862,6 +1927,8 @@ def war_all_attacks(war_obj, discord_emoji_list, client_emoji_list):
 
     star_emoji = get_emoji(
         "War Star", discord_emoji_list, client_emoji_list)
+    empty_star_emoji = get_emoji(
+        "Empty War Star", discord_emoji_list, client_emoji_list)
     field_dict_list = []
 
     for member_obj in war_obj.clan.members:
@@ -1894,19 +1961,20 @@ def war_all_attacks(war_obj, discord_emoji_list, client_emoji_list):
                 defender_obj.town_hall, discord_emoji_list, client_emoji_list)
 
             star_string = star_emoji*attack_obj.stars
+            star_string += empty_star_emoji*(3-attack_obj.stars)
 
             if attack_obj.stars == 3:
                 field_value += (
                     f"{defender_obj.map_position}. "
-                    f"{defender_obj.name} {defender_th_emoji}\n"
+                    f"{defender_obj.name} {defender_th_emoji} "
                     f"{star_string}\n\n"
                 )
             else:
                 field_value += (
                     f"{defender_obj.map_position}. "
                     f"{defender_obj.name} {defender_th_emoji}\n"
-                    f"{round(attack_obj.destruction, 2)}%\n"
-                    f"{star_string}\n\n"
+                    f"{star_string} "
+                    f"{round(attack_obj.destruction, 2)}%\n\n"
                 )
 
         # remove trailing space in field value
@@ -1920,6 +1988,83 @@ def war_all_attacks(war_obj, discord_emoji_list, client_emoji_list):
             ),
             'value': field_value
         })
+    return field_dict_list
+
+
+def war_open_bases(
+        war: ClanWar, star_count: int,
+        discord_emoji_list, client_emoji_list):
+    if war is None:
+        return [{
+            'name': f"not in war",
+            'value': f"you are not in war"
+        }]
+
+    if war.state == "preparation":
+        time_string = clash_responder.string_date_time(war)
+
+        return [{
+            'name': f"{time_string}",
+            'value': f"left before war starts, nobody has attacked"
+        }]
+
+    field_dict_list = []
+
+    star_emoji = get_emoji(
+        "War Star", discord_emoji_list, client_emoji_list)
+    empty_star_emoji = get_emoji(
+        "Empty War Star", discord_emoji_list, client_emoji_list)
+
+    position_index = 0
+    for opponent in war.opponent.members:
+        position_index += 1
+
+        # there is no opponent attack
+        if opponent.best_opponent_attack is None:
+            opponent_th_emoji = get_emoji(
+                opponent.town_hall, discord_emoji_list, client_emoji_list)
+
+            field_dict_list.append({
+                "name": (
+                    f"{position_index}: {opponent_th_emoji} "
+                    f"{opponent.name} {opponent.tag}"
+                ),
+                "value": (
+                    f"not attacked"
+                )
+            })
+
+            continue
+
+        if opponent.best_opponent_attack.stars <= star_count:
+            opponent_th_emoji = get_emoji(
+                opponent.town_hall, discord_emoji_list, client_emoji_list)
+
+            opp_star_count = opponent.best_opponent_attack.stars
+
+            star_string = star_emoji*opp_star_count
+            star_string += empty_star_emoji*(3-opp_star_count)
+
+            field_dict_list.append({
+                "name": (
+                    f"{position_index}: {opponent_th_emoji} "
+                    f"{opponent.name} {opponent.tag}"
+                ),
+                "value": (
+                    f"{star_string} "
+                    f"{opponent.best_opponent_attack.destruction}%"
+                )
+            })
+
+            continue
+
+    # no open bases
+    if len(field_dict_list) == 0:
+        field_dict_list.append({
+            "name": f"no open bases",
+            "value": f"with less than {star_count+1} {star_emoji}"
+        })
+
     return field_dict_list
 
 
@@ -2242,6 +2387,18 @@ async def cwl_group_leadership_verification(db_player_obj, user_obj, guild_id, c
     return verification_payload
 
 
+def cwl_info(cwl_group: ClanWarLeagueGroup):
+    """
+        embed
+            title
+                clan name, tag, league name
+            description
+                current round
+            current war status
+
+    """
+
+
 def cwl_lineup(cwl_group):
     message = (
         "```\n"
@@ -2269,7 +2426,7 @@ def cwl_lineup(cwl_group):
     return message
 
 
-async def cwl_clan_score(clan_obj, cwl_group):
+async def cwl_clan_score(clan_obj, cwl_group: ClanWarLeagueGroup):
     if not cwl_group:
         return [{
             'name': f"{clan_obj.name} is not in CWL",
@@ -2281,12 +2438,6 @@ async def cwl_clan_score(clan_obj, cwl_group):
     async for war in cwl_group.get_wars_for_clan(clan_obj.tag):
         if war.state == "warEnded":
             cwl_wars.append(war)
-
-    if len(cwl_wars) < 2:
-        return [{
-            'name': "not enough wars",
-            'value': "please wait till round two has ended to score members"
-        }]
 
     # get the cwl clan
     for clan in cwl_group.clans:
@@ -2324,12 +2475,6 @@ async def cwl_member_score(player_obj, cwl_group, clan_tag):
     async for war in cwl_group.get_wars_for_clan(clan_tag):
         if war.state == "warEnded":
             cwl_wars.append(war)
-
-    if len(cwl_wars) < 2:
-        return [{
-            'name': "not enough wars",
-            'value': "please wait till round two has ended to score members"
-        }]
 
     # find your clan
     found = False
@@ -2375,6 +2520,168 @@ async def cwl_member_score(player_obj, cwl_group, clan_tag):
                 'name': f"round {round_index} score",
                 'value': f"{round(round_score, 3)}"
             })
+
+    return field_dict_list
+
+
+async def cwl_scoreboard_group(
+        cwl_group, discord_emoji_list, client_emoji_list, coc_client):
+    field_dict_list = []
+
+    clan_scoreboards = []
+
+    ended_war_count = 0
+    # getting the ended war count
+    for war_round in cwl_group.rounds:
+        war = await coc_client.get_league_war(war_round[0])
+
+        if war.state == "warEnded":
+            ended_war_count += 1
+            continue
+
+        break
+
+    for clan in cwl_group.clans:
+        clan_scoreboard = await clash_responder.cwl_clan_scoreboard(
+            cwl_group, clan)
+
+        clan_scoreboards.append(clan_scoreboard)
+
+    clan_scoreboards.sort(reverse=True, key=lambda x: (x.stars, x.destruction))
+    star_emoji = get_emoji(
+        "War Star", discord_emoji_list, client_emoji_list)
+    position_index = 0
+
+    for clan_scoreboard in clan_scoreboards:
+        position_index += 1
+
+        # getting the avg destruction %
+        if ended_war_count == 0:
+            destruction = clan_scoreboard.destruction
+
+        else:
+            destruction = clan_scoreboard.destruction / ended_war_count
+
+        field_name = f"**{position_index}: {clan_scoreboard.clan.name}**"
+        field_value = (f"{clan_scoreboard.stars} {star_emoji}\n"
+                       f"{round(destruction, 2)}% destruction")
+
+        field_dict_list.append({
+            'name': field_name,
+            'value': field_value
+        })
+
+    return field_dict_list
+
+
+async def cwl_scoreboard_round(
+        cwl_group: ClanWarLeagueGroup, cwl_round, round_index,
+        discord_emoji_list, client_emoji_list, coc_client):
+
+    field_dict_list = []
+    star_emoji = get_emoji(
+        "War Star", discord_emoji_list, client_emoji_list)
+
+    for war_tag in cwl_round:
+        war = await coc_client.get_league_war(war_tag)
+
+        # set opponent war status
+        if war.status == "lost":
+            opponent_status = "won"
+
+        if war.status == "won":
+            opponent_status = "lost"
+
+        if war.status == "tied":
+            opponent_status = "tied"
+
+        field_dict_list.append({
+            "name": f"{war.clan.name} | {war.opponent.name}",
+            "value": (
+                f"{war.status} | {opponent_status}"
+                f"\n"
+                f"{war.clan.stars} {star_emoji} "
+                f"| {war.opponent.stars} {star_emoji}"
+                f"\n"
+                f"{round(war.clan.destruction, 2)}% "
+                f"| {round(war.opponent.destruction, 2)}%"
+            )
+        })
+
+    return field_dict_list
+
+
+async def cwl_scoreboard_clan(
+    inter: ApplicationCommandInteraction,
+    cwl_group: ClanWarLeagueGroup,
+    clan: Clan, coc_client: CocClient,
+    discord_emoji_list, client_emoji_list
+):
+    field_dict_list = []
+
+    for cwl_clan in cwl_group.clans:
+        # specified clan is found
+        if cwl_clan.tag == clan.tag:
+            break
+
+    # making sure clan was found in cwl_group
+    if cwl_clan.tag != clan.tag:
+        field_dict_list.append({
+            "name": f"{clan.name} {clan.tag}",
+            "value": "not found in given CWL group"
+        })
+        return field_dict_list
+
+    # get a list of all CWLWar objects
+    cwl_wars = []
+    async for war in cwl_group.get_wars_for_clan(clan.tag):
+        if war.state == "warEnded":
+            cwl_wars.append(war)
+
+    # get a list of all CWLWarMembers their scores
+    scored_members = []
+    for member in cwl_clan.members:
+        scored_member = clash_responder.cwl_member_score(cwl_wars, member)
+
+        if scored_member.participated_wars == 0:
+            continue
+
+        scored_members.append(scored_member)
+
+    scored_members.sort(reverse=True, key=lambda x: (
+        x.stars, x.destruction, x.score))
+
+    position_index = 0
+    for scored_member in scored_members:
+        position_index += 1
+
+        player = await coc_client.get_player(scored_member.tag)
+        th_emoji = get_th_emoji(
+            player.town_hall, discord_emoji_list, client_emoji_list)
+        star_emoji = get_emoji(
+            "War Star", discord_emoji_list, client_emoji_list)
+
+        # getting the avg destruction %
+        if scored_member.participated_wars == 0:
+            destruction = scored_member.destruction
+
+        else:
+            destruction = (scored_member.destruction
+                           / scored_member.participated_wars)
+
+        field_dict_list.append({
+            "name": (
+                f"{position_index}: {th_emoji} {scored_member.name}"
+            ),
+            "value": (
+                f"{scored_member.stars} {star_emoji}\n"
+                f"{round(destruction, 2)}% destruction\n"
+                f"{scored_member.attack_count}/"
+                f"{scored_member.potential_attack_count} attacks\n"
+                f"{round(scored_member.score, 2)} "
+                f"{inter.me.display_name} score"
+            )
+        })
 
     return field_dict_list
 
@@ -2721,7 +3028,7 @@ def initialize_embed(
     # thumbnail is not null
     if thumbnail is not None:
         embed.set_thumbnail(
-            url=thumbnail.small)
+            url=thumbnail)
 
     # image url is not null
     if image_url is not None:
@@ -2739,7 +3046,11 @@ def initialize_embed(
     return embed
 
 
-async def send_embed_list(embed_list, inter):
+async def send_embed_list(
+        inter: ApplicationCommandInteraction,
+        embed_list: list = [],
+        content: str = None,
+        channel: TextChannel = None):
     # embed limit is 10
     # embed char limit is 6000
     # embed field limit is 25
@@ -2788,10 +3099,124 @@ async def send_embed_list(embed_list, inter):
 
     # send all embeds
     for embeds in send_list:
-        await inter.send(embeds=embeds)
+        # respond to interaction if channel is not provided
+        if channel is None:
+            await inter.send(embeds=embeds)
+            continue
+
+        # try to send the embeds to specified channel
+        try:
+            await channel.send(embeds=embeds)
+
+            # edit original message if the message was sent to channel
+            embed_title = "message sent"
+            embed_description = f"channel {channel.mention}"
+
+            embed_list = embed_message(
+                icon_url=inter.bot.user.avatar.url,
+                bot_user_name=inter.me.display_name,
+                title=embed_title,
+                description=embed_description,
+                author_display_name=inter.author.display_name,
+                author_avatar_url=inter.author.avatar.url)
+
+            await inter.edit_original_message(embeds=embed_list)
+            continue
+
+        # could not send embeds to specified channel
+        # possible that bot does not have access for that
+        except:
+            embed_title = "message could not be sent"
+            embed_description = (f"please ensure bot is in "
+                                 f"channel {channel.mention}")
+
+            embed_list = embed_message(
+                icon_url=inter.bot.user.avatar.url,
+                bot_user_name=inter.me.display_name,
+                title=embed_title,
+                description=embed_description,
+                author_display_name=inter.author.display_name,
+                author_avatar_url=inter.author.avatar.url)
+
+            await inter.edit_original_message(embeds=embed_list)
+
+            return False
+
+    # end by sending content if provided
+    if content is None:
+        return True
+
+    # respond to interaction if channel is not provided
+    if channel is None:
+        if len(content) >= 2000:
+            while len(content) >= 2000:
+                # send the first 2K characters of the string
+                await inter.send(content=content[:2000])
+
+                # remove the first 2K characters of the string
+                content = content[2000:]
+
+        await inter.send(content=content)
+        return True
+
+    # try to send the content to specified channel
+    try:
+        if len(content) >= 2000:
+            while len(content) >= 2000:
+                # send the first 2K characters of the string
+                await channel.send(content=content[:2000])
+
+                # remove the first 2K characters of the string
+                content = content[2000:]
+
+        await channel.send(content=content)
+
+        # edit original message if the message was sent to channel
+        embed_title = "message sent"
+        embed_description = f"channel {channel.mention}"
+
+        embed_list = embed_message(
+            icon_url=inter.bot.user.avatar.url,
+            bot_user_name=inter.me.display_name,
+            title=embed_title,
+            description=embed_description,
+            author_display_name=inter.author.display_name,
+            author_avatar_url=inter.author.avatar.url)
+
+        await inter.edit_original_message(embeds=embed_list)
+        return True
+
+    # could not send content to specified channel
+    # possible that bot does not have access for that
+    except:
+        embed_title = "message could not be sent"
+        embed_description = (f"please ensure bot is in "
+                             f"channel {channel.mention}")
+
+        embed_list = embed_message(
+            icon_url=inter.bot.user.avatar.url,
+            bot_user_name=inter.me.display_name,
+            title=embed_title,
+            description=embed_description,
+            author_display_name=inter.author.display_name,
+            author_avatar_url=inter.author.avatar.url)
+
+        await inter.edit_original_message(embeds=embed_list)
+
+        return False
+
+# town hall urls
+
+
+def get_town_hall_url(player):
+    thumbnail_url = get_th_url(player.town_hall)
+    if thumbnail_url is None:
+        thumbnail_url = player.league.icon.small
+    return thumbnail_url
 
 
 # emojis
+
 def get_emoji(coc_name, discord_emoji_list, client_emoji_list):
     client_emoji = get_base_emoji(
         coc_name, discord_emoji_list, client_emoji_list)
@@ -2961,6 +3386,8 @@ def help_switch(db_guild_obj, db_player_obj, player_obj, user_id, emoji,
         return help_client(db_guild_obj, user_id, bot_category, all_commands)
     if bot_category.brief == "discord":
         return help_discord(player_obj, bot_category, all_commands)
+    if bot_category.brief == "announce":
+        return help_announce(player_obj, bot_category, all_commands)
     if bot_category.brief == "player":
         return help_player(player_obj, bot_category, all_commands)
     if (bot_category.brief == "clan" or
@@ -3030,6 +3457,23 @@ def help_client(db_guild_obj, user_id, bot_category, all_commands):
 
 
 def help_discord(player_obj, bot_category, all_commands):
+    help_dict = {
+        'field_dict_list': [],
+        'emoji_list': []
+    }
+
+    for parent in all_commands.values():
+        # command is not in the correct category
+        if not bot_category.brief == parent.name:
+            continue
+
+        field_dict_list = help_command_dict_list(parent)
+        help_dict["field_dict_list"] = field_dict_list
+
+    return help_dict
+
+
+def help_announce(player_obj, bot_category, all_commands):
     help_dict = {
         'field_dict_list': [],
         'emoji_list': []
@@ -3287,7 +3731,7 @@ async def update_roles(user, guild, coc_client):
                     "name": f"{player_obj.clan.name} {player_obj.clan.tag}",
                     "value": f"not claimed in {guild.name} server"
                 }],
-                "thumbnail": player_obj.league.icon
+                "thumbnail": player_obj.league.icon.small
             })
             continue
 
@@ -3305,7 +3749,7 @@ async def update_roles(user, guild, coc_client):
                              f"{player_obj.clan.tag}"),
                     "value": f"not claimed"
                 }],
-                "thumbnail": player_obj.clan.badge
+                "thumbnail": player_obj.clan.badge.small
             })
             continue
 
@@ -3420,17 +3864,49 @@ async def update_roles(user, guild, coc_client):
         })
 
         # adding added roles to field dict list
-        for role in add_role_obj_list:
+        if len(add_role_obj_list) != 0:
+            field_value = ""
+
+            # setting the title for singular or plural
+            if len(add_role_obj_list) == 1:
+                field_name = "added role"
+            else:
+                field_name = "added roles"
+
+            for role in add_role_obj_list:
+                field_value += f"{role.mention}"
+                field_value += "\n"
+
+            # remove the last 1 character of the string
+            # removing "\n"
+            field_value = field_value[:-1]
+
             field_dict_list.append({
-                "name": f"added role",
-                "value": role.mention
+                "name": field_name,
+                "value": field_value
             })
 
         # adding removed roles to field dict list
-        for role in remove_role_obj_list:
+        if len(remove_role_obj_list) != 0:
+            field_value = ""
+
+            # setting the title for singular or plural
+            if len(remove_role_obj_list) == 1:
+                field_name = "removed role"
+            else:
+                field_name = "removed roles"
+
+            for role in remove_role_obj_list:
+                field_value += f"{role.mention}"
+                field_value += "\n"
+
+            # remove the last 1 character of the string
+            # removing "\n"
+            field_value = field_value[:-1]
+
             field_dict_list.append({
-                "name": f"removed role",
-                "value": role.mention
+                "name": field_name,
+                "value": field_value
             })
 
         embed_dict_list.append({
@@ -3758,9 +4234,12 @@ async def clan_role_war_verification(
 
         # specifically for last day of CWl
         if cwl_group is not None:
-            if cwl_group.state == "inWar":
-                # last war is the current war
-                if war_obj.state != "inWar":
+            # amount of rounds matches the number of rounds
+            if len(cwl_group.rounds) == cwl_group.number_of_rounds:
+                last_round_war = await coc_client.get_league_war(cwl_group.rounds[-1][0])
+
+                # last war is either in war or war ended
+                if last_round_war.state != "preparation":
                     # change current to prep
                     if cwl_enum_round == WarRound.current_war:
                         cwl_enum_round = WarRound.current_preparation
@@ -4123,5 +4602,88 @@ async def clan_role_cwl_group_leadership_verification(
         'player_obj': player_obj,
         'clan_obj': clan_obj,
         'cwl_group_obj': cwl_group_obj
+    }
+    return verification_payload
+
+
+def guild_admin_verification(
+    inter: ApplicationCommandInteraction
+):
+    """
+        verifying author is a guild admin
+        and returning verification payload
+        Args:
+            inter (obj): disnake ApplicationCommandInteraction 
+        Returns:
+            dict: verification_payload
+                (verified, embed_list, db_guild, db_author)
+    """
+
+    db_guild = db_responder.read_guild(inter.guild.id)
+    # guild not claimed
+    if not db_guild:
+        embed_description = f"{inter.guild.name} has not been claimed"
+
+        embed_list = embed_message(
+            icon_url=inter.bot.user.avatar.url,
+            description=embed_description,
+            bot_user_name=inter.me.display_name,
+            author_display_name=inter.author.display_name,
+            author_avatar_url=inter.author.avatar.url)
+
+        return {
+            'verified': False,
+            'embed_list': embed_list,
+            'db_guild': None,
+            'db_author': None
+        }
+
+    db_author = db_responder.read_user(inter.author.id)
+    # author not claimed
+    if not db_author:
+        embed_description = f"{inter.author.mention} has not been claimed"
+
+        embed_list = embed_message(
+            icon_url=inter.bot.user.avatar.url,
+            description=embed_description,
+            bot_user_name=inter.me.display_name,
+            author_display_name=inter.author.display_name,
+            author_avatar_url=inter.author.avatar.url
+        )
+
+        return {
+            'verified': False,
+            'embed_list': embed_list,
+            'db_guild': db_guild,
+            'db_author': None
+        }
+
+    is_guild_admin = db_guild.admin_user_id == inter.author.id
+
+    # user is not guild admin and is not super user
+    if (not is_guild_admin
+            and not db_author.super_user):
+        embed_description = f"{inter.author.mention} is not guild's admin"
+
+        embed_list = embed_message(
+            icon_url=inter.bot.user.avatar.url,
+            description=embed_description,
+            bot_user_name=inter.me.display_name,
+            author_display_name=inter.author.display_name,
+            author_avatar_url=inter.author.avatar.url
+        )
+
+        return {
+            'verified': False,
+            'embed_list': embed_list,
+            'db_guild': db_guild,
+            'db_author': db_author
+        }
+
+    verification_payload = {
+        'verified': True,
+        'embed_list': None,
+        'db_guild': db_guild,
+        'db_author': db_author
     }
     return verification_payload

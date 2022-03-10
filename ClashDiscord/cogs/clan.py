@@ -59,7 +59,7 @@ class Clan(commands.Cog):
                 author_avatar_url=inter.author.avatar.url
             )
 
-            await discord_responder.send_embed_list(embed_list, inter)
+            await discord_responder.send_embed_list(inter, embed_list)
             return
 
         clan = verification_payload['clan_obj']
@@ -79,7 +79,7 @@ class Clan(commands.Cog):
                     author_avatar_url=inter.author.avatar.url
                 )
 
-                await discord_responder.send_embed_list(embed_list, inter)
+                await discord_responder.send_embed_list(inter, embed_list)
                 return
 
         field_dict_list = discord_responder.clan_info(
@@ -90,13 +90,13 @@ class Clan(commands.Cog):
             icon_url=inter.bot.user.avatar.url,
             title=f"{clan.name} {clan.tag}",
             bot_user_name=inter.me.display_name,
-            thumbnail=clan.badge,
+            thumbnail=clan.badge.small,
             field_list=field_dict_list,
             author_display_name=inter.author.display_name,
             author_avatar_url=inter.author.avatar.url
         )
 
-        await discord_responder.send_embed_list(embed_list, inter)
+        await discord_responder.send_embed_list(inter, embed_list)
 
     @clan.sub_command()
     async def lineup(
@@ -107,7 +107,6 @@ class Clan(commands.Cog):
         tag: str = discord_utils.command_param_dict['tag']
     ):
         """
-            *leadership* 
             get clan town hall lineup information 
             *default option is overview*
 
@@ -123,12 +122,12 @@ class Clan(commands.Cog):
             db_player_obj = db_responder.read_player_active(inter.author.id)
 
             verification_payload = (
-                await discord_responder.clan_leadership_verification(
-                    db_player_obj, inter.author, inter.guild.id, self.coc_client))
+                await discord_responder.clan_verification(
+                    db_player_obj, inter.author, self.coc_client))
         # role has been mentioned
         else:
             verification_payload = (
-                await discord_responder.clan_role_player_leadership_verification(
+                await discord_responder.clan_role_player_verification(
                     clan_role, inter.author, inter.guild.id, self.coc_client))
 
         if not verification_payload['verified']:
@@ -140,7 +139,7 @@ class Clan(commands.Cog):
                 author_avatar_url=inter.author.avatar.url
             )
 
-            await discord_responder.send_embed_list(embed_list, inter)
+            await discord_responder.send_embed_list(inter, embed_list)
             return
 
         clan = verification_payload['clan_obj']
@@ -160,17 +159,29 @@ class Clan(commands.Cog):
                     author_avatar_url=inter.author.avatar.url
                 )
 
-                await discord_responder.send_embed_list(embed_list, inter)
+                await discord_responder.send_embed_list(inter, embed_list)
                 return
+
+        # initializing embed default values
+        embed_title = None
+        embed_description = None
+        field_dict_list = []
 
         if option == "overview":
             embed_title = f"{clan.name} lineup"
-            field_dict_list = await discord_responder.clan_lineup(
+            embed_description = await discord_responder.clan_lineup(
                 clan, self.coc_client, inter.client.emojis, self.client_data.emojis)
+
         elif option == "member":
-            embed_title = f"{clan.name} lineup"
+            embed_title = f"{clan.name} member lineup"
             field_dict_list = await discord_responder.clan_lineup_member(
                 clan, self.coc_client, inter.client.emojis, self.client_data.emojis)
+
+        elif option == "count":
+            embed_title = f"{clan.name} lineup count"
+            field_dict_list = await discord_responder.clan_lineup_count(
+                clan, self.coc_client, inter.client.emojis, self.client_data.emojis)
+
         else:
             embed_title = None
             field_dict_list = [{
@@ -181,14 +192,15 @@ class Clan(commands.Cog):
         embed_list = discord_responder.embed_message(
             icon_url=inter.bot.user.avatar.url,
             title=embed_title,
+            description=embed_description,
             bot_user_name=inter.me.display_name,
-            thumbnail=clan.badge,
+            thumbnail=clan.badge.small,
             field_list=field_dict_list,
             author_display_name=inter.author.display_name,
             author_avatar_url=inter.author.avatar.url
         )
 
-        await discord_responder.send_embed_list(embed_list, inter)
+        await discord_responder.send_embed_list(inter, embed_list)
 
     @clan.sub_command()
     async def warpreference(
@@ -199,7 +211,6 @@ class Clan(commands.Cog):
         tag: str = discord_utils.command_param_dict['tag']
     ):
         """
-            *leadership* 
             rundown of clan's war preference 
             *default option is overview*
 
@@ -215,12 +226,12 @@ class Clan(commands.Cog):
             db_player_obj = db_responder.read_player_active(inter.author.id)
 
             verification_payload = (
-                await discord_responder.clan_leadership_verification(
-                    db_player_obj, inter.author, inter.guild.id, self.coc_client))
+                await discord_responder.clan_verification(
+                    db_player_obj, inter.author, self.coc_client))
         # role has been mentioned
         else:
             verification_payload = (
-                await discord_responder.clan_role_player_leadership_verification(
+                await discord_responder.clan_role_player_verification(
                     clan_role, inter.author, inter.guild.id, self.coc_client))
 
         if not verification_payload['verified']:
@@ -232,7 +243,7 @@ class Clan(commands.Cog):
                 author_avatar_url=inter.author.avatar.url
             )
 
-            await discord_responder.send_embed_list(embed_list, inter)
+            await discord_responder.send_embed_list(inter, embed_list)
             return
 
         clan = verification_payload['clan_obj']
@@ -252,7 +263,7 @@ class Clan(commands.Cog):
                     author_avatar_url=inter.author.avatar.url
                 )
 
-                await discord_responder.send_embed_list(embed_list, inter)
+                await discord_responder.send_embed_list(inter, embed_list)
                 return
 
         # initializing embed default values
@@ -281,13 +292,13 @@ class Clan(commands.Cog):
             title=embed_title,
             description=embed_description,
             bot_user_name=inter.me.display_name,
-            thumbnail=clan.badge,
+            thumbnail=clan.badge.small,
             field_list=field_dict_list,
             author_display_name=inter.author.display_name,
             author_avatar_url=inter.author.avatar.url
         )
 
-        await discord_responder.send_embed_list(embed_list, inter)
+        await discord_responder.send_embed_list(inter, embed_list)
 
     @clan.sub_command()
     async def donate(
@@ -331,7 +342,7 @@ class Clan(commands.Cog):
                 author_avatar_url=inter.author.avatar.url
             )
 
-            await discord_responder.send_embed_list(embed_list, inter)
+            await discord_responder.send_embed_list(inter, embed_list)
             return
 
         clan = verification_payload['clan_obj']
@@ -351,7 +362,7 @@ class Clan(commands.Cog):
                     author_avatar_url=inter.author.avatar.url
                 )
 
-                await discord_responder.send_embed_list(embed_list, inter)
+                await discord_responder.send_embed_list(inter, embed_list)
                 return
 
         donator_list = await clash_responder.donation(
@@ -366,13 +377,13 @@ class Clan(commands.Cog):
             icon_url=inter.bot.user.avatar.url,
             title=f"{clan.name} {clan.tag}",
             bot_user_name=inter.me.display_name,
-            thumbnail=clan.badge,
+            thumbnail=clan.badge.small,
             field_list=field_dict_list,
             author_display_name=inter.author.display_name,
             author_avatar_url=inter.author.avatar.url
         )
 
-        await discord_responder.send_embed_list(embed_list, inter)
+        await discord_responder.send_embed_list(inter, embed_list)
 
     @clan.sub_command()
     async def supertroop(
@@ -417,7 +428,7 @@ class Clan(commands.Cog):
                 author_avatar_url=inter.author.avatar.url
             )
 
-            await discord_responder.send_embed_list(embed_list, inter)
+            await discord_responder.send_embed_list(inter, embed_list)
             return
 
         clan = verification_payload['clan_obj']
@@ -437,7 +448,7 @@ class Clan(commands.Cog):
                     author_avatar_url=inter.author.avatar.url
                 )
 
-                await discord_responder.send_embed_list(embed_list, inter)
+                await discord_responder.send_embed_list(inter, embed_list)
                 return
 
         # super troop not specified for search
@@ -462,7 +473,7 @@ class Clan(commands.Cog):
                     author_avatar_url=inter.author.avatar.url
                 )
 
-                await discord_responder.send_embed_list(embed_list, inter)
+                await discord_responder.send_embed_list(inter, embed_list)
                 return
 
             donor_list = await clash_responder.active_super_troop_search(
@@ -479,10 +490,10 @@ class Clan(commands.Cog):
             icon_url=inter.bot.user.avatar.url,
             title=embed_title,
             bot_user_name=inter.me.display_name,
-            thumbnail=clan.badge,
+            thumbnail=clan.badge.small,
             field_list=field_dict_list,
             author_display_name=inter.author.display_name,
             author_avatar_url=inter.author.avatar.url
         )
 
-        await discord_responder.send_embed_list(embed_list, inter)
+        await discord_responder.send_embed_list(inter, embed_list)

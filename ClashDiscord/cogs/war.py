@@ -1,4 +1,7 @@
 import disnake
+from disnake import (
+    ApplicationCommandInteraction as Interaction
+)
 from disnake.ext import commands
 from responders import (
     DiscordResponder as discord_responder,
@@ -59,7 +62,7 @@ class War(commands.Cog):
                 author_avatar_url=inter.author.avatar.url
             )
 
-            await discord_responder.send_embed_list(embed_list, inter)
+            await discord_responder.send_embed_list(inter, embed_list)
             return
 
         war_obj = verification_payload['war_obj']
@@ -71,13 +74,13 @@ class War(commands.Cog):
             icon_url=inter.bot.user.avatar.url,
             title=f"{war_obj.clan.name} vs. {war_obj.opponent.name}",
             bot_user_name=inter.me.display_name,
-            thumbnail=war_obj.clan.badge,
+            thumbnail=war_obj.clan.badge.small,
             field_list=field_dict_list,
             author_display_name=inter.author.display_name,
             author_avatar_url=inter.author.avatar.url
         )
 
-        await discord_responder.send_embed_list(embed_list, inter)
+        await discord_responder.send_embed_list(inter, embed_list)
 
     @war.sub_command()
     async def noattack(
@@ -118,7 +121,7 @@ class War(commands.Cog):
                 author_avatar_url=inter.author.avatar.url
             )
 
-            await discord_responder.send_embed_list(embed_list, inter)
+            await discord_responder.send_embed_list(inter, embed_list)
             return
 
         war_obj = verification_payload['war_obj']
@@ -130,13 +133,82 @@ class War(commands.Cog):
             icon_url=inter.bot.user.avatar.url,
             title=f"{war_obj.clan.name} vs. {war_obj.opponent.name}",
             bot_user_name=inter.me.display_name,
-            thumbnail=war_obj.clan.badge,
+            thumbnail=war_obj.clan.badge.small,
             field_list=field_dict_list,
             author_display_name=inter.author.display_name,
             author_avatar_url=inter.author.avatar.url
         )
 
-        await discord_responder.send_embed_list(embed_list, inter)
+        await discord_responder.send_embed_list(inter, embed_list)
+
+    @war.sub_command()
+    async def open(
+        self,
+        inter: Interaction,
+        star_count: int = discord_utils.command_param_dict['star_count'],
+        clan_role: disnake.Role = discord_utils.command_param_dict['clan_role'],
+        war_selection: str = discord_utils.command_param_dict['war_selection']
+    ):
+        """
+            show opponent bases that are open
+
+            Parameters
+            ----------
+            clan_role (optional): clan role to use linked clan
+            war_selection (optional): cwl war selection
+        """
+
+        # role not mentioned
+        if clan_role is None:
+            db_player_obj = db_responder.read_player_active(inter.author.id)
+
+            verification_payload = await discord_responder.war_verification(
+                db_player_obj, war_selection, inter.author, self.coc_client)
+
+        # role has been mentioned
+        else:
+            verification_payload = await discord_responder.clan_role_war_verification(
+                clan_role, war_selection, self.coc_client)
+
+        if not verification_payload['verified']:
+            embed_list = discord_responder.embed_message(
+                icon_url=inter.bot.user.avatar.url,
+                bot_user_name=inter.me.display_name,
+                field_list=verification_payload['field_dict_list'],
+                author_display_name=inter.author.display_name,
+                author_avatar_url=inter.author.avatar.url
+            )
+
+            await discord_responder.send_embed_list(inter, embed_list)
+            return
+
+        war = verification_payload['war_obj']
+
+        star_emoji = discord_responder.get_emoji(
+            "War Star", inter.client.emojis, self.client_data.emojis)
+
+        embed_title = f"{war.clan.name} vs. {war.opponent.name}"
+
+        star_string = star_emoji * (star_count + 1)
+
+        field_dict_list = discord_responder.war_open_bases(
+            war, star_count, inter.client.emojis, self.client_data.emojis)
+
+        embed_description = (f"{len(field_dict_list)} "
+                             f"bases with less than {star_string}")
+
+        embed_list = discord_responder.embed_message(
+            icon_url=inter.bot.user.avatar.url,
+            title=embed_title,
+            description=embed_description,
+            bot_user_name=inter.me.display_name,
+            thumbnail=war.clan.badge.small,
+            field_list=field_dict_list,
+            author_display_name=inter.author.display_name,
+            author_avatar_url=inter.author.avatar.url
+        )
+
+        await discord_responder.send_embed_list(inter, embed_list)
 
     @war.sub_command()
     async def stars(
@@ -147,7 +219,6 @@ class War(commands.Cog):
         war_selection: str = discord_utils.command_param_dict['war_selection']
     ):
         """
-            *leadership*
             show all war members and their stars 
             *default option is stars*
 
@@ -163,15 +234,15 @@ class War(commands.Cog):
             db_player_obj = db_responder.read_player_active(inter.author.id)
 
             verification_payload = (
-                await discord_responder.war_leadership_verification(
+                await discord_responder.war_verification(
                     db_player_obj, war_selection,
-                    inter.author, inter.guild.id, self.coc_client))
+                    inter.author, self.coc_client))
         # role has been mentioned
         else:
             verification_payload = (
-                await discord_responder.clan_role_war_leadership_verification(
+                await discord_responder.clan_role_war_verification(
                     clan_role, war_selection,
-                    inter.author, inter.guild.id, self.coc_client))
+                    self.coc_client))
 
         if not verification_payload['verified']:
             embed_list = discord_responder.embed_message(
@@ -182,7 +253,7 @@ class War(commands.Cog):
                 author_avatar_url=inter.author.avatar.url
             )
 
-            await discord_responder.send_embed_list(embed_list, inter)
+            await discord_responder.send_embed_list(inter, embed_list)
             return
 
         war_obj = verification_payload['war_obj']
@@ -206,13 +277,13 @@ class War(commands.Cog):
             icon_url=inter.bot.user.avatar.url,
             title=embed_title,
             bot_user_name=inter.me.display_name,
-            thumbnail=war_obj.clan.badge,
+            thumbnail=war_obj.clan.badge.small,
             field_list=field_dict_list,
             author_display_name=inter.author.display_name,
             author_avatar_url=inter.author.avatar.url
         )
 
-        await discord_responder.send_embed_list(embed_list, inter)
+        await discord_responder.send_embed_list(inter, embed_list)
 
     @war.sub_command_group()
     async def score(self, inter):
@@ -255,7 +326,7 @@ class War(commands.Cog):
                 author_avatar_url=inter.author.avatar.url
             )
 
-            await discord_responder.send_embed_list(embed_list, inter)
+            await discord_responder.send_embed_list(inter, embed_list)
             return
 
         player_obj = verification_payload['player_obj']
@@ -267,13 +338,13 @@ class War(commands.Cog):
             icon_url=inter.bot.user.avatar.url,
             title=f"{player_obj.name} war score",
             bot_user_name=inter.me.display_name,
-            thumbnail=player_obj.clan.badge,
+            thumbnail=player_obj.clan.badge.small,
             field_list=field_dict_list,
             author_display_name=inter.author.display_name,
             author_avatar_url=inter.author.avatar.url
         )
 
-        await discord_responder.send_embed_list(embed_list, inter)
+        await discord_responder.send_embed_list(inter, embed_list)
 
     @score.sub_command()
     async def clan(
@@ -316,7 +387,7 @@ class War(commands.Cog):
                 author_avatar_url=inter.author.avatar.url
             )
 
-            await discord_responder.send_embed_list(embed_list, inter)
+            await discord_responder.send_embed_list(inter, embed_list)
             return
 
         war_obj = verification_payload['war_obj']
@@ -327,13 +398,13 @@ class War(commands.Cog):
             icon_url=inter.bot.user.avatar.url,
             title=f"{war_obj.clan.name} vs. {war_obj.opponent.name}",
             bot_user_name=inter.me.display_name,
-            thumbnail=war_obj.clan.badge,
+            thumbnail=war_obj.clan.badge.small,
             field_list=field_dict_list,
             author_display_name=inter.author.display_name,
             author_avatar_url=inter.author.avatar.url
         )
 
-        await discord_responder.send_embed_list(embed_list, inter)
+        await discord_responder.send_embed_list(inter, embed_list)
 
     @war.sub_command()
     async def lineup(
@@ -374,7 +445,7 @@ class War(commands.Cog):
                 author_avatar_url=inter.author.avatar.url
             )
 
-            await discord_responder.send_embed_list(embed_list, inter)
+            await discord_responder.send_embed_list(inter, embed_list)
             return
 
         war_obj = verification_payload['war_obj']
@@ -402,13 +473,13 @@ class War(commands.Cog):
                 icon_url=inter.bot.user.avatar.url,
                 title=embed_title,
                 bot_user_name=inter.me.display_name,
-                thumbnail=war_obj.clan.badge,
+                thumbnail=war_obj.clan.badge.small,
                 field_list=field_dict_list,
                 author_display_name=inter.author.display_name,
                 author_avatar_url=inter.author.avatar.url
             )
 
-            await discord_responder.send_embed_list(embed_list, inter)
+            await discord_responder.send_embed_list(inter, embed_list)
 
             # running opponent's members
             field_dict_list = await discord_responder.war_lineup_member(
@@ -419,13 +490,13 @@ class War(commands.Cog):
                 icon_url=inter.bot.user.avatar.url,
                 title=embed_title,
                 bot_user_name=inter.me.display_name,
-                thumbnail=war_obj.clan.badge,
+                thumbnail=war_obj.clan.badge.small,
                 field_list=field_dict_list,
                 author_display_name=inter.author.display_name,
                 author_avatar_url=inter.author.avatar.url
             )
 
-            await discord_responder.send_embed_list(embed_list, inter)
+            await discord_responder.send_embed_list(inter, embed_list)
 
             return
 
@@ -440,10 +511,10 @@ class War(commands.Cog):
             icon_url=inter.bot.user.avatar.url,
             title=embed_title,
             bot_user_name=inter.me.display_name,
-            thumbnail=war_obj.clan.badge,
+            thumbnail=war_obj.clan.badge.small,
             field_list=field_dict_list,
             author_display_name=inter.author.display_name,
             author_avatar_url=inter.author.avatar.url
         )
 
-        await discord_responder.send_embed_list(embed_list, inter)
+        await discord_responder.send_embed_list(inter, embed_list)

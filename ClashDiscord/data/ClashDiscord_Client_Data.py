@@ -67,6 +67,8 @@ class ClashDiscord_Data(object):
         ClashDiscord_Category(
             'Discord', 'discord', 'Discord based commands', '💻'),
         ClashDiscord_Category(
+            'Announce', 'announce', 'Announce based commands', '📣'),
+        ClashDiscord_Category(
             'Player', 'player', 'Player based commands', '😎'),
         ClashDiscord_Category(
             'Clan', 'clan', 'Clan based commands', '🏠'),
@@ -498,6 +500,30 @@ class ClashDiscord_Data(object):
             coc_name="Base Designing"
         ),
         ClashDiscord_Emoji(
+            display_name="International",
+            discord_id=947989987503276033,
+            discord_name="label_international",
+            coc_name="International"
+        ),
+        ClashDiscord_Emoji(
+            display_name="Relaxed",
+            discord_id=947993343776940103,
+            discord_name="label_relaxed",
+            coc_name="Relaxed"
+        ),
+        ClashDiscord_Emoji(
+            display_name="Newbie Friendly",
+            discord_id=947993267872616458,
+            discord_name="label_newbie_friendly",
+            coc_name="Newbie Friendly"
+        ),
+        ClashDiscord_Emoji(
+            display_name="Underdog",
+            discord_id=947993350378749992,
+            discord_name="label_underdog",
+            coc_name="Underdog"
+        ),
+        ClashDiscord_Emoji(
             display_name="Farming",
             discord_id=929214100909727815,
             discord_name="label_farming",
@@ -692,6 +718,12 @@ class ClashDiscord_Data(object):
             coc_name="Legend Trophy"
         ),
         ClashDiscord_Emoji(
+            display_name="League Medal",
+            discord_id=949138029698744430,
+            discord_name="icon_league_medal",
+            coc_name="League Medal"
+        ),
+        ClashDiscord_Emoji(
             display_name="Shield",
             discord_id=929407832191811615,
             discord_name="icon_shield",
@@ -708,6 +740,12 @@ class ClashDiscord_Data(object):
             discord_id=930307229872181289,
             discord_name="icon_war_star",
             coc_name="War Star"
+        ),
+        ClashDiscord_Emoji(
+            display_name="Empty War Star",
+            discord_id=948833337705898004,
+            discord_name="icon_empty_war_star",
+            coc_name="Empty War Star"
         ),
         ClashDiscord_Emoji(
             display_name="Clan Exp",
