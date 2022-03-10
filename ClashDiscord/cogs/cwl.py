@@ -391,6 +391,67 @@ class CWL(commands.Cog):
 
         await discord_responder.send_embed_list(inter, embed_list)
 
+    @cwl.sub_command()
+    async def noattack(
+        self,
+        inter,
+        clan_role: disnake.Role = discord_utils.command_param_dict['clan_role']
+    ):
+        """
+            *leadership*
+            lists players that missed attacks in cwl
+
+            Parameters
+            ----------
+            clan_role (optional): clan role to use linked clan
+        """
+
+        # role not mentioned
+        if clan_role is None:
+            db_player_obj = db_responder.read_player_active(inter.author.id)
+
+            verification_payload = (
+                await discord_responder.cwl_group_leadership_verification(
+                    db_player_obj, inter.author, inter.guild.id, self.coc_client)
+            )
+        # role has been mentioned
+        else:
+            verification_payload = (
+                await discord_responder.clan_role_cwl_group_leadership_verification(
+                    clan_role, inter.author, inter.guild.id, self.coc_client))
+
+        if not verification_payload['verified']:
+            embed_list = discord_responder.embed_message(
+                icon_url=inter.bot.user.avatar.url,
+                bot_user_name=inter.me.display_name,
+                field_list=verification_payload['field_dict_list'],
+                author_display_name=inter.author.display_name,
+                author_avatar_url=inter.author.avatar.url
+            )
+
+            await discord_responder.send_embed_list(inter, embed_list)
+            return
+
+        player_obj = verification_payload['player_obj']
+        clan_obj = verification_payload['clan_obj']
+        cwl_group_obj = verification_payload['cwl_group_obj']
+
+        field_dict_list = await discord_responder.cwl_clan_noatk(
+            clan_obj, cwl_group_obj, self.coc_client,
+            inter.client.emojis, self.client_data.emojis)
+
+        embed_list = discord_responder.embed_message(
+            icon_url=inter.bot.user.avatar.url,
+            title=f"{clan_obj.name} CWL missed attacks",
+            bot_user_name=inter.me.display_name,
+            thumbnail=player_obj.clan.badge.small,
+            field_list=field_dict_list,
+            author_display_name=inter.author.display_name,
+            author_avatar_url=inter.author.avatar.url
+        )
+
+        await discord_responder.send_embed_list(inter, embed_list)
+
     @cwl.sub_command_group()
     async def score(self, inter):
         """

@@ -809,6 +809,29 @@ def cwl_member_score(cwl_wars, cwl_member):
     return scored_member
 
 
+async def cwl_clan_member_scoreboard_list(cwl_group, clan_obj):
+    # get a list of all CWLWar objects
+    cwl_wars = []
+    async for war in cwl_group.get_wars_for_clan(clan_obj.tag):
+        if war.state == "warEnded":
+            cwl_wars.append(war)
+
+    # get the cwl clan
+    for clan in cwl_group.clans:
+        if clan.tag == clan_obj.tag:
+            cwl_clan = clan
+            break
+
+    # get a list of all CWLWarMembers their scores
+    scored_members = []
+    for member in cwl_clan.members:
+        scored_member = cwl_member_score(cwl_wars, member)
+        if scored_member.participated_wars != 0:
+            scored_members.append(scored_member)
+
+    return scored_members
+
+
 async def cwl_clan_scoreboard(cwl_group, clan):
     class CWLScoreboardClan(object):
         """

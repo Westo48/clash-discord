@@ -2433,32 +2433,73 @@ async def cwl_clan_score(clan_obj, cwl_group: ClanWarLeagueGroup):
             'value': "there is no score"
         }]
 
-    # get a list of all CWLWar objects
-    cwl_wars = []
-    async for war in cwl_group.get_wars_for_clan(clan_obj.tag):
-        if war.state == "warEnded":
-            cwl_wars.append(war)
-
-    # get the cwl clan
-    for clan in cwl_group.clans:
-        if clan.tag == clan_obj.tag:
-            cwl_clan = clan
-            break
-
-    # get a list of all CWLWarMembers their scores
-    scored_members = []
-    for member in cwl_clan.members:
-        scored_member = clash_responder.cwl_member_score(cwl_wars, member)
-        if scored_member.participated_wars != 0:
-            scored_members.append(scored_member)
+    scored_members = (
+        await clash_responder.cwl_clan_member_scoreboard_list(
+            cwl_group, clan_obj))
 
     sorted_scored_members = sorted(
         scored_members, key=lambda member: member.score, reverse=True)
+
     field_dict_list = []
     for member in sorted_scored_members:
         field_dict_list.append({
             'name': member.name,
             'value': f"{round(member.score, 3)}"
+        })
+    return field_dict_list
+
+
+async def cwl_clan_noatk(clan, cwl_group: ClanWarLeagueGroup,
+                         coc_client, discord_emoji_list, client_emoji_list):
+    if cwl_group is None:
+        return [{
+            'name': f"{clan.name} is not in CWL",
+            'value': "there is no score"
+        }]
+
+    cwl_clan = get(cwl_group.clans, tag=clan.tag)
+
+    if cwl_clan is None:
+        return [{
+            'name': f"{clan.name} is not in CWL",
+            'value': "there is no score"
+        }]
+
+    scored_members = (
+        await clash_responder.cwl_clan_member_scoreboard_list(
+            cwl_group, clan))
+
+    no_atk_members = []
+
+    # missed attacks
+    for scored_member in scored_members:
+        # made all attacks
+        if scored_member.potential_attack_count == scored_member.attack_count:
+            continue
+
+        no_atk_members.append(scored_member)
+
+    if len(no_atk_members) == 0:
+        return [{
+            'name': f"no missed attacks",
+            'value': (f"all {len(cwl_clan.members)} {clan.name} "
+                      f"cwl members attacked")
+        }]
+
+    field_dict_list = []
+    for member in no_atk_members:
+        player = await coc_client.get_player(scored_member.tag)
+        th_emoji = get_th_emoji(
+            player.town_hall, discord_emoji_list, client_emoji_list)
+
+        attacks_missed = member.potential_attack_count - member.attack_count
+
+        attack_string = clash_responder.string_attack(attacks_missed)
+
+        field_dict_list.append({
+            'name': f"{th_emoji} {member.name}",
+            'value': (f"{member.attack_count}/{member.potential_attack_count} "
+                      f"attacks")
         })
     return field_dict_list
 

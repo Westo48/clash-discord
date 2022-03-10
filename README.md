@@ -383,6 +383,9 @@ Once setup is complete you will be able to interact with ClashDiscord using the 
       - `rounds` - cwl scoreboard for each round
       - `clan` - cwl scoreboard for each clan member
 
+  - cwl noattack
+    - lists players that missed attacks in cwl
+    
   - cwl score user
     - user's active player's cwl score
     - _cwl score user option_
