@@ -1199,9 +1199,14 @@ async def clan_lineup_member(
             field_value += f"|{hero.max_level}"
             field_value += f"\n"
 
-        # remove the last 1 character of the string
-        # removing "\n"
-        field_value = field_value[:-1]
+        # no heroes in field value
+        if field_value == "":
+            field_value = "_ _"
+
+        else:
+            # remove the last 1 character of the string
+            # removing "\n"
+            field_value = field_value[:-1]
 
         field_dict_list.append({
             'name': field_name,
