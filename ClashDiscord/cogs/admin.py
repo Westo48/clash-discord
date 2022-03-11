@@ -540,7 +540,7 @@ class Admin(commands.Cog):
 
         clan_obj = verification_payload['clan_obj']
 
-        embed_title = f"{clan_obj.name} {clan_obj.tag} linked users"
+        embed_title = f"{clan_obj.name} {clan_obj.tag} missing linked users"
         field_dict_list = []
         embed_thumbnail = clan_obj.badge.small
 
