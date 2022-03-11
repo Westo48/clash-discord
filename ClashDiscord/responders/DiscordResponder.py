@@ -4082,6 +4082,7 @@ async def clan_role_player_verification(
         Args:
             clan_role (obj): discord role
             user (obj): discord user object
+            guild_id (obj): discord guild id
             coc_client (obj): coc.py client
 
         Returns:
@@ -4244,7 +4245,7 @@ async def clan_role_war_verification(
         and returning verification payload
 
         Args:
-            db_player_obj (obj): player object from db
+            clan_role (obj): discord role
             war_selection (str): cwl war selection
                 ["preparation", "current", "upcoming", None]
             coc_client (obj): coc.py client
@@ -4516,8 +4517,7 @@ async def clan_role_cwl_group_verification(
         verifying a cwl group from clan role
         and returning verification payload
         Args:
-            db_player_obj (obj): player object from db
-            user_obj (obj): discord user obj
+            clan_role (obj): discord role
             coc_client (obj): coc.py client
         Returns:
             dict: verification_payload
@@ -4582,7 +4582,7 @@ async def clan_role_cwl_group_leadership_verification(
         verifying a cwl group from clan role
         and returning verification payload
         Args:
-            db_player_obj (obj): player object from db
+            clan_role (obj): discord role
             user_obj (obj): discord user obj
             guild_id (obj): discord guild id
             coc_client (obj): coc.py client
