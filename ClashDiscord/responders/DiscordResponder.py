@@ -4651,7 +4651,7 @@ def guild_admin_verification(
     inter: ApplicationCommandInteraction
 ):
     """
-        verifying author is a guild admin
+        verifying author is a guild admin, admin user, or super user
         and returning verification payload
         Args:
             inter (obj): disnake ApplicationCommandInteraction 
@@ -4661,6 +4661,7 @@ def guild_admin_verification(
     """
 
     db_guild = db_responder.read_guild(inter.guild.id)
+
     # guild not claimed
     if not db_guild:
         embed_description = f"{inter.guild.name} has not been claimed"
@@ -4680,6 +4681,7 @@ def guild_admin_verification(
         }
 
     db_author = db_responder.read_user(inter.author.id)
+
     # author not claimed
     if not db_author:
         embed_description = f"{inter.author.mention} has not been claimed"
@@ -4701,9 +4703,10 @@ def guild_admin_verification(
 
     is_guild_admin = db_guild.admin_user_id == inter.author.id
 
-    # user is not guild admin and is not super user
+    # user is not guild admin and is not super user and is not admin user
     if (not is_guild_admin
-            and not db_author.super_user):
+            and not db_author.super_user
+            and not db_author.admin):
         embed_description = f"{inter.author.mention} is not guild's admin"
 
         embed_list = embed_message(
