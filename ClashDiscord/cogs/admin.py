@@ -484,3 +484,92 @@ class Admin(commands.Cog):
         )
 
         await discord_responder.send_embed_list(inter, embed_list)
+
+    @admin.sub_command()
+    async def missing(
+        self,
+        inter,
+        clan_role: disnake.Role = discord_utils.command_param_dict['clan_role']
+    ):
+        """
+            *admin* 
+            show who has not been linked from a clan
+
+            Parameters
+            ----------
+            clan_role (optional): clan role to use linked clan
+        """
+
+        verification_payload = (
+            discord_responder.guild_admin_verification(inter))
+
+        if not verification_payload['verified']:
+
+            embed_list = verification_payload["embed_list"]
+
+            await discord_responder.send_embed_list(inter, embed_list)
+
+            return
+
+        # role not mentioned
+        if clan_role is None:
+            db_player_obj = db_responder.read_player_active(
+                inter.author.id)
+
+            verification_payload = (
+                await discord_responder.clan_verification(
+                    db_player_obj, inter.author, self.coc_client))
+
+        # role mentioned
+        else:
+            verification_payload = (
+                await discord_responder.clan_role_player_verification(
+                    clan_role, inter.author, inter.guild.id, self.coc_client))
+
+        if not verification_payload['verified']:
+            embed_list = discord_responder.embed_message(
+                icon_url=inter.bot.user.avatar.url,
+                bot_user_name=inter.me.display_name,
+                field_list=verification_payload['field_dict_list'],
+                author_display_name=inter.author.display_name,
+                author_avatar_url=inter.author.avatar.url
+            )
+
+            await discord_responder.send_embed_list(inter, embed_list)
+            return
+
+        clan_obj = verification_payload['clan_obj']
+
+        embed_title = f"{clan_obj.name} {clan_obj.tag} linked users"
+        field_dict_list = []
+        embed_thumbnail = clan_obj.badge.small
+
+        member_dict_list = []
+
+        # finding the user for each member in the clan
+        for member_obj in clan_obj.members:
+            member_dict_list.append(discord_responder.find_user_from_tag(
+                member_obj, inter.guild.members))
+
+        # selecting all those who aren't linked
+        for member_dict in member_dict_list:
+            if "not found" in member_dict["value"]:
+                field_dict_list.append(member_dict)
+
+        if len(field_dict_list) == 0:
+            field_dict_list.append({
+                "name": f"all {len(clan_obj.members)} members linked",
+                "value": "no additional members need to be linked"
+            })
+
+        embed_list = discord_responder.embed_message(
+            icon_url=inter.bot.user.avatar.url,
+            title=embed_title,
+            thumbnail=embed_thumbnail,
+            field_list=field_dict_list,
+            bot_user_name=inter.me.display_name,
+            author_display_name=inter.author.display_name,
+            author_avatar_url=inter.author.avatar.url
+        )
+
+        await discord_responder.send_embed_list(inter, embed_list)
