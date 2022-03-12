@@ -542,6 +542,12 @@ class ClashDiscord_Data(object):
             coc_name="Active Daily"
         ),
         ClashDiscord_Emoji(
+            display_name="Donations",
+            discord_id=952336611981549638,
+            discord_name="label_donations",
+            coc_name="Donations"
+        ),
+        ClashDiscord_Emoji(
             display_name="Hungry Learner",
             discord_id=929214187652128798,
             discord_name="label_hungry_learner",
@@ -691,13 +697,13 @@ class ClashDiscord_Data(object):
             display_name="Donations",
             discord_id=929407021235728404,
             discord_name="icon_donations",
-            coc_name="donations"
+            coc_name="player donations"
         ),
         ClashDiscord_Emoji(
             display_name="Received",
             discord_id=929407028638662756,
             discord_name="icon_received",
-            coc_name="received"
+            coc_name="player received"
         ),
         ClashDiscord_Emoji(
             display_name="Exp Level",
