@@ -194,8 +194,19 @@ class War(commands.Cog):
         field_dict_list = discord_responder.war_open_bases(
             war, star_count, inter.client.emojis, self.client_data.emojis)
 
-        embed_description = (f"{len(field_dict_list)} "
-                             f"bases with less than {star_string}")
+        # setting embed description
+        if field_dict_list[0]["name"] == "no open bases":
+            embed_description = None
+
+        else:
+            if len(field_dict_list) == 1:
+                bases_string = "base"
+
+            else:
+                bases_string = "bases"
+
+            embed_description = (f"{len(field_dict_list)} "
+                                 f"{bases_string} with less than {star_string}")
 
         embed_list = discord_responder.embed_message(
             icon_url=inter.bot.user.avatar.url,
