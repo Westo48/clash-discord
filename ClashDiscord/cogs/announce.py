@@ -217,13 +217,14 @@ class Announce(commands.Cog):
         unit_emoji = discord_responder.get_emoji(
             formatted_unit_name, inter.client.emojis, self.client_data.emojis)
 
+        content_list = []
+
         # nobody in the clan can donate the requested unit
         if len(donator_list) == 0:
             message = f"{clan.name} is unable to donate {unit_emoji}"
             content = None
 
         else:
-            content_list = []
             content = ""
             for donor in donator_list:
                 member_message = discord_responder.user_player_ping(
@@ -242,10 +243,10 @@ class Announce(commands.Cog):
 
                 content += member_message
 
-        # cuts the last two characters from the string ', '
-        content = content[:-2]
+            # cuts the last two characters from the string ', '
+            content = content[:-2]
 
-        content_list.append(content)
+            content_list.append(content)
 
         embed_title = f"{unit_emoji} **{formatted_unit_name} DONORS**"
 
@@ -341,13 +342,13 @@ class Announce(commands.Cog):
         unit_emoji = discord_responder.get_emoji(
             super_troop_name, inter.client.emojis, self.client_data.emojis)
 
+        content_list = []
         # nobody in the clan can donate the requested unit
         if len(donator_list) == 0:
             message = f"{clan.name} is unable to donate {unit_emoji}"
             content = None
 
         else:
-            content_list = []
             content = ""
             for donor in donator_list:
                 member_message = discord_responder.user_player_ping(
@@ -366,10 +367,10 @@ class Announce(commands.Cog):
 
                 content += member_message
 
-        # cuts the last two characters from the string ', '
-        content = content[:-2]
+            # cuts the last two characters from the string ', '
+            content = content[:-2]
 
-        content_list.append(content)
+            content_list.append(content)
 
         embed_title = f"{unit_emoji} **{super_troop_name} DONORS**"
         embed_description = message
