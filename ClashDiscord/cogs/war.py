@@ -127,7 +127,8 @@ class War(commands.Cog):
         war_obj = verification_payload['war_obj']
 
         field_dict_list = discord_responder.war_no_attack(
-            war_obj, missed_attacks)
+            war_obj, missed_attacks,
+            inter.client.emojis, self.client_data.emojis)
 
         embed_list = discord_responder.embed_message(
             icon_url=inter.bot.user.avatar.url,

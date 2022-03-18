@@ -1796,66 +1796,68 @@ def war_time(war_obj):
         }]
 
 
-def war_no_attack(war_obj, missed_attacks):
-    if war_obj.state == "preparation":
-        time_string = clash_responder.string_date_time(war_obj)
+def war_no_attack(war: ClanWar, missed_attacks, discord_emoji_list, client_emoji_list):
+    if war is None:
+        return [{
+            'name': f"not in war",
+            'value': f"you are not in war"
+        }]
+
+    if war.state == "preparation":
+        time_string = clash_responder.string_date_time(war)
 
         return [{
             'name': f"{time_string}",
             'value': f"left before war starts, nobody has attacked"
         }]
 
-    elif war_obj.state == "inWar":
-        no_attack_list = clash_responder.war_no_attack(war_obj, missed_attacks)
-        if len(no_attack_list) == 0:
-            return [{
-                'name': f"no missed attacks",
-                'value': (f"all {war_obj.team_size} {war_obj.clan.name} "
-                          f"war members attacked")
-            }]
-        field_dict_list = []
-        for member in no_attack_list:
-            missing_attack_count = (
-                war_obj.attacks_per_member - len(member.attacks))
-
-            missing_attack_string = (
-                clash_responder.string_attack(missing_attack_count))
-
-            field_dict_list.append({
-                'name': f"{member.name} {member.tag}",
-                'value': (f"is missing "
-                          f"{missing_attack_count} {missing_attack_string}")
-            })
-        return field_dict_list
-
-    elif war_obj.state == "warEnded":
-        no_attack_list = clash_responder.war_no_attack(war_obj, missed_attacks)
-        if len(no_attack_list) == 0:
-            return [{
-                'name': f"no missed attacks",
-                'value': (f"all {war_obj.team_size} {war_obj.clan.name} "
-                          f"war members attacked")
-            }]
-        field_dict_list = []
-        for member in no_attack_list:
-            missing_attack_count = (
-                war_obj.attacks_per_member - len(member.attacks))
-
-            missing_attack_string = (
-                clash_responder.string_attack(missing_attack_count))
-
-            field_dict_list.append({
-                'name': f"{member.name} {member.tag}",
-                'value': (f"missed "
-                          f"{missing_attack_count} {missing_attack_string}")
-            })
-        return field_dict_list
+    # setting past or present tense of missed or is missing
+    if war.state == "inWar":
+        missed_string = "is missing "
 
     else:
+        missed_string = "missed "
+
+    field_dict_list = []
+    map_position_index = 0
+
+    for member in war.clan.members:
+        map_position_index += 1
+
+        missing_attack_count = (
+            war.attacks_per_member - len(member.attacks))
+
+        # not missing any attacks
+        if missing_attack_count == 0:
+            continue
+
+        # missed attacks specified
+        if missed_attacks is not None:
+            # skip members who are missing attacks other than what is specified
+            if missing_attack_count != missed_attacks:
+                continue
+
+        th_emoji = get_emoji(
+            member.town_hall, discord_emoji_list, client_emoji_list)
+
+        missing_attack_string = (
+            clash_responder.string_attack(missing_attack_count))
+
+        field_dict_list.append({
+            'name': (f"{map_position_index}: {th_emoji} "
+                     f"{member.name} {member.tag}"),
+            'value': (f"{missed_string}"
+                      f"{missing_attack_count} {missing_attack_string}")
+        })
+
+    if len(field_dict_list) == 0:
         return [{
-            'name': f"not in war",
-            'value': f"you are not in war"
+            'name': f"no missed attacks",
+            'value': (f"all {war.team_size} {war.clan.name} "
+                      f"war members attacked")
         }]
+
+    return field_dict_list
 
 
 def war_clan_stars(war_obj, discord_emoji_list, client_emoji_list):
