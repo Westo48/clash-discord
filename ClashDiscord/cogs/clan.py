@@ -276,7 +276,7 @@ class Clan(commands.Cog):
             embed_description = await discord_responder.war_preference_member(
                 clan, self.coc_client, inter.client.emojis, self.client_data.emojis)
 
-        if option == "count":
+        elif option == "count":
             embed_title = f"{clan.name} war preference"
             field_dict_list = await discord_responder.war_preference_clan(
                 clan, self.coc_client, inter.client.emojis, self.client_data.emojis)
