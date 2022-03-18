@@ -291,8 +291,8 @@ Once setup is complete you will be able to interact with ClashDiscord using the 
     - displays rundown of clan member's war preference
     - _clan warpreference options_
       - options for `clan warpreference` command
-      - `overview` _default_ - returns an overview of the clan's war preference
-      - `member` - returns each member of the clan and their war preference
+      - `overview` _default_ - returns each member of the clan and their war preference
+      - `count` - returns a count of those that are in and out
 
   - clan donate `unit name`
     - search the clan for available donors for a specified unit
