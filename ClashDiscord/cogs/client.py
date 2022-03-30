@@ -269,7 +269,10 @@ class Client(commands.Cog):
                     message += f"{player_obj.name} {player_obj.tag}, "
             # cuts the last two characters from the string ', '
             message = message[:-2]
-            embed_description = message
+
+            await inter.send(message)
+
+            return
 
         elif option == "update":
             if player_tag is None:
