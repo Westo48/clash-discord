@@ -2406,6 +2406,58 @@ def cwl_info(cwl_group: ClanWarLeagueGroup):
     """
 
 
+def war_scoreboard(war, discord_emoji_list, client_emoji_list):
+    if not war:
+        return [{
+            'name': f"not in war",
+            'value': f"you are not in war"
+        }]
+
+    time_string = clash_responder.string_date_time(war)
+    if war.state == "preparation":
+
+        return [{
+            'name': f"{war.clan.name} vs. {war.opponent.name}",
+            'value': f"{time_string} left before war starts"
+        }]
+
+    field_dict_list = []
+
+    # overview: state, time remaining, win/lose/tie, score
+    star_emoji = get_emoji(
+        "War Star", discord_emoji_list, client_emoji_list)
+    scoreboard_string = clash_responder.string_scoreboard(war, star_emoji)
+
+    # getting the overview
+    if war.state == "inWar":
+        field_name = f"{war.clan.name} vs. {war.opponent.name}"
+        field_value = f"{war.clan.name} is {scoreboard_string} "
+        field_value = f"{time_string} left in war"
+
+    else:
+        field_name = f"{war.clan.name} vs. {war.opponent.name}"
+        field_value = f"{war.clan.name} {scoreboard_string} "
+        field_value += f"war has ended"
+
+    field_dict_list.append({
+        'name': field_name,
+        'value': field_value
+    })
+
+    # clan: stars/potential stars, attacks/potential attacks, total destruction
+    # getting the clan scoreboard
+    clan_scoreboard_fields = clash_responder.war_clan_scoreboard(
+        war, war.clan, star_emoji)
+    field_dict_list.extend(clan_scoreboard_fields)
+
+    # getting the opponent scoreboard
+    opp_scoreboard_fields = clash_responder.war_clan_scoreboard(
+        war, war.opponent, star_emoji)
+    field_dict_list.extend(opp_scoreboard_fields)
+
+    return field_dict_list
+
+
 def cwl_lineup(cwl_group):
     message = (
         "```\n"
