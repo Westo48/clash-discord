@@ -2433,6 +2433,74 @@ def cwl_lineup(cwl_group):
     return message
 
 
+def cwl_lineup_clan(
+    cwl_clan, coc_client, discord_emoji_list, client_emoji_list
+):
+    field_dict_list = []
+    return_string = ""
+    count_index = 0
+    sorted_members = sorted(
+        cwl_clan.members, key=lambda member: member.town_hall, reverse=True)
+
+    for member in sorted_members:
+        count_index += 1
+
+        th_emoji = get_th_emoji(
+            member.town_hall, discord_emoji_list, client_emoji_list)
+
+        return_string += f"{count_index}: {th_emoji} {member.name}"
+        return_string += "\n"
+
+    # remove the last 1 character of the string
+    # removing "\n"
+    return_string = return_string[:-1]
+
+    return return_string
+
+
+async def cwl_lineup_member(
+    cwl_clan, coc_client, discord_emoji_list, client_emoji_list
+):
+    field_dict_list = []
+    sorted_members = sorted(
+        cwl_clan.members, key=lambda member: member.town_hall, reverse=True)
+    map_position_index = 0
+
+    for member in sorted_members:
+        player = await clash_responder.get_player(member.tag, coc_client)
+
+        map_position_index += 1
+
+        # just in case player returned None
+        if player is None:
+            continue
+
+        th_emoji = get_emoji(
+            player.town_hall, discord_emoji_list, client_emoji_list)
+
+        field_name = f"{map_position_index}: {player.name} {player.tag}"
+
+        field_value = f"{th_emoji}"
+
+        for hero in player.heroes:
+            if not hero.is_home_base:
+                continue
+
+            hero_emoji = get_emoji(
+                hero.name, discord_emoji_list, client_emoji_list)
+
+            field_value += f"\n"
+            field_value += f"{hero_emoji} {hero.level}"
+
+        field_dict_list.append({
+            'name': field_name,
+            'value': field_value,
+            'inline': False
+        })
+
+    return field_dict_list
+
+
 async def cwl_clan_score(clan_obj, cwl_group: ClanWarLeagueGroup):
     if not cwl_group:
         return [{

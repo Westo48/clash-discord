@@ -136,7 +136,8 @@ class CWL(commands.Cog):
         clan_role: disnake.Role = discord_utils.command_param_dict['clan_role']
     ):
         """
-            CWL town hall lineup
+            CWL town hall lineup 
+            *default option is clan*
 
             Parameters
             ----------
@@ -176,7 +177,7 @@ class CWL(commands.Cog):
 
         elif option == "clan":
             for clan in cwl_group_obj.clans:
-                field_dict_list = await discord_responder.war_lineup_member(
+                embed_description = discord_responder.cwl_lineup_clan(
                     clan, self.coc_client, inter.client.emojis, self.client_data.emojis)
 
                 embed_list = discord_responder.embed_message(
@@ -184,7 +185,7 @@ class CWL(commands.Cog):
                     title=f"{clan.name} {clan.tag} CWL Lineup",
                     bot_user_name=inter.me.display_name,
                     thumbnail=clan.badge.small,
-                    field_list=field_dict_list,
+                    description=embed_description,
                     author_display_name=inter.author.display_name,
                     author_avatar_url=inter.author.avatar.url
                 )
@@ -195,7 +196,7 @@ class CWL(commands.Cog):
 
         elif option == "member":
             for clan in cwl_group_obj.clans:
-                field_dict_list = await discord_responder.war_lineup_member(
+                field_dict_list = await discord_responder.cwl_lineup_member(
                     clan, self.coc_client, inter.client.emojis, self.client_data.emojis)
 
                 embed_list = discord_responder.embed_message(
