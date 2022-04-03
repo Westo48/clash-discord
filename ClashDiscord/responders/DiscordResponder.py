@@ -2406,7 +2406,7 @@ def cwl_info(cwl_group: ClanWarLeagueGroup):
     """
 
 
-def war_scoreboard(war, discord_emoji_list, client_emoji_list):
+def cwl_info_scoreboard(war, discord_emoji_list, client_emoji_list):
     if not war:
         return [{
             'name': f"not in war",

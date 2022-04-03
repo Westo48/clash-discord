@@ -113,7 +113,7 @@ class CWL(commands.Cog):
 
         embed_description = f"Round {round_number}/{cwl_group.number_of_rounds}"
 
-        field_dict_list = discord_responder.war_scoreboard(
+        field_dict_list = discord_responder.cwl_info_scoreboard(
             cwl_war, inter.client.emojis, self.client_data.emojis)
 
         embed_list = discord_responder.embed_message(
