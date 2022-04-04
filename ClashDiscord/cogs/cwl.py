@@ -368,10 +368,29 @@ class CWL(commands.Cog):
                 self.client_data.emojis)
             embed_title = f"CWL {league_emoji} {clan.war_league.name} Group"
 
-            field_dict_list = await discord_responder.cwl_scoreboard_clan(
-                inter, cwl_group, clan, self.coc_client,
-                inter.client.emojis, self.client_data.emojis
-            )
+            round_index = 0
+
+            for cwl_round in cwl_group.rounds:
+
+                # checking if war has ended
+                war = await self.coc_client.get_league_war(cwl_round[0])
+                if war.state != "warEnded":
+                    break
+
+                # update round index
+                round_index += 1
+
+            if round_index == 0:
+                field_dict_list = [{
+                    "name": f"no rounds have ended",
+                    "value": f"please wait till after the first round is over"
+                }]
+
+            else:
+                field_dict_list = await discord_responder.cwl_scoreboard_clan(
+                    inter, cwl_group, clan, self.coc_client,
+                    inter.client.emojis, self.client_data.emojis
+                )
 
         else:
             field_dict_list = [{
