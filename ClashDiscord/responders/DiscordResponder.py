@@ -2615,7 +2615,7 @@ async def cwl_clan_noatk(clan, cwl_group: ClanWarLeagueGroup,
 
     field_dict_list = []
     for member in no_atk_members:
-        player = await coc_client.get_player(scored_member.tag)
+        player = await coc_client.get_player(member.tag)
         th_emoji = get_th_emoji(
             player.town_hall, discord_emoji_list, client_emoji_list)
 
@@ -2624,7 +2624,7 @@ async def cwl_clan_noatk(clan, cwl_group: ClanWarLeagueGroup,
         attack_string = clash_responder.string_attack(attacks_missed)
 
         field_dict_list.append({
-            'name': f"{th_emoji} {member.name}",
+            'name': f"{th_emoji} {player.name}",
             'value': (f"{member.attack_count}/{member.potential_attack_count} "
                       f"attacks")
         })
