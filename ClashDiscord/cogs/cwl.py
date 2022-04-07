@@ -367,7 +367,7 @@ class CWL(commands.Cog):
                 inter.client.emojis,
                 self.client_data.emojis)
             embed_title = f"CWL {league_emoji} {clan.war_league.name} Group"
-            embed_description = f"{clan.name} {clan.tag}"
+            embed_description = f"**{clan.name} {clan.tag}**"
 
             round_index = 0
 
