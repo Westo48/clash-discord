@@ -411,6 +411,8 @@ There aren't many required packages, but here are the few that are required and 
   - 2.0.0
 - PyMySQL
   - 1.0.2
+- requests
+  - 2.27.1
 
 # <a id="links-and-contact"></a>Links and Contact
 

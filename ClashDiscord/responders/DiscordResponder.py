@@ -77,6 +77,22 @@ def get_client_password():
     return RazBot_Data.RazBot_Data().coc_dev_password
 
 
+def get_linkapi_username():
+    """
+        returns RazBot_Data client link api username
+    """
+
+    return RazBot_Data.RazBot_Data().link_api_username
+
+
+def get_linkapi_password():
+    """
+        returns RazBot_Data client link api password
+    """
+
+    return RazBot_Data.RazBot_Data().link_api_password
+
+
 def client_info(client, client_data):
     field_dict_list = []
 

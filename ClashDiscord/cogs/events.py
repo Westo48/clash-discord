@@ -16,7 +16,12 @@ class Events(commands.Cog):
 
     # client events
     @commands.Cog.listener()
+    async def on_ready(self):
+        print(f"RazBot is ready")
+
+    @commands.Cog.listener()
     async def on_member_join(self, ctx):
+        # updating roles for possible uninitiated role
         # get uninitiated role from db
         db_role_obj = db_responder.read_rank_role_from_guild_and_clash(
             ctx.guild.id, 'uninitiated')
