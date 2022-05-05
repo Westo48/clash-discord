@@ -51,7 +51,7 @@ class ClashDiscord_Data(object):
                 emojis (list[obj]): list of emoji objects
     """
 
-    version = '2.3.1'
+    version = '2.4.0'
     author = "Razgriz#7805"
     description = ("Clash of Clans discord bot for discord member management "
                    "and various clash related info")
@@ -129,7 +129,7 @@ class ClashDiscord_Data(object):
         ),
         ClashDiscord_Emoji(
             display_name="Dragon",
-            discord_id=929203638340038656,
+            discord_id=971181613570482216,
             discord_name="troop_dragon",
             coc_name="Dragon"
         ),
@@ -201,7 +201,7 @@ class ClashDiscord_Data(object):
         ),
         ClashDiscord_Emoji(
             display_name="Lava Hound",
-            discord_id=929203914170048552,
+            discord_id=971181728184017046,
             discord_name="troop_lava_hound",
             coc_name="Lava Hound"
         ),
@@ -213,7 +213,7 @@ class ClashDiscord_Data(object):
         ),
         ClashDiscord_Emoji(
             display_name="Ice Golem",
-            discord_id=929204012354527292,
+            discord_id=971181697183932416,
             discord_name="troop_ice_golem",
             coc_name="Ice Golem"
         ),
@@ -464,6 +464,12 @@ class ClashDiscord_Data(object):
             coc_name="Clan Wars"
         ),
         ClashDiscord_Emoji(
+            display_name="Clan Capital",
+            discord_id=971183272665157662,
+            discord_name="label_clan_capital",
+            coc_name="Clan Capital"
+        ),
+        ClashDiscord_Emoji(
             display_name="Clan War League",
             discord_id=929214029451378779,
             discord_name="label_clan_war_league",
@@ -633,7 +639,7 @@ class ClashDiscord_Data(object):
         ),
         ClashDiscord_Emoji(
             display_name="Super Dragon",
-            discord_id=929220578320220170,
+            discord_id=971181825588351026,
             discord_name="super_troop_super_dragon",
             coc_name="Super Dragon"
         ),

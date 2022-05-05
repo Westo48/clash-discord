@@ -1,30 +1,61 @@
 import disnake
 from disnake.ext import commands
+from linkAPI.client import LinkApiClient
+from linkAPI.errors import ConflictError
 from responders import (
     DiscordResponder as discord_responder,
     ClashResponder as clash_responder,
-    RazBotDB_Responder as db_responder
+    RazBotDB_Responder as db_responder,
+    linkApiResponder as link_responder
 )
 from utils import discord_utils
 
 
 class Events(commands.Cog):
-    def __init__(self, bot, coc_client, client_data):
+    def __init__(self, bot, coc_client, client_data, linkapi_client: LinkApiClient):
         self.bot = bot
         self.coc_client = coc_client
         self.client_data = client_data
+        self.linkapi_client = linkapi_client
 
     # client events
     @commands.Cog.listener()
-    async def on_member_join(self, ctx):
+    async def on_ready(self):
+        print(f"RazBot is ready")
+
+    @commands.Cog.listener()
+    async def on_member_join(self, member):
+        # updating roles for possible uninitiated role
         # get uninitiated role from db
         db_role_obj = db_responder.read_rank_role_from_guild_and_clash(
-            ctx.guild.id, 'uninitiated')
+            member.guild.id, 'uninitiated')
         if db_role_obj:
             discord_role_obj = disnake.utils.get(
-                ctx.guild.roles, id=db_role_obj.discord_role_id)
+                member.guild.roles, id=db_role_obj.discord_role_id)
             if discord_role_obj:
-                await ctx.add_roles(discord_role_obj)
+                await member.add_roles(discord_role_obj)
+
+        # sync player data
+
+        # confirm user has been claimed
+        db_user_obj = db_responder.read_user(member.id)
+
+        if not db_user_obj:
+            db_user_obj = db_responder.claim_user(member.id)
+
+            # user could not be claimed
+            if not db_user_obj:
+                print_info = f"{member.mention} user couldn't be claimed"
+
+                print(print_info)
+
+        try:
+            link_responder.sync_link(
+                linkapi_client=self.linkapi_client,
+                discord_user_id=db_user_obj.discord_id
+            )
+        except ConflictError as arg:
+            print(arg)
 
     @commands.Cog.listener()
     async def on_member_remove(self, member):

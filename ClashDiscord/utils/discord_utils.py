@@ -234,7 +234,7 @@ command_param_dict = {
         description="*optional* options for client user returns",
         default="claim",
         choices=[
-            "claim"
+            "claim", "remove"
         ]
     ),
     'client_player': commands.Param(
@@ -242,7 +242,7 @@ command_param_dict = {
         description="*optional* options for client player returns",
         default="show",
         choices=[
-            "claim", "show", "update", "remove"
+            "claim", "show", "update", "remove", "sync"
         ]
     ),
     'client_player_tag': commands.Param(
@@ -292,7 +292,7 @@ command_param_dict = {
         description="*optional* options for admin player returns",
         default="show",
         choices=[
-            "claim", "show", "remove"
+            "claim", "show", "remove", "sync"
         ]
     ),
     'superuser_guild': commands.Param(
@@ -321,7 +321,7 @@ command_param_dict = {
         description="*optional* options for superuser player returns",
         default="claim",
         choices=[
-            "claim", "remove"
+            "claim", "remove", "sync"
         ]
     ),
 }

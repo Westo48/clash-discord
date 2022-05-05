@@ -1,3 +1,4 @@
 PyMySQL==1.0.2
 disnake==2.3.2
 coc.py==2.0.0
+requests==2.27.1
