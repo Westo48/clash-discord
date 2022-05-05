@@ -364,7 +364,7 @@ class SuperUser(commands.Cog):
             else:
                 embed_description = f"{user.mention} is no longer an admin"
 
-        elif option == "toggle":
+        elif option == "remove":
             if user is None:
                 embed_description = (
                     f"user not specified, "
