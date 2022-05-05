@@ -58,7 +58,7 @@ def add_secure_link(linkapi_client: LinkApiClient,
             print(f"Player tag {player_tag} not valid")
         except ConflictError:
             print("Player tag {player_tag} already in LinkAPI DB")
-            raise ConflictError("Tag already in DB")
+            raise ConflictError(f"Tag {player_tag} already in DB")
 
 
 def add_link(linkapi_client: LinkApiClient,
@@ -93,7 +93,7 @@ def add_link(linkapi_client: LinkApiClient,
         # player supplied api key
         # link needs to be deleted so it can be added
         if player_link.discord_user_id != discord_user_id:
-            raise ConflictError("Tag already in DB")
+            raise ConflictError(f"Tag {player_tag} already in DB")
 
     # player link not found or deleted
     if not player_link:
@@ -108,7 +108,7 @@ def add_link(linkapi_client: LinkApiClient,
             print(f"Player tag {player_tag} not valid")
         except ConflictError:
             print("Player tag {player_tag} already in LinkAPI DB")
-            raise ConflictError("Tag already in DB")
+            raise ConflictError(f"Tag {player_tag} already in DB")
 
 
 def remove_link(linkapi_client: LinkApiClient,
@@ -194,7 +194,8 @@ def pull_from_link(
         # player claim found from other user
         # raise conflict error
         if other_player_claim:
-            raise ConflictError("Player claimed by different user")
+            raise ConflictError(f"Player with tag {player_link.player_tag} "
+                                f"claimed by different user")
 
         # other player claim not found
         # claim player
@@ -205,7 +206,8 @@ def pull_from_link(
 
         # player couldn't be claimed
         if not new_player_claim:
-            raise ConflictError("Player could not be claimed")
+            raise ConflictError(f"Player with tag {player_link.player_tag} "
+                                f"could not be claimed")
 
         # player claimed correctly
         # move on to next player
@@ -225,7 +227,7 @@ def push_to_link(
 
         Raises:
             ConflictError: player couldn't be linked to LinkAPI
-                (either claimed by other player or other error)
+                (either linked to other player or other error)
     """
 
     claimed_players = db_responder.read_player_list(
@@ -278,8 +280,6 @@ def push_to_link(
             print("Error logging into LinkAPI")
         # not found, set other player link to None
         except NotFoundError:
-            print(f"Player tag {player_claim.player_tag} "
-                  f"not found in LinkAPI db")
             other_player_link = None
         except InvalidTagError:
             print(f"Player tag {player_claim.player_tag} not valid")
@@ -287,7 +287,8 @@ def push_to_link(
         # player link found from other user
         # raise conflict error
         if other_player_link:
-            raise ConflictError("Player claimed by different user")
+            raise ConflictError(f"Player with tag {player_claim.player_tag} "
+                                f"linked to different user")
 
         # other player link not found
         # link player
@@ -301,5 +302,40 @@ def push_to_link(
         except InvalidTagError:
             print(f"Player tag {player_claim.player_tag} not valid")
         except ConflictError:
-            print("Player tag {player_claim.player_tag} already in LinkAPI DB")
-            raise ConflictError("Tag already in DB")
+            raise ConflictError(
+                f"Player tag {player_claim.player_tag} already in LinkAPI DB")
+
+
+def sync_link(
+    linkapi_client: LinkApiClient,
+    discord_user_id: int
+):
+    """
+        sync ClashCommander db and LinkAPI data
+
+        Args:
+            linkapi_client (LinkApiClient): client for linkAPI
+            discord_user_id (int): discord user id
+
+        Raises:
+            ConflictError: player could not be synced
+                (claimed/linked by/to other player or other error)
+    """
+
+    # pull from LinkAPI to ClashCommander db
+    try:
+        pull_from_link(
+            linkapi_client=linkapi_client,
+            discord_user_id=discord_user_id
+        )
+    except ConflictError as arg:
+        raise ConflictError(arg)
+
+    # push from ClashCommander db to LinkAPI
+    try:
+        push_to_link(
+            linkapi_client=linkapi_client,
+            discord_user_id=discord_user_id
+        )
+    except ConflictError as arg:
+        raise ConflictError(arg)

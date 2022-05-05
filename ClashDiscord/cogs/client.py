@@ -596,6 +596,52 @@ class Client(commands.Cog):
 
             await discord_responder.send_embed_list(inter, embed_list)
 
+        elif option == "sync":
+            # confirm user has been claimed
+            db_user_obj = db_responder.read_user(inter.author.id)
+
+            if not db_user_obj:
+                db_user_obj = db_responder.claim_user(inter.author.id)
+
+                # user could not be claimed
+                if not db_user_obj:
+                    embed_description = f"{inter.author.mention} user couldn't be claimed"
+
+                    embed_list = discord_responder.embed_message(
+                        icon_url=inter.bot.user.avatar.url,
+                        description=embed_description,
+                        bot_user_name=inter.me.display_name,
+                        author_display_name=inter.author.display_name,
+                        author_avatar_url=inter.author.avatar.url
+                    )
+
+                    await discord_responder.send_embed_list(inter, embed_list)
+                    return
+
+            try:
+                link_responder.sync_link(
+                    linkapi_client=self.linkapi_client,
+                    discord_user_id=db_user_obj.discord_id
+                )
+            except ConflictError as arg:
+                embed_description = (f"{inter.author.mention}: {arg}\n\n"
+                                     f"please let {self.client_data.author} know")
+
+                embed_list = discord_responder.embed_message(
+                    icon_url=inter.bot.user.avatar.url,
+                    description=embed_description,
+                    bot_user_name=inter.me.display_name,
+                    author_display_name=inter.author.display_name,
+                    author_avatar_url=inter.author.avatar.url
+                )
+
+                await discord_responder.send_embed_list(inter, embed_list)
+                return
+
+            # player data has been synced correctly
+            embed_description = (
+                f"data for {inter.author.mention} has been properly synced")
+
         else:
             field_dict_list = [{
                 'name': "incorrect option selected",

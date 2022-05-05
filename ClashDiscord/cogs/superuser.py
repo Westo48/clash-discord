@@ -431,8 +431,8 @@ class SuperUser(commands.Cog):
         self,
         inter,
         option: str = discord_utils.command_param_dict['superuser_player'],
-        player_tag: str = discord_utils.command_param_dict['required_tag'],
-        user: disnake.User = discord_utils.command_param_dict['required_user']
+        user: disnake.User = discord_utils.command_param_dict['required_user'],
+        player_tag: str = discord_utils.command_param_dict['tag']
     ):
         """
             *super user* 
@@ -479,6 +479,83 @@ class SuperUser(commands.Cog):
             await discord_responder.send_embed_list(inter, embed_list)
             return
 
+        # initializing embed default values
+        embed_title = None
+        embed_description = None
+        field_dict_list = []
+
+        if option == "sync":
+            # confirm user has been claimed
+            db_user_obj = db_responder.read_user(user.id)
+
+            if not db_user_obj:
+                db_user_obj = db_responder.claim_user(user.id)
+
+                # user could not be claimed
+                if not db_user_obj:
+                    embed_description = f"{user.mention} user couldn't be claimed"
+
+                    embed_list = discord_responder.embed_message(
+                        icon_url=inter.bot.user.avatar.url,
+                        description=embed_description,
+                        bot_user_name=inter.me.display_name,
+                        author_display_name=inter.author.display_name,
+                        author_avatar_url=inter.author.avatar.url
+                    )
+
+                    await discord_responder.send_embed_list(inter, embed_list)
+                    return
+
+            try:
+                link_responder.sync_link(
+                    linkapi_client=self.linkapi_client,
+                    discord_user_id=db_user_obj.discord_id
+                )
+            except ConflictError as arg:
+                embed_description = (f"{user.mention}: {arg}\n\n"
+                                     f"please let {self.client_data.author} know")
+
+                embed_list = discord_responder.embed_message(
+                    icon_url=inter.bot.user.avatar.url,
+                    description=embed_description,
+                    bot_user_name=inter.me.display_name,
+                    author_display_name=inter.author.display_name,
+                    author_avatar_url=inter.author.avatar.url
+                )
+
+                await discord_responder.send_embed_list(inter, embed_list)
+                return
+
+            # player data has been synced correctly
+            embed_description = (
+                f"data for {user.mention} has been properly synced")
+
+            embed_list = discord_responder.embed_message(
+                icon_url=inter.bot.user.avatar.url,
+                title=embed_title,
+                description=embed_description,
+                bot_user_name=inter.me.display_name,
+                field_list=field_dict_list,
+                author_display_name=inter.author.display_name,
+                author_avatar_url=inter.author.avatar.url)
+
+            await discord_responder.send_embed_list(inter, embed_list)
+            return
+
+        if not player_tag:
+            embed_description = f"please enter a valid player tag"
+
+            embed_list = discord_responder.embed_message(
+                icon_url=inter.bot.user.avatar.url,
+                description=embed_description,
+                bot_user_name=inter.me.display_name,
+                author_display_name=inter.author.display_name,
+                author_avatar_url=inter.author.avatar.url
+            )
+
+            await discord_responder.send_embed_list(inter, embed_list)
+            return
+
         # confirm valid player_tag
         player_obj = await clash_responder.get_player(
             player_tag, self.coc_client)
@@ -497,11 +574,6 @@ class SuperUser(commands.Cog):
 
             await discord_responder.send_embed_list(inter, embed_list)
             return
-
-        # initializing embed default values
-        embed_title = None
-        embed_description = None
-        field_dict_list = []
 
         if option == "claim":
             # confirm user has been claimed

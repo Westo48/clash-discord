@@ -242,7 +242,7 @@ command_param_dict = {
         description="*optional* options for client player returns",
         default="show",
         choices=[
-            "claim", "show", "update", "remove"
+            "claim", "show", "update", "remove", "sync"
         ]
     ),
     'client_player_tag': commands.Param(
@@ -321,7 +321,7 @@ command_param_dict = {
         description="*optional* options for superuser player returns",
         default="claim",
         choices=[
-            "claim", "remove"
+            "claim", "remove", "sync"
         ]
     ),
 }
