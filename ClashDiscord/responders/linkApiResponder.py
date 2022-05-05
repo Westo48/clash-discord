@@ -1,6 +1,7 @@
 from linkAPI.client import LinkApiClient
 from linkAPI.errors import *
 from linkAPI.playerLinkModel import PlayerLink
+from responders import RazBotDB_Responder as db_responder
 
 
 def add_secure_link(linkapi_client: LinkApiClient,
@@ -129,3 +130,82 @@ def remove_link(linkapi_client: LinkApiClient,
         print("Error logging into LinkAPI")
     except NotFoundError:
         print(f"Player tag {player_tag} not found in LinkAPI db")
+
+
+def pull_from_link(
+    linkapi_client: LinkApiClient,
+    discord_user_id: int
+):
+    """
+        pulls link api data and saves to ClashCommander db
+
+        Args:
+            linkapi_client (LinkApiClient): client for linkAPI
+            discord_user_id (int): discord user id
+
+        Raises:
+            ConflictError: player couldn't be claimed in db
+                (either claimed by other player or other error)
+    """
+
+    # get link api data
+    try:
+        player_links = linkapi_client.get_discord_user_link(
+            discord_user_id=discord_user_id
+        )
+    except LoginError:
+        print("Error logging into LinkAPI")
+        return
+    # no player links found, so there is nothing to pull, return
+    except NotFoundError:
+        print(f"Player tags for discord user id {discord_user_id} "
+              f"not found in LinkAPI db")
+        return
+
+    claimed_players = db_responder.read_player_list(
+        discord_user_id=discord_user_id)
+
+    # add player claim if player has not been claimed by user or anyone else
+    for player_link in player_links:
+
+        # check if player has been claimed by user
+        for player_claim in claimed_players:
+
+            player_synced = False
+
+            # player has already been claimed by user
+            # move to next player in player links
+            # by breaking out of current for loop
+            if player_link.player_tag == player_claim.player_tag:
+                player_synced = True
+                break
+
+        # player data already synced
+        # move to next player
+        if player_synced:
+            continue
+
+        # player data not synced to user
+        # search for player claimed by other user
+        other_player_claim = db_responder.read_player_from_tag(
+            player_tag=player_link.player_tag)
+
+        # player claim found from other user
+        # raise conflict error
+        if other_player_claim:
+            raise ConflictError("Player claimed by different user")
+
+        # player claim not found
+        # claim player
+        new_player_claim = db_responder.claim_player(
+            discord_user_id=player_link.discord_user_id,
+            player_tag=player_link.player_tag
+        )
+
+        # player couldn't be claimed
+        if not new_player_claim:
+            raise ConflictError("Player could not be claimed")
+
+        # player claimed correctly
+        # move on to next player
+        continue
