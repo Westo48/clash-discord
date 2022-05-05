@@ -43,7 +43,7 @@ def add_secure_link(linkapi_client: LinkApiClient,
             except LoginError:
                 print("Error logging into LinkAPI")
             except NotFoundError:
-                print(f"Player tag {player_tag} not found in LinkAPI db")
+                pass
 
     # player link not found or deleted
     if not player_link:
@@ -57,7 +57,6 @@ def add_secure_link(linkapi_client: LinkApiClient,
         except InvalidTagError:
             print(f"Player tag {player_tag} not valid")
         except ConflictError:
-            print("Player tag {player_tag} already in LinkAPI DB")
             raise ConflictError(f"Tag {player_tag} already in DB")
 
 
@@ -107,7 +106,6 @@ def add_link(linkapi_client: LinkApiClient,
         except InvalidTagError:
             print(f"Player tag {player_tag} not valid")
         except ConflictError:
-            print("Player tag {player_tag} already in LinkAPI DB")
             raise ConflictError(f"Tag {player_tag} already in DB")
 
 
@@ -151,15 +149,12 @@ def pull_from_link(
     # get link api data
     try:
         player_links = linkapi_client.get_discord_user_link(
-            discord_user_id=discord_user_id
-        )
+            discord_user_id=discord_user_id)
     except LoginError:
         print("Error logging into LinkAPI")
         return
     # no player links found, so there is nothing to pull, return
     except NotFoundError:
-        print(f"Player tags for discord user id {discord_user_id} "
-              f"not found in LinkAPI db")
         return
 
     claimed_players = db_responder.read_player_list(
@@ -201,8 +196,7 @@ def pull_from_link(
         # claim player
         new_player_claim = db_responder.claim_player(
             discord_user_id=player_link.discord_user_id,
-            player_tag=player_link.player_tag
-        )
+            player_tag=player_link.player_tag)
 
         # player couldn't be claimed
         if not new_player_claim:
@@ -240,8 +234,7 @@ def push_to_link(
     # get link api data
     try:
         player_links = linkapi_client.get_discord_user_link(
-            discord_user_id=discord_user_id
-        )
+            discord_user_id=discord_user_id)
     except LoginError:
         player_links = []
         print("Error logging into LinkAPI")
@@ -270,40 +263,13 @@ def push_to_link(
         if player_synced:
             continue
 
-        # player data not synced to user
-        # search for player link by other user
         try:
-            other_player_link = linkapi_client.get_player_tag_link(
-                player_tag=player_claim.player_tag
-            )
-        except LoginError:
-            print("Error logging into LinkAPI")
-        # not found, set other player link to None
-        except NotFoundError:
-            other_player_link = None
-        except InvalidTagError:
-            print(f"Player tag {player_claim.player_tag} not valid")
-
-        # player link found from other user
-        # raise conflict error
-        if other_player_link:
-            raise ConflictError(f"Player with tag {player_claim.player_tag} "
-                                f"linked to different user")
-
-        # other player link not found
-        # link player
-        try:
-            linkapi_client.add_link(
+            add_link(
+                linkapi_client=linkapi_client,
                 player_tag=player_claim.player_tag,
-                discord_user_id=discord_user_id
-            )
-        except LoginError:
-            print("Error logging into LinkAPI")
-        except InvalidTagError:
-            print(f"Player tag {player_claim.player_tag} not valid")
-        except ConflictError:
-            raise ConflictError(
-                f"Player tag {player_claim.player_tag} already in LinkAPI DB")
+                discord_user_id=discord_user_id)
+        except ConflictError as arg:
+            raise ConflictError(arg)
 
 
 def sync_link(
@@ -326,8 +292,7 @@ def sync_link(
     try:
         pull_from_link(
             linkapi_client=linkapi_client,
-            discord_user_id=discord_user_id
-        )
+            discord_user_id=discord_user_id)
     except ConflictError as arg:
         raise ConflictError(arg)
 
@@ -335,7 +300,6 @@ def sync_link(
     try:
         push_to_link(
             linkapi_client=linkapi_client,
-            discord_user_id=discord_user_id
-        )
+            discord_user_id=discord_user_id)
     except ConflictError as arg:
         raise ConflictError(arg)

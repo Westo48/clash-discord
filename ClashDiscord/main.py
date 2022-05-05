@@ -70,7 +70,7 @@ bot.add_cog(admin_cog.Admin(
 bot.add_cog(superuser_cog.SuperUser(
     bot, coc_client, client_data, linkapi_client))
 bot.add_cog(events_cog.Events(
-    bot, coc_client, client_data))
+    bot, coc_client, client_data, linkapi_client))
 
 if __name__ == "__main__":
     bot.run(get_client_token())
