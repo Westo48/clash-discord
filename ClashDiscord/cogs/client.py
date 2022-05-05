@@ -87,7 +87,79 @@ class Client(commands.Cog):
 
             # user was already claimed
             else:
-                embed_description = f"{inter.author.mention} has already been claimed"
+                embed_description = (f"{inter.author.mention} "
+                                     f"has already been claimed")
+
+        elif option == "remove":
+            db_user = db_responder.read_user(inter.author.id)
+
+            # user not found
+            if not db_user:
+                embed_description = (f"claimed user for "
+                                     f"{inter.author.mention} not found")
+
+                embed_list = discord_responder.embed_message(
+                    icon_url=inter.bot.user.avatar.url,
+                    title=embed_title,
+                    description=embed_description,
+                    bot_user_name=inter.me.display_name,
+                    field_list=field_dict_list,
+                    author_display_name=inter.author.display_name,
+                    author_avatar_url=inter.author.avatar.url
+                )
+
+                await discord_responder.send_embed_list(inter, embed_list)
+                return
+
+            # user found
+
+            # delete user claim
+            removed_user = db_responder.delete_user(inter.author.id)
+
+            # user could not be deleted
+            if removed_user:
+                embed_description = (
+                    f"could not delete user "
+                    f"{inter.author.mention}, please let "
+                    f"{self.client_data.author} know")
+
+                embed_list = discord_responder.embed_message(
+                    icon_url=inter.bot.user.avatar.url,
+                    title=embed_title,
+                    description=embed_description,
+                    bot_user_name=inter.me.display_name,
+                    field_list=field_dict_list,
+                    author_display_name=inter.author.display_name,
+                    author_avatar_url=inter.author.avatar.url
+                )
+
+                await discord_responder.send_embed_list(inter, embed_list)
+                return
+
+            player_links = []
+
+            # get all player links for this user
+            try:
+                player_links = self.linkapi_client.get_discord_user_link(
+                    inter.author.id)
+            except LoginError as arg:
+                print(arg)
+            # pass this error as nothing needs to be deleted
+            except NotFoundError:
+                pass
+
+            # delete each link for the user
+            for link in player_links:
+                try:
+                    self.linkapi_client.delete_link(player_tag=link.player_tag)
+                except LoginError as arg:
+                    print(arg)
+                # pass this error as nothing needs to be deleted
+                except NotFoundError:
+                    pass
+
+            embed_description = (
+                f"user {inter.author.mention} removed properly")
 
         else:
             embed_title = None
@@ -233,11 +305,9 @@ class Client(commands.Cog):
                     player_tag=player_obj.tag,
                     discord_user_id=db_user_obj.discord_id
                 )
-            except ConflictError:
-                embed_description = (
-                    f"player could not be linked to LinkAPI database, "
-                    f"please let {self.client_data.author} know"
-                )
+            except ConflictError as arg:
+                embed_description = (f"{inter.author.mention}: {arg}\n\n"
+                                     f"please let {self.client_data.author} know")
 
                 embed_list = discord_responder.embed_message(
                     icon_url=inter.bot.user.avatar.url,
@@ -595,6 +665,52 @@ class Client(commands.Cog):
             )
 
             await discord_responder.send_embed_list(inter, embed_list)
+
+        elif option == "sync":
+            # confirm user has been claimed
+            db_user_obj = db_responder.read_user(inter.author.id)
+
+            if not db_user_obj:
+                db_user_obj = db_responder.claim_user(inter.author.id)
+
+                # user could not be claimed
+                if not db_user_obj:
+                    embed_description = f"{inter.author.mention} user couldn't be claimed"
+
+                    embed_list = discord_responder.embed_message(
+                        icon_url=inter.bot.user.avatar.url,
+                        description=embed_description,
+                        bot_user_name=inter.me.display_name,
+                        author_display_name=inter.author.display_name,
+                        author_avatar_url=inter.author.avatar.url
+                    )
+
+                    await discord_responder.send_embed_list(inter, embed_list)
+                    return
+
+            try:
+                link_responder.sync_link(
+                    linkapi_client=self.linkapi_client,
+                    discord_user_id=db_user_obj.discord_id
+                )
+            except ConflictError as arg:
+                embed_description = (f"{inter.author.mention}: {arg}\n\n"
+                                     f"please let {self.client_data.author} know")
+
+                embed_list = discord_responder.embed_message(
+                    icon_url=inter.bot.user.avatar.url,
+                    description=embed_description,
+                    bot_user_name=inter.me.display_name,
+                    author_display_name=inter.author.display_name,
+                    author_avatar_url=inter.author.avatar.url
+                )
+
+                await discord_responder.send_embed_list(inter, embed_list)
+                return
+
+            # player data has been synced correctly
+            embed_description = (
+                f"data for {inter.author.mention} has been properly synced")
 
         else:
             field_dict_list = [{

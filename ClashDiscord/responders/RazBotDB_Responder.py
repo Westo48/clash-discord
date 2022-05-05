@@ -100,6 +100,26 @@ def read_user_admin_all():
     return user_list
 
 
+def read_user_all():
+    """
+        finds all users,
+        returns empty list if no users are found
+
+        Returns:
+            list: list of user object (discord_id, admin, super_user)
+    """
+    user_data_list = list(user.select_user_all())
+    user_list = []
+
+    for user_data in user_data_list:
+        user_discord_id, user_admin, user_super_user = user_data
+        user_list.append(user.User(
+            user_discord_id, bool(user_admin), bool(user_super_user)
+        ))
+
+    return user_list
+
+
 def update_toggle_user_admin(discord_user_id):
     """
         toggles the user's admin bool 
