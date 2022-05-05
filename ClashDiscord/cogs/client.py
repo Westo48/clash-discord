@@ -233,11 +233,9 @@ class Client(commands.Cog):
                     player_tag=player_obj.tag,
                     discord_user_id=db_user_obj.discord_id
                 )
-            except ConflictError:
-                embed_description = (
-                    f"player could not be linked to LinkAPI database, "
-                    f"please let {self.client_data.author} know"
-                )
+            except ConflictError as arg:
+                embed_description = (f"{inter.author.mention}: {arg}\n\n"
+                                     f"please let {self.client_data.author} know")
 
                 embed_list = discord_responder.embed_message(
                     icon_url=inter.bot.user.avatar.url,

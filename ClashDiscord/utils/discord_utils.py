@@ -292,7 +292,7 @@ command_param_dict = {
         description="*optional* options for admin player returns",
         default="show",
         choices=[
-            "claim", "show", "remove"
+            "claim", "show", "remove", "sync"
         ]
     ),
     'superuser_guild': commands.Param(

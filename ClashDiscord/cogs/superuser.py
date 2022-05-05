@@ -430,9 +430,9 @@ class SuperUser(commands.Cog):
     async def player(
         self,
         inter,
-        option: str = discord_utils.command_param_dict['superuser_player'],
         user: disnake.User = discord_utils.command_param_dict['required_user'],
-        player_tag: str = discord_utils.command_param_dict['tag']
+        option: str = discord_utils.command_param_dict['superuser_player'],
+        player_tag: str = discord_utils.command_param_dict['client_player_tag']
     ):
         """
             *super user* 
@@ -440,9 +440,9 @@ class SuperUser(commands.Cog):
 
             Parameters
             ----------
+            user: user to run command for
             option (optional): options for superuser player commands
-            player_tag: player tag create or remove link
-            user: user to create or remove player link
+            player_tag (optional): player tag create or remove link
         """
 
         # defer for every superuser player command
@@ -484,6 +484,7 @@ class SuperUser(commands.Cog):
         embed_description = None
         field_dict_list = []
 
+        # commands that do not require player tag
         if option == "sync":
             # confirm user has been claimed
             db_user_obj = db_responder.read_user(user.id)
@@ -512,7 +513,7 @@ class SuperUser(commands.Cog):
                     discord_user_id=db_user_obj.discord_id
                 )
             except ConflictError as arg:
-                embed_description = (f"{user.mention}: {arg}\n\n"
+                embed_description = (f"{inter.author.mention}: {arg}\n\n"
                                      f"please let {self.client_data.author} know")
 
                 embed_list = discord_responder.embed_message(
@@ -542,6 +543,7 @@ class SuperUser(commands.Cog):
             await discord_responder.send_embed_list(inter, embed_list)
             return
 
+        # player tag not supplied
         if not player_tag:
             embed_description = f"please enter a valid player tag"
 
@@ -613,10 +615,8 @@ class SuperUser(commands.Cog):
                     discord_user_id=db_user_obj.discord_id
                 )
             except ConflictError:
-                embed_description = (
-                    f"player could not be linked to LinkAPI database, "
-                    f"please let {self.client_data.author} know"
-                )
+                embed_description = (f"{inter.author.mention}: {arg}\n\n"
+                                     f"please let {self.client_data.author} know")
 
                 embed_list = discord_responder.embed_message(
                     icon_url=inter.bot.user.avatar.url,
