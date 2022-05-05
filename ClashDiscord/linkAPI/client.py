@@ -117,8 +117,6 @@ class LinkApiClient(object):
 
             Args:
                 player_tag (str): clash of clans player tag
-                    all caps
-                    no #
 
             Raises:
                 LoginError: failed login
