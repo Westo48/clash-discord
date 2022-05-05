@@ -234,7 +234,7 @@ command_param_dict = {
         description="*optional* options for client user returns",
         default="claim",
         choices=[
-            "claim"
+            "claim", "remove"
         ]
     ),
     'client_player': commands.Param(

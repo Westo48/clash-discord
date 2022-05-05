@@ -57,7 +57,8 @@ def add_secure_link(linkapi_client: LinkApiClient,
         except InvalidTagError:
             print(f"Player tag {player_tag} not valid")
         except ConflictError:
-            raise ConflictError(f"Tag {player_tag} already in DB")
+            raise ConflictError(f"Tag {player_tag} already in DB, "
+                                f"cannot securely add link")
 
 
 def add_link(linkapi_client: LinkApiClient,
@@ -92,7 +93,8 @@ def add_link(linkapi_client: LinkApiClient,
         # player supplied api key
         # link needs to be deleted so it can be added
         if player_link.discord_user_id != discord_user_id:
-            raise ConflictError(f"Tag {player_tag} already in DB")
+            raise ConflictError(f"Tag {player_tag} already in DB, "
+                                f"cannot add link, linked to different user")
 
     # player link not found or deleted
     if not player_link:
@@ -106,7 +108,8 @@ def add_link(linkapi_client: LinkApiClient,
         except InvalidTagError:
             print(f"Player tag {player_tag} not valid")
         except ConflictError:
-            raise ConflictError(f"Tag {player_tag} already in DB")
+            raise ConflictError(f"Tag {player_tag} already in DB, "
+                                f"cannot add link")
 
 
 def remove_link(linkapi_client: LinkApiClient,
