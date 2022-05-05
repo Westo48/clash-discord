@@ -6,6 +6,7 @@ from linkAPI.errors import (
     InvalidTagError,
     AuthorizationError
 )
+from linkAPI.playerLinkModel import PlayerLink
 
 
 class LinkApiClient(object):
@@ -25,6 +26,12 @@ class LinkApiClient(object):
     batch_url = f"/batch"
 
     def login(self):
+        """
+            LinkAPI Client login
+
+            errors:
+                Login Error
+        """
         request_url = self.base_url + self.login_url
         payload = {
             'username': self.username,
@@ -38,14 +45,46 @@ class LinkApiClient(object):
 
         self.token = r.json()['token']
 
+    def instanciate_player_link(self, player_tag: str, discord_user_id: str):
+        return PlayerLink(
+            player_tag=player_tag,
+            discord_user_id=int(discord_user_id)
+        )
+
+    def instanciate_player_link_list(self, player_links: list):
+        return_list = []
+        for link in player_links:
+            return_list.append(
+                self.instanciate_player_link(
+                    player_tag=link['playerTag'],
+                    discord_user_id=link['discordId']
+                )
+            )
+
+        return return_list
+
     def get_discord_user_link(self, discord_user_id: int):
+        """
+            gets linked players using discord ID
+
+            Args:
+                discord_user_id (int): user ID from discord
+
+            Raises:
+                LoginError: failed login
+                NotFoundError: data not found
+
+            Returns:
+                list: list of PlayerLink objects
+                    player_tag, discord_user_id
+        """
         if self.token == "":
             try:
                 self.login()
             except LoginError:
                 raise LoginError("Invalid login credentials")
 
-        url = self.base_url + self.links_url + discord_user_id
+        url = self.base_url + self.links_url + str(discord_user_id)
         header = {
             'Authorization': f"Bearer {self.token}"
         }
@@ -64,10 +103,38 @@ class LinkApiClient(object):
         if r.status_code == 404:
             raise NotFoundError("No user found with requested id")
 
-        return r.json()
+        # no user is found with requested id
+        if r.json() == []:
+            raise NotFoundError("No user found with requested id")
+
+        player_links = self.instanciate_player_link_list(player_links=r.json())
+
+        return player_links
 
     def get_player_tag_link(self, player_tag: str):
+        """
+            gets linked player using player tag
+
+            Args:
+                player_tag (str): clash of clans player tag
+                    all caps
+                    no #
+
+            Raises:
+                LoginError: failed login
+                NotFoundError: data not found
+                InvalidTagError: invalid player tag
+
+            Returns:
+                PlayerLink: Player Link Object
+                    player_tag, discord_user_id
+        """
+
+        # change string to upper
         player_tag = player_tag.upper()
+        # remove '#' from player tag
+        player_tag = player_tag.replace('#', '')
+
         if self.token == "":
             try:
                 self.login()
@@ -97,9 +164,35 @@ class LinkApiClient(object):
         if r.status_code == 400:
             raise InvalidTagError("Invalid player tag")
 
-        return r.json()
+        # no player is found with requested tag
+        if r.json() == []:
+            raise NotFoundError("No player found with requested tag")
+
+        response_link = r.json()
+
+        player_link = self.instanciate_player_link(
+            player_tag=response_link[0]['playerTag'],
+            discord_user_id=response_link[0]['discordId']
+        )
+
+        return player_link
 
     def get_batch_links(self, batch_list: list):
+        """
+            gets linked player using list of discord ids and player tags
+
+            Args:
+                batch_list (list): list of strings for 
+                    discord ids and player tags
+
+            Raises:
+                LoginError: failed login
+                NotFoundError: data not found
+
+            Returns:
+                list: list of PlayerLink objects
+                    player_tag, discord_user_id
+        """
 
         if self.token == "":
             try:
@@ -112,8 +205,11 @@ class LinkApiClient(object):
             'Authorization': f"Bearer {self.token}"
         }
         payload = []
+        # adding items in batch list and formatting player tags
         for item in batch_list:
-            payload.append(item.upper())
+            payload_item = item.upper()
+            payload_item = payload_item.replace('#', '')
+            payload.append(payload_item)
 
         r = requests.post(url=url, headers=header, json=payload)
 
@@ -129,10 +225,37 @@ class LinkApiClient(object):
         if r.status_code == 404:
             raise NotFoundError("data is not found with supplied information")
 
-        return r.json()
+        # no user is found with requested id
+        if r.json() == []:
+            raise NotFoundError("data is not found with supplied information")
+
+        player_links = self.instanciate_player_link_list(player_links=r.json())
+
+        return player_links
 
     def add_link(self, player_tag: str, discord_user_id: int):
+        """
+            adds a player link
+
+            Args:
+                player_tag (str): clash of clans player tag
+                discord_user_id (int): user ID from discord
+
+            Raises:
+                LoginError: failed login
+                InvalidTagError: invalid player tag
+                ConflictError: link data already in db
+
+            Returns:
+                PlayerLink: Player Link Object
+                    player_tag, discord_user_id
+        """
+
+        # change string to upper
         player_tag = player_tag.upper()
+        # remove '#' from player tag
+        player_tag = player_tag.replace('#', '')
+
         if self.token == "":
             try:
                 self.login()
@@ -167,13 +290,28 @@ class LinkApiClient(object):
             raise ConflictError("Tag already in DB")
 
         if r.status_code == 200:
-            return {
-                'playerTag': player_tag,
-                'discordId': discord_user_id
-            }
+            player_link = self.instanciate_player_link(
+                player_tag=player_tag,
+                discord_user_id=discord_user_id)
+            return player_link
 
     def delete_link(self, player_tag: str):
+        """
+            deletes a player link
+
+            Args:
+                player_tag (str): _description_
+
+            Raises:
+                LoginError: failed login
+                NotFoundError: data not found
+        """
+
+        # change string to upper
         player_tag = player_tag.upper()
+        # remove '#' from player tag
+        player_tag = player_tag.replace('#', '')
+
         if self.token == "":
             try:
                 self.login()

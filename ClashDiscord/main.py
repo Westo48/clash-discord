@@ -47,18 +47,30 @@ bot = commands.Bot(
     test_guilds=get_client_test_guilds())
 bot.remove_command('help')
 
-bot.add_cog(help_cog.Help(bot, coc_client, client_data))
-bot.add_cog(misc_cog.Misc(bot, coc_client, client_data))
-bot.add_cog(player_cog.Player(bot, coc_client, client_data))
-bot.add_cog(clan_cog.Clan(bot, coc_client, client_data))
-bot.add_cog(war_cog.War(bot, coc_client, client_data))
-bot.add_cog(cwl_cog.CWL(bot, coc_client, client_data))
-bot.add_cog(discord_cog.Discord(bot, coc_client, client_data))
-bot.add_cog(announce_cog.Announce(bot, coc_client, client_data))
-bot.add_cog(client_cog.Client(bot, coc_client, client_data))
-bot.add_cog(admin_cog.Admin(bot, coc_client, client_data))
-bot.add_cog(superuser_cog.SuperUser(bot, coc_client, client_data))
-bot.add_cog(events_cog.Events(bot, coc_client, client_data))
+bot.add_cog(help_cog.Help(
+    bot, coc_client, client_data))
+bot.add_cog(misc_cog.Misc(
+    bot, coc_client, client_data))
+bot.add_cog(player_cog.Player(
+    bot, coc_client, client_data))
+bot.add_cog(clan_cog.Clan(
+    bot, coc_client, client_data))
+bot.add_cog(war_cog.War(
+    bot, coc_client, client_data))
+bot.add_cog(cwl_cog.CWL(
+    bot, coc_client, client_data))
+bot.add_cog(discord_cog.Discord(
+    bot, coc_client, client_data))
+bot.add_cog(announce_cog.Announce(
+    bot, coc_client, client_data))
+bot.add_cog(client_cog.Client(
+    bot, coc_client, client_data, linkapi_client))
+bot.add_cog(admin_cog.Admin(
+    bot, coc_client, client_data, linkapi_client))
+bot.add_cog(superuser_cog.SuperUser(
+    bot, coc_client, client_data, linkapi_client))
+bot.add_cog(events_cog.Events(
+    bot, coc_client, client_data))
 
 if __name__ == "__main__":
     bot.run(get_client_token())
