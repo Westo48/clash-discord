@@ -3,16 +3,20 @@ from disnake.ext import commands
 from responders import (
     DiscordResponder as discord_responder,
     ClashResponder as clash_responder,
-    RazBotDB_Responder as db_responder
+    RazBotDB_Responder as db_responder,
+    linkApiResponder as link_responder
 )
 from utils import discord_utils
+from linkAPI.client import LinkApiClient
+from linkAPI.errors import *
 
 
 class Client(commands.Cog):
-    def __init__(self, bot, coc_client, client_data):
+    def __init__(self, bot, coc_client, client_data, linkapi_client: LinkApiClient):
         self.bot = bot
         self.coc_client = coc_client
         self.client_data = client_data
+        self.linkapi_client = linkapi_client
 
     @commands.slash_command()
     async def client(self, inter):
@@ -168,10 +172,10 @@ class Client(commands.Cog):
             # confirm user has been claimed
             db_user_obj = db_responder.read_user(inter.author.id)
             if not db_user_obj:
-                # user has not been claimed
                 db_user_obj = db_responder.claim_user(inter.author.id)
+
+                # user could not be claimed
                 if not db_user_obj:
-                    # user could not be claimed
                     embed_description = f"{inter.author.mention} user couldn't be claimed"
 
                     embed_list = discord_responder.embed_message(
@@ -222,10 +226,37 @@ class Client(commands.Cog):
                 await discord_responder.send_embed_list(inter, embed_list)
                 return
 
+            # add player link to link API
+            try:
+                link_responder.add_secure_link(
+                    linkapi_client=self.linkapi_client,
+                    player_tag=player_obj.tag,
+                    discord_user_id=db_user_obj.discord_id
+                )
+            except ConflictError:
+                embed_description = (
+                    f"player could not be linked to LinkAPI database, "
+                    f"please let {self.client_data.author} know"
+                )
+
+                embed_list = discord_responder.embed_message(
+                    icon_url=inter.bot.user.avatar.url,
+                    description=embed_description,
+                    bot_user_name=inter.me.display_name,
+                    author_display_name=inter.author.display_name,
+                    author_avatar_url=inter.author.avatar.url
+                )
+
+                await discord_responder.send_embed_list(inter, embed_list)
+                return
+
+            # player linked in LinkAPI correctly
             # user claimed
             # player is valid
             # player hasn't been claimed
             # player is authenticated
+
+            # claim player in db
             db_player_obj = db_responder.claim_player(
                 inter.author.id, player_obj.tag)
 
