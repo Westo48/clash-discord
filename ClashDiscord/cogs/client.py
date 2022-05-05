@@ -475,6 +475,10 @@ class Client(commands.Cog):
                 await discord_responder.send_embed_list(inter, embed_list)
                 return
 
+            # delete link api link
+            self.linkapi_client.delete_link(
+                player_tag=player_obj.tag)
+
             db_active_player_obj = db_responder.read_player_active(
                 inter.author.id)
 

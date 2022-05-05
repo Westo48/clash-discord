@@ -108,3 +108,24 @@ def add_link(linkapi_client: LinkApiClient,
         except ConflictError:
             print("Player tag {player_tag} already in LinkAPI DB")
             raise ConflictError("Tag already in DB")
+
+
+def remove_link(linkapi_client: LinkApiClient,
+                player_tag: str):
+    """
+        removing player link
+
+        Args:
+            linkapi_client (LinkApiClient): client for linkAPI
+            player_tag (str): clash of clans player tag
+
+        Raises:
+            ConflictError: database conflict
+    """
+    try:
+        linkapi_client.delete_link(
+            player_tag=player_tag)
+    except LoginError:
+        print("Error logging into LinkAPI")
+    except NotFoundError:
+        print(f"Player tag {player_tag} not found in LinkAPI db")
