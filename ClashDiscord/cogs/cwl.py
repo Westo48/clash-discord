@@ -56,8 +56,7 @@ class CWL(commands.Cog):
                 icon_url=inter.bot.user.avatar.url,
                 bot_user_name=inter.me.display_name,
                 field_list=verification_payload['field_dict_list'],
-                author_display_name=inter.author.display_name,
-                author_avatar_url=inter.author.avatar.url
+                author=inter.author
             )
 
             await discord_responder.send_embed_list(inter, embed_list)
@@ -91,8 +90,7 @@ class CWL(commands.Cog):
                 icon_url=inter.bot.user.avatar.url,
                 bot_user_name=inter.me.display_name,
                 field_list=verification_payload['field_dict_list'],
-                author_display_name=inter.author.display_name,
-                author_avatar_url=inter.author.avatar.url
+                author=inter.author
             )
 
             await discord_responder.send_embed_list(inter, embed_list)
@@ -123,8 +121,7 @@ class CWL(commands.Cog):
             description=embed_description,
             bot_user_name=inter.me.display_name,
             field_list=field_dict_list,
-            author_display_name=inter.author.display_name,
-            author_avatar_url=inter.author.avatar.url)
+            author=inter.author)
 
         await discord_responder.send_embed_list(inter, embed_list)
 
@@ -160,8 +157,7 @@ class CWL(commands.Cog):
                 icon_url=inter.bot.user.avatar.url,
                 bot_user_name=inter.me.display_name,
                 field_list=verification_payload['field_dict_list'],
-                author_display_name=inter.author.display_name,
-                author_avatar_url=inter.author.avatar.url
+                author=inter.author
             )
 
             await discord_responder.send_embed_list(inter, embed_list)
@@ -186,8 +182,7 @@ class CWL(commands.Cog):
                     bot_user_name=inter.me.display_name,
                     thumbnail=clan.badge.small,
                     description=embed_description,
-                    author_display_name=inter.author.display_name,
-                    author_avatar_url=inter.author.avatar.url
+                    author=inter.author
                 )
 
                 await discord_responder.send_embed_list(inter, embed_list)
@@ -205,8 +200,7 @@ class CWL(commands.Cog):
                     bot_user_name=inter.me.display_name,
                     thumbnail=clan.badge.small,
                     field_list=field_dict_list,
-                    author_display_name=inter.author.display_name,
-                    author_avatar_url=inter.author.avatar.url
+                    author=inter.author
                 )
 
                 await discord_responder.send_embed_list(inter, embed_list)
@@ -223,8 +217,7 @@ class CWL(commands.Cog):
             icon_url=inter.bot.user.avatar.url,
             bot_user_name=inter.me.display_name,
             field_list=field_dict_list,
-            author_display_name=inter.author.display_name,
-            author_avatar_url=inter.author.avatar.url
+            author=inter.author
         )
 
         await discord_responder.send_embed_list(inter, embed_list)
@@ -262,8 +255,7 @@ class CWL(commands.Cog):
                 icon_url=inter.bot.user.avatar.url,
                 bot_user_name=inter.me.display_name,
                 field_list=verification_payload['field_dict_list'],
-                author_display_name=inter.author.display_name,
-                author_avatar_url=inter.author.avatar.url
+                author=inter.author
             )
 
             await discord_responder.send_embed_list(inter, embed_list)
@@ -307,8 +299,7 @@ class CWL(commands.Cog):
                 title=embed_title,
                 description=embed_description,
                 thumbnail=clan.badge.small,
-                author_display_name=inter.author.display_name,
-                author_avatar_url=inter.author.avatar.url
+                author=inter.author
             ))
 
             round_index = 0
@@ -335,8 +326,7 @@ class CWL(commands.Cog):
                     title=embed_title,
                     description=embed_description,
                     field_list=field_dict_list,
-                    author_display_name=inter.author.display_name,
-                    author_avatar_url=inter.author.avatar.url
+                    author=inter.author
                 ))
 
             if len(embed_list) == 1:
@@ -352,8 +342,7 @@ class CWL(commands.Cog):
                     description=embed_description,
                     field_list=field_dict_list,
                     thumbnail=clan.badge.small,
-                    author_display_name=inter.author.display_name,
-                    author_avatar_url=inter.author.avatar.url
+                    author=inter.author
                 )
 
             await discord_responder.send_embed_list(
@@ -406,8 +395,7 @@ class CWL(commands.Cog):
             description=embed_description,
             field_list=field_dict_list,
             thumbnail=clan.badge.small,
-            author_display_name=inter.author.display_name,
-            author_avatar_url=inter.author.avatar.url
+            author=inter.author
         )
 
         await discord_responder.send_embed_list(inter, embed_list)
@@ -446,8 +434,7 @@ class CWL(commands.Cog):
                 icon_url=inter.bot.user.avatar.url,
                 bot_user_name=inter.me.display_name,
                 field_list=verification_payload['field_dict_list'],
-                author_display_name=inter.author.display_name,
-                author_avatar_url=inter.author.avatar.url
+                author=inter.author
             )
 
             await discord_responder.send_embed_list(inter, embed_list)
@@ -467,8 +454,7 @@ class CWL(commands.Cog):
             bot_user_name=inter.me.display_name,
             thumbnail=player_obj.clan.badge.small,
             field_list=field_dict_list,
-            author_display_name=inter.author.display_name,
-            author_avatar_url=inter.author.avatar.url
+            author=inter.author
         )
 
         await discord_responder.send_embed_list(inter, embed_list)
@@ -509,8 +495,7 @@ class CWL(commands.Cog):
                 icon_url=inter.bot.user.avatar.url,
                 bot_user_name=inter.me.display_name,
                 field_list=verification_payload['field_dict_list'],
-                author_display_name=inter.author.display_name,
-                author_avatar_url=inter.author.avatar.url
+                author=inter.author
             )
 
             await discord_responder.send_embed_list(inter, embed_list)
@@ -530,8 +515,7 @@ class CWL(commands.Cog):
                     icon_url=inter.bot.user.avatar.url,
                     bot_user_name=inter.me.display_name,
                     description=embed_description,
-                    author_display_name=inter.author.display_name,
-                    author_avatar_url=inter.author.avatar.url
+                    author=inter.author
                 )
 
                 await discord_responder.send_embed_list(inter, embed_list)
@@ -546,8 +530,7 @@ class CWL(commands.Cog):
             bot_user_name=inter.me.display_name,
             thumbnail=embed_thumbnail,
             field_list=field_dict_list,
-            author_display_name=inter.author.display_name,
-            author_avatar_url=inter.author.avatar.url
+            author=inter.author
         )
 
         await discord_responder.send_embed_list(inter, embed_list)
@@ -586,8 +569,7 @@ class CWL(commands.Cog):
                 icon_url=inter.bot.user.avatar.url,
                 bot_user_name=inter.me.display_name,
                 field_list=verification_payload['field_dict_list'],
-                author_display_name=inter.author.display_name,
-                author_avatar_url=inter.author.avatar.url
+                author=inter.author
             )
 
             await discord_responder.send_embed_list(inter, embed_list)
@@ -605,8 +587,7 @@ class CWL(commands.Cog):
             bot_user_name=inter.me.display_name,
             thumbnail=player_obj.clan.badge.small,
             field_list=field_dict_list,
-            author_display_name=inter.author.display_name,
-            author_avatar_url=inter.author.avatar.url
+            author=inter.author
         )
 
         await discord_responder.send_embed_list(inter, embed_list)

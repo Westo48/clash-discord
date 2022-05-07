@@ -1,6 +1,9 @@
 from disnake import (
     ApplicationCommandInteraction,
-    TextChannel
+    TextChannel,
+    Member,
+    Embed,
+    Color
 )
 from coc import (
     Client as CocClient,
@@ -25,7 +28,6 @@ import responders.RazBotDB_Responder as db_responder
 from data.th_urls import get_th_url
 from utils import coc_utils
 from disnake.utils import get
-from disnake import Embed, Color
 
 
 # CLIENT
@@ -3060,24 +3062,22 @@ def embed_message(
     thumbnail=None,
     field_list=[],
     image_url=None,
-    author_display_name=None,
-    author_avatar_url=None
+    author: Member = None
 ):
     embed_list = []
 
     # no fields given
     if len(field_list) == 0:
         embed = initialize_embed(
-            discord_embed,
-            color,
-            icon_url,
-            title,
-            description,
-            bot_user_name,
-            thumbnail,
-            image_url,
-            author_display_name,
-            author_avatar_url
+            discord_embed=discord_embed,
+            color=color,
+            icon_url=icon_url,
+            title=title,
+            description=description,
+            bot_user_name=bot_user_name,
+            thumbnail=thumbnail,
+            image_url=image_url,
+            author=author
         )
         embed_list.append(embed)
         return embed_list
@@ -3085,16 +3085,15 @@ def embed_message(
     while len(field_list) > 0:
         # initialize the current embed
         embed = initialize_embed(
-            discord_embed,
-            color,
-            icon_url,
-            title,
-            description,
-            bot_user_name,
-            thumbnail,
-            image_url,
-            author_display_name,
-            author_avatar_url
+            discord_embed=discord_embed,
+            color=color,
+            icon_url=icon_url,
+            title=title,
+            description=description,
+            bot_user_name=bot_user_name,
+            thumbnail=thumbnail,
+            image_url=image_url,
+            author=author
         )
 
         embed_str = ""
@@ -3170,16 +3169,15 @@ def embed_message(
 
 
 def initialize_embed(
-    discord_embed,
-    color,
+    discord_embed: Embed,
+    color: Color,
     icon_url,
     title,
     description,
     bot_user_name,
     thumbnail,
     image_url,
-    author_display_name,
-    author_avatar_url
+    author: Member
 ):
     if title and description:
         embed = discord_embed(
@@ -3219,13 +3217,19 @@ def initialize_embed(
         embed.set_image(
             url=image_url)
 
-    # author display name and author avatar url is not null
-    if (author_display_name is not None
-            and author_avatar_url is not None):
-        embed.set_footer(
-            text=author_display_name,
-            icon_url=author_avatar_url
-        )
+    # author is not None
+    if author is not None:
+        # author avatar is None
+        if author.avatar is None:
+            embed.set_footer(
+                text=author.display_name
+            )
+        # author avatar is not None
+        else:
+            embed.set_footer(
+                text=author.display_name,
+                icon_url=author.avatar.url
+            )
 
     return embed
 
@@ -3301,8 +3305,7 @@ async def send_embed_list(
                 bot_user_name=inter.me.display_name,
                 title=embed_title,
                 description=embed_description,
-                author_display_name=inter.author.display_name,
-                author_avatar_url=inter.author.avatar.url)
+                author=inter.author)
 
             await inter.edit_original_message(embeds=embed_list)
             continue
@@ -3319,8 +3322,7 @@ async def send_embed_list(
                 bot_user_name=inter.me.display_name,
                 title=embed_title,
                 description=embed_description,
-                author_display_name=inter.author.display_name,
-                author_avatar_url=inter.author.avatar.url)
+                author=inter.author)
 
             await inter.edit_original_message(embeds=embed_list)
 
@@ -3364,8 +3366,7 @@ async def send_embed_list(
             bot_user_name=inter.me.display_name,
             title=embed_title,
             description=embed_description,
-            author_display_name=inter.author.display_name,
-            author_avatar_url=inter.author.avatar.url)
+            author=inter.author)
 
         await inter.edit_original_message(embeds=embed_list)
         return True
@@ -3382,8 +3383,7 @@ async def send_embed_list(
             bot_user_name=inter.me.display_name,
             title=embed_title,
             description=embed_description,
-            author_display_name=inter.author.display_name,
-            author_avatar_url=inter.author.avatar.url)
+            author=inter.author)
 
         await inter.edit_original_message(embeds=embed_list)
 
@@ -4813,8 +4813,7 @@ def guild_admin_verification(
             icon_url=inter.bot.user.avatar.url,
             description=embed_description,
             bot_user_name=inter.me.display_name,
-            author_display_name=inter.author.display_name,
-            author_avatar_url=inter.author.avatar.url)
+            author=inter.author)
 
         return {
             'verified': False,
@@ -4833,8 +4832,7 @@ def guild_admin_verification(
             icon_url=inter.bot.user.avatar.url,
             description=embed_description,
             bot_user_name=inter.me.display_name,
-            author_display_name=inter.author.display_name,
-            author_avatar_url=inter.author.avatar.url
+            author=inter.author
         )
 
         return {
@@ -4856,8 +4854,7 @@ def guild_admin_verification(
             icon_url=inter.bot.user.avatar.url,
             description=embed_description,
             bot_user_name=inter.me.display_name,
-            author_display_name=inter.author.display_name,
-            author_avatar_url=inter.author.avatar.url
+            author=inter.author
         )
 
         return {

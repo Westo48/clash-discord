@@ -53,8 +53,7 @@ class Client(commands.Cog):
             title=f"{inter.me.display_name} client overview",
             bot_user_name=inter.me.display_name,
             field_list=field_dict_list,
-            author_display_name=inter.author.display_name,
-            author_avatar_url=inter.author.avatar.url
+            author=inter.author
         )
 
         await discord_responder.send_embed_list(inter, embed_list)
@@ -104,8 +103,7 @@ class Client(commands.Cog):
                     description=embed_description,
                     bot_user_name=inter.me.display_name,
                     field_list=field_dict_list,
-                    author_display_name=inter.author.display_name,
-                    author_avatar_url=inter.author.avatar.url
+                    author=inter.author
                 )
 
                 await discord_responder.send_embed_list(inter, embed_list)
@@ -129,8 +127,7 @@ class Client(commands.Cog):
                     description=embed_description,
                     bot_user_name=inter.me.display_name,
                     field_list=field_dict_list,
-                    author_display_name=inter.author.display_name,
-                    author_avatar_url=inter.author.avatar.url
+                    author=inter.author
                 )
 
                 await discord_responder.send_embed_list(inter, embed_list)
@@ -174,8 +171,7 @@ class Client(commands.Cog):
             description=embed_description,
             bot_user_name=inter.me.display_name,
             field_list=field_dict_list,
-            author_display_name=inter.author.display_name,
-            author_avatar_url=inter.author.avatar.url
+            author=inter.author
         )
 
         await discord_responder.send_embed_list(inter, embed_list)
@@ -215,8 +211,7 @@ class Client(commands.Cog):
                     icon_url=inter.bot.user.avatar.url,
                     description=embed_description,
                     bot_user_name=inter.me.display_name,
-                    author_display_name=inter.author.display_name,
-                    author_avatar_url=inter.author.avatar.url
+                    author=inter.author
                 )
 
                 await discord_responder.send_embed_list(inter, embed_list)
@@ -234,8 +229,7 @@ class Client(commands.Cog):
                     icon_url=inter.bot.user.avatar.url,
                     description=embed_description,
                     bot_user_name=inter.me.display_name,
-                    author_display_name=inter.author.display_name,
-                    author_avatar_url=inter.author.avatar.url
+                    author=inter.author
                 )
 
                 await discord_responder.send_embed_list(inter, embed_list)
@@ -254,8 +248,7 @@ class Client(commands.Cog):
                         icon_url=inter.bot.user.avatar.url,
                         description=embed_description,
                         bot_user_name=inter.me.display_name,
-                        author_display_name=inter.author.display_name,
-                        author_avatar_url=inter.author.avatar.url
+                        author=inter.author
                     )
 
                     await discord_responder.send_embed_list(inter, embed_list)
@@ -272,8 +265,7 @@ class Client(commands.Cog):
                     icon_url=inter.bot.user.avatar.url,
                     description=embed_description,
                     bot_user_name=inter.me.display_name,
-                    author_display_name=inter.author.display_name,
-                    author_avatar_url=inter.author.avatar.url
+                    author=inter.author
                 )
 
                 await discord_responder.send_embed_list(inter, embed_list)
@@ -291,8 +283,7 @@ class Client(commands.Cog):
                     icon_url=inter.bot.user.avatar.url,
                     description=embed_description,
                     bot_user_name=inter.me.display_name,
-                    author_display_name=inter.author.display_name,
-                    author_avatar_url=inter.author.avatar.url
+                    author=inter.author
                 )
 
                 await discord_responder.send_embed_list(inter, embed_list)
@@ -313,8 +304,7 @@ class Client(commands.Cog):
                     icon_url=inter.bot.user.avatar.url,
                     description=embed_description,
                     bot_user_name=inter.me.display_name,
-                    author_display_name=inter.author.display_name,
-                    author_avatar_url=inter.author.avatar.url
+                    author=inter.author
                 )
 
                 await discord_responder.send_embed_list(inter, embed_list)
@@ -353,8 +343,7 @@ class Client(commands.Cog):
                     icon_url=inter.bot.user.avatar.url,
                     description=embed_description,
                     bot_user_name=inter.me.display_name,
-                    author_display_name=inter.author.display_name,
-                    author_avatar_url=inter.author.avatar.url
+                    author=inter.author
                 )
 
                 await discord_responder.send_embed_list(inter, embed_list)
@@ -385,8 +374,7 @@ class Client(commands.Cog):
                     icon_url=inter.bot.user.avatar.url,
                     description=embed_description,
                     bot_user_name=inter.me.display_name,
-                    author_display_name=inter.author.display_name,
-                    author_avatar_url=inter.author.avatar.url
+                    author=inter.author
                 )
 
                 await discord_responder.send_embed_list(inter, embed_list)
@@ -402,8 +390,7 @@ class Client(commands.Cog):
                     icon_url=inter.bot.user.avatar.url,
                     description=embed_description,
                     bot_user_name=inter.me.display_name,
-                    author_display_name=inter.author.display_name,
-                    author_avatar_url=inter.author.avatar.url
+                    author=inter.author
                 )
 
                 await discord_responder.send_embed_list(inter, embed_list)
@@ -424,8 +411,7 @@ class Client(commands.Cog):
                     icon_url=inter.bot.user.avatar.url,
                     description=embed_description,
                     bot_user_name=inter.me.display_name,
-                    author_display_name=inter.author.display_name,
-                    author_avatar_url=inter.author.avatar.url
+                    author=inter.author
                 )
 
                 await discord_responder.send_embed_list(inter, embed_list)
@@ -443,8 +429,7 @@ class Client(commands.Cog):
                     icon_url=inter.bot.user.avatar.url,
                     description=embed_description,
                     bot_user_name=inter.me.display_name,
-                    author_display_name=inter.author.display_name,
-                    author_avatar_url=inter.author.avatar.url
+                    author=inter.author
                 )
 
                 await discord_responder.send_embed_list(inter, embed_list)
@@ -463,8 +448,7 @@ class Client(commands.Cog):
                     icon_url=inter.bot.user.avatar.url,
                     description=embed_description,
                     bot_user_name=inter.me.display_name,
-                    author_display_name=inter.author.display_name,
-                    author_avatar_url=inter.author.avatar.url
+                    author=inter.author
                 )
 
                 await discord_responder.send_embed_list(inter, embed_list)
@@ -480,8 +464,7 @@ class Client(commands.Cog):
                     icon_url=inter.bot.user.avatar.url,
                     description=embed_description,
                     bot_user_name=inter.me.display_name,
-                    author_display_name=inter.author.display_name,
-                    author_avatar_url=inter.author.avatar.url
+                    author=inter.author
                 )
 
                 await discord_responder.send_embed_list(inter, embed_list)
@@ -497,8 +480,7 @@ class Client(commands.Cog):
                     icon_url=inter.bot.user.avatar.url,
                     description=embed_description,
                     bot_user_name=inter.me.display_name,
-                    author_display_name=inter.author.display_name,
-                    author_avatar_url=inter.author.avatar.url
+                    author=inter.author
                 )
 
                 await discord_responder.send_embed_list(inter, embed_list)
@@ -516,8 +498,7 @@ class Client(commands.Cog):
                     icon_url=inter.bot.user.avatar.url,
                     description=embed_description,
                     bot_user_name=inter.me.display_name,
-                    author_display_name=inter.author.display_name,
-                    author_avatar_url=inter.author.avatar.url
+                    author=inter.author
                 )
 
                 await discord_responder.send_embed_list(inter, embed_list)
@@ -538,8 +519,7 @@ class Client(commands.Cog):
                     icon_url=inter.bot.user.avatar.url,
                     description=embed_description,
                     bot_user_name=inter.me.display_name,
-                    author_display_name=inter.author.display_name,
-                    author_avatar_url=inter.author.avatar.url
+                    author=inter.author
                 )
 
                 await discord_responder.send_embed_list(inter, embed_list)
@@ -565,8 +545,7 @@ class Client(commands.Cog):
                     icon_url=inter.bot.user.avatar.url,
                     description=embed_description,
                     bot_user_name=inter.me.display_name,
-                    author_display_name=inter.author.display_name,
-                    author_avatar_url=inter.author.avatar.url
+                    author=inter.author
                 )
 
                 await discord_responder.send_embed_list(inter, embed_list)
@@ -589,8 +568,7 @@ class Client(commands.Cog):
                     icon_url=inter.bot.user.avatar.url,
                     description=embed_description,
                     bot_user_name=inter.me.display_name,
-                    author_display_name=inter.author.display_name,
-                    author_avatar_url=inter.author.avatar.url
+                    author=inter.author
                 )
 
                 await discord_responder.send_embed_list(inter, embed_list)
@@ -613,8 +591,7 @@ class Client(commands.Cog):
                     icon_url=inter.bot.user.avatar.url,
                     description=embed_description,
                     bot_user_name=inter.me.display_name,
-                    author_display_name=inter.author.display_name,
-                    author_avatar_url=inter.author.avatar.url
+                    author=inter.author
                 )
 
                 await discord_responder.send_embed_list(inter, embed_list)
@@ -638,8 +615,7 @@ class Client(commands.Cog):
                     icon_url=inter.bot.user.avatar.url,
                     description=embed_description,
                     bot_user_name=inter.me.display_name,
-                    author_display_name=inter.author.display_name,
-                    author_avatar_url=inter.author.avatar.url
+                    author=inter.author
                 )
 
                 await discord_responder.send_embed_list(inter, embed_list)
@@ -660,8 +636,7 @@ class Client(commands.Cog):
                 icon_url=inter.bot.user.avatar.url,
                 description=embed_description,
                 bot_user_name=inter.me.display_name,
-                author_display_name=inter.author.display_name,
-                author_avatar_url=inter.author.avatar.url
+                author=inter.author
             )
 
             await discord_responder.send_embed_list(inter, embed_list)
@@ -681,8 +656,7 @@ class Client(commands.Cog):
                         icon_url=inter.bot.user.avatar.url,
                         description=embed_description,
                         bot_user_name=inter.me.display_name,
-                        author_display_name=inter.author.display_name,
-                        author_avatar_url=inter.author.avatar.url
+                        author=inter.author
                     )
 
                     await discord_responder.send_embed_list(inter, embed_list)
@@ -701,8 +675,7 @@ class Client(commands.Cog):
                     icon_url=inter.bot.user.avatar.url,
                     description=embed_description,
                     bot_user_name=inter.me.display_name,
-                    author_display_name=inter.author.display_name,
-                    author_avatar_url=inter.author.avatar.url
+                    author=inter.author
                 )
 
                 await discord_responder.send_embed_list(inter, embed_list)
@@ -724,8 +697,7 @@ class Client(commands.Cog):
             description=embed_description,
             field_list=field_dict_list,
             bot_user_name=inter.me.display_name,
-            author_display_name=inter.author.display_name,
-            author_avatar_url=inter.author.avatar.url
+            author=inter.author
         )
 
         await discord_responder.send_embed_list(inter, embed_list)
@@ -762,8 +734,7 @@ class Client(commands.Cog):
                     icon_url=inter.bot.user.avatar.url,
                     description=embed_description,
                     bot_user_name=inter.me.display_name,
-                    author_display_name=inter.author.display_name,
-                    author_avatar_url=inter.author.avatar.url
+                    author=inter.author
                 )
 
                 await discord_responder.send_embed_list(inter, embed_list)
@@ -779,8 +750,7 @@ class Client(commands.Cog):
                     icon_url=inter.bot.user.avatar.url,
                     description=embed_description,
                     bot_user_name=inter.me.display_name,
-                    author_display_name=inter.author.display_name,
-                    author_avatar_url=inter.author.avatar.url
+                    author=inter.author
                 )
 
                 await discord_responder.send_embed_list(inter, embed_list)
@@ -797,8 +767,7 @@ class Client(commands.Cog):
                     icon_url=inter.bot.user.avatar.url,
                     description=embed_description,
                     bot_user_name=inter.me.display_name,
-                    author_display_name=inter.author.display_name,
-                    author_avatar_url=inter.author.avatar.url
+                    author=inter.author
                 )
 
                 await discord_responder.send_embed_list(inter, embed_list)
@@ -821,8 +790,7 @@ class Client(commands.Cog):
             description=embed_description,
             bot_user_name=inter.me.display_name,
             field_list=field_dict_list,
-            author_display_name=inter.author.display_name,
-            author_avatar_url=inter.author.avatar.url
+            author=inter.author
         )
 
         await discord_responder.send_embed_list(inter, embed_list)
@@ -859,8 +827,7 @@ class Client(commands.Cog):
                     icon_url=inter.bot.user.avatar.url,
                     description=embed_description,
                     bot_user_name=inter.me.display_name,
-                    author_display_name=inter.author.display_name,
-                    author_avatar_url=inter.author.avatar.url
+                    author=inter.author
                 )
 
                 await discord_responder.send_embed_list(inter, embed_list)
@@ -876,8 +843,7 @@ class Client(commands.Cog):
                     icon_url=inter.bot.user.avatar.url,
                     description=embed_description,
                     bot_user_name=inter.me.display_name,
-                    author_display_name=inter.author.display_name,
-                    author_avatar_url=inter.author.avatar.url
+                    author=inter.author
                 )
 
                 await discord_responder.send_embed_list(inter, embed_list)
@@ -893,8 +859,7 @@ class Client(commands.Cog):
                     icon_url=inter.bot.user.avatar.url,
                     description=embed_description,
                     bot_user_name=inter.me.display_name,
-                    author_display_name=inter.author.display_name,
-                    author_avatar_url=inter.author.avatar.url
+                    author=inter.author
                 )
 
                 await discord_responder.send_embed_list(inter, embed_list)
@@ -909,8 +874,7 @@ class Client(commands.Cog):
                     icon_url=inter.bot.user.avatar.url,
                     description=embed_description,
                     bot_user_name=inter.me.display_name,
-                    author_display_name=inter.author.display_name,
-                    author_avatar_url=inter.author.avatar.url
+                    author=inter.author
                 )
 
                 await discord_responder.send_embed_list(inter, embed_list)
@@ -926,8 +890,7 @@ class Client(commands.Cog):
                     icon_url=inter.bot.user.avatar.url,
                     description=embed_description,
                     bot_user_name=inter.me.display_name,
-                    author_display_name=inter.author.display_name,
-                    author_avatar_url=inter.author.avatar.url
+                    author=inter.author
                 )
 
                 await discord_responder.send_embed_list(inter, embed_list)
@@ -947,8 +910,7 @@ class Client(commands.Cog):
                     icon_url=inter.bot.user.avatar.url,
                     description=embed_description,
                     bot_user_name=inter.me.display_name,
-                    author_display_name=inter.author.display_name,
-                    author_avatar_url=inter.author.avatar.url
+                    author=inter.author
                 )
 
                 await discord_responder.send_embed_list(inter, embed_list)
@@ -964,8 +926,7 @@ class Client(commands.Cog):
                     icon_url=inter.bot.user.avatar.url,
                     description=embed_description,
                     bot_user_name=inter.me.display_name,
-                    author_display_name=inter.author.display_name,
-                    author_avatar_url=inter.author.avatar.url
+                    author=inter.author
                 )
 
                 await discord_responder.send_embed_list(inter, embed_list)
@@ -984,8 +945,7 @@ class Client(commands.Cog):
                     icon_url=inter.bot.user.avatar.url,
                     description=embed_description,
                     bot_user_name=inter.me.display_name,
-                    author_display_name=inter.author.display_name,
-                    author_avatar_url=inter.author.avatar.url
+                    author=inter.author
                 )
 
                 await discord_responder.send_embed_list(inter, embed_list)
@@ -1001,8 +961,7 @@ class Client(commands.Cog):
                     icon_url=inter.bot.user.avatar.url,
                     description=embed_description,
                     bot_user_name=inter.me.display_name,
-                    author_display_name=inter.author.display_name,
-                    author_avatar_url=inter.author.avatar.url
+                    author=inter.author
                 )
 
                 await discord_responder.send_embed_list(inter, embed_list)
@@ -1017,8 +976,7 @@ class Client(commands.Cog):
                     icon_url=inter.bot.user.avatar.url,
                     description=embed_description,
                     bot_user_name=inter.me.display_name,
-                    author_display_name=inter.author.display_name,
-                    author_avatar_url=inter.author.avatar.url
+                    author=inter.author
                 )
 
                 await discord_responder.send_embed_list(inter, embed_list)
@@ -1035,8 +993,7 @@ class Client(commands.Cog):
                     icon_url=inter.bot.user.avatar.url,
                     description=embed_description,
                     bot_user_name=inter.me.display_name,
-                    author_display_name=inter.author.display_name,
-                    author_avatar_url=inter.author.avatar.url
+                    author=inter.author
                 )
 
                 await discord_responder.send_embed_list(inter, embed_list)
@@ -1064,8 +1021,7 @@ class Client(commands.Cog):
                     icon_url=inter.bot.user.avatar.url,
                     description=embed_description,
                     bot_user_name=inter.me.display_name,
-                    author_display_name=inter.author.display_name,
-                    author_avatar_url=inter.author.avatar.url
+                    author=inter.author
                 )
 
                 await discord_responder.send_embed_list(inter, embed_list)
@@ -1081,8 +1037,7 @@ class Client(commands.Cog):
                     icon_url=inter.bot.user.avatar.url,
                     description=embed_description,
                     bot_user_name=inter.me.display_name,
-                    author_display_name=inter.author.display_name,
-                    author_avatar_url=inter.author.avatar.url
+                    author=inter.author
                 )
 
                 await discord_responder.send_embed_list(inter, embed_list)
@@ -1098,8 +1053,7 @@ class Client(commands.Cog):
                     icon_url=inter.bot.user.avatar.url,
                     description=embed_description,
                     bot_user_name=inter.me.display_name,
-                    author_display_name=inter.author.display_name,
-                    author_avatar_url=inter.author.avatar.url
+                    author=inter.author
                 )
 
                 await discord_responder.send_embed_list(inter, embed_list)
@@ -1114,8 +1068,7 @@ class Client(commands.Cog):
                     icon_url=inter.bot.user.avatar.url,
                     description=embed_description,
                     bot_user_name=inter.me.display_name,
-                    author_display_name=inter.author.display_name,
-                    author_avatar_url=inter.author.avatar.url
+                    author=inter.author
                 )
 
                 await discord_responder.send_embed_list(inter, embed_list)
@@ -1131,8 +1084,7 @@ class Client(commands.Cog):
                     icon_url=inter.bot.user.avatar.url,
                     description=embed_description,
                     bot_user_name=inter.me.display_name,
-                    author_display_name=inter.author.display_name,
-                    author_avatar_url=inter.author.avatar.url
+                    author=inter.author
                 )
 
                 await discord_responder.send_embed_list(inter, embed_list)
@@ -1148,8 +1100,7 @@ class Client(commands.Cog):
                     icon_url=inter.bot.user.avatar.url,
                     description=embed_description,
                     bot_user_name=inter.me.display_name,
-                    author_display_name=inter.author.display_name,
-                    author_avatar_url=inter.author.avatar.url
+                    author=inter.author
                 )
 
                 await discord_responder.send_embed_list(inter, embed_list)
@@ -1165,8 +1116,7 @@ class Client(commands.Cog):
                     icon_url=inter.bot.user.avatar.url,
                     description=embed_description,
                     bot_user_name=inter.me.display_name,
-                    author_display_name=inter.author.display_name,
-                    author_avatar_url=inter.author.avatar.url
+                    author=inter.author
                 )
 
                 await discord_responder.send_embed_list(inter, embed_list)
@@ -1187,8 +1137,7 @@ class Client(commands.Cog):
             description=embed_description,
             bot_user_name=inter.me.display_name,
             field_list=field_dict_list,
-            author_display_name=inter.author.display_name,
-            author_avatar_url=inter.author.avatar.url
+            author=inter.author
         )
 
         await discord_responder.send_embed_list(inter, embed_list)
@@ -1227,8 +1176,7 @@ class Client(commands.Cog):
                     icon_url=inter.bot.user.avatar.url,
                     description=embed_description,
                     bot_user_name=inter.me.display_name,
-                    author_display_name=inter.author.display_name,
-                    author_avatar_url=inter.author.avatar.url
+                    author=inter.author
                 )
 
                 await discord_responder.send_embed_list(inter, embed_list)
@@ -1242,8 +1190,7 @@ class Client(commands.Cog):
                     icon_url=inter.bot.user.avatar.url,
                     description=embed_description,
                     bot_user_name=inter.me.display_name,
-                    author_display_name=inter.author.display_name,
-                    author_avatar_url=inter.author.avatar.url
+                    author=inter.author
                 )
 
                 await discord_responder.send_embed_list(inter, embed_list)
@@ -1258,8 +1205,7 @@ class Client(commands.Cog):
                     icon_url=inter.bot.user.avatar.url,
                     description=embed_description,
                     bot_user_name=inter.me.display_name,
-                    author_display_name=inter.author.display_name,
-                    author_avatar_url=inter.author.avatar.url
+                    author=inter.author
                 )
 
                 await discord_responder.send_embed_list(inter, embed_list)
@@ -1344,8 +1290,7 @@ class Client(commands.Cog):
                     icon_url=inter.bot.user.avatar.url,
                     description=embed_description,
                     bot_user_name=inter.me.display_name,
-                    author_display_name=inter.author.display_name,
-                    author_avatar_url=inter.author.avatar.url
+                    author=inter.author
                 )
 
                 await discord_responder.send_embed_list(inter, embed_list)
@@ -1362,8 +1307,7 @@ class Client(commands.Cog):
                     icon_url=inter.bot.user.avatar.url,
                     description=embed_description,
                     bot_user_name=inter.me.display_name,
-                    author_display_name=inter.author.display_name,
-                    author_avatar_url=inter.author.avatar.url
+                    author=inter.author
                 )
 
                 await discord_responder.send_embed_list(inter, embed_list)
@@ -1377,8 +1321,7 @@ class Client(commands.Cog):
                     icon_url=inter.bot.user.avatar.url,
                     description=embed_description,
                     bot_user_name=inter.me.display_name,
-                    author_display_name=inter.author.display_name,
-                    author_avatar_url=inter.author.avatar.url
+                    author=inter.author
                 )
 
                 await discord_responder.send_embed_list(inter, embed_list)
@@ -1393,8 +1336,7 @@ class Client(commands.Cog):
                     icon_url=inter.bot.user.avatar.url,
                     description=embed_description,
                     bot_user_name=inter.me.display_name,
-                    author_display_name=inter.author.display_name,
-                    author_avatar_url=inter.author.avatar.url
+                    author=inter.author
                 )
 
                 await discord_responder.send_embed_list(inter, embed_list)
@@ -1414,8 +1356,7 @@ class Client(commands.Cog):
                         icon_url=inter.bot.user.avatar.url,
                         description=embed_description,
                         bot_user_name=inter.me.display_name,
-                        author_display_name=inter.author.display_name,
-                        author_avatar_url=inter.author.avatar.url
+                        author=inter.author
                     )
 
                     await discord_responder.send_embed_list(inter, embed_list)
@@ -1428,8 +1369,7 @@ class Client(commands.Cog):
                     icon_url=inter.bot.user.avatar.url,
                     description=embed_description,
                     bot_user_name=inter.me.display_name,
-                    author_display_name=inter.author.display_name,
-                    author_avatar_url=inter.author.avatar.url
+                    author=inter.author
                 )
 
                 await discord_responder.send_embed_list(inter, embed_list)
@@ -1449,8 +1389,7 @@ class Client(commands.Cog):
                         icon_url=inter.bot.user.avatar.url,
                         description=embed_description,
                         bot_user_name=inter.me.display_name,
-                        author_display_name=inter.author.display_name,
-                        author_avatar_url=inter.author.avatar.url
+                        author=inter.author
                     )
 
                     await discord_responder.send_embed_list(inter, embed_list)
@@ -1463,8 +1402,7 @@ class Client(commands.Cog):
                     icon_url=inter.bot.user.avatar.url,
                     description=embed_description,
                     bot_user_name=inter.me.display_name,
-                    author_display_name=inter.author.display_name,
-                    author_avatar_url=inter.author.avatar.url
+                    author=inter.author
                 )
 
                 await discord_responder.send_embed_list(inter, embed_list)
@@ -1484,8 +1422,7 @@ class Client(commands.Cog):
             description=embed_description,
             bot_user_name=inter.me.display_name,
             field_list=field_dict_list,
-            author_display_name=inter.author.display_name,
-            author_avatar_url=inter.author.avatar.url
+            author=inter.author
         )
 
         await discord_responder.send_embed_list(inter, embed_list)
@@ -1524,8 +1461,7 @@ class Client(commands.Cog):
                     icon_url=inter.bot.user.avatar.url,
                     description=embed_description,
                     bot_user_name=inter.me.display_name,
-                    author_display_name=inter.author.display_name,
-                    author_avatar_url=inter.author.avatar.url
+                    author=inter.author
                 )
 
                 await discord_responder.send_embed_list(inter, embed_list)
@@ -1541,8 +1477,7 @@ class Client(commands.Cog):
                     icon_url=inter.bot.user.avatar.url,
                     description=embed_description,
                     bot_user_name=inter.me.display_name,
-                    author_display_name=inter.author.display_name,
-                    author_avatar_url=inter.author.avatar.url
+                    author=inter.author
                 )
 
                 await discord_responder.send_embed_list(inter, embed_list)
@@ -1558,8 +1493,7 @@ class Client(commands.Cog):
                     icon_url=inter.bot.user.avatar.url,
                     description=embed_description,
                     bot_user_name=inter.me.display_name,
-                    author_display_name=inter.author.display_name,
-                    author_avatar_url=inter.author.avatar.url
+                    author=inter.author
                 )
 
                 await discord_responder.send_embed_list(inter, embed_list)
@@ -1575,8 +1509,7 @@ class Client(commands.Cog):
                     icon_url=inter.bot.user.avatar.url,
                     description=embed_description,
                     bot_user_name=inter.me.display_name,
-                    author_display_name=inter.author.display_name,
-                    author_avatar_url=inter.author.avatar.url
+                    author=inter.author
                 )
 
                 await discord_responder.send_embed_list(inter, embed_list)
@@ -1591,8 +1524,7 @@ class Client(commands.Cog):
                     icon_url=inter.bot.user.avatar.url,
                     description=embed_description,
                     bot_user_name=inter.me.display_name,
-                    author_display_name=inter.author.display_name,
-                    author_avatar_url=inter.author.avatar.url
+                    author=inter.author
                 )
 
                 await discord_responder.send_embed_list(inter, embed_list)
@@ -1609,8 +1541,7 @@ class Client(commands.Cog):
                     icon_url=inter.bot.user.avatar.url,
                     description=embed_description,
                     bot_user_name=inter.me.display_name,
-                    author_display_name=inter.author.display_name,
-                    author_avatar_url=inter.author.avatar.url
+                    author=inter.author
                 )
 
                 await discord_responder.send_embed_list(inter, embed_list)
@@ -1628,8 +1559,7 @@ class Client(commands.Cog):
                     icon_url=inter.bot.user.avatar.url,
                     description=embed_description,
                     bot_user_name=inter.me.display_name,
-                    author_display_name=inter.author.display_name,
-                    author_avatar_url=inter.author.avatar.url
+                    author=inter.author
                 )
 
                 await discord_responder.send_embed_list(inter, embed_list)
@@ -1647,8 +1577,7 @@ class Client(commands.Cog):
                     icon_url=inter.bot.user.avatar.url,
                     description=embed_description,
                     bot_user_name=inter.me.display_name,
-                    author_display_name=inter.author.display_name,
-                    author_avatar_url=inter.author.avatar.url
+                    author=inter.author
                 )
 
                 await discord_responder.send_embed_list(inter, embed_list)
@@ -1667,8 +1596,7 @@ class Client(commands.Cog):
                     icon_url=inter.bot.user.avatar.url,
                     description=embed_description,
                     bot_user_name=inter.me.display_name,
-                    author_display_name=inter.author.display_name,
-                    author_avatar_url=inter.author.avatar.url
+                    author=inter.author
                 )
 
                 await discord_responder.send_embed_list(inter, embed_list)
@@ -1688,8 +1616,7 @@ class Client(commands.Cog):
             description=embed_description,
             bot_user_name=inter.me.display_name,
             field_list=field_dict_list,
-            author_display_name=inter.author.display_name,
-            author_avatar_url=inter.author.avatar.url
+            author=inter.author
         )
 
         await discord_responder.send_embed_list(inter, embed_list)
@@ -1727,8 +1654,7 @@ class Client(commands.Cog):
                     icon_url=inter.bot.user.avatar.url,
                     description=embed_description,
                     bot_user_name=inter.me.display_name,
-                    author_display_name=inter.author.display_name,
-                    author_avatar_url=inter.author.avatar.url
+                    author=inter.author
                 )
 
                 await discord_responder.send_embed_list(inter, embed_list)
@@ -1745,8 +1671,7 @@ class Client(commands.Cog):
                     icon_url=inter.bot.user.avatar.url,
                     description=embed_description,
                     bot_user_name=inter.me.display_name,
-                    author_display_name=inter.author.display_name,
-                    author_avatar_url=inter.author.avatar.url
+                    author=inter.author
                 )
 
                 await discord_responder.send_embed_list(inter, embed_list)
@@ -1761,8 +1686,7 @@ class Client(commands.Cog):
                     icon_url=inter.bot.user.avatar.url,
                     description=embed_description,
                     bot_user_name=inter.me.display_name,
-                    author_display_name=inter.author.display_name,
-                    author_avatar_url=inter.author.avatar.url
+                    author=inter.author
                 )
 
                 await discord_responder.send_embed_list(inter, embed_list)
@@ -1777,8 +1701,7 @@ class Client(commands.Cog):
                     icon_url=inter.bot.user.avatar.url,
                     description=embed_description,
                     bot_user_name=inter.me.display_name,
-                    author_display_name=inter.author.display_name,
-                    author_avatar_url=inter.author.avatar.url
+                    author=inter.author
                 )
 
                 await discord_responder.send_embed_list(inter, embed_list)
@@ -1793,8 +1716,7 @@ class Client(commands.Cog):
                     icon_url=inter.bot.user.avatar.url,
                     description=embed_description,
                     bot_user_name=inter.me.display_name,
-                    author_display_name=inter.author.display_name,
-                    author_avatar_url=inter.author.avatar.url
+                    author=inter.author
                 )
 
                 await discord_responder.send_embed_list(inter, embed_list)
@@ -1811,8 +1733,7 @@ class Client(commands.Cog):
                     icon_url=inter.bot.user.avatar.url,
                     description=embed_description,
                     bot_user_name=inter.me.display_name,
-                    author_display_name=inter.author.display_name,
-                    author_avatar_url=inter.author.avatar.url
+                    author=inter.author
                 )
 
                 await discord_responder.send_embed_list(inter, embed_list)
@@ -1829,8 +1750,7 @@ class Client(commands.Cog):
                     icon_url=inter.bot.user.avatar.url,
                     description=embed_description,
                     bot_user_name=inter.me.display_name,
-                    author_display_name=inter.author.display_name,
-                    author_avatar_url=inter.author.avatar.url
+                    author=inter.author
                 )
 
                 await discord_responder.send_embed_list(inter, embed_list)
@@ -1861,8 +1781,7 @@ class Client(commands.Cog):
             description=embed_description,
             bot_user_name=inter.me.display_name,
             field_list=field_dict_list,
-            author_display_name=inter.author.display_name,
-            author_avatar_url=inter.author.avatar.url
+            author=inter.author
         )
 
         await discord_responder.send_embed_list(inter, embed_list)

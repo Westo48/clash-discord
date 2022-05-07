@@ -52,8 +52,7 @@ class Announce(commands.Cog):
                 icon_url=inter.bot.user.avatar.url,
                 bot_user_name=inter.me.display_name,
                 field_list=verification_payload['field_dict_list'],
-                author_display_name=inter.author.display_name,
-                author_avatar_url=inter.author.avatar.url
+                author=inter.author
             )
 
             await discord_responder.xx(embed_list, inter)
@@ -66,8 +65,7 @@ class Announce(commands.Cog):
             bot_user_name=inter.me.display_name,
             title=embed_title,
             description=message,
-            author_display_name=inter.author.display_name,
-            author_avatar_url=inter.author.avatar.url)
+            author=inter.author)
 
         if channel is None:
             channel = inter.channel
@@ -104,8 +102,7 @@ class Announce(commands.Cog):
                 icon_url=inter.bot.user.avatar.url,
                 bot_user_name=inter.me.display_name,
                 field_list=verification_payload['field_dict_list'],
-                author_display_name=inter.author.display_name,
-                author_avatar_url=inter.author.avatar.url)
+                author=inter.author)
 
             await discord_responder.send_embed_list(inter, embed_list)
             return
@@ -121,8 +118,7 @@ class Announce(commands.Cog):
                 icon_url=inter.bot.user.avatar.url,
                 bot_user_name=inter.me.display_name,
                 field_list=field_dict_list,
-                author_display_name=inter.author.display_name,
-                author_avatar_url=inter.author.avatar.url
+                author=inter.author
             )
 
             await discord_responder.send_embed_list(inter, embed_list)
@@ -138,8 +134,7 @@ class Announce(commands.Cog):
             title=embed_title,
             description=message,
             thumbnail=embed_thumbnail,
-            author_display_name=inter.author.display_name,
-            author_avatar_url=inter.author.avatar.url)
+            author=inter.author)
 
         content = discord_responder.user_player_ping(
             player, inter.guild.members)
@@ -194,8 +189,7 @@ class Announce(commands.Cog):
                 icon_url=inter.bot.user.avatar.url,
                 bot_user_name=inter.me.display_name,
                 field_list=verification_payload['field_dict_list'],
-                author_display_name=inter.author.display_name,
-                author_avatar_url=inter.author.avatar.url
+                author=inter.author
             )
 
             await discord_responder.send_embed_list(inter, embed_list)
@@ -256,8 +250,7 @@ class Announce(commands.Cog):
             title=embed_title,
             description=message,
             thumbnail=clan.badge.small,
-            author_display_name=inter.author.display_name,
-            author_avatar_url=inter.author.avatar.url)
+            author=inter.author)
 
         if channel is None:
             channel = inter.channel
@@ -314,8 +307,7 @@ class Announce(commands.Cog):
                 icon_url=inter.bot.user.avatar.url,
                 bot_user_name=inter.me.display_name,
                 field_list=verification_payload['field_dict_list'],
-                author_display_name=inter.author.display_name,
-                author_avatar_url=inter.author.avatar.url
+                author=inter.author
             )
 
             await discord_responder.send_embed_list(inter, embed_list)
@@ -381,8 +373,7 @@ class Announce(commands.Cog):
             title=embed_title,
             description=embed_description,
             thumbnail=clan.badge.small,
-            author_display_name=inter.author.display_name,
-            author_avatar_url=inter.author.avatar.url)
+            author=inter.author)
 
         if channel is None:
             channel = inter.channel
@@ -438,8 +429,7 @@ class Announce(commands.Cog):
                 icon_url=inter.bot.user.avatar.url,
                 bot_user_name=inter.me.display_name,
                 field_list=verification_payload['field_dict_list'],
-                author_display_name=inter.author.display_name,
-                author_avatar_url=inter.author.avatar.url
+                author=inter.author
             )
 
             await discord_responder.send_embed_list(inter, embed_list)
@@ -480,8 +470,7 @@ class Announce(commands.Cog):
             title=embed_title,
             description=embed_description,
             thumbnail=war.clan.badge.small,
-            author_display_name=inter.author.display_name,
-            author_avatar_url=inter.author.avatar.url)
+            author=inter.author)
 
         if channel is None:
             channel = inter.channel
@@ -539,8 +528,7 @@ class Announce(commands.Cog):
                 icon_url=inter.bot.user.avatar.url,
                 bot_user_name=inter.me.display_name,
                 field_list=verification_payload['field_dict_list'],
-                author_display_name=inter.author.display_name,
-                author_avatar_url=inter.author.avatar.url
+                author=inter.author
             )
 
             await discord_responder.send_embed_list(inter, embed_list)
@@ -589,8 +577,7 @@ class Announce(commands.Cog):
             title=embed_title,
             description=message,
             thumbnail=war.clan.badge.small,
-            author_display_name=inter.author.display_name,
-            author_avatar_url=inter.author.avatar.url)
+            author=inter.author)
 
         if channel is None:
             channel = inter.channel
