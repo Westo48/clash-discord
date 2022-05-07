@@ -59,8 +59,7 @@ class Discord(commands.Cog):
                 bot_user_name=inter.me.display_name,
                 thumbnail=embed_dict["thumbnail"],
                 field_list=embed_dict["field_dict_list"],
-                author_display_name=inter.author.display_name,
-                author_avatar_url=inter.author.avatar.url
+                author=inter.author
             )
 
             await discord_responder.send_embed_list(inter, embed_list)
@@ -99,8 +98,7 @@ class Discord(commands.Cog):
                 icon_url=inter.bot.user.avatar.url,
                 bot_user_name=inter.me.display_name,
                 field_list=verification_payload['field_dict_list'],
-                author_display_name=inter.author.display_name,
-                author_avatar_url=inter.author.avatar.url
+                author=inter.author
             )
 
             await discord_responder.send_embed_list(inter, embed_list)
@@ -117,8 +115,7 @@ class Discord(commands.Cog):
                 bot_user_name=inter.me.display_name,
                 thumbnail=embed_dict["thumbnail"],
                 field_list=embed_dict["field_dict_list"],
-                author_display_name=inter.author.display_name,
-                author_avatar_url=inter.author.avatar.url
+                author=inter.author
             )
 
             await discord_responder.send_embed_list(inter, embed_list)
@@ -159,8 +156,7 @@ class Discord(commands.Cog):
             icon_url=inter.bot.user.avatar.url,
             description="updating roles",
             bot_user_name=inter.me.display_name,
-            author_display_name=inter.author.display_name,
-            author_avatar_url=inter.author.avatar.url
+            author=inter.author
         )
 
         await discord_responder.send_embed_list(inter, embed_list)
@@ -180,8 +176,7 @@ class Discord(commands.Cog):
                     bot_user_name=inter.me.display_name,
                     thumbnail=embed_dict["thumbnail"],
                     field_list=embed_dict["field_dict_list"],
-                    author_display_name=inter.author.display_name,
-                    author_avatar_url=inter.author.avatar.url
+                    author=inter.author
                 )
 
                 await discord_responder.send_embed_list(inter, embed_list)
@@ -191,8 +186,7 @@ class Discord(commands.Cog):
             icon_url=inter.bot.user.avatar.url,
             description="update complete",
             bot_user_name=inter.me.display_name,
-            author_display_name=inter.author.display_name,
-            author_avatar_url=inter.author.avatar.url
+            author=inter.author
         )
 
         await discord_responder.send_embed_list(inter, embed_list)
@@ -259,8 +253,7 @@ class Discord(commands.Cog):
                     icon_url=inter.bot.user.avatar.url,
                     description=f"tag not specified, please provide player tag",
                     bot_user_name=inter.me.display_name,
-                    author_display_name=inter.author.display_name,
-                    author_avatar_url=inter.author.avatar.url
+                    author=inter.author
                 )
 
                 await discord_responder.send_embed_list(inter, embed_list)
@@ -274,8 +267,7 @@ class Discord(commands.Cog):
                     icon_url=inter.bot.user.avatar.url,
                     description=f"could not find player with tag {tag}",
                     bot_user_name=inter.me.display_name,
-                    author_display_name=inter.author.display_name,
-                    author_avatar_url=inter.author.avatar.url
+                    author=inter.author
                 )
 
                 await discord_responder.send_embed_list(inter, embed_list)
@@ -310,8 +302,7 @@ class Discord(commands.Cog):
                     icon_url=inter.bot.user.avatar.url,
                     bot_user_name=inter.me.display_name,
                     field_list=verification_payload['field_dict_list'],
-                    author_display_name=inter.author.display_name,
-                    author_avatar_url=inter.author.avatar.url
+                    author=inter.author
                 )
 
                 await discord_responder.send_embed_list(inter, embed_list)
@@ -342,8 +333,7 @@ class Discord(commands.Cog):
             title=embed_title,
             thumbnail=embed_thumbnail,
             field_list=field_dict_list,
-            author_display_name=inter.author.display_name,
-            author_avatar_url=inter.author.avatar.url
+            author=inter.author
         )
 
         await discord_responder.send_embed_list(inter, embed_list)

@@ -110,8 +110,7 @@ class Events(commands.Cog):
             title=embed_title,
             bot_user_name=ctx.bot.user.name,
             field_list=field_dict_list,
-            author_display_name=user.display_name,
-            author_avatar_url=user.avatar.url
+            author=user
         )
 
         for embed in embed_list:
