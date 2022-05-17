@@ -39,7 +39,8 @@ linkapi_client = LinkApiClient(
     get_linkapi_password()
 )
 
-intents = disnake.Intents.all()
+intents = disnake.Intents.default()
+intents.members = True
 
 bot = commands.Bot(
     command_prefix=client_data.prefix,
