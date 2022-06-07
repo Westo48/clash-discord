@@ -161,7 +161,7 @@ def client_guild_info(guild, db_guild):
         guild_admin_value = f"{db_guild_admin.mention}"
 
     field_dict_list.append({
-        'name': "ClashDiscord server admin",
+        'name': "ClashCommander server admin",
         'value': guild_admin_value
     })
 
