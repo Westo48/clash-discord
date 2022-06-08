@@ -250,6 +250,10 @@ command_param_dict = {
         description="*optional* player tag",
         default=None
     ),
+    'required_player_tag': commands.Param(
+        name="player_tag",
+        description="*required* player tag",
+    ),
     'client_guild': commands.Param(
         name="option",
         description="*optional* options for client guild returns",
@@ -327,9 +331,9 @@ command_param_dict = {
     'superuser_player': commands.Param(
         name="option",
         description="*optional* options for superuser player returns",
-        default="claim",
+        default="user",
         choices=[
-            "claim", "remove", "sync"
+            "user", "claim", "remove"
         ]
     ),
     'superuser_count': commands.Param(

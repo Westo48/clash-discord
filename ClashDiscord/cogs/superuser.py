@@ -408,9 +408,9 @@ class SuperUser(commands.Cog):
     async def player(
         self,
         inter,
-        user: disnake.User = discord_utils.command_param_dict['required_user'],
+        player_tag: str = discord_utils.command_param_dict['required_player_tag'],
         option: str = discord_utils.command_param_dict['superuser_player'],
-        player_tag: str = discord_utils.command_param_dict['client_player_tag']
+        user: disnake.User = discord_utils.command_param_dict['user']
     ):
         """
             *super user* 
@@ -460,76 +460,6 @@ class SuperUser(commands.Cog):
         embed_description = None
         field_dict_list = []
 
-        # commands that do not require player tag
-        if option == "sync":
-            # confirm user has been claimed
-            db_user_obj = db_responder.read_user(user.id)
-
-            if not db_user_obj:
-                db_user_obj = db_responder.claim_user(user.id)
-
-                # user could not be claimed
-                if not db_user_obj:
-                    embed_description = f"{user.mention} user couldn't be claimed"
-
-                    embed_list = discord_responder.embed_message(
-                        icon_url=inter.bot.user.avatar.url,
-                        description=embed_description,
-                        bot_user_name=inter.me.display_name,
-                        author=inter.author
-                    )
-
-                    await discord_responder.send_embed_list(inter, embed_list)
-                    return
-
-            try:
-                link_responder.sync_link(
-                    linkapi_client=self.linkapi_client,
-                    discord_user_id=db_user_obj.discord_id
-                )
-            except ConflictError as arg:
-                embed_description = (f"{inter.author.mention}: {arg}\n\n"
-                                     f"please let {self.client_data.author} know")
-
-                embed_list = discord_responder.embed_message(
-                    icon_url=inter.bot.user.avatar.url,
-                    description=embed_description,
-                    bot_user_name=inter.me.display_name,
-                    author=inter.author
-                )
-
-                await discord_responder.send_embed_list(inter, embed_list)
-                return
-
-            # player data has been synced correctly
-            embed_description = (
-                f"data for {user.mention} has been properly synced")
-
-            embed_list = discord_responder.embed_message(
-                icon_url=inter.bot.user.avatar.url,
-                title=embed_title,
-                description=embed_description,
-                bot_user_name=inter.me.display_name,
-                field_list=field_dict_list,
-                author=inter.author)
-
-            await discord_responder.send_embed_list(inter, embed_list)
-            return
-
-        # player tag not supplied
-        if not player_tag:
-            embed_description = f"please enter a valid player tag"
-
-            embed_list = discord_responder.embed_message(
-                icon_url=inter.bot.user.avatar.url,
-                description=embed_description,
-                bot_user_name=inter.me.display_name,
-                author=inter.author
-            )
-
-            await discord_responder.send_embed_list(inter, embed_list)
-            return
-
         # confirm valid player_tag
         player_obj = await clash_responder.get_player(
             player_tag, self.coc_client)
@@ -548,7 +478,40 @@ class SuperUser(commands.Cog):
             await discord_responder.send_embed_list(inter, embed_list)
             return
 
-        if option == "claim":
+        if option == "user":
+            field_dict_list.append(discord_responder.find_user_from_tag(
+                player_obj, inter.guild.members))
+
+        # user not supplied
+        if not user:
+            embed_description = f"please supply valid user"
+
+            embed_list = discord_responder.embed_message(
+                icon_url=inter.bot.user.avatar.url,
+                description=embed_description,
+                bot_user_name=inter.me.display_name,
+                author=inter.author
+            )
+
+            await discord_responder.send_embed_list(inter, embed_list)
+            return
+
+        # player tag not supplied
+        if not player_tag:
+            embed_description = f"please supply valid player tag"
+
+            embed_list = discord_responder.embed_message(
+                icon_url=inter.bot.user.avatar.url,
+                description=embed_description,
+                bot_user_name=inter.me.display_name,
+                author=inter.author
+            )
+
+            await discord_responder.send_embed_list(inter, embed_list)
+            return
+
+        elif option == "claim":
+
             # confirm user has been claimed
             db_user_obj = db_responder.read_user(user.id)
             if not db_user_obj:
@@ -584,7 +547,7 @@ class SuperUser(commands.Cog):
                     player_tag=player_obj.tag,
                     discord_user_id=db_user_obj.discord_id
                 )
-            except ConflictError:
+            except ConflictError as arg:
                 embed_description = (f"{inter.author.mention}: {arg}\n\n"
                                      f"please let {self.client_data.author} know")
 

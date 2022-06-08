@@ -347,6 +347,28 @@ def delete_player(discord_user_id, player_tag):
         return None
 
 
+def delete_player_from_tag(player_tag):
+    """
+        deletes the requested user's player 
+        and returns None if the player could not be found after deletion
+        if player_obj is returned then player couldn't be deleted
+
+        Args:
+            player_tag (str): user's player tag
+
+        Returns:
+            obj: player object (player_tag, active)
+    """
+    # delete the player
+    player_found = player.delete_player_from_tag(player_tag)
+    player_data = player.select_player_from_tag(player_tag)
+    if player_data:
+        player_tag, active = player_data
+        return player.Player(player_tag, bool(active))
+    else:
+        return None
+
+
 # guild
 def claim_guild(discord_user_id, discord_guild_id):
     """
