@@ -238,180 +238,6 @@ class SuperUser(commands.Cog):
         await discord_responder.send_embed_list(inter, embed_list)
 
     @superuser.sub_command()
-    async def guild(
-        self,
-        inter,
-        option: str = discord_utils.command_param_dict['superuser_guild'],
-        guild_id: str = discord_utils.command_param_dict['guild_id']
-    ):
-        """
-            *super user* 
-            super user guild commands
-
-            Parameters
-            ----------
-            option (optional): options for superuser guild commands
-            guild_id (optional): guild id for removal
-        """
-
-        await inter.response.defer()
-
-        db_author_obj = db_responder.read_user(inter.author.id)
-        # author is not claimed
-        if not db_author_obj:
-            embed_description = f"{inter.author.mention} is not claimed"
-
-            embed_list = discord_responder.embed_message(
-                icon_url=inter.bot.user.avatar.url,
-                description=embed_description,
-                bot_user_name=inter.me.display_name,
-                author=inter.author
-            )
-
-            await discord_responder.send_embed_list(inter, embed_list)
-            return
-
-        # author is not super user
-        if not db_author_obj.super_user:
-            embed_description = f"{inter.author.mention} is not super user"
-
-            embed_list = discord_responder.embed_message(
-                icon_url=inter.bot.user.avatar.url,
-                description=embed_description,
-                bot_user_name=inter.me.display_name,
-                author=inter.author
-            )
-
-            await discord_responder.send_embed_list(inter, embed_list)
-            return
-
-        # initializing embed default values
-        embed_title = None
-        embed_description = None
-        field_dict_list = []
-
-        if option == "show":
-            embed_title = f"**ClashDiscord Guilds**"
-            embed_description = f"Guild Count: {len(inter.client.guilds)}"
-
-            for guild in inter.client.guilds:
-                field_dict_list.append({
-                    'name': f"{guild.name}",
-                    'value': f"{guild.id}"
-                })
-
-        elif option == "remove":
-            if guild_id is None:
-                embed_description = (
-                    f"guild id not specified, "
-                    f"please provide guild id to remove a guild")
-
-                embed_list = discord_responder.embed_message(
-                    icon_url=inter.bot.user.avatar.url,
-                    description=embed_description,
-                    bot_user_name=inter.me.display_name,
-                    author=inter.author
-                )
-
-                await discord_responder.send_embed_list(inter, embed_list)
-                return
-
-            guild_id = int(guild_id)
-
-            # confirm guild is claimed
-            db_guild_obj = db_responder.read_guild(guild_id)
-
-            # guild isn't claimed
-            if not db_guild_obj:
-                embed_description = f"guild with id {guild_id} is not claimed"
-
-                embed_list = discord_responder.embed_message(
-                    icon_url=inter.bot.user.avatar.url,
-                    description=embed_description,
-                    bot_user_name=inter.me.display_name,
-                    author=inter.author
-                )
-
-                await discord_responder.send_embed_list(inter, embed_list)
-                return
-
-            deleted_guild_obj = db_responder.delete_guild(guild_id)
-
-            # guild was deleted properly
-            if deleted_guild_obj is None:
-                embed_description = f"guild with id {guild_id} was deleted"
-
-            # guild could not be deleted
-            else:
-                embed_description = f"guild with id {guild_id} could not be deleted"
-
-        elif option == "leave":
-            if guild_id is None:
-                embed_description = (
-                    f"guild id not specified, "
-                    f"please provide guild id to leave a guild")
-
-                embed_list = discord_responder.embed_message(
-                    icon_url=inter.bot.user.avatar.url,
-                    description=embed_description,
-                    bot_user_name=inter.me.display_name,
-                    author=inter.author
-                )
-
-                await discord_responder.send_embed_list(inter, embed_list)
-                return
-
-            guild_id = int(guild_id)
-
-            # confirm bot is in guild
-            guild = disnake.utils.get(inter.bot.guilds, id=guild_id)
-
-            # bot isn't in guild
-            if guild is None:
-                embed_description = (f"{inter.me.display_name} "
-                                     f"is not in guild {guild_id}")
-
-                embed_list = discord_responder.embed_message(
-                    icon_url=inter.bot.user.avatar.url,
-                    description=embed_description,
-                    bot_user_name=inter.me.display_name,
-                    author=inter.author
-                )
-
-                await discord_responder.send_embed_list(inter, embed_list)
-                return
-
-            await guild.leave()
-            left_guild = disnake.utils.get(inter.bot.guilds, id=guild.id)
-
-            # guild was left properly
-            if left_guild is None:
-                embed_description = (f"{inter.me.display_name} left "
-                                     f"guild {guild.name} id {guild.id}")
-
-            # guild could not be left
-            else:
-                embed_description = (f"{inter.me.display_name} could not leave "
-                                     f"guild {guild.name} id {guild.id}")
-
-        else:
-            field_dict_list = [{
-                'name': "incorrect option selected",
-                'value': "please select a different option"
-            }]
-
-        embed_list = discord_responder.embed_message(
-            icon_url=inter.bot.user.avatar.url,
-            title=embed_title,
-            description=embed_description,
-            bot_user_name=inter.me.display_name,
-            field_list=field_dict_list,
-            author=inter.author
-        )
-
-        await discord_responder.send_embed_list(inter, embed_list)
-
-    @superuser.sub_command()
     async def admin(
         self,
         inter,
@@ -927,6 +753,180 @@ class SuperUser(commands.Cog):
             bot_user_name=inter.me.display_name,
             field_list=field_dict_list,
             author=inter.author)
+
+        await discord_responder.send_embed_list(inter, embed_list)
+
+    @superuser.sub_command()
+    async def guild(
+        self,
+        inter,
+        option: str = discord_utils.command_param_dict['superuser_guild'],
+        guild_id: str = discord_utils.command_param_dict['guild_id']
+    ):
+        """
+            *super user* 
+            super user guild commands
+
+            Parameters
+            ----------
+            option (optional): options for superuser guild commands
+            guild_id (optional): guild id for removal
+        """
+
+        await inter.response.defer()
+
+        db_author_obj = db_responder.read_user(inter.author.id)
+        # author is not claimed
+        if not db_author_obj:
+            embed_description = f"{inter.author.mention} is not claimed"
+
+            embed_list = discord_responder.embed_message(
+                icon_url=inter.bot.user.avatar.url,
+                description=embed_description,
+                bot_user_name=inter.me.display_name,
+                author=inter.author
+            )
+
+            await discord_responder.send_embed_list(inter, embed_list)
+            return
+
+        # author is not super user
+        if not db_author_obj.super_user:
+            embed_description = f"{inter.author.mention} is not super user"
+
+            embed_list = discord_responder.embed_message(
+                icon_url=inter.bot.user.avatar.url,
+                description=embed_description,
+                bot_user_name=inter.me.display_name,
+                author=inter.author
+            )
+
+            await discord_responder.send_embed_list(inter, embed_list)
+            return
+
+        # initializing embed default values
+        embed_title = None
+        embed_description = None
+        field_dict_list = []
+
+        if option == "show":
+            embed_title = f"**ClashDiscord Guilds**"
+            embed_description = f"Guild Count: {len(inter.client.guilds)}"
+
+            for guild in inter.client.guilds:
+                field_dict_list.append({
+                    'name': f"{guild.name}",
+                    'value': f"{guild.id}"
+                })
+
+        elif option == "remove":
+            if guild_id is None:
+                embed_description = (
+                    f"guild id not specified, "
+                    f"please provide guild id to remove a guild")
+
+                embed_list = discord_responder.embed_message(
+                    icon_url=inter.bot.user.avatar.url,
+                    description=embed_description,
+                    bot_user_name=inter.me.display_name,
+                    author=inter.author
+                )
+
+                await discord_responder.send_embed_list(inter, embed_list)
+                return
+
+            guild_id = int(guild_id)
+
+            # confirm guild is claimed
+            db_guild_obj = db_responder.read_guild(guild_id)
+
+            # guild isn't claimed
+            if not db_guild_obj:
+                embed_description = f"guild with id {guild_id} is not claimed"
+
+                embed_list = discord_responder.embed_message(
+                    icon_url=inter.bot.user.avatar.url,
+                    description=embed_description,
+                    bot_user_name=inter.me.display_name,
+                    author=inter.author
+                )
+
+                await discord_responder.send_embed_list(inter, embed_list)
+                return
+
+            deleted_guild_obj = db_responder.delete_guild(guild_id)
+
+            # guild was deleted properly
+            if deleted_guild_obj is None:
+                embed_description = f"guild with id {guild_id} was deleted"
+
+            # guild could not be deleted
+            else:
+                embed_description = f"guild with id {guild_id} could not be deleted"
+
+        elif option == "leave":
+            if guild_id is None:
+                embed_description = (
+                    f"guild id not specified, "
+                    f"please provide guild id to leave a guild")
+
+                embed_list = discord_responder.embed_message(
+                    icon_url=inter.bot.user.avatar.url,
+                    description=embed_description,
+                    bot_user_name=inter.me.display_name,
+                    author=inter.author
+                )
+
+                await discord_responder.send_embed_list(inter, embed_list)
+                return
+
+            guild_id = int(guild_id)
+
+            # confirm bot is in guild
+            guild = disnake.utils.get(inter.bot.guilds, id=guild_id)
+
+            # bot isn't in guild
+            if guild is None:
+                embed_description = (f"{inter.me.display_name} "
+                                     f"is not in guild {guild_id}")
+
+                embed_list = discord_responder.embed_message(
+                    icon_url=inter.bot.user.avatar.url,
+                    description=embed_description,
+                    bot_user_name=inter.me.display_name,
+                    author=inter.author
+                )
+
+                await discord_responder.send_embed_list(inter, embed_list)
+                return
+
+            await guild.leave()
+            left_guild = disnake.utils.get(inter.bot.guilds, id=guild.id)
+
+            # guild was left properly
+            if left_guild is None:
+                embed_description = (f"{inter.me.display_name} left "
+                                     f"guild {guild.name} id {guild.id}")
+
+            # guild could not be left
+            else:
+                embed_description = (f"{inter.me.display_name} could not leave "
+                                     f"guild {guild.name} id {guild.id}")
+
+        else:
+            field_dict_list = [{
+                'name': "incorrect option selected",
+                'value': "please select a different option"
+            }]
+
+        embed_list = discord_responder.embed_message(
+            icon_url=inter.bot.user.avatar.url,
+            title=embed_title,
+            description=embed_description,
+            bot_user_name=inter.me.display_name,
+            field_list=field_dict_list,
+            author=inter.author
+        )
 
         await discord_responder.send_embed_list(inter, embed_list)
 
