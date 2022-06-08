@@ -1991,8 +1991,8 @@ def war_all_attacks(war_obj, discord_emoji_list, client_emoji_list):
             if attack_obj.stars == 3:
                 field_value += (
                     f"{defender_obj.map_position}. "
-                    f"{defender_obj.name} {defender_th_emoji} "
-                    f"{star_string}\n\n"
+                    f"{defender_obj.name} {defender_th_emoji}\n"
+                    f"{star_string} 100%\n\n"
                 )
             else:
                 field_value += (
