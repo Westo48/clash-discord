@@ -295,6 +295,14 @@ command_param_dict = {
             "claim", "show", "remove", "sync"
         ]
     ),
+    'superuser_user': commands.Param(
+        name="option",
+        description="*optional* options for superuser user returns",
+        default="players",
+        choices=[
+            "players", "sync", "claim", "remove"
+        ]
+    ),
     'superuser_guild': commands.Param(
         name="option",
         description="*optional* options for superuser guild returns",
