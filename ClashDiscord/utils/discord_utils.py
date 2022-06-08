@@ -324,4 +324,12 @@ command_param_dict = {
             "claim", "remove", "sync"
         ]
     ),
+    'superuser_count': commands.Param(
+        name="option",
+        description="*optional* options for superuser count returns",
+        default="user",
+        choices=[
+            "user", "player", "guild", "clan"
+        ]
+    ),
 }

@@ -123,6 +123,23 @@ def delete_guild(guild_id):
     return data
 
 
+def select_guild_count():
+    """
+        returns guild count
+
+        Returns:
+            guild_count: int of guild count
+    """
+    # set up the query
+    query = (
+        f"SELECT COUNT(id) as guild_count FROM guild;"
+    )
+
+    # execute and return query
+    data = preset.select(query)
+    return data
+
+
 # todo docstring
 # todo some sort of confirmation
 def create_guild_table():

@@ -140,6 +140,20 @@ def update_toggle_user_admin(discord_user_id):
         return None
 
 
+def read_user_count():
+    """
+        returns int of user count
+
+        Returns:
+            int: user count
+    """
+    user_data = user.select_user_count()
+
+    user_count, = user_data
+
+    return user_count
+
+
 def delete_user(discord_user_id):
     """
         deletes user and returns None if the user 
@@ -294,6 +308,20 @@ def update_player_active(discord_user_id, player_tag):
         return None
 
 
+def read_player_count():
+    """
+        returns int of player count
+
+        Returns:
+            int: player count
+    """
+    player_data = player.select_player_count()
+
+    player_count, = player_data
+
+    return player_count
+
+
 # todo if active player is deleted and another player remains change the active player
 def delete_player(discord_user_id, player_tag):
     """
@@ -375,6 +403,20 @@ def read_guild(discord_guild_id):
 
     else:
         return None
+
+
+def read_guild_count():
+    """
+        returns int of guild count
+
+        Returns:
+            int: guild count
+    """
+    guild_data = guild.select_guild_count()
+
+    guild_count, = guild_data
+
+    return guild_count
 
 
 def delete_guild(discord_guild_id):
@@ -473,6 +515,20 @@ def read_clan_list_from_guild(discord_guild_id):
         guild_id, clan_tag = item
         clan_obj_list.append(clan.Clan(guild_id, clan_tag))
     return clan_obj_list
+
+
+def read_clan_count():
+    """
+        returns int of clan count
+
+        Returns:
+            int: clan count
+    """
+    clan_data = clan.select_clan_count()
+
+    clan_count, = clan_data
+
+    return clan_count
 
 
 def delete_clan(discord_guild_id, clan_tag):

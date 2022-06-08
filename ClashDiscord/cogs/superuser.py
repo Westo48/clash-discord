@@ -761,3 +761,95 @@ class SuperUser(commands.Cog):
             author=inter.author)
 
         await discord_responder.send_embed_list(inter, embed_list)
+
+    @superuser.sub_command()
+    async def count(
+        self, inter,
+        option: str = discord_utils.command_param_dict['superuser_count'],
+    ):
+        """
+            *super user* 
+            super user count commands
+
+            Parameters
+            ----------
+            option (optional): options for superuser count commands
+        """
+
+        # defer for every superuser count command
+        await inter.response.defer(ephemeral=True)
+
+        db_author_obj = db_responder.read_user(inter.author.id)
+
+        # author is not claimed
+        if not db_author_obj:
+            embed_description = f"{inter.author.mention} is not claimed"
+
+            embed_list = discord_responder.embed_message(
+                icon_url=inter.bot.user.avatar.url,
+                description=embed_description,
+                bot_user_name=inter.me.display_name,
+                author=inter.author
+            )
+
+            await discord_responder.send_embed_list(inter, embed_list)
+            return
+
+        # author is not super user
+        if not db_author_obj.super_user:
+            embed_description = f"{inter.author.mention} is not super user"
+
+            embed_list = discord_responder.embed_message(
+                icon_url=inter.bot.user.avatar.url,
+                description=embed_description,
+                bot_user_name=inter.me.display_name,
+                author=inter.author
+            )
+
+            await discord_responder.send_embed_list(inter, embed_list)
+            return
+
+        # initializing embed default values
+        embed_title = None
+        embed_description = None
+        field_dict_list = []
+
+        if option == "user":
+            user_count = db_responder.read_user_count()
+
+            embed_title = f"{inter.me.display_name} User Count"
+            embed_description = f"{user_count} users"
+
+        elif option == "player":
+            player_count = db_responder.read_player_count()
+
+            embed_title = f"{inter.me.display_name} Player Count"
+            embed_description = f"{player_count} players"
+
+        elif option == "guild":
+            guild_count = db_responder.read_guild_count()
+
+            embed_title = f"{inter.me.display_name} Guild Count"
+            embed_description = f"{guild_count} guilds"
+
+        elif option == "clan":
+            clan_count = db_responder.read_clan_count()
+
+            embed_title = f"{inter.me.display_name} Clan Count"
+            embed_description = f"{clan_count} clans"
+
+        else:
+            field_dict_list = [{
+                'name': "incorrect option selected",
+                'value': "please select a different option"
+            }]
+
+        embed_list = discord_responder.embed_message(
+            icon_url=inter.bot.user.avatar.url,
+            title=embed_title,
+            description=embed_description,
+            bot_user_name=inter.me.display_name,
+            field_list=field_dict_list,
+            author=inter.author)
+
+        await discord_responder.send_embed_list(inter, embed_list)

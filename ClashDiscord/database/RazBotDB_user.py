@@ -274,6 +274,23 @@ def delete_user(discord_id):
     return data
 
 
+def select_user_count():
+    """
+        returns user count
+
+        Returns:
+            user_count: int of user count
+    """
+    # set up the query
+    query = (
+        f"SELECT COUNT(id) as user_count FROM user;"
+    )
+
+    # execute and return query
+    data = preset.select(query)
+    return data
+
+
 # todo some sort of confirmation
 def create_user_table():
     # set up the query

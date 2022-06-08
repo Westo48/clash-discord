@@ -302,6 +302,23 @@ def delete_player(discord_id, player_tag):
         return False
 
 
+def select_player_count():
+    """
+        returns player count
+
+        Returns:
+            player_count: int of player count
+    """
+    # set up the query
+    query = (
+        f"SELECT COUNT(id) as player_count FROM player;"
+    )
+
+    # execute and return query
+    data = preset.select(query)
+    return data
+
+
 # todo some sort of confirmation
 def create_player_table():
     # set up the query
