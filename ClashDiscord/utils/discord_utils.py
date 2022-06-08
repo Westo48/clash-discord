@@ -58,7 +58,7 @@ async def autocomp_emoji_name(
 command_param_dict = {
     'user': commands.Param(
         name="user",
-        description="*optional* user to search for active player",
+        description="*optional* user to specify for command",
         default=None
     ),
     'required_user': commands.Param(
@@ -215,6 +215,14 @@ command_param_dict = {
     'coc_name': commands.Param(
         name="emoji_name",
         description="options for emoji name"
+    ),
+    'discord_role': commands.Param(
+        name="option",
+        description="*optional* options for discord role returns",
+        default="me",
+        choices=[
+            "me", "member", "all"
+        ]
     ),
     'discord_user': commands.Param(
         name="option",

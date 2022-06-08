@@ -44,7 +44,7 @@ Getting ClashDiscord set up in your discord server can be somewhat confusing, bu
 
    - `client guild` `claim`
      - this will claim your discord server and add you as the guild admin within ClashDiscord
-      - _guild is what the discord API calls a server_
+     - _guild is what the discord API calls a server_
 
 4. link a player to your user
 
@@ -54,27 +54,28 @@ Getting ClashDiscord set up in your discord server can be somewhat confusing, bu
 
 5. link a clan to your guild
 
-    - `client clan` `claim` `clan tag`
-      - claims a clan and links it to the claimed guild
-      - a linked player **must** be in the clan
-        - _this is also for security_
+   - `client clan` `claim` `clan tag`
+     - claims a clan and links it to the claimed guild
+     - a linked player **must** be in the clan
+       - _this is also for security_
 
 6. link existing roles to your server
 
-    A. claim clan roles
-      - `client clanrole` `claim` `clan tag` `role mention`
-        - links the clan role to a claimed clan
+   A. claim clan roles
 
-    B. claim rank roles
+   - `client clanrole` `claim` `clan tag` `role mention`
+     - links the clan role to a claimed clan
 
-      - `client rankrole` `claim` `rank name` `role mention`
-        - links the rank role to a discord role
-          - leader
-          - co-leader
-          - elder
-          - member
-          - uninitiated
-            - _this means they aren't verified or they aren't in a claimed clan_
+   B. claim rank roles
+
+   - `client rankrole` `claim` `rank name` `role mention`
+     - links the rank role to a discord role
+       - leader
+       - co-leader
+       - elder
+       - member
+       - uninitiated
+         - _this means they aren't verified or they aren't in a claimed clan_
 
 7. Use ClashDiscord, you are set up!
 
@@ -95,7 +96,6 @@ Once setup is complete you will be able to interact with ClashDiscord using the 
 
 # <a id="command-list"></a>Command List
 
-
 - ## <a id="command-list-help"></a>Help
 
   - help
@@ -105,12 +105,15 @@ Once setup is complete you will be able to interact with ClashDiscord using the 
 - ## <a id="command-list-clashdiscord"></a>ClashDiscord
 
   - client info
+
     - overview for the client
 
   - client user
+
     - claims the user by discord user id within ClashDiscord
 
   - client player
+
     - _client player options_
       - options for `client player` command
       - `claim` - links a specified player to your user
@@ -120,13 +123,16 @@ Once setup is complete you will be able to interact with ClashDiscord using the 
         - _values needed_ - `player tag`
       - `remove` - removes the linked player from your user
         - _values needed_ - `player tag`
+      - `sync` - syncs your player information with LinkAPI centralized data
 
   - client guild
+
     - claims the guild by discord guild id within ClashDiscord
     - _sets the user who called the command as the guild admin within ClashDiscord_
       - _if the guild has already been claimed, then nothing will happen_
 
   - client clan
+
     - _client clan options_
       - options for `client clan` command
       - `claim` - links a specified clan to your guild
@@ -136,6 +142,7 @@ Once setup is complete you will be able to interact with ClashDiscord using the 
         - _values needed_ - `clan tag`
 
   - client role
+
     - _client role options_
       - options for `client role` command
       - `show` _default_ - return all linked roles
@@ -143,6 +150,7 @@ Once setup is complete you will be able to interact with ClashDiscord using the 
         - _values needed_ - `role mention`
 
   - client clanrole
+
     - _client clanrole options_
       - options for `client clanrole` command
       - `claim` - links a specified clanrole the specified guild's claimed clan
@@ -164,17 +172,19 @@ Once setup is complete you will be able to interact with ClashDiscord using the 
 - ## <a id="command-list-discord"></a>Discord
 
   - discord role me
-    - update your roles
 
-  - discord role member `membermention`
-    - update mentioned user's roles
-    - *restricted to leaders and co-leaders*
-
-  - discord role all
-    - update roles for every member in the server
-    - *restricted to ClashDiscord server admin*
+    - update roles
+    - _discord role options_
+      - options for `discord role` command
+      - `me` _default_ - updating your _(author's)_ roles
+      - `member` - updates the specified user's roles
+        - _restricted to leaders and co-leaders_
+        - _user must be specified_
+      - `all` - updates **ALL** guild user's roles
+        - _restricted to ClashCommander server admin_
 
   - discord emoji `coc_name`
+
     - sends specified emoji
 
   - discord user
@@ -184,25 +194,29 @@ Once setup is complete you will be able to interact with ClashDiscord using the 
       - `player` - finding the linked user to the specified player
         - _player tag must be specified_
       - `clan` _default_ - finding the linked user for each member in the clan
-        - *restricted to leaders and co-leaders*
+        - _restricted to leaders and co-leaders_
         - _if no clan role is specified, then the user's active player's clan will be used_
 
 - ## <a id="command-list-announce"></a>Announce
 
   - ### _announce options_
+
     - options for announce commands
     - `channel` - specify a channel to send the announcement to that channel
       - _if no channel is specified, then the announcement will be sent to the current channel_
 
   - announce message `channel` `message`
+
     - announces message to specified channel
-    - *restricted to leaders and co-leaders*
+    - _restricted to leaders and co-leaders_
 
   - announce player `channel` `message` `player tag`
+
     - announces message to specified channel, pings the requested player's user
-    - *restricted to leaders and co-leaders*
+    - _restricted to leaders and co-leaders_
 
   - announce donate `channel` `message` `unit name`
+
     - announces message to specified channel, pings all users that can donate the requested
     - _announce donate options_
       - options for `announce donate` command
@@ -210,6 +224,7 @@ Once setup is complete you will be able to interact with ClashDiscord using the 
           - _if no clan role is specified, then the user's active player's clan will be used_
 
   - announce supertroop `channel` `message` `super troop name`
+
     - announces message to specified channel, pings all users that have the requested super troop active
     - _announce supertroop options_
       - options for `announce supertroop` command
@@ -217,30 +232,32 @@ Once setup is complete you will be able to interact with ClashDiscord using the 
           - _if no clan role is specified, then the user's active player's clan will be used_
 
   - announce war `channel` `message`
+
     - announces message to specified channel, pings all in current war
-    - *restricted to leaders and co-leaders*
+    - _restricted to leaders and co-leaders_
     - _announce war options_
       - options for `announce war` command
         - `clan_role` - mention a role linked to a clan to get that clan's information
           - _if no clan role is specified, then the user's active player's clan will be used_
-        - `cwl_war_selection` - *only for cwl* specify whether to look for the previous, current, or upcoming war
+        - `cwl_war_selection` - _only for cwl_ specify whether to look for the previous, current, or upcoming war
           - _defaults to current_
 
   - announce warnoatk `channel` `message`
     - announces message to channel, pings all in war missing attacks
-    - *restricted to leaders and co-leaders*
+    - _restricted to leaders and co-leaders_
     - _announce warnoattack options_
       - options for `announce warnoattack` command
         - `clan_role` - mention a role linked to a clan to get that clan's information
           - _if no clan role is specified, then the user's active player's clan will be used_
         - `missed_attacks` - returns players who missed exactly the specified missed attack count
           - _if not specified, then it will simply return all who are or have missed attacks_
-        - `cwl_war_selection` - *only for cwl* specify whether to look for the previous, current, or upcoming war
+        - `cwl_war_selection` - _only for cwl_ specify whether to look for the previous, current, or upcoming war
           - _defaults to current_
 
 - ## <a id="command-list-player"></a>Player
 
   - ### _player options_
+
     - options for player commands
     - `user` - mention a user to get their active player's information
       - _if no user is specified, then the user's active player will be used_
@@ -248,15 +265,17 @@ Once setup is complete you will be able to interact with ClashDiscord using the 
       - _if no tag is specified, then the user's active player will be used_
 
   - player info
+
     - shows player information based on your active player
 
   - player recruit
     - displays player recruit information for requested player tag
-    
   - player unit all
+
     - shows the level your units based on the specified type
 
   - player unit find `unit name`
+
     - shows the level, town hall max, and overall max levels for the requested unit
     - you can search troops, spells, and heroes
     - example
@@ -270,6 +289,7 @@ Once setup is complete you will be able to interact with ClashDiscord using the 
 - ## <a id="command-list-clan"></a>Clan
 
   - ### _clan options_
+
     - options for clan commands
     - `clan_role` - mention a role linked to a clan to get that clan's information
       - _if no clan role is specified, then the user's active player's clan will be used_
@@ -277,9 +297,11 @@ Once setup is complete you will be able to interact with ClashDiscord using the 
       - _if no tag is specified, then the user's active player's clan will be used_
 
   - clan info
+
     - displays clan information
 
   - clan lineup
+
     - displays clan town hall lineup
     - _clan lineup options_
       - options for `clan lineup` command
@@ -288,6 +310,7 @@ Once setup is complete you will be able to interact with ClashDiscord using the 
       - `count` - returns a count of the clan's town hall lineup
 
   - clan warpreference
+
     - displays rundown of clan member's war preference
     - _clan warpreference options_
       - options for `clan warpreference` command
@@ -295,6 +318,7 @@ Once setup is complete you will be able to interact with ClashDiscord using the 
       - `count` - returns a count of those that are in and out
 
   - clan donate `unit name`
+
     - search the clan for available donors for a specified unit
     - _examples_
       - `/clan donate hog rider`
@@ -309,16 +333,19 @@ Once setup is complete you will be able to interact with ClashDiscord using the 
 - ## <a id="command-list-war"></a>War
 
   - ### _war options_
+
     - options for war commands
     - `clan_role` - mention a role linked to a clan to get that clan's war information
       - _if no clan role is specified, then the user's active player's clan will be used_
-    - `cwl_war_selection` - *only for cwl* specify whether to look for the previous, current, or upcoming war
+    - `cwl_war_selection` - _only for cwl_ specify whether to look for the previous, current, or upcoming war
       - _defaults to current_
 
   - war info
+
     - displays war information
 
   - war noattack
+
     - lists players that missed attacks in war
     - _war noattack option_
       - option for `war noattack` command
@@ -326,12 +353,14 @@ Once setup is complete you will be able to interact with ClashDiscord using the 
         - _if not specified, then it will simply return all who are or have missed attacks_
 
   - war open
+
     - show opponent bases that are open
     - _war open option_
       - `star_count` - star count selection for open bases
         - _if not specified, then it show all open bases that haven't been 3 starred_
 
   - war stars
+
     - show all war members and their stars
     - _war stars options_
       - options for `war stars` command
@@ -339,6 +368,7 @@ Once setup is complete you will be able to interact with ClashDiscord using the 
       - `member` - show all war members and their attacks
 
   - war score user
+
     - user's active player's war score
     - _war score user option_
       - option for `war score user` command
@@ -346,8 +376,9 @@ Once setup is complete you will be able to interact with ClashDiscord using the 
         - _if not specified, then it will return the author's active player's war score_
 
   - war score clan
+
     - every clan member's war score
-    - *restricted to leaders and co-leaders*
+    - _restricted to leaders and co-leaders_
 
   - war lineup
     - war town hall lineup
@@ -360,14 +391,17 @@ Once setup is complete you will be able to interact with ClashDiscord using the 
 - ## <a id="command-list-cwl"></a>CWL
 
   - ### _cwl options_
+
     - options for cwl commands
     - `clan_role` - mention a role linked to a clan to get that clan's cwl information
       - _if no clan role is specified, then the user's active player's clan will be used_
 
   - cwl info
+
     - CWL info
 
   - cwl lineup
+
     - CWL town hall lineup
     - _cwl lineup options_
       - options for `cwl lineup` command
@@ -376,6 +410,7 @@ Once setup is complete you will be able to interact with ClashDiscord using the 
       - `member` - lineup for every member in each clan in cwl
 
   - cwl scoreboard
+
     - CWL scoreboard
     - _cwl scoreboard options_
       - options for `cwl scoreboard` command
@@ -385,8 +420,8 @@ Once setup is complete you will be able to interact with ClashDiscord using the 
 
   - cwl noattack
     - lists players that missed attacks in cwl
-    
   - cwl score user
+
     - user's active player's cwl score
     - _cwl score user option_
       - option for `cwl score user` command
@@ -395,7 +430,7 @@ Once setup is complete you will be able to interact with ClashDiscord using the 
 
   - cwl score clan
     - every clan member's cwl score
-    - *restricted to leaders and co-leaders*
+    - _restricted to leaders and co-leaders_
 
 # <a id="contributing"></a>Contributing
 
