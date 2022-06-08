@@ -561,48 +561,6 @@ class SuperUser(commands.Cog):
             else:
                 embed_description = f"{user.mention} is no longer an admin"
 
-        elif option == "remove":
-            if user is None:
-                embed_description = (
-                    f"user not specified, "
-                    f"please provide user to remove user")
-
-                embed_list = discord_responder.embed_message(
-                    icon_url=inter.bot.user.avatar.url,
-                    description=embed_description,
-                    bot_user_name=inter.me.display_name,
-                    author=inter.author
-                )
-
-                await discord_responder.send_embed_list(inter, embed_list)
-                return
-
-            # confirm user is claimed
-            db_user_obj = db_responder.read_user(user.id)
-            # user isn't claimed
-            if not db_user_obj:
-                embed_description = f"{user.mention} is not claimed"
-
-                embed_list = discord_responder.embed_message(
-                    icon_url=inter.bot.user.avatar.url,
-                    description=embed_description,
-                    bot_user_name=inter.me.display_name,
-                    author=inter.author
-                )
-
-                await discord_responder.send_embed_list(inter, embed_list)
-                return
-
-            deleted_user_obj = db_responder.delete_user(user.id)
-
-            # user was deleted properly
-            if deleted_user_obj is None:
-                embed_description = f"{user.mention} was deleted"
-
-            # user could not be deleted
-            else:
-                embed_description = f"{user.mention} could not be deleted"
-
         else:
             field_dict_list = [{
                 'name': "incorrect option selected",
