@@ -3,7 +3,8 @@ from disnake import (
     TextChannel,
     Member,
     Embed,
-    Color
+    Color,
+    User
 )
 from coc import (
     Client as CocClient,
@@ -4137,7 +4138,51 @@ def role_add_remove_list(needed_role_list, current_role_list):
     return add_list, remove_list
 
 
+async def update_user_nickname(user: User, coc_client):
+    db_player = db_responder.read_player_active(user.id)
+
+    # no player found for user
+    if not db_player:
+        field_dict_list = [{
+            "name": f"nickname update failed",
+            "value": f"no claimed player for {user.mention}"
+        }]
+
+        return field_dict_list
+
+    player = await clash_responder.get_player(db_player.player_tag, coc_client)
+
+    # clash player not found
+    if not player:
+        field_dict_list = [{
+            "name": f"nickname update failed",
+            "value": (f"claimed player {db_player.player_tag} "
+                      f"for {user.mention} not found in Clash of Clans")
+        }]
+
+        return field_dict_list
+
+    try:
+        await user.edit(nick=player.name)
+    except:
+        field_dict_list = [{
+            "name": f"nickname update failed",
+            "value": f"could not edit user {user.mention}"
+        }]
+
+        return field_dict_list
+
+    field_dict_list = [{
+        "name": f"nickname update successful",
+        "value": (f"{user.mention} nickname changed using "
+                  f"player {player.name} {player.tag}")
+    }]
+
+    return field_dict_list
+
 # DB
+
+
 async def clan_role_verification(
         clan_role, coc_client):
     """

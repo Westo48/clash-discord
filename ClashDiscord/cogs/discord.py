@@ -25,13 +25,13 @@ class Discord(commands.Cog):
 
         pass
 
-    # discord role
     @discord.sub_command()
-    async def role(self,
-                   inter,
-                   option: str = discord_utils.command_param_dict['discord_role'],
-                   user: disnake.User = discord_utils.command_param_dict['user']
-                   ):
+    async def role(
+        self,
+        inter,
+        option: str = discord_utils.command_param_dict['discord_role'],
+        user: disnake.User = discord_utils.command_param_dict['user']
+    ):
         """
             update roles
             *member requires leadership*
@@ -209,6 +209,149 @@ class Discord(commands.Cog):
             )
 
             await discord_responder.send_embed_list(inter, embed_list)
+
+    @discord.sub_command()
+    async def nickname(
+        self,
+        inter,
+        option: str = discord_utils.command_param_dict['discord_nickname'],
+        user: disnake.User = discord_utils.command_param_dict['user']
+    ):
+        """
+            update nicknames based on active clash player
+            *member requires leadership*
+            *all requires admin*
+
+            Parameters
+            ----------
+            option (optional): options for discord nickname command
+            user (optional): user nickname *required for using member option*
+        """
+
+        await inter.response.defer()
+
+        # bot does not have manage nicknames permission
+        if not inter.me.guild_permissions.manage_nicknames:
+            embed_description = (
+                f"{inter.bot.user.mention} does not "
+                f"have permission to manage nicknames")
+
+            embed_list = discord_responder.embed_message(
+                icon_url=inter.bot.user.avatar.url,
+                description=embed_description,
+                bot_user_name=inter.me.display_name,
+                author=inter.author
+            )
+
+            await discord_responder.send_embed_list(inter, embed_list)
+            return
+
+        db_guild_obj = db_responder.read_guild(inter.guild.id)
+
+        # if guild is not claimed
+        if not db_guild_obj:
+            embed_description = f"{inter.guild.name} has not been claimed"
+
+            embed_list = discord_responder.embed_message(
+                icon_url=inter.bot.user.avatar.url,
+                description=embed_description,
+                bot_user_name=inter.me.display_name,
+                author=inter.author
+            )
+
+            await discord_responder.send_embed_list(inter, embed_list)
+            return
+
+        # initializing embed default values
+        embed_title = None
+        embed_description = None
+        field_dict_list = []
+
+        if option == "me":
+            embed_title = f"discord nickname update"
+
+            field_dict_list = await discord_responder.update_user_nickname(
+                inter.author, self.coc_client)
+
+        elif option == "member":
+            # user not supplied
+            if not user:
+                embed_description = f"please supply valid user"
+
+                embed_list = discord_responder.embed_message(
+                    icon_url=inter.bot.user.avatar.url,
+                    description=embed_description,
+                    bot_user_name=inter.me.display_name,
+                    author=inter.author
+                )
+
+                await discord_responder.send_embed_list(inter, embed_list)
+                return
+
+            # getting author's db player obj for leadership verification
+            db_player_obj = db_responder.read_player_active(inter.author.id)
+
+            verification_payload = await discord_responder.player_leadership_verification(
+                db_player_obj, inter.author, inter.guild.id, self.coc_client)
+
+            if not verification_payload['verified']:
+                embed_list = discord_responder.embed_message(
+                    icon_url=inter.bot.user.avatar.url,
+                    bot_user_name=inter.me.display_name,
+                    field_list=verification_payload['field_dict_list'],
+                    author=inter.author
+                )
+
+                await discord_responder.send_embed_list(inter, embed_list)
+                return
+
+            embed_title = f"discord nickname update"
+
+            field_dict_list = await discord_responder.update_user_nickname(
+                user, self.coc_client)
+
+        elif option == "all":
+            db_user_obj = db_responder.read_user(inter.author.id)
+
+            # if user is not claimed
+            if not db_user_obj:
+                await inter.edit_original_message(
+                    content=f"{inter.author.mention} has not been claimed")
+                return
+
+            # if author is not guild admin and is not super user
+            if (not db_guild_obj.admin_user_id == inter.author.id
+                    and not db_user_obj.super_user):
+
+                await inter.edit_original_message(
+                    content=f"{inter.author.mention} is not guild's admin")
+                return
+
+            field_dict_list = []
+            for user in inter.guild.members:
+                if user.bot:
+                    continue
+
+                field_dict_list.extend(await discord_responder.update_user_nickname(
+                    user, self.coc_client))
+
+        else:
+            embed_title = None
+            field_dict_list = [{
+                'name': "incorrect option selected",
+                'value': "please select a different option"
+            }]
+
+        embed_list = discord_responder.embed_message(
+            icon_url=inter.bot.user.avatar.url,
+            title=embed_title,
+            description=embed_description,
+            bot_user_name=inter.me.display_name,
+            field_list=field_dict_list,
+            author=inter.author
+        )
+
+        await discord_responder.send_embed_list(inter, embed_list)
 
     @discord.sub_command()
     async def emoji(

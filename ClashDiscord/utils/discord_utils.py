@@ -224,6 +224,14 @@ command_param_dict = {
             "me", "member", "all"
         ]
     ),
+    'discord_nickname': commands.Param(
+        name="option",
+        description="*optional* options for discord nickname returns",
+        default="me",
+        choices=[
+            "me", "member", "all"
+        ]
+    ),
     'discord_user': commands.Param(
         name="option",
         description="*optional* options for discord user returns",

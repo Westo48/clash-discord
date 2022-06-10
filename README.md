@@ -10,7 +10,7 @@ Discord bot for Clash of Clans discord servers written in Python
 - [Usage](#usage)
 - [Command List](#command-list)
   - [Help](#command-list-help)
-  - [ClashDiscord](#command-list-clashdiscord)
+  - [Client](#command-list-client)
   - [Discord](#command-list-discord)
   - [Announce](#command-list-announce)
   - [Player](#command-list-player)
@@ -102,7 +102,7 @@ Once setup is complete you will be able to interact with ClashDiscord using the 
     - displays relevant help-text regarding what commands can be run
     - react to the help message to parse through command groups
 
-- ## <a id="command-list-clashdiscord"></a>ClashDiscord
+- ## <a id="command-list-client"></a>Client
 
   - client info
 
@@ -171,7 +171,7 @@ Once setup is complete you will be able to interact with ClashDiscord using the 
 
 - ## <a id="command-list-discord"></a>Discord
 
-  - discord role me
+  - discord role
 
     - update roles
     - _discord role options_
@@ -181,6 +181,18 @@ Once setup is complete you will be able to interact with ClashDiscord using the 
         - _restricted to leaders and co-leaders_
         - _user must be specified_
       - `all` - updates **ALL** guild user's roles
+        - _restricted to ClashCommander server admin_
+
+  - discord nickname
+
+    - update nicknames
+    - _discord nickname options_
+      - options for `discord nickname` command
+      - `me` _default_ - updating your _(author's)_ nickname
+      - `member` - updates the specified user's nickname
+        - _restricted to leaders and co-leaders_
+        - _user must be specified_
+      - `all` - updates **ALL** guild user's nickname
         - _restricted to ClashCommander server admin_
 
   - discord emoji `coc_name`
