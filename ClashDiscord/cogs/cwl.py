@@ -452,7 +452,7 @@ class CWL(commands.Cog):
             icon_url=inter.bot.user.avatar.url,
             title=f"{clan_obj.name} CWL missed attacks",
             bot_user_name=inter.me.display_name,
-            thumbnail=player_obj.clan.badge.small,
+            thumbnail=clan_obj.badge.small,
             field_list=field_dict_list,
             author=inter.author
         )
@@ -585,7 +585,7 @@ class CWL(commands.Cog):
             icon_url=inter.bot.user.avatar.url,
             title=f"{clan_obj.name} CWL scores",
             bot_user_name=inter.me.display_name,
-            thumbnail=player_obj.clan.badge.small,
+            thumbnail=clan_obj.badge.small,
             field_list=field_dict_list,
             author=inter.author
         )
