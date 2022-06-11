@@ -720,22 +720,7 @@ class Client(commands.Cog):
         embed_description = None
         field_dict_list = []
 
-        if option == "claim":
-            if clan_tag is None:
-                embed_description = (
-                    f"player tag not specified, "
-                    f"please provide player tag to remove a player")
-
-                embed_list = discord_responder.embed_message(
-                    icon_url=inter.bot.user.avatar.url,
-                    description=embed_description,
-                    bot_user_name=inter.me.display_name,
-                    author=inter.author
-                )
-
-                await discord_responder.send_embed_list(inter, embed_list)
-                return
-
+        if option == "show":
             db_guild_obj = db_responder.read_guild(inter.guild.id)
 
             # guild not claimed
@@ -746,7 +731,8 @@ class Client(commands.Cog):
                     icon_url=inter.bot.user.avatar.url,
                     description=embed_description,
                     bot_user_name=inter.me.display_name,
-                    author=inter.author
+                    author_display_name=inter.author.display_name,
+                    author_avatar_url=inter.author.avatar.url
                 )
 
                 await discord_responder.send_embed_list(inter, embed_list)
@@ -762,7 +748,8 @@ class Client(commands.Cog):
                     icon_url=inter.bot.user.avatar.url,
                     description=embed_description,
                     bot_user_name=inter.me.display_name,
-                    author=inter.author
+                    author_display_name=inter.author.display_name,
+                    author_avatar_url=inter.author.avatar.url
                 )
 
                 await discord_responder.send_embed_list(inter, embed_list)
@@ -777,65 +764,42 @@ class Client(commands.Cog):
                     icon_url=inter.bot.user.avatar.url,
                     description=embed_description,
                     bot_user_name=inter.me.display_name,
-                    author=inter.author
+                    author_display_name=inter.author.display_name,
+                    author_avatar_url=inter.author.avatar.url
                 )
 
                 await discord_responder.send_embed_list(inter, embed_list)
                 return
 
-            clan_obj = await clash_responder.get_clan(clan_tag, self.coc_client)
+            db_clan_obj_list = db_responder.read_clan_list_from_guild(
+                inter.guild.id)
 
-            # clan not found
-            if not clan_obj:
-                embed_description = f"couldn't find clan {clan_tag}"
+            # guild has no claimed clans
+            if len(db_clan_obj_list) == 0:
+                embed_description = f"{inter.guild.name} does not have any claimed clans"
 
                 embed_list = discord_responder.embed_message(
                     icon_url=inter.bot.user.avatar.url,
                     description=embed_description,
                     bot_user_name=inter.me.display_name,
-                    author=inter.author
+                    author_display_name=inter.author.display_name,
+                    author_avatar_url=inter.author.avatar.url
                 )
 
                 await discord_responder.send_embed_list(inter, embed_list)
                 return
 
-            claimed_clan_obj = db_responder.read_clan(
-                inter.guild.id, clan_obj.tag)
+            embed_title = f"{inter.guild.name} claimed clans"
 
-            # already claimed
-            if claimed_clan_obj:
-                embed_description = (
-                    f"{clan_obj.name} has already been claimed for "
-                    f"{inter.guild.name}"
-                )
+            field_dict_list = []
+            for db_clan in db_clan_obj_list:
+                clan = await clash_responder.get_clan(
+                    db_clan.clan_tag, self.coc_client)
 
-                embed_list = discord_responder.embed_message(
-                    icon_url=inter.bot.user.avatar.url,
-                    description=embed_description,
-                    bot_user_name=inter.me.display_name,
-                    author=inter.author
-                )
-
-                await discord_responder.send_embed_list(inter, embed_list)
-                return
-
-            db_clan_obj = db_responder.claim_clan(inter.guild.id, clan_obj.tag)
-
-            # clan not claimed
-            if not db_clan_obj:
-                embed_description = f"couldn't claim {clan_obj.name}"
-
-                embed_list = discord_responder.embed_message(
-                    icon_url=inter.bot.user.avatar.url,
-                    description=embed_description,
-                    bot_user_name=inter.me.display_name,
-                    author=inter.author
-                )
-
-                await discord_responder.send_embed_list(inter, embed_list)
-                return
-
-            embed_description = f"{clan_obj.name} has been claimed"
+                field_dict_list.append({
+                    "name": clan.name,
+                    "value": clan.tag
+                })
 
         else:
             field_dict_list = [{
