@@ -459,7 +459,9 @@ Once setup is complete you will be able to interact with ClashCommander using th
       - `clan` - cwl scoreboard for each clan member
 
   - cwl noattack
+
     - lists players that missed attacks in cwl
+
   - cwl score user
 
     - user's active player's cwl score
