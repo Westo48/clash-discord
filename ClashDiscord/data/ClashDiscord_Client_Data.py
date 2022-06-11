@@ -63,6 +63,8 @@ class ClashDiscord_Data(object):
             'Super User', 'superuser',
             'ClashDiscord client based commands for super user', '🧠'),
         ClashDiscord_Category(
+            'Admin', 'admin', 'ClashDiscord admin based commands', '🔑'),
+        ClashDiscord_Category(
             'Client', 'client', 'ClashDiscord client based commands', '🤖'),
         ClashDiscord_Category(
             'Discord', 'discord', 'Discord based commands', '💻'),

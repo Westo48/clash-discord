@@ -492,7 +492,7 @@ def help_main(db_guild_obj, user_id, player_obj, bot_categories):
     }
     if not db_guild_obj:
         for category in bot_categories:
-            if category.brief == "client":
+            if category.brief == "admin":
                 help_dict['field_dict_list'].append({
                     'name': category.name,
                     'value': category.description
@@ -506,6 +506,13 @@ def help_main(db_guild_obj, user_id, player_obj, bot_categories):
             if not db_user_obj:
                 continue
             if not db_user_obj.super_user:
+                continue
+        if category.brief == "admin":
+            if not db_user_obj:
+                continue
+            # user is not guild admin and is not an admin
+            if (db_guild_obj.admin_user_id != db_user_obj.discord_id
+                    and not db_user_obj.admin):
                 continue
         if (
             category.brief == "discord" and
@@ -545,6 +552,8 @@ def help_switch(db_guild_obj, db_player_obj, player_obj, user_id, emoji,
     if bot_category.brief == "superuser":
         return help_super_user(db_guild_obj, user_id,
                                bot_category, all_commands)
+    if bot_category.brief == "admin":
+        return help_admin(db_guild_obj, user_id, bot_category, all_commands)
     if bot_category.brief == "client":
         return help_client(db_guild_obj, user_id, bot_category, all_commands)
     if bot_category.brief == "discord":
@@ -586,6 +595,50 @@ def help_super_user(db_guild_obj, user_id, bot_category, all_commands):
     return help_dict
 
 
+def help_admin(db_guild_obj, user_id, bot_category, all_commands):
+    help_dict = {
+        'field_dict_list': [],
+        'emoji_list': []
+    }
+
+    # guild not claimed
+    if db_guild_obj is None:
+        help_dict['field_dict_list'].append({
+            'name': "guild not claimed",
+            'value': "please claim guild using `client guild claim`"
+        })
+        return help_dict
+
+    db_user_obj = db_responder.read_user(user_id)
+
+    # user is not guild admin and is not an admin
+    if (db_guild_obj.admin_user_id != db_user_obj.discord_id
+            and not db_user_obj.admin):
+        help_dict['field_dict_list'].append({
+            'name': "user is not admin user",
+            'value': "must be admin user to view admin user commands"
+        })
+        return help_dict
+
+    for parent in all_commands.values():
+        # command is not in the correct category
+        if not bot_category.brief == parent.name:
+            continue
+
+        field_dict_list = help_command_dict_list(parent)
+
+        if len(field_dict_list) == 0:
+            help_dict["field_dict_list"].append({
+                'name': "guild not claimed",
+                'value': "please claim guild using `admin guild claim`"
+            })
+            return help_dict
+
+        help_dict["field_dict_list"] = field_dict_list
+
+    return help_dict
+
+
 def help_client(db_guild_obj, user_id, bot_category, all_commands):
     help_dict = {
         'field_dict_list': [],
@@ -610,7 +663,7 @@ def help_client(db_guild_obj, user_id, bot_category, all_commands):
         if len(field_dict_list) == 0:
             help_dict["field_dict_list"].append({
                 'name': "guild not claimed",
-                'value': "please claim guild using `client claim guild`"
+                'value': "please claim guild using `admin guild claim`"
             })
             return help_dict
 
