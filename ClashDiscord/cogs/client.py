@@ -471,29 +471,30 @@ class Client(commands.Cog):
                 await discord_responder.send_embed_list(inter, embed_list)
                 return
 
-            player_obj = await clash_responder.get_player(player_tag, self.coc_client)
+            player = await clash_responder.get_player(player_tag, self.coc_client)
 
             # player not found
-            if not player_obj:
-                embed_description = f"player with tag {player_tag} not found"
+            if not player:
+                # format player tag
+                # remove spaces
+                player_tag = player_tag.replace(" ", "")
+                # adding "#" if it isn't already in the player tag
+                if "#" not in player_tag:
+                    player_tag = f"#{player_tag}"
 
-                embed_list = discord_responder.embed_message(
-                    icon_url=inter.bot.user.avatar.url,
-                    description=embed_description,
-                    bot_user_name=inter.me.display_name,
-                    author=inter.author
-                )
+                player_title = player_tag.upper()
 
-                await discord_responder.send_embed_list(inter, embed_list)
-                return
+            else:
+                player_tag = player.tag
+                player_title = f"{player.name} {player.tag}"
 
-            db_player_obj = db_responder.read_player(
-                inter.author.id, player_obj.tag)
+            db_player = db_responder.read_player(
+                inter.author.id, player_tag)
 
             # db player not found
-            if not db_player_obj:
-                embed_description = (f"{player_obj.name} {player_obj.tag} "
-                                     f"is not claimed by {inter.author.mention}")
+            if not db_player:
+                embed_description = (f"{player_title} is not claimed by "
+                                     f"{inter.author.mention}")
 
                 embed_list = discord_responder.embed_message(
                     icon_url=inter.bot.user.avatar.url,
@@ -505,14 +506,13 @@ class Client(commands.Cog):
                 await discord_responder.send_embed_list(inter, embed_list)
                 return
 
-            db_del_player_obj = db_responder.delete_player(
-                inter.author.id, player_obj.tag)
+            db_del_player = db_responder.delete_player(
+                inter.author.id, player_tag)
 
             # player was not deleted
-            if db_del_player_obj:
+            if db_del_player:
                 embed_description = (
-                    f"{player_obj.name} {player_obj.tag} "
-                    f"could not be deleted "
+                    f"{player_title} could not be deleted "
                     f"from {inter.author.mention} player list"
                 )
 
@@ -528,17 +528,16 @@ class Client(commands.Cog):
 
             # delete link api link
             self.linkapi_client.delete_link(
-                player_tag=player_obj.tag)
+                player_tag=player_tag)
 
-            db_active_player_obj = db_responder.read_player_active(
+            db_active_player = db_responder.read_player_active(
                 inter.author.id)
 
             # active player found
             # no need to change the active player
-            if db_active_player_obj:
+            if db_active_player:
                 embed_description = (
-                    f"{player_obj.name} {player_obj.tag} "
-                    f"has been deleted "
+                    f"{player_title} has been deleted "
                     f"from {inter.author.mention} player list"
                 )
 
@@ -554,16 +553,14 @@ class Client(commands.Cog):
 
             # no active player found
             # check if there are any other players
-            db_player_obj_list = db_responder.read_player_list(
+            db_player_list = db_responder.read_player_list(
                 inter.author.id)
 
             # no additional players claimed
-            if len(db_player_obj_list) == 0:
+            if len(db_player_list) == 0:
                 embed_description = (
-                    f"{player_obj.name} {player_obj.tag} "
-                    f"has been deleted, "
-                    f"{inter.author.mention} has no more claimed players"
-                )
+                    f"{player_title} has been deleted, "
+                    f"{inter.author.mention} has no more claimed players")
 
                 embed_list = discord_responder.embed_message(
                     icon_url=inter.bot.user.avatar.url,
@@ -577,14 +574,14 @@ class Client(commands.Cog):
 
             # additional players claimed by user
             # update the first as the new active
-            db_updated_player_obj = db_responder.update_player_active(
-                inter.author.id, db_player_obj_list[0].player_tag)
+            db_updated_player = db_responder.update_player_active(
+                inter.author.id, db_player_list[0].player_tag)
 
             # update not successful
-            if not db_updated_player_obj:
+            if not db_updated_player:
                 embed_description = (
-                    f"{player_obj.name} {player_obj.tag} "
-                    f"has been deleted, could not update active player, "
+                    f"{player_title} has been deleted, "
+                    f"could not update active player, "
                     f"{inter.author.mention} has no active players"
                 )
 
@@ -599,16 +596,15 @@ class Client(commands.Cog):
                 return
 
             # update was successful
-            clash_updated_player_obj = await clash_responder.get_player(
-                db_updated_player_obj.player_tag, self.coc_client)
+            clash_updated_player = await clash_responder.get_player(
+                db_updated_player.player_tag, self.coc_client)
 
             # clash player not found
-            if not clash_updated_player_obj:
+            if not clash_updated_player:
                 embed_description = (
-                    f"{player_obj.name} {player_obj.tag} "
-                    f"has been deleted, "
+                    f"{player_title} has been deleted, "
                     f"{inter.author.mention} active is now set to "
-                    f"{db_updated_player_obj.player_tag}, "
+                    f"{db_updated_player.player_tag}, "
                     f"could not find player in clash of clans"
                 )
 
@@ -626,11 +622,10 @@ class Client(commands.Cog):
             # active player updated
             # clash player found
             embed_description = (
-                f"{player_obj.name} {player_obj.tag} "
-                f"has been deleted, "
+                f"{player_title} has been deleted, "
                 f"{inter.author.mention} active is now set to "
-                f"{clash_updated_player_obj.name} "
-                f"{clash_updated_player_obj.tag}"
+                f"{clash_updated_player.name} "
+                f"{clash_updated_player.tag}"
             )
 
             embed_list = discord_responder.embed_message(

@@ -379,30 +379,29 @@ class Admin(commands.Cog):
 
         # action approved
 
-        # confirm valid player_tag
-        player = await clash_responder.get_player(
-            player_tag, self.coc_client)
-
-        # player tag was not valid
-        if not player:
-            embed_description = f"player with tag {player_tag} was not found"
-
-            embed_list = discord_responder.embed_message(
-                icon_url=inter.bot.user.avatar.url,
-                description=embed_description,
-                bot_user_name=inter.me.display_name,
-                author=inter.author
-            )
-
-            await discord_responder.send_embed_list(inter, embed_list)
-            return
-
         # initializing embed default values
         embed_title = None
         embed_description = None
         field_dict_list = []
 
         if option == "claim":
+            # confirm valid player_tag
+            player = await clash_responder.get_player(
+                player_tag, self.coc_client)
+
+            # player tag was not valid
+            if not player:
+                embed_description = f"player with tag {player_tag} was not found"
+
+                embed_list = discord_responder.embed_message(
+                    icon_url=inter.bot.user.avatar.url,
+                    description=embed_description,
+                    bot_user_name=inter.me.display_name,
+                    author=inter.author
+                )
+
+                await discord_responder.send_embed_list(inter, embed_list)
+                return
 
             # confirm player has not been claimed
             db_player = db_responder.read_player_from_tag(player.tag)
@@ -460,12 +459,47 @@ class Admin(commands.Cog):
                                      f"{player.tag} for {user.mention}")
 
         elif option == "remove":
-            db_player = db_responder.read_player(user.id, player.tag)
+            # player tag is a required parameter
+            # player tag not specified
+            if player_tag is None:
+                embed_description = (
+                    f"player tag not specified, "
+                    f"please provide player tag to remove a player")
+
+                embed_list = discord_responder.embed_message(
+                    icon_url=inter.bot.user.avatar.url,
+                    description=embed_description,
+                    bot_user_name=inter.me.display_name,
+                    author=inter.author
+                )
+
+                await discord_responder.send_embed_list(inter, embed_list)
+                return
+
+            player = await clash_responder.get_player(player_tag, self.coc_client)
+
+            # player not found
+            if not player:
+                # format player tag
+                # remove spaces
+                player_tag = player_tag.replace(" ", "")
+                # adding "#" if it isn't already in the player tag
+                if "#" not in player_tag:
+                    player_tag = f"#{player_tag}"
+
+                player_title = player_tag.upper()
+
+            else:
+                player_tag = player.tag
+                player_title = f"{player.name} {player.tag}"
+
+            db_player = db_responder.read_player(user.id, player_tag)
 
             # db player not found
             if not db_player:
-                embed_description = (f"{player.name} {player.tag} "
-                                     f"is not claimed by {user.mention}")
+                embed_description = (
+                    f"{player_title} is not claimed "
+                    f"by {user.mention}")
 
                 embed_list = discord_responder.embed_message(
                     icon_url=inter.bot.user.avatar.url,
@@ -478,12 +512,12 @@ class Admin(commands.Cog):
                 return
 
             db_del_player = db_responder.delete_player(
-                user.id, player.tag)
+                user.id, player_tag)
 
             # player was not deleted
             if db_del_player:
                 embed_description = (
-                    f"{player.name} {player.tag} "
+                    f"{player_title} "
                     f"could not be deleted "
                     f"from {user.mention} player list"
                 )
@@ -501,7 +535,7 @@ class Admin(commands.Cog):
             # delete link api link
             try:
                 self.linkapi_client.delete_link(
-                    player_tag=player.tag)
+                    player_tag=player_tag)
             except LoginError as arg:
                 print(arg)
             # error not found can be ignored
@@ -515,8 +549,7 @@ class Admin(commands.Cog):
             # no need to change the active player
             if db_active_player:
                 embed_description = (
-                    f"{player.name} {player.tag} "
-                    f"has been deleted "
+                    f"{player_title} has been deleted "
                     f"from {user.mention} player list"
                 )
 
@@ -538,8 +571,7 @@ class Admin(commands.Cog):
             # no additional players claimed
             if len(db_player_list) == 0:
                 embed_description = (
-                    f"{player.name} {player.tag} "
-                    f"has been deleted, "
+                    f"{player_title} has been deleted, "
                     f"{user.mention} has no more claimed players"
                 )
 
@@ -561,8 +593,8 @@ class Admin(commands.Cog):
             # update not successful
             if not db_updated_player:
                 embed_description = (
-                    f"{player.name} {player.tag} "
-                    f"has been deleted, could not update active player, "
+                    f"{player_title} has been deleted, "
+                    f"could not update active player, "
                     f"{user.mention} has no active players"
                 )
 
@@ -583,8 +615,7 @@ class Admin(commands.Cog):
             # clash player not found
             if clash_updated_player is None:
                 embed_description = (
-                    f"{player.name} {player.tag} "
-                    f"has been deleted, "
+                    f"{player_title} has been deleted, "
                     f"{user.mention} active is now set to "
                     f"{db_updated_player.player_tag}, "
                     f"could not find player in clash of clans"
@@ -595,8 +626,7 @@ class Admin(commands.Cog):
             # clash player found
             else:
                 embed_description = (
-                    f"{player.name} {player.tag} "
-                    f"has been deleted, "
+                    f"{player_title} has been deleted, "
                     f"{user.mention} active is now set to "
                     f"{clash_updated_player.name} "
                     f"{clash_updated_player.tag}")
