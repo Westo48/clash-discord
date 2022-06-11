@@ -270,7 +270,7 @@ command_param_dict = {
         name="player_tag",
         description="*required* player tag",
     ),
-    'client_guild': commands.Param(
+    'admin_guild': commands.Param(
         name="option",
         description="*optional* options for client guild returns",
         default="claim",
@@ -283,10 +283,18 @@ command_param_dict = {
         description="*optional* options for client clan returns",
         default="show",
         choices=[
-            "claim", "show", "remove"
+            "show"
         ]
     ),
-    'client_role': commands.Param(
+    'admin_clan': commands.Param(
+        name="option",
+        description="*optional* options for admin clan returns",
+        default="show",
+        choices=[
+            "show", "claim", "remove"
+        ]
+    ),
+    'admin_role': commands.Param(
         name="option",
         description="*optional* options for client role returns",
         default="show",
@@ -294,25 +302,32 @@ command_param_dict = {
             "show", "remove"
         ]
     ),
-    'client_role_mention': commands.Param(
+    'role_mention': commands.Param(
         name="role",
         description="*optional* mentioned discord role",
         default=None
     ),
-    'client_clan_rank_role': commands.Param(
+    'admin_clan_rank_role': commands.Param(
         name="option",
-        description="*optional* options for client clan and rank role returns",
+        description="*optional* options for admin clan and rank role returns",
         default="claim",
         choices=[
             "claim"
         ]
     ),
+    'admin_user': commands.Param(
+        name="option",
+        description="*optional* options for admin user returns",
+        default="player",
+        choices=[
+            "player", "sync", "update"
+        ]
+    ),
     'admin_player': commands.Param(
         name="option",
         description="*optional* options for admin player returns",
-        default="show",
         choices=[
-            "claim", "show", "remove", "sync"
+            "claim", "remove"
         ]
     ),
     'superuser_user': commands.Param(

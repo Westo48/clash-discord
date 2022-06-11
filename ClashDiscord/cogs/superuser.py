@@ -482,6 +482,15 @@ class SuperUser(commands.Cog):
             field_dict_list.append(discord_responder.find_user_from_tag(
                 player_obj, inter.guild.members))
 
+            embed_list = discord_responder.embed_message(
+                icon_url=inter.bot.user.avatar.url,
+                bot_user_name=inter.me.display_name,
+                field_list=field_dict_list,
+                author=inter.author)
+
+            await discord_responder.send_embed_list(inter, embed_list)
+            return
+
         # user not supplied
         if not user:
             embed_description = f"please supply valid user"

@@ -1,4 +1,4 @@
-# ClashDiscord
+# ClashCommander
 
 Discord bot for Clash of Clans discord servers written in Python
 
@@ -11,6 +11,7 @@ Discord bot for Clash of Clans discord servers written in Python
 - [Command List](#command-list)
   - [Help](#command-list-help)
   - [Client](#command-list-client)
+  - [Admin](#command-list-admin)
   - [Discord](#command-list-discord)
   - [Announce](#command-list-announce)
   - [Player](#command-list-player)
@@ -23,19 +24,19 @@ Discord bot for Clash of Clans discord servers written in Python
 
 # <a id="introduction"></a>Introduction
 
-ClashDiscord is a discord bot written in Python that, while having a great many uses and commands, focuses _primarily_ on discord member management. This entails, but is not limited to, adding an uninitiated role to incoming members, allowing members to give themselves roles based on their clash of clans profile, and focusing on discord server security.
+ClashCommander is a discord bot written in Python that, while having a great many uses and commands, focuses _primarily_ on discord member management. This entails, but is not limited to, adding an uninitiated role to incoming members, allowing members to give themselves roles based on their clash of clans profile, and focusing on discord server security.
 
 Non-management commands include, but are also not limited to, returning player or clan information based on their tag, getting troop levels and how close they are to max for their town hall as well as total max, who can donate the best of a specific troop in a clan, war information, cwl lineup, cwl war, and cwl clan member scores.
 
 # <a id="setup"></a>Setup
 
-Getting ClashDiscord set up in your discord server can be somewhat confusing, but never fear for I am here.
+Getting ClashCommander set up in your discord server can be somewhat confusing, but never fear for I am here.
 
-1. invite ClashDiscord to your discord server
+1. invite ClashCommander to your discord server
 
    - [invite link](https://discord.com/api/oauth2/authorize?client_id=649107156989378571&permissions=1239433964608&scope=bot%20applications.commands)
 
-2. claim your user in ClashDiscord
+2. claim your user in ClashCommander
 
    - `client user` `claim`
      - this will claim you as a user
@@ -43,7 +44,7 @@ Getting ClashDiscord set up in your discord server can be somewhat confusing, bu
 3. claim your discord server
 
    - `client guild` `claim`
-     - this will claim your discord server and add you as the guild admin within ClashDiscord
+     - this will claim your discord server and add you as the guild admin within ClashCommander
      - _guild is what the discord API calls a server_
 
 4. link a player to your user
@@ -77,7 +78,7 @@ Getting ClashDiscord set up in your discord server can be somewhat confusing, bu
        - uninitiated
          - _this means they aren't verified or they aren't in a claimed clan_
 
-7. Use ClashDiscord, you are set up!
+7. Use ClashCommander, you are set up!
 
 # <a id="setup-summary"></a>Setup Summary
 
@@ -90,9 +91,9 @@ Getting ClashDiscord set up in your discord server can be somewhat confusing, bu
 
 # <a id="usage"></a>Usage
 
-ClashDiscord is largely **command** focused, meaning it doesn't do anything that it is not told to do. The only exception to this is when a member joins. If a server has claimed an uninitiated role, then they will be given that role, otherwise nothing will happen. The other action ClashDiscord will take is if it detects a role being deleted from discord it will delete the database instance of that role.
+ClashCommander is largely **command** focused, meaning it doesn't do anything that it is not told to do. The only exception to this is when a member joins. If a server has claimed an uninitiated role, then they will be given that role, otherwise nothing will happen. The other action ClashCommander will take is if it detects a role being deleted from discord it will delete the database instance of that role.
 
-Once setup is complete you will be able to interact with ClashDiscord using the prefix `/` and run the commands as desired.
+Once setup is complete you will be able to interact with ClashCommander using the prefix `/` and run the commands as desired.
 
 # <a id="command-list"></a>Command List
 
@@ -110,7 +111,7 @@ Once setup is complete you will be able to interact with ClashDiscord using the 
 
   - client user
 
-    - claims the user by discord user id within ClashDiscord
+    - claims the user by discord user id within ClashCommander
 
   - client player
 
@@ -125,40 +126,61 @@ Once setup is complete you will be able to interact with ClashDiscord using the 
         - _values needed_ - `player tag`
       - `sync` - syncs your player information with LinkAPI centralized data
 
-  - client guild
-
-    - claims the guild by discord guild id within ClashDiscord
-    - _sets the user who called the command as the guild admin within ClashDiscord_
-      - _if the guild has already been claimed, then nothing will happen_
-
   - client clan
 
     - _client clan options_
       - options for `client clan` command
+      - `show` _default_ - return all claimed clans
+
+- ## <a id="command-list-admin"></a>Admin
+
+  - _all admin commands require ClashCommander server admin access_
+
+  - admin user
+
+    - _admin user options_
+      - options for `admin player` command
+      - `player` _default_ - return all claimed players for user
+      - `sync` - syncs player information with LinkAPI centralized data for user
+      - `update` - updates the requested player as the active player for the user
+        - _values needed_ - `player tag`
+
+  - admin player
+
+    - _admin player options_
+      - options for `admin player` command
+      - `claim` - links a player to the user
+      - `remove` - removes the player from the user
+
+  - admin clan
+
+    - _admin clan options_
+      - options for `admin clan` command
+      - `show` _default_ - return all claimed clans
       - `claim` - links a specified clan to your guild
         - _values needed_ - `clan tag`
-      - `show` _default_ - return all claimed clans
       - `remove` - removes the linked clan from your guild
         - _values needed_ - `clan tag`
 
-  - client role
+  - admin role
 
-    - _client role options_
-      - options for `client role` command
+    - _admin role options_
+      - options for `admin role` command
       - `show` _default_ - return all linked roles
       - `remove` - removes claim on the mentioned role
         - _values needed_ - `role mention`
 
-  - client clanrole
+  - admin clanrole
 
-    - _client clanrole options_
-      - options for `client clanrole` command
+    - _admin clanrole options_
+      - options for `admin clanrole` command
       - `claim` - links a specified clanrole the specified guild's claimed clan
         - _values needed_ - `role mention` `clan tag`
 
-  - client rankrole
-    - _client rankrole options_
-      - options for `client rankrole` command
+  - admin rankrole
+
+    - _admin rankrole options_
+      - options for `admin rankrole` command
       - `claim` - links a specified rankrole the specified Clash of Clans rank
         - _values needed_ - `role mention` `rank name`
         - _rank names_
@@ -168,6 +190,12 @@ Once setup is complete you will be able to interact with ClashDiscord using the 
           - member
           - uninitiated
             - _this means they aren't verified or they aren't in a claimed clan_
+
+  - admin guild
+
+    - claims the guild by discord guild id within ClashCommander
+    - _sets the user who called the command as the guild admin within ClashCommander_
+      - _if the guild has already been claimed, then nothing will happen_
 
 - ## <a id="command-list-discord"></a>Discord
 
@@ -463,6 +491,6 @@ There aren't many required packages, but here are the few that are required and 
 
 # <a id="links-and-contact"></a>Links and Contact
 
-[Official ClashDiscord Server](https://discord.gg/3jcfaa5NYk)
+[Official ClashCommander Server](https://discord.gg/3jcfaa5NYk)
 
-Email: clashdiscord21@gmail.com
+Email: ClashCommander218@gmail.com
