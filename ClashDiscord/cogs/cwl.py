@@ -4,7 +4,9 @@ from coc.utils import get
 from responders import (
     DiscordResponder as discord_responder,
     ClashResponder as clash_responder,
-    RazBotDB_Responder as db_responder
+    RazBotDB_Responder as db_responder,
+    AuthResponder as auth_responder,
+    CWLResponder as cwl_responder
 )
 from utils import discord_utils
 
@@ -44,11 +46,11 @@ class CWL(commands.Cog):
         if clan_role is None:
             db_player_obj = db_responder.read_player_active(inter.author.id)
 
-            verification_payload = await discord_responder.cwl_group_verification(
+            verification_payload = await auth_responder.cwl_group_verification(
                 db_player_obj, inter.author, self.coc_client)
         # role has been mentioned
         else:
-            verification_payload = await discord_responder.clan_role_cwl_group_verification(
+            verification_payload = await auth_responder.clan_role_cwl_group_verification(
                 clan_role, self.coc_client)
 
         if not verification_payload['verified']:
@@ -78,11 +80,11 @@ class CWL(commands.Cog):
         if clan_role is None:
             db_player_obj = db_responder.read_player_active(inter.author.id)
 
-            verification_payload = await discord_responder.war_verification(
+            verification_payload = await auth_responder.war_verification(
                 db_player_obj, war_selection, inter.author, self.coc_client)
         # role has been mentioned
         else:
-            verification_payload = await discord_responder.clan_role_war_verification(
+            verification_payload = await auth_responder.clan_role_war_verification(
                 clan_role, war_selection, self.coc_client)
 
         if not verification_payload['verified']:
@@ -111,7 +113,7 @@ class CWL(commands.Cog):
 
         embed_description = f"Round {round_number}/{cwl_group.number_of_rounds}"
 
-        field_dict_list = discord_responder.cwl_info_scoreboard(
+        field_dict_list = cwl_responder.cwl_info_scoreboard(
             cwl_war, inter.client.emojis, self.client_data.emojis)
 
         embed_list = discord_responder.embed_message(
@@ -145,11 +147,11 @@ class CWL(commands.Cog):
         if clan_role is None:
             db_player_obj = db_responder.read_player_active(inter.author.id)
 
-            verification_payload = await discord_responder.cwl_group_verification(
+            verification_payload = await auth_responder.cwl_group_verification(
                 db_player_obj, inter.author, self.coc_client)
         # role has been mentioned
         else:
-            verification_payload = await discord_responder.clan_role_cwl_group_verification(
+            verification_payload = await auth_responder.clan_role_cwl_group_verification(
                 clan_role, self.coc_client)
 
         if not verification_payload['verified']:
@@ -167,13 +169,13 @@ class CWL(commands.Cog):
 
         if option == "overview":
             await inter.edit_original_message(
-                content=discord_responder.cwl_lineup(cwl_group_obj))
+                content=cwl_responder.cwl_lineup(cwl_group_obj))
 
             return
 
         elif option == "clan":
             for clan in cwl_group_obj.clans:
-                embed_description = discord_responder.cwl_lineup_clan(
+                embed_description = cwl_responder.cwl_lineup_clan(
                     clan, self.coc_client, inter.client.emojis, self.client_data.emojis)
 
                 embed_list = discord_responder.embed_message(
@@ -191,7 +193,7 @@ class CWL(commands.Cog):
 
         elif option == "member":
             for clan in cwl_group_obj.clans:
-                field_dict_list = await discord_responder.cwl_lineup_member(
+                field_dict_list = await cwl_responder.cwl_lineup_member(
                     clan, self.coc_client, inter.client.emojis, self.client_data.emojis)
 
                 embed_list = discord_responder.embed_message(
@@ -242,12 +244,12 @@ class CWL(commands.Cog):
         if clan_role is None:
             db_player_obj = db_responder.read_player_active(inter.author.id)
 
-            verification_payload = await discord_responder.cwl_group_verification(
+            verification_payload = await auth_responder.cwl_group_verification(
                 db_player_obj, inter.author, self.coc_client)
         # role has been mentioned
         else:
             verification_payload = await (
-                discord_responder.clan_role_cwl_group_verification(
+                auth_responder.clan_role_cwl_group_verification(
                     clan_role, self.coc_client))
 
         if not verification_payload['verified']:
@@ -282,7 +284,7 @@ class CWL(commands.Cog):
                 self.client_data.emojis)
             embed_title = f"CWL {league_emoji} {clan.war_league.name} Group"
 
-            field_dict_list = await discord_responder.cwl_scoreboard_group(
+            field_dict_list = await cwl_responder.cwl_scoreboard_group(
                 cwl_group, inter.client.emojis, self.client_data.emojis, self.coc_client)
 
         elif option == "rounds":
@@ -311,7 +313,7 @@ class CWL(commands.Cog):
                 if war.state != "warEnded":
                     break
 
-                field_dict_list = await discord_responder.cwl_scoreboard_round(
+                field_dict_list = await cwl_responder.cwl_scoreboard_round(
                     cwl_group, cwl_round, round_index,
                     inter.client.emojis, self.client_data.emojis,
                     self.coc_client)
@@ -377,7 +379,7 @@ class CWL(commands.Cog):
                 }]
 
             else:
-                field_dict_list = await discord_responder.cwl_scoreboard_clan(
+                field_dict_list = await cwl_responder.cwl_scoreboard_clan(
                     inter, cwl_group, clan, self.coc_client,
                     inter.client.emojis, self.client_data.emojis
                 )
@@ -420,13 +422,13 @@ class CWL(commands.Cog):
             db_player_obj = db_responder.read_player_active(inter.author.id)
 
             verification_payload = (
-                await discord_responder.cwl_group_leadership_verification(
+                await auth_responder.cwl_group_leadership_verification(
                     db_player_obj, inter.author, inter.guild.id, self.coc_client)
             )
         # role has been mentioned
         else:
             verification_payload = (
-                await discord_responder.clan_role_cwl_group_leadership_verification(
+                await auth_responder.clan_role_cwl_group_leadership_verification(
                     clan_role, inter.author, inter.guild.id, self.coc_client))
 
         if not verification_payload['verified']:
@@ -444,7 +446,7 @@ class CWL(commands.Cog):
         clan_obj = verification_payload['clan_obj']
         cwl_group_obj = verification_payload['cwl_group_obj']
 
-        field_dict_list = await discord_responder.cwl_clan_noatk(
+        field_dict_list = await cwl_responder.cwl_clan_noatk(
             clan_obj, cwl_group_obj, self.coc_client,
             inter.client.emojis, self.client_data.emojis)
 
@@ -488,7 +490,7 @@ class CWL(commands.Cog):
 
         db_player_obj = db_responder.read_player_active(user.id)
 
-        verification_payload = await discord_responder.cwl_group_verification(
+        verification_payload = await auth_responder.cwl_group_verification(
             db_player_obj, user, self.coc_client)
         if not verification_payload['verified']:
             embed_list = discord_responder.embed_message(
@@ -522,7 +524,7 @@ class CWL(commands.Cog):
                 return
 
         embed_thumbnail = discord_responder.get_town_hall_url(player_obj)
-        field_dict_list = await discord_responder.cwl_member_score(
+        field_dict_list = await cwl_responder.cwl_member_score(
             player_obj, cwl_group_obj, player_obj.clan.tag)
         embed_list = discord_responder.embed_message(
             icon_url=inter.bot.user.avatar.url,
@@ -555,13 +557,13 @@ class CWL(commands.Cog):
             db_player_obj = db_responder.read_player_active(inter.author.id)
 
             verification_payload = (
-                await discord_responder.cwl_group_leadership_verification(
+                await auth_responder.cwl_group_leadership_verification(
                     db_player_obj, inter.author, inter.guild.id, self.coc_client)
             )
         # role has been mentioned
         else:
             verification_payload = (
-                await discord_responder.clan_role_cwl_group_leadership_verification(
+                await auth_responder.clan_role_cwl_group_leadership_verification(
                     clan_role, inter.author, inter.guild.id, self.coc_client))
 
         if not verification_payload['verified']:
@@ -579,7 +581,7 @@ class CWL(commands.Cog):
         clan_obj = verification_payload['clan_obj']
         cwl_group_obj = verification_payload['cwl_group_obj']
 
-        field_dict_list = await discord_responder.cwl_clan_score(
+        field_dict_list = await cwl_responder.cwl_clan_score(
             clan_obj, cwl_group_obj)
         embed_list = discord_responder.embed_message(
             icon_url=inter.bot.user.avatar.url,

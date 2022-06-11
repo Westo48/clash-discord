@@ -6,7 +6,8 @@ from disnake.ext import commands
 from responders import (
     DiscordResponder as discord_responder,
     ClashResponder as clash_responder,
-    RazBotDB_Responder as db_responder
+    RazBotDB_Responder as db_responder,
+    AuthResponder as auth_responder
 )
 from utils import discord_utils
 
@@ -103,7 +104,7 @@ class Discord(commands.Cog):
             # getting author's db player obj for leadership verification
             db_player_obj = db_responder.read_player_active(inter.author.id)
 
-            verification_payload = await discord_responder.player_leadership_verification(
+            verification_payload = await auth_responder.player_leadership_verification(
                 db_player_obj, inter.author, inter.guild.id, self.coc_client)
 
             if not verification_payload['verified']:
@@ -291,7 +292,7 @@ class Discord(commands.Cog):
             # getting author's db player obj for leadership verification
             db_player_obj = db_responder.read_player_active(inter.author.id)
 
-            verification_payload = await discord_responder.player_leadership_verification(
+            verification_payload = await auth_responder.player_leadership_verification(
                 db_player_obj, inter.author, inter.guild.id, self.coc_client)
 
             if not verification_payload['verified']:
@@ -450,13 +451,13 @@ class Discord(commands.Cog):
                     inter.author.id)
 
                 verification_payload = (
-                    await discord_responder.clan_leadership_verification(
+                    await auth_responder.clan_leadership_verification(
                         db_player_obj, inter.author, inter.guild.id, self.coc_client))
 
             # role mentioned
             else:
                 verification_payload = (
-                    await discord_responder.clan_role_player_leadership_verification(
+                    await auth_responder.clan_role_player_leadership_verification(
                         clan_role, inter.author, inter.guild.id, self.coc_client))
 
             if not verification_payload['verified']:

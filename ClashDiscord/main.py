@@ -18,7 +18,7 @@ from cogs import (
 )
 from data import ClashDiscord_Client_Data
 from linkAPI.client import LinkApiClient
-from responders.DiscordResponder import (
+from responders.ClientResponder import (
     get_client_email,
     get_client_password,
     get_linkapi_username,

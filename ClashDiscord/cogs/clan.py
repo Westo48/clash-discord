@@ -3,7 +3,9 @@ from disnake.ext import commands
 from responders import (
     DiscordResponder as discord_responder,
     ClashResponder as clash_responder,
-    RazBotDB_Responder as db_responder
+    RazBotDB_Responder as db_responder,
+    AuthResponder as auth_responder,
+    ClanResponder as clan_responder
 )
 from utils import discord_utils
 
@@ -43,11 +45,11 @@ class Clan(commands.Cog):
         if clan_role is None:
             db_player_obj = db_responder.read_player_active(inter.author.id)
 
-            verification_payload = await discord_responder.clan_verification(
+            verification_payload = await auth_responder.clan_verification(
                 db_player_obj, inter.author, self.coc_client)
         # role has been mentioned
         else:
-            verification_payload = await discord_responder.clan_role_verification(
+            verification_payload = await auth_responder.clan_role_verification(
                 clan_role, self.coc_client)
 
         if not verification_payload['verified']:
@@ -80,7 +82,7 @@ class Clan(commands.Cog):
                 await discord_responder.send_embed_list(inter, embed_list)
                 return
 
-        field_dict_list = discord_responder.clan_info(
+        field_dict_list = clan_responder.clan_info(
             clan, inter.client.emojis, self.client_data.emojis
         )
 
@@ -119,12 +121,12 @@ class Clan(commands.Cog):
             db_player_obj = db_responder.read_player_active(inter.author.id)
 
             verification_payload = (
-                await discord_responder.clan_verification(
+                await auth_responder.clan_verification(
                     db_player_obj, inter.author, self.coc_client))
         # role has been mentioned
         else:
             verification_payload = (
-                await discord_responder.clan_role_player_verification(
+                await auth_responder.clan_role_player_verification(
                     clan_role, inter.author, inter.guild.id, self.coc_client))
 
         if not verification_payload['verified']:
@@ -164,17 +166,17 @@ class Clan(commands.Cog):
 
         if option == "overview":
             embed_title = f"{clan.name} lineup"
-            embed_description = await discord_responder.clan_lineup(
+            embed_description = await clan_responder.clan_lineup(
                 clan, self.coc_client, inter.client.emojis, self.client_data.emojis)
 
         elif option == "member":
             embed_title = f"{clan.name} member lineup"
-            field_dict_list = await discord_responder.clan_lineup_member(
+            field_dict_list = await clan_responder.clan_lineup_member(
                 clan, self.coc_client, inter.client.emojis, self.client_data.emojis)
 
         elif option == "count":
             embed_title = f"{clan.name} lineup count"
-            field_dict_list = await discord_responder.clan_lineup_count(
+            field_dict_list = await clan_responder.clan_lineup_count(
                 clan, self.coc_client, inter.client.emojis, self.client_data.emojis)
 
         else:
@@ -220,12 +222,12 @@ class Clan(commands.Cog):
             db_player_obj = db_responder.read_player_active(inter.author.id)
 
             verification_payload = (
-                await discord_responder.clan_verification(
+                await auth_responder.clan_verification(
                     db_player_obj, inter.author, self.coc_client))
         # role has been mentioned
         else:
             verification_payload = (
-                await discord_responder.clan_role_player_verification(
+                await auth_responder.clan_role_player_verification(
                     clan_role, inter.author, inter.guild.id, self.coc_client))
 
         if not verification_payload['verified']:
@@ -265,12 +267,12 @@ class Clan(commands.Cog):
 
         if option == "overview":
             embed_title = f"{clan.name} war preference"
-            embed_description = await discord_responder.war_preference_member(
+            embed_description = await clan_responder.war_preference_member(
                 clan, self.coc_client, inter.client.emojis, self.client_data.emojis)
 
         elif option == "count":
             embed_title = f"{clan.name} war preference"
-            field_dict_list = await discord_responder.war_preference_clan(
+            field_dict_list = await clan_responder.war_preference_clan(
                 clan, self.coc_client, inter.client.emojis, self.client_data.emojis)
 
         else:
@@ -317,11 +319,11 @@ class Clan(commands.Cog):
         if clan_role is None:
             db_player_obj = db_responder.read_player_active(inter.author.id)
 
-            verification_payload = await discord_responder.clan_verification(
+            verification_payload = await auth_responder.clan_verification(
                 db_player_obj, inter.author, self.coc_client)
         # role has been mentioned
         else:
-            verification_payload = await discord_responder.clan_role_verification(
+            verification_payload = await auth_responder.clan_role_verification(
                 clan_role, self.coc_client)
 
         if not verification_payload['verified']:
@@ -357,7 +359,7 @@ class Clan(commands.Cog):
         donator_list = await clash_responder.donation(
             clan, unit_name, self.coc_client)
 
-        field_dict_list = discord_responder.donation(
+        field_dict_list = clan_responder.donation(
             clan, donator_list, unit_name,
             inter.client.emojis, self.client_data.emojis
         )
@@ -400,11 +402,11 @@ class Clan(commands.Cog):
         if clan_role is None:
             db_player_obj = db_responder.read_player_active(inter.author.id)
 
-            verification_payload = await discord_responder.clan_verification(
+            verification_payload = await auth_responder.clan_verification(
                 db_player_obj, inter.author, self.coc_client)
         # role has been mentioned
         else:
-            verification_payload = await discord_responder.clan_role_verification(
+            verification_payload = await auth_responder.clan_role_verification(
                 clan_role, self.coc_client)
 
         if not verification_payload['verified']:
@@ -441,7 +443,7 @@ class Clan(commands.Cog):
         if super_troop is None:
             embed_title = f"{clan.name} active super troops"
 
-            field_dict_list = await discord_responder.clan_super_troop_active(
+            field_dict_list = await clan_responder.clan_super_troop_active(
                 clan, inter.client.emojis, self.client_data.emojis, self.coc_client)
 
         # super troop specified for search
@@ -466,7 +468,7 @@ class Clan(commands.Cog):
 
             embed_title = f"{clan.name} {clan.tag}"
 
-            field_dict_list = discord_responder.super_troop_search(
+            field_dict_list = clan_responder.super_troop_search(
                 clan, donor_list, super_troop_name,
                 inter.client.emojis, self.client_data.emojis
             )

@@ -4,7 +4,8 @@ from responders import (
     DiscordResponder as discord_responder,
     ClashResponder as clash_responder,
     RazBotDB_Responder as db_responder,
-    linkApiResponder as link_responder
+    linkApiResponder as link_responder,
+    AuthResponder as auth_responder
 )
 from utils import discord_utils
 from linkAPI.client import LinkApiClient
@@ -49,11 +50,18 @@ class Admin(commands.Cog):
         # authenticating admin authorization
 
         verification_payload = (
-            discord_responder.guild_admin_verification(inter))
+            auth_responder.guild_admin_verification(inter))
 
         if not verification_payload['verified']:
 
-            embed_list = verification_payload["embed_list"]
+            embed_description = verification_payload["embed_description"]
+
+            embed_list = discord_responder.embed_message(
+                icon_url=inter.bot.user.avatar.url,
+                description=embed_description,
+                bot_user_name=inter.me.display_name,
+                author=inter.author
+            )
 
             await discord_responder.send_embed_list(inter, embed_list)
 
@@ -429,11 +437,18 @@ class Admin(commands.Cog):
         """
 
         verification_payload = (
-            discord_responder.guild_admin_verification(inter))
+            auth_responder.guild_admin_verification(inter))
 
         if not verification_payload['verified']:
 
-            embed_list = verification_payload["embed_list"]
+            embed_description = verification_payload["embed_description"]
+
+            embed_list = discord_responder.embed_message(
+                icon_url=inter.bot.user.avatar.url,
+                description=embed_description,
+                bot_user_name=inter.me.display_name,
+                author=inter.author
+            )
 
             await discord_responder.send_embed_list(inter, embed_list)
 
@@ -445,13 +460,13 @@ class Admin(commands.Cog):
                 inter.author.id)
 
             verification_payload = (
-                await discord_responder.clan_verification(
+                await auth_responder.clan_verification(
                     db_player_obj, inter.author, self.coc_client))
 
         # role mentioned
         else:
             verification_payload = (
-                await discord_responder.clan_role_player_verification(
+                await auth_responder.clan_role_player_verification(
                     clan_role, inter.author, inter.guild.id, self.coc_client))
 
         if not verification_payload['verified']:

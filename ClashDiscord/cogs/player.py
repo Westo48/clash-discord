@@ -3,7 +3,9 @@ from disnake.ext import commands
 from responders import (
     DiscordResponder as discord_responder,
     ClashResponder as clash_responder,
-    RazBotDB_Responder as db_responder
+    RazBotDB_Responder as db_responder,
+    AuthResponder as auth_responder,
+    PlayerResponder as player_responder
 )
 from utils import discord_utils
 
@@ -45,7 +47,7 @@ class Player(commands.Cog):
 
         db_player_obj = db_responder.read_player_active(user.id)
 
-        verification_payload = await discord_responder.player_verification(
+        verification_payload = await auth_responder.player_verification(
             db_player_obj, user, self.coc_client)
         if not verification_payload['verified']:
             embed_list = discord_responder.embed_message(
@@ -79,7 +81,7 @@ class Player(commands.Cog):
 
         embed_thumbnail = discord_responder.get_town_hall_url(player)
 
-        field_dict_list = discord_responder.player_info(
+        field_dict_list = player_responder.player_info(
             player, inter.client.emojis, self.client_data.emojis)
 
         embed_list = discord_responder.embed_message(
@@ -115,7 +117,7 @@ class Player(commands.Cog):
 
         db_player_obj = db_responder.read_player_active(user.id)
 
-        verification_payload = await discord_responder.player_verification(
+        verification_payload = await auth_responder.player_verification(
             db_player_obj, user, self.coc_client)
         if not verification_payload['verified']:
             embed_list = discord_responder.embed_message(
@@ -149,7 +151,7 @@ class Player(commands.Cog):
 
         embed_thumbnail = discord_responder.get_town_hall_url(player)
 
-        player_field_dict_list = discord_responder.player_info(
+        player_field_dict_list = player_responder.player_info(
             player, inter.client.emojis, self.client_data.emojis)
 
         embed_list = []
@@ -163,7 +165,7 @@ class Player(commands.Cog):
             author=inter.author
         ))
 
-        unit_field_dict_list = discord_responder.unit_lvl_all(
+        unit_field_dict_list = player_responder.unit_lvl_all(
             player, inter.client.emojis, self.client_data.emojis)
 
         embed_list.extend(discord_responder.embed_message(
@@ -179,11 +181,11 @@ class Player(commands.Cog):
 
         player_links = ""
 
-        player_links += discord_responder.link_clash_of_stats(player)
+        player_links += player_responder.link_clash_of_stats(player)
 
         player_links += "\n\n"
 
-        player_links += discord_responder.link_chocolate_clash(player)
+        player_links += player_responder.link_chocolate_clash(player)
 
         await inter.send(content=player_links)
 
@@ -217,7 +219,7 @@ class Player(commands.Cog):
 
         db_player_obj = db_responder.read_player_active(user.id)
 
-        verification_payload = await discord_responder.player_verification(
+        verification_payload = await auth_responder.player_verification(
             db_player_obj, user, self.coc_client)
         if not verification_payload['verified']:
             embed_list = discord_responder.embed_message(
@@ -252,7 +254,7 @@ class Player(commands.Cog):
         title_string = f"{player.name} units"
         embed_thumbnail = discord_responder.get_town_hall_url(player)
 
-        field_dict_list = discord_responder.unit_lvl_all(
+        field_dict_list = player_responder.unit_lvl_all(
             player, inter.client.emojis, self.client_data.emojis
         )
 
@@ -295,7 +297,7 @@ class Player(commands.Cog):
 
         db_player_obj = db_responder.read_player_active(user.id)
 
-        verification_payload = await discord_responder.player_verification(
+        verification_payload = await auth_responder.player_verification(
             db_player_obj, user, self.coc_client)
         if not verification_payload['verified']:
             embed_list = discord_responder.embed_message(
@@ -328,7 +330,7 @@ class Player(commands.Cog):
                 return
 
         unit_obj = clash_responder.find_player_unit(player, unit_name)
-        field_dict_list = [discord_responder.unit_lvl(
+        field_dict_list = [player_responder.unit_lvl(
             player, unit_obj, unit_name,
             inter.client.emojis, self.client_data.emojis)]
         # unit_obj not found
@@ -375,7 +377,7 @@ class Player(commands.Cog):
 
         db_player_obj = db_responder.read_player_active(user.id)
 
-        verification_payload = await discord_responder.player_verification(
+        verification_payload = await auth_responder.player_verification(
             db_player_obj, user, self.coc_client)
         if not verification_payload['verified']:
             embed_list = discord_responder.embed_message(
@@ -412,7 +414,7 @@ class Player(commands.Cog):
 
         embed_thumbnail = discord_responder.get_town_hall_url(player)
 
-        field_dict_list = discord_responder.active_super_troops(
+        field_dict_list = player_responder.active_super_troops(
             player, active_super_troop_list,
             inter.client.emojis, self.client_data.emojis
         )

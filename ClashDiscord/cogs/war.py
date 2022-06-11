@@ -6,7 +6,9 @@ from disnake.ext import commands
 from responders import (
     DiscordResponder as discord_responder,
     ClashResponder as clash_responder,
-    RazBotDB_Responder as db_responder
+    RazBotDB_Responder as db_responder,
+    AuthResponder as auth_responder,
+    WarResponder as war_responder
 )
 from utils import discord_utils
 
@@ -46,11 +48,11 @@ class War(commands.Cog):
         if clan_role is None:
             db_player_obj = db_responder.read_player_active(inter.author.id)
 
-            verification_payload = await discord_responder.war_verification(
+            verification_payload = await auth_responder.war_verification(
                 db_player_obj, war_selection, inter.author, self.coc_client)
         # role has been mentioned
         else:
-            verification_payload = await discord_responder.clan_role_war_verification(
+            verification_payload = await auth_responder.clan_role_war_verification(
                 clan_role, war_selection, self.coc_client)
 
         if not verification_payload['verified']:
@@ -66,7 +68,7 @@ class War(commands.Cog):
 
         war_obj = verification_payload['war_obj']
 
-        field_dict_list = discord_responder.war_scoreboard(
+        field_dict_list = war_responder.war_scoreboard(
             war_obj, inter.client.emojis, self.client_data.emojis)
 
         embed_list = discord_responder.embed_message(
@@ -102,12 +104,12 @@ class War(commands.Cog):
         if clan_role is None:
             db_player_obj = db_responder.read_player_active(inter.author.id)
 
-            verification_payload = await discord_responder.war_verification(
+            verification_payload = await auth_responder.war_verification(
                 db_player_obj, war_selection, inter.author, self.coc_client)
 
         # role has been mentioned
         else:
-            verification_payload = await discord_responder.clan_role_war_verification(
+            verification_payload = await auth_responder.clan_role_war_verification(
                 clan_role, war_selection, self.coc_client)
 
         if not verification_payload['verified']:
@@ -123,7 +125,7 @@ class War(commands.Cog):
 
         war_obj = verification_payload['war_obj']
 
-        field_dict_list = discord_responder.war_no_attack(
+        field_dict_list = war_responder.war_no_attack(
             war_obj, missed_attacks,
             inter.client.emojis, self.client_data.emojis)
 
@@ -159,12 +161,12 @@ class War(commands.Cog):
         if clan_role is None:
             db_player_obj = db_responder.read_player_active(inter.author.id)
 
-            verification_payload = await discord_responder.war_verification(
+            verification_payload = await auth_responder.war_verification(
                 db_player_obj, war_selection, inter.author, self.coc_client)
 
         # role has been mentioned
         else:
-            verification_payload = await discord_responder.clan_role_war_verification(
+            verification_payload = await auth_responder.clan_role_war_verification(
                 clan_role, war_selection, self.coc_client)
 
         if not verification_payload['verified']:
@@ -187,7 +189,7 @@ class War(commands.Cog):
 
         star_string = star_emoji * (star_count + 1)
 
-        field_dict_list = discord_responder.war_open_bases(
+        field_dict_list = war_responder.war_open_bases(
             war, star_count, inter.client.emojis, self.client_data.emojis)
 
         # setting embed description
@@ -240,13 +242,13 @@ class War(commands.Cog):
             db_player_obj = db_responder.read_player_active(inter.author.id)
 
             verification_payload = (
-                await discord_responder.war_verification(
+                await auth_responder.war_verification(
                     db_player_obj, war_selection,
                     inter.author, self.coc_client))
         # role has been mentioned
         else:
             verification_payload = (
-                await discord_responder.clan_role_war_verification(
+                await auth_responder.clan_role_war_verification(
                     clan_role, war_selection,
                     self.coc_client))
 
@@ -265,11 +267,11 @@ class War(commands.Cog):
 
         if option == "stars":
             embed_title = f"{war_obj.clan.name} vs. {war_obj.opponent.name}"
-            field_dict_list = discord_responder.war_clan_stars(
+            field_dict_list = war_responder.war_clan_stars(
                 war_obj, inter.client.emojis, self.client_data.emojis)
         elif option == "attacks":
             embed_title = f"{war_obj.clan.name} vs. {war_obj.opponent.name}"
-            field_dict_list = discord_responder.war_all_attacks(
+            field_dict_list = war_responder.war_all_attacks(
                 war_obj, inter.client.emojis, self.client_data.emojis)
         else:
             embed_title = None
@@ -319,7 +321,7 @@ class War(commands.Cog):
 
         db_player_obj = db_responder.read_player_active(user.id)
 
-        verification_payload = await discord_responder.war_verification(
+        verification_payload = await auth_responder.war_verification(
             db_player_obj, war_selection, user, self.coc_client)
         if not verification_payload['verified']:
             embed_list = discord_responder.embed_message(
@@ -335,7 +337,7 @@ class War(commands.Cog):
         player_obj = verification_payload['player_obj']
         war_obj = verification_payload['war_obj']
 
-        field_dict_list = discord_responder.war_member_score(
+        field_dict_list = war_responder.war_member_score(
             war_obj, player_obj)
         embed_list = discord_responder.embed_message(
             icon_url=inter.bot.user.avatar.url,
@@ -370,13 +372,13 @@ class War(commands.Cog):
             db_player_obj = db_responder.read_player_active(inter.author.id)
 
             verification_payload = (
-                await discord_responder.war_leadership_verification(
+                await auth_responder.war_leadership_verification(
                     db_player_obj, war_selection,
                     inter.author, inter.guild.id, self.coc_client))
         # role has been mentioned
         else:
             verification_payload = (
-                await discord_responder.clan_role_war_leadership_verification(
+                await auth_responder.clan_role_war_leadership_verification(
                     clan_role, war_selection,
                     inter.author, inter.guild.id, self.coc_client))
 
@@ -393,7 +395,7 @@ class War(commands.Cog):
 
         war_obj = verification_payload['war_obj']
 
-        field_dict_list = discord_responder.war_clan_score(
+        field_dict_list = war_responder.war_clan_score(
             war_obj)
         embed_list = discord_responder.embed_message(
             icon_url=inter.bot.user.avatar.url,
@@ -429,11 +431,11 @@ class War(commands.Cog):
         if clan_role is None:
             db_player_obj = db_responder.read_player_active(inter.author.id)
 
-            verification_payload = await discord_responder.war_verification(
+            verification_payload = await auth_responder.war_verification(
                 db_player_obj, war_selection, inter.author, self.coc_client)
         # role has been mentioned
         else:
-            verification_payload = await discord_responder.clan_role_war_verification(
+            verification_payload = await auth_responder.clan_role_war_verification(
                 clan_role, war_selection, self.coc_client)
 
         if not verification_payload['verified']:
@@ -451,20 +453,20 @@ class War(commands.Cog):
 
         if option == "overview":
             await inter.edit_original_message(
-                content=discord_responder.war_lineup_overview(war_obj))
+                content=war_responder.war_lineup_overview(war_obj))
 
             return
 
         elif option == "clan":
             embed_title = f"{war_obj.clan.name} vs. {war_obj.opponent.name}"
-            field_dict_list = discord_responder.war_lineup_clan(
+            field_dict_list = war_responder.war_lineup_clan(
                 war_obj, inter.client.emojis, self.client_data.emojis)
 
         elif option == "member":
             embed_title = f"{war_obj.clan.name} vs. {war_obj.opponent.name}"
 
             # running clan's members
-            field_dict_list = await discord_responder.war_lineup_member(
+            field_dict_list = await war_responder.war_lineup_member(
                 war_obj.clan, self.coc_client,
                 inter.client.emojis, self.client_data.emojis)
 
@@ -480,7 +482,7 @@ class War(commands.Cog):
             await discord_responder.send_embed_list(inter, embed_list)
 
             # running opponent's members
-            field_dict_list = await discord_responder.war_lineup_member(
+            field_dict_list = await war_responder.war_lineup_member(
                 war_obj.opponent, self.coc_client,
                 inter.client.emojis, self.client_data.emojis)
 

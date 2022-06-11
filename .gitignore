@@ -1,8 +1,10 @@
 testing.py
 notes.txt
 .vscode
+.idea
 __pycache__
 RazBot_Data.py
 RazBotDB_Connection_Data.py
 Procfile
 runtime.txt
+venv

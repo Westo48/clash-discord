@@ -4,7 +4,8 @@ from responders import (
     DiscordResponder as discord_responder,
     ClashResponder as clash_responder,
     RazBotDB_Responder as db_responder,
-    linkApiResponder as link_responder
+    linkApiResponder as link_responder,
+    ClientResponder as client_responder
 )
 from utils import discord_utils
 from linkAPI.client import LinkApiClient
@@ -35,17 +36,17 @@ class Client(commands.Cog):
 
         field_dict_list = []
 
-        field_dict_list.extend(discord_responder.client_info(
+        field_dict_list.extend(client_responder.client_info(
             inter.client, self.client_data))
 
         db_guild = db_responder.read_guild(inter.guild.id)
 
-        field_dict_list.extend(discord_responder.client_guild_info(
+        field_dict_list.extend(client_responder.client_guild_info(
             inter.guild, db_guild))
 
         db_players = db_responder.read_player_list(inter.author.id)
 
-        field_dict_list.extend(await discord_responder.client_player_info(
+        field_dict_list.extend(await client_responder.client_player_info(
             inter.author, db_players, self.coc_client))
 
         embed_list = discord_responder.embed_message(
