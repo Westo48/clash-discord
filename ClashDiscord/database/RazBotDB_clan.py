@@ -155,6 +155,23 @@ def delete_clan(guild_id, clan_tag):
     return data
 
 
+def select_clan_count():
+    """
+        returns clan count
+
+        Returns:
+            clan_count: int of clan count
+    """
+    # set up the query
+    query = (
+        f"SELECT COUNT(id) as clan_count FROM clan;"
+    )
+
+    # execute and return query
+    data = preset.select(query)
+    return data
+
+
 # todo docstring
 # todo some sort of confirmation
 def create_clan_table():

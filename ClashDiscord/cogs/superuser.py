@@ -28,27 +28,28 @@ class SuperUser(commands.Cog):
         pass
 
     @superuser.sub_command()
-    async def guild(
+    async def user(
         self,
         inter,
-        option: str = discord_utils.command_param_dict['superuser_guild'],
-        guild_id: str = discord_utils.command_param_dict['guild_id']
+        user: disnake.User = discord_utils.command_param_dict['required_user'],
+        option: str = discord_utils.command_param_dict['superuser_user'],
     ):
         """
             *super user* 
-            super user guild commands
+            superuser user commands
 
             Parameters
             ----------
-            option (optional): options for superuser guild commands
-            guild_id (optional): guild id for removal
+            user: user to run command for
+            option (optional): options for superuser user commands
         """
 
-        await inter.response.defer()
+        # defer for every superuser player command
+        await inter.response.defer(ephemeral=True)
 
-        db_author_obj = db_responder.read_user(inter.author.id)
+        db_author = db_responder.read_user(inter.author.id)
         # author is not claimed
-        if not db_author_obj:
+        if not db_author:
             embed_description = f"{inter.author.mention} is not claimed"
 
             embed_list = discord_responder.embed_message(
@@ -62,7 +63,7 @@ class SuperUser(commands.Cog):
             return
 
         # author is not super user
-        if not db_author_obj.super_user:
+        if not db_author.super_user:
             embed_description = f"{inter.author.mention} is not super user"
 
             embed_list = discord_responder.embed_message(
@@ -80,110 +81,146 @@ class SuperUser(commands.Cog):
         embed_description = None
         field_dict_list = []
 
-        if option == "show":
-            embed_title = f"**ClashDiscord Guilds**"
-            embed_description = f"Guild Count: {len(inter.client.guilds)}"
+        if option == "players":
+            db_player_list = db_responder.read_player_list(user.id)
 
-            for guild in inter.client.guilds:
-                field_dict_list.append({
-                    'name': f"{guild.name}",
-                    'value': f"{guild.id}"
-                })
+            # user has no claimed players
+            if len(db_player_list) == 0:
+                embed_description = (f"{user.mention} does not have any "
+                                     f"claimed players")
+
+                embed_list = discord_responder.embed_message(
+                    icon_url=inter.bot.user.avatar.url,
+                    description=embed_description,
+                    bot_user_name=inter.me.display_name,
+                    author=inter.author
+                )
+
+                await discord_responder.send_embed_list(inter, embed_list)
+                return
+
+            message = f"{user.mention} has claimed "
+            for db_player in db_player_list:
+                player = await clash_responder.get_player(
+                    db_player.player_tag, self.coc_client)
+                if db_player.active:
+                    message += f"{player.name} {player.tag} (active), "
+                else:
+                    message += f"{player.name} {player.tag}, "
+            # cuts the last two characters from the string ', '
+            message = message[:-2]
+
+            await inter.send(message)
+
+            return
+
+        elif option == "sync":
+            try:
+                # confirm user has been claimed
+                db_user = db_responder.read_user(user.id)
+
+                link_responder.sync_link(
+                    linkapi_client=self.linkapi_client,
+                    discord_user_id=db_user.discord_id
+                )
+            except ConflictError as arg:
+                embed_description = (f"{inter.author.mention}: {arg}\n\n"
+                                     f"please let {self.client_data.author} know")
+
+                embed_list = discord_responder.embed_message(
+                    icon_url=inter.bot.user.avatar.url,
+                    description=embed_description,
+                    bot_user_name=inter.me.display_name,
+                    author=inter.author
+                )
+
+                await discord_responder.send_embed_list(inter, embed_list)
+                return
+
+            # player data has been synced correctly
+            embed_description = (
+                f"data for {user.mention} has been properly synced")
+
+        if option == "claim":
+            db_user = db_responder.claim_user(user.id)
+
+            # user wasn't claimed and now is
+            if db_user:
+                embed_description = f"{user.mention} is now claimed"
+
+            # user was already claimed
+            else:
+                embed_description = (f"{user.mention} "
+                                     f"has already been claimed")
 
         elif option == "remove":
-            if guild_id is None:
+            db_user = db_responder.read_user(user.id)
+
+            # user not found
+            if not db_user:
+                embed_description = (f"claimed user for "
+                                     f"{user.mention} not found")
+
+                embed_list = discord_responder.embed_message(
+                    icon_url=inter.bot.user.avatar.url,
+                    title=embed_title,
+                    description=embed_description,
+                    bot_user_name=inter.me.display_name,
+                    field_list=field_dict_list,
+                    author=inter.author
+                )
+
+                await discord_responder.send_embed_list(inter, embed_list)
+                return
+
+            # user found
+
+            # delete user claim
+            removed_user = db_responder.delete_user(user.id)
+
+            # user could not be deleted
+            if removed_user:
                 embed_description = (
-                    f"guild id not specified, "
-                    f"please provide guild id to remove a guild")
+                    f"could not delete user "
+                    f"{user.mention}, please let "
+                    f"{self.client_data.author} know")
 
                 embed_list = discord_responder.embed_message(
                     icon_url=inter.bot.user.avatar.url,
+                    title=embed_title,
                     description=embed_description,
                     bot_user_name=inter.me.display_name,
+                    field_list=field_dict_list,
                     author=inter.author
                 )
 
                 await discord_responder.send_embed_list(inter, embed_list)
                 return
 
-            guild_id = int(guild_id)
+            player_links = []
 
-            # confirm guild is claimed
-            db_guild_obj = db_responder.read_guild(guild_id)
+            # get all player links for this user
+            try:
+                player_links = self.linkapi_client.get_discord_user_link(
+                    user.id)
+            except LoginError as arg:
+                print(arg)
+            # pass this error as nothing needs to be deleted
+            except NotFoundError:
+                pass
 
-            # guild isn't claimed
-            if not db_guild_obj:
-                embed_description = f"guild with id {guild_id} is not claimed"
+            # delete each link for the user
+            for link in player_links:
+                try:
+                    self.linkapi_client.delete_link(player_tag=link.player_tag)
+                except LoginError as arg:
+                    print(arg)
+                # pass this error as nothing needs to be deleted
+                except NotFoundError:
+                    pass
 
-                embed_list = discord_responder.embed_message(
-                    icon_url=inter.bot.user.avatar.url,
-                    description=embed_description,
-                    bot_user_name=inter.me.display_name,
-                    author=inter.author
-                )
-
-                await discord_responder.send_embed_list(inter, embed_list)
-                return
-
-            deleted_guild_obj = db_responder.delete_guild(guild_id)
-
-            # guild was deleted properly
-            if deleted_guild_obj is None:
-                embed_description = f"guild with id {guild_id} was deleted"
-
-            # guild could not be deleted
-            else:
-                embed_description = f"guild with id {guild_id} could not be deleted"
-
-        elif option == "leave":
-            if guild_id is None:
-                embed_description = (
-                    f"guild id not specified, "
-                    f"please provide guild id to leave a guild")
-
-                embed_list = discord_responder.embed_message(
-                    icon_url=inter.bot.user.avatar.url,
-                    description=embed_description,
-                    bot_user_name=inter.me.display_name,
-                    author=inter.author
-                )
-
-                await discord_responder.send_embed_list(inter, embed_list)
-                return
-
-            guild_id = int(guild_id)
-
-            # confirm bot is in guild
-            guild = disnake.utils.get(inter.bot.guilds, id=guild_id)
-
-            # bot isn't in guild
-            if guild is None:
-                embed_description = (f"{inter.me.display_name} "
-                                     f"is not in guild {guild_id}")
-
-                embed_list = discord_responder.embed_message(
-                    icon_url=inter.bot.user.avatar.url,
-                    description=embed_description,
-                    bot_user_name=inter.me.display_name,
-                    author=inter.author
-                )
-
-                await discord_responder.send_embed_list(inter, embed_list)
-                return
-
-            await guild.leave()
-            left_guild = disnake.utils.get(inter.bot.guilds, id=guild.id)
-
-            # guild was left properly
-            if left_guild is None:
-                embed_description = (f"{inter.me.display_name} left "
-                                     f"guild {guild.name} id {guild.id}")
-
-            # guild could not be left
-            else:
-                embed_description = (f"{inter.me.display_name} could not leave "
-                                     f"guild {guild.name} id {guild.id}")
-
+            embed_description = (
+                f"user {user.mention} removed properly")
         else:
             field_dict_list = [{
                 'name': "incorrect option selected",
@@ -196,8 +233,7 @@ class SuperUser(commands.Cog):
             description=embed_description,
             bot_user_name=inter.me.display_name,
             field_list=field_dict_list,
-            author=inter.author
-        )
+            author=inter.author)
 
         await discord_responder.send_embed_list(inter, embed_list)
 
@@ -221,9 +257,9 @@ class SuperUser(commands.Cog):
         # defer for every superuser admin command
         await inter.response.defer(ephemeral=True)
 
-        db_author_obj = db_responder.read_user(inter.author.id)
+        db_author = db_responder.read_user(inter.author.id)
         # author is not claimed
-        if not db_author_obj:
+        if not db_author:
             embed_description = f"{inter.author.mention} is not claimed"
 
             embed_list = discord_responder.embed_message(
@@ -237,7 +273,7 @@ class SuperUser(commands.Cog):
             return
 
         # author is not super user
-        if not db_author_obj.super_user:
+        if not db_author.super_user:
             embed_description = f"{inter.author.mention} is not super user"
 
             embed_list = discord_responder.embed_message(
@@ -313,9 +349,9 @@ class SuperUser(commands.Cog):
                 return
 
             # confirm user is claimed
-            db_user_obj = db_responder.read_user(user.id)
+            db_user = db_responder.read_user(user.id)
             # user isn't claimed
-            if not db_user_obj:
+            if not db_user:
                 embed_description = f"{user.mention} is not claimed"
 
                 embed_list = discord_responder.embed_message(
@@ -328,9 +364,9 @@ class SuperUser(commands.Cog):
                 await discord_responder.send_embed_list(inter, embed_list)
                 return
 
-            updated_user_obj = db_responder.update_toggle_user_admin(user.id)
+            updated_user = db_responder.update_toggle_user_admin(user.id)
             # upated user not found
-            if updated_user_obj is None:
+            if updated_user is None:
                 embed_description = f"{user.mention} could not be updated"
 
                 embed_list = discord_responder.embed_message(
@@ -344,54 +380,12 @@ class SuperUser(commands.Cog):
                 return
 
             # user was updated and is now an admin
-            if updated_user_obj.admin:
+            if updated_user.admin:
                 embed_description = f"{user.mention} is now an admin"
 
             # user was updated and is now not an admin
             else:
                 embed_description = f"{user.mention} is no longer an admin"
-
-        elif option == "remove":
-            if user is None:
-                embed_description = (
-                    f"user not specified, "
-                    f"please provide user to remove user")
-
-                embed_list = discord_responder.embed_message(
-                    icon_url=inter.bot.user.avatar.url,
-                    description=embed_description,
-                    bot_user_name=inter.me.display_name,
-                    author=inter.author
-                )
-
-                await discord_responder.send_embed_list(inter, embed_list)
-                return
-
-            # confirm user is claimed
-            db_user_obj = db_responder.read_user(user.id)
-            # user isn't claimed
-            if not db_user_obj:
-                embed_description = f"{user.mention} is not claimed"
-
-                embed_list = discord_responder.embed_message(
-                    icon_url=inter.bot.user.avatar.url,
-                    description=embed_description,
-                    bot_user_name=inter.me.display_name,
-                    author=inter.author
-                )
-
-                await discord_responder.send_embed_list(inter, embed_list)
-                return
-
-            deleted_user_obj = db_responder.delete_user(user.id)
-
-            # user was deleted properly
-            if deleted_user_obj is None:
-                embed_description = f"{user.mention} was deleted"
-
-            # user could not be deleted
-            else:
-                embed_description = f"{user.mention} could not be deleted"
 
         else:
             field_dict_list = [{
@@ -414,9 +408,9 @@ class SuperUser(commands.Cog):
     async def player(
         self,
         inter,
-        user: disnake.User = discord_utils.command_param_dict['required_user'],
+        player_tag: str = discord_utils.command_param_dict['required_player_tag'],
         option: str = discord_utils.command_param_dict['superuser_player'],
-        player_tag: str = discord_utils.command_param_dict['client_player_tag']
+        user: disnake.User = discord_utils.command_param_dict['user']
     ):
         """
             *super user* 
@@ -432,9 +426,9 @@ class SuperUser(commands.Cog):
         # defer for every superuser player command
         await inter.response.defer(ephemeral=True)
 
-        db_author_obj = db_responder.read_user(inter.author.id)
+        db_author = db_responder.read_user(inter.author.id)
         # author is not claimed
-        if not db_author_obj:
+        if not db_author:
             embed_description = f"{inter.author.mention} is not claimed"
 
             embed_list = discord_responder.embed_message(
@@ -448,7 +442,7 @@ class SuperUser(commands.Cog):
             return
 
         # author is not super user
-        if not db_author_obj.super_user:
+        if not db_author.super_user:
             embed_description = f"{inter.author.mention} is not super user"
 
             embed_list = discord_responder.embed_message(
@@ -466,36 +460,13 @@ class SuperUser(commands.Cog):
         embed_description = None
         field_dict_list = []
 
-        # commands that do not require player tag
-        if option == "sync":
-            # confirm user has been claimed
-            db_user_obj = db_responder.read_user(user.id)
-
-            if not db_user_obj:
-                db_user_obj = db_responder.claim_user(user.id)
-
-                # user could not be claimed
-                if not db_user_obj:
-                    embed_description = f"{user.mention} user couldn't be claimed"
-
-                    embed_list = discord_responder.embed_message(
-                        icon_url=inter.bot.user.avatar.url,
-                        description=embed_description,
-                        bot_user_name=inter.me.display_name,
-                        author=inter.author
-                    )
-
-                    await discord_responder.send_embed_list(inter, embed_list)
-                    return
-
-            try:
-                link_responder.sync_link(
-                    linkapi_client=self.linkapi_client,
-                    discord_user_id=db_user_obj.discord_id
-                )
-            except ConflictError as arg:
-                embed_description = (f"{inter.author.mention}: {arg}\n\n"
-                                     f"please let {self.client_data.author} know")
+        if option == "remove":
+            # player tag is a required parameter
+            # player tag not specified
+            if player_tag is None:
+                embed_description = (
+                    f"player tag not specified, "
+                    f"please provide player tag to remove a player")
 
                 embed_list = discord_responder.embed_message(
                     icon_url=inter.bot.user.avatar.url,
@@ -507,41 +478,167 @@ class SuperUser(commands.Cog):
                 await discord_responder.send_embed_list(inter, embed_list)
                 return
 
-            # player data has been synced correctly
-            embed_description = (
-                f"data for {user.mention} has been properly synced")
+            # user not supplied
+            if not user:
+                embed_description = f"please supply valid user"
 
-            embed_list = discord_responder.embed_message(
-                icon_url=inter.bot.user.avatar.url,
-                title=embed_title,
-                description=embed_description,
-                bot_user_name=inter.me.display_name,
-                field_list=field_dict_list,
-                author=inter.author)
+                embed_list = discord_responder.embed_message(
+                    icon_url=inter.bot.user.avatar.url,
+                    description=embed_description,
+                    bot_user_name=inter.me.display_name,
+                    author=inter.author
+                )
 
-            await discord_responder.send_embed_list(inter, embed_list)
+                await discord_responder.send_embed_list(inter, embed_list)
+                return
+
+            player = await clash_responder.get_player(player_tag, self.coc_client)
+
+            # player not found
+            if not player:
+                # format player tag
+                # remove spaces
+                player_tag = player_tag.replace(" ", "")
+                # adding "#" if it isn't already in the player tag
+                if "#" not in player_tag:
+                    player_tag = f"#{player_tag}"
+
+                player_title = player_tag.upper()
+
+            else:
+                player_tag = player.tag
+                player_title = f"{player.name} {player.tag}"
+
+            db_player = db_responder.read_player(user.id, player_tag)
+
+            # db player not found
+            if not db_player:
+                embed_description = (
+                    f"{player_title} is not claimed "
+                    f"by {user.mention}")
+
+                embed_list = discord_responder.embed_message(
+                    icon_url=inter.bot.user.avatar.url,
+                    description=embed_description,
+                    bot_user_name=inter.me.display_name,
+                    author=inter.author)
+
+                await discord_responder.send_embed_list(inter, embed_list)
+                return
+
+            db_del_player = db_responder.delete_player(
+                user.id, player_tag)
+
+            # player was not deleted
+            if db_del_player:
+                embed_description = (
+                    f"{player_title} could not be deleted "
+                    f"from {user.mention} player list")
+
+                embed_list = discord_responder.embed_message(
+                    icon_url=inter.bot.user.avatar.url,
+                    description=embed_description,
+                    bot_user_name=inter.me.display_name,
+                    author=inter.author)
+
+                await discord_responder.send_embed_list(inter, embed_list)
+                return
+
+            # delete link api link
+            self.linkapi_client.delete_link(
+                player_tag=player_tag)
+
+            db_active_player = db_responder.read_player_active(user.id)
+
+            # active player found
+            # no need to change the active player
+            if db_active_player:
+                embed_description = (
+                    f"{player_title} has been deleted "
+                    f"from {user.mention} player list")
+
+                embed_list = discord_responder.embed_message(
+                    icon_url=inter.bot.user.avatar.url,
+                    description=embed_description,
+                    bot_user_name=inter.me.display_name,
+                    author=inter.author)
+
+                await discord_responder.send_embed_list(inter, embed_list)
+                return
+
+            # no active player found
+            # check if there are any other players
+            db_player_list = db_responder.read_player_list(
+                user.id)
+
+            # no additional players claimed
+            if len(db_player_list) == 0:
+                embed_description = (
+                    f"{player_title} has been deleted, "
+                    f"{user.mention} has no more claimed players")
+
+                embed_list = discord_responder.embed_message(
+                    icon_url=inter.bot.user.avatar.url,
+                    description=embed_description,
+                    bot_user_name=inter.me.display_name,
+                    author=inter.author)
+
+                await discord_responder.send_embed_list(inter, embed_list)
+                return
+
+            # additional players claimed by user
+            # update the first as the new active
+            db_updated_player = db_responder.update_player_active(
+                user.id, db_player_list[0].player_tag)
+
+            # update not successful
+            if not db_updated_player:
+                embed_description = (
+                    f"{player_title} has been deleted, "
+                    f"could not update active player, "
+                    f"{user.mention} has no active players")
+
+                embed_list = discord_responder.embed_message(
+                    icon_url=inter.bot.user.avatar.url,
+                    description=embed_description,
+                    bot_user_name=inter.me.display_name,
+                    author=inter.author)
+
+                await discord_responder.send_embed_list(inter, embed_list)
+                return
+
+            # update was successful
+            clash_updated_player = await clash_responder.get_player(
+                db_updated_player.player_tag, self.coc_client)
+
+            # clash player not found
+            if clash_updated_player is None:
+                embed_description = (
+                    f"{player_title} has been deleted, "
+                    f"{user.mention} active is now set to "
+                    f"{db_updated_player.player_tag}, "
+                    f"could not find player in clash of clans")
+
+            # player deleted
+            # active player updated
+            # clash player found
+            else:
+                embed_description = (
+                    f"{player_title} has been deleted, "
+                    f"{user.mention} active is now set to "
+                    f"{clash_updated_player.name} "
+                    f"{clash_updated_player.tag}")
+
             return
 
-        # player tag not supplied
-        if not player_tag:
-            embed_description = f"please enter a valid player tag"
-
-            embed_list = discord_responder.embed_message(
-                icon_url=inter.bot.user.avatar.url,
-                description=embed_description,
-                bot_user_name=inter.me.display_name,
-                author=inter.author
-            )
-
-            await discord_responder.send_embed_list(inter, embed_list)
-            return
+        # requires valid player
 
         # confirm valid player_tag
-        player_obj = await clash_responder.get_player(
+        player = await clash_responder.get_player(
             player_tag, self.coc_client)
 
         # player tag was not valid
-        if not player_obj:
+        if not player:
             embed_description = f"player with tag {player_tag} was not found"
 
             embed_list = discord_responder.embed_message(
@@ -554,23 +651,66 @@ class SuperUser(commands.Cog):
             await discord_responder.send_embed_list(inter, embed_list)
             return
 
-        if option == "claim":
+        if option == "user":
+            field_dict_list.append(discord_responder.find_user_from_tag(
+                player, inter.guild.members))
+
+            embed_list = discord_responder.embed_message(
+                icon_url=inter.bot.user.avatar.url,
+                bot_user_name=inter.me.display_name,
+                field_list=field_dict_list,
+                author=inter.author)
+
+            await discord_responder.send_embed_list(inter, embed_list)
+            return
+
+        # user not supplied
+        if not user:
+            embed_description = f"please supply valid user"
+
+            embed_list = discord_responder.embed_message(
+                icon_url=inter.bot.user.avatar.url,
+                description=embed_description,
+                bot_user_name=inter.me.display_name,
+                author=inter.author
+            )
+
+            await discord_responder.send_embed_list(inter, embed_list)
+            return
+
+        # player tag is a required parameter
+        # player tag not supplied
+        if not player_tag:
+            embed_description = f"please supply valid player tag"
+
+            embed_list = discord_responder.embed_message(
+                icon_url=inter.bot.user.avatar.url,
+                description=embed_description,
+                bot_user_name=inter.me.display_name,
+                author=inter.author
+            )
+
+            await discord_responder.send_embed_list(inter, embed_list)
+            return
+
+        elif option == "claim":
+
             # confirm user has been claimed
-            db_user_obj = db_responder.read_user(user.id)
-            if not db_user_obj:
+            db_user = db_responder.read_user(user.id)
+            if not db_user:
                 # user has not been claimed
-                db_user_obj = db_responder.claim_user(user.id)
-                if not db_user_obj:
+                db_user = db_responder.claim_user(user.id)
+                if not db_user:
                     # user could not be claimed
                     await inter.edit_original_message(
                         content=f"{user.mention} user couldn't be claimed")
                     return
 
             # confirm player has not been claimed
-            db_player_obj = db_responder.read_player_from_tag(player_obj.tag)
+            db_player = db_responder.read_player_from_tag(player.tag)
             # player has already been claimed
-            if db_player_obj:
-                embed_description = (f"{player_obj.name} {player_obj.tag} "
+            if db_player:
+                embed_description = (f"{player.name} {player.tag} "
                                      f"has already been claimed")
 
                 embed_list = discord_responder.embed_message(
@@ -587,10 +727,10 @@ class SuperUser(commands.Cog):
             try:
                 link_responder.add_secure_link(
                     linkapi_client=self.linkapi_client,
-                    player_tag=player_obj.tag,
-                    discord_user_id=db_user_obj.discord_id
+                    player_tag=player.tag,
+                    discord_user_id=db_user.discord_id
                 )
-            except ConflictError:
+            except ConflictError as arg:
                 embed_description = (f"{inter.author.mention}: {arg}\n\n"
                                      f"please let {self.client_data.author} know")
 
@@ -608,143 +748,284 @@ class SuperUser(commands.Cog):
             # user claimed
             # player is valid
             # player hasn't been claimed
-            db_player_obj = db_responder.claim_player(
-                user.id, player_obj.tag)
+            db_player = db_responder.claim_player(
+                user.id, player.tag)
 
             # failed to claim
-            if db_player_obj is None:
-                embed_description = (f"Could not claim {player_obj.name} "
-                                     f"{player_obj.tag} for {user.mention}")
+            if db_player is None:
+                embed_description = (f"Could not claim {player.name} "
+                                     f"{player.tag} for {user.mention}")
 
             # succesfully claimed
             else:
-                embed_description = (f"{player_obj.name} {player_obj.tag} "
+                embed_description = (f"{player.name} {player.tag} "
                                      f"is now claimed by {user.mention}")
 
+        else:
+            field_dict_list = [{
+                'name': "incorrect option selected",
+                'value': "please select a different option"
+            }]
+
+        embed_list = discord_responder.embed_message(
+            icon_url=inter.bot.user.avatar.url,
+            title=embed_title,
+            description=embed_description,
+            bot_user_name=inter.me.display_name,
+            field_list=field_dict_list,
+            author=inter.author)
+
+        await discord_responder.send_embed_list(inter, embed_list)
+
+    @superuser.sub_command()
+    async def guild(
+        self,
+        inter,
+        option: str = discord_utils.command_param_dict['superuser_guild'],
+        guild_id: str = discord_utils.command_param_dict['guild_id']
+    ):
+        """
+            *super user* 
+            super user guild commands
+
+            Parameters
+            ----------
+            option (optional): options for superuser guild commands
+            guild_id (optional): guild id for removal
+        """
+
+        await inter.response.defer()
+
+        db_author = db_responder.read_user(inter.author.id)
+        # author is not claimed
+        if not db_author:
+            embed_description = f"{inter.author.mention} is not claimed"
+
+            embed_list = discord_responder.embed_message(
+                icon_url=inter.bot.user.avatar.url,
+                description=embed_description,
+                bot_user_name=inter.me.display_name,
+                author=inter.author
+            )
+
+            await discord_responder.send_embed_list(inter, embed_list)
+            return
+
+        # author is not super user
+        if not db_author.super_user:
+            embed_description = f"{inter.author.mention} is not super user"
+
+            embed_list = discord_responder.embed_message(
+                icon_url=inter.bot.user.avatar.url,
+                description=embed_description,
+                bot_user_name=inter.me.display_name,
+                author=inter.author
+            )
+
+            await discord_responder.send_embed_list(inter, embed_list)
+            return
+
+        # initializing embed default values
+        embed_title = None
+        embed_description = None
+        field_dict_list = []
+
+        if option == "show":
+            embed_title = f"**ClashDiscord Guilds**"
+            embed_description = f"Guild Count: {len(inter.client.guilds)}"
+
+            for guild in inter.client.guilds:
+                field_dict_list.append({
+                    'name': f"{guild.name}",
+                    'value': f"{guild.id}"
+                })
+
         elif option == "remove":
-            db_player_obj = db_responder.read_player(user.id, player_obj.tag)
-
-            # db player not found
-            if not db_player_obj:
-                embed_description = (f"{player_obj.name} {player_obj.tag} "
-                                     f"is not claimed by {user.mention}")
+            if guild_id is None:
+                embed_description = (
+                    f"guild id not specified, "
+                    f"please provide guild id to remove a guild")
 
                 embed_list = discord_responder.embed_message(
                     icon_url=inter.bot.user.avatar.url,
                     description=embed_description,
                     bot_user_name=inter.me.display_name,
-                    author=inter.author)
+                    author=inter.author
+                )
 
                 await discord_responder.send_embed_list(inter, embed_list)
                 return
 
-            db_del_player_obj = db_responder.delete_player(
-                user.id, player_obj.tag)
+            guild_id = int(guild_id)
 
-            # player was not deleted
-            if db_del_player_obj:
-                embed_description = (
-                    f"{player_obj.name} {player_obj.tag} "
-                    f"could not be deleted "
-                    f"from {user.mention} player list")
+            # confirm guild is claimed
+            db_guild = db_responder.read_guild(guild_id)
+
+            # guild isn't claimed
+            if not db_guild:
+                embed_description = f"guild with id {guild_id} is not claimed"
 
                 embed_list = discord_responder.embed_message(
                     icon_url=inter.bot.user.avatar.url,
                     description=embed_description,
                     bot_user_name=inter.me.display_name,
-                    author=inter.author)
+                    author=inter.author
+                )
 
                 await discord_responder.send_embed_list(inter, embed_list)
                 return
 
-            # delete link api link
-            self.linkapi_client.delete_link(
-                player_tag=player_obj.tag)
+            deleted_guild = db_responder.delete_guild(guild_id)
 
-            db_active_player_obj = db_responder.read_player_active(user.id)
+            # guild was deleted properly
+            if deleted_guild is None:
+                embed_description = f"guild with id {guild_id} was deleted"
 
-            # active player found
-            # no need to change the active player
-            if db_active_player_obj:
-                embed_description = (
-                    f"{player_obj.name} {player_obj.tag} "
-                    f"has been deleted "
-                    f"from {user.mention} player list")
-
-                embed_list = discord_responder.embed_message(
-                    icon_url=inter.bot.user.avatar.url,
-                    description=embed_description,
-                    bot_user_name=inter.me.display_name,
-                    author=inter.author)
-
-                await discord_responder.send_embed_list(inter, embed_list)
-                return
-
-            # no active player found
-            # check if there are any other players
-            db_player_obj_list = db_responder.read_player_list(
-                user.id)
-
-            # no additional players claimed
-            if len(db_player_obj_list) == 0:
-                embed_description = (
-                    f"{player_obj.name} {player_obj.tag} "
-                    f"has been deleted, "
-                    f"{user.mention} has no more claimed players")
-
-                embed_list = discord_responder.embed_message(
-                    icon_url=inter.bot.user.avatar.url,
-                    description=embed_description,
-                    bot_user_name=inter.me.display_name,
-                    author=inter.author)
-
-                await discord_responder.send_embed_list(inter, embed_list)
-                return
-
-            # additional players claimed by user
-            # update the first as the new active
-            db_updated_player_obj = db_responder.update_player_active(
-                user.id, db_player_obj_list[0].player_tag)
-
-            # update not successful
-            if not db_updated_player_obj:
-                embed_description = (
-                    f"{player_obj.name} {player_obj.tag} "
-                    f"has been deleted, could not update active player, "
-                    f"{user.mention} has no active players")
-
-                embed_list = discord_responder.embed_message(
-                    icon_url=inter.bot.user.avatar.url,
-                    description=embed_description,
-                    bot_user_name=inter.me.display_name,
-                    author=inter.author)
-
-                await discord_responder.send_embed_list(inter, embed_list)
-                return
-
-            # update was successful
-            clash_updated_player_obj = await clash_responder.get_player(
-                db_updated_player_obj.player_tag, self.coc_client)
-
-            # clash player not found
-            if clash_updated_player_obj is None:
-                embed_description = (
-                    f"{player_obj.name} {player_obj.tag} "
-                    f"has been deleted, "
-                    f"{user.mention} active is now set to "
-                    f"{db_updated_player_obj.player_tag}, "
-                    f"could not find player in clash of clans")
-
-            # player deleted
-            # active player updated
-            # clash player found
+            # guild could not be deleted
             else:
+                embed_description = f"guild with id {guild_id} could not be deleted"
+
+        elif option == "leave":
+            if guild_id is None:
                 embed_description = (
-                    f"{player_obj.name} {player_obj.tag} "
-                    f"has been deleted, "
-                    f"{user.mention} active is now set to "
-                    f"{clash_updated_player_obj.name} "
-                    f"{clash_updated_player_obj.tag}")
+                    f"guild id not specified, "
+                    f"please provide guild id to leave a guild")
+
+                embed_list = discord_responder.embed_message(
+                    icon_url=inter.bot.user.avatar.url,
+                    description=embed_description,
+                    bot_user_name=inter.me.display_name,
+                    author=inter.author
+                )
+
+                await discord_responder.send_embed_list(inter, embed_list)
+                return
+
+            guild_id = int(guild_id)
+
+            # confirm bot is in guild
+            guild = disnake.utils.get(inter.bot.guilds, id=guild_id)
+
+            # bot isn't in guild
+            if guild is None:
+                embed_description = (f"{inter.me.display_name} "
+                                     f"is not in guild {guild_id}")
+
+                embed_list = discord_responder.embed_message(
+                    icon_url=inter.bot.user.avatar.url,
+                    description=embed_description,
+                    bot_user_name=inter.me.display_name,
+                    author=inter.author
+                )
+
+                await discord_responder.send_embed_list(inter, embed_list)
+                return
+
+            await guild.leave()
+            left_guild = disnake.utils.get(inter.bot.guilds, id=guild.id)
+
+            # guild was left properly
+            if left_guild is None:
+                embed_description = (f"{inter.me.display_name} left "
+                                     f"guild {guild.name} id {guild.id}")
+
+            # guild could not be left
+            else:
+                embed_description = (f"{inter.me.display_name} could not leave "
+                                     f"guild {guild.name} id {guild.id}")
+
+        else:
+            field_dict_list = [{
+                'name': "incorrect option selected",
+                'value': "please select a different option"
+            }]
+
+        embed_list = discord_responder.embed_message(
+            icon_url=inter.bot.user.avatar.url,
+            title=embed_title,
+            description=embed_description,
+            bot_user_name=inter.me.display_name,
+            field_list=field_dict_list,
+            author=inter.author
+        )
+
+        await discord_responder.send_embed_list(inter, embed_list)
+
+    @superuser.sub_command()
+    async def count(
+        self, inter,
+        option: str = discord_utils.command_param_dict['superuser_count'],
+    ):
+        """
+            *super user* 
+            super user count commands
+
+            Parameters
+            ----------
+            option (optional): options for superuser count commands
+        """
+
+        # defer for every superuser count command
+        await inter.response.defer(ephemeral=True)
+
+        db_author = db_responder.read_user(inter.author.id)
+
+        # author is not claimed
+        if not db_author:
+            embed_description = f"{inter.author.mention} is not claimed"
+
+            embed_list = discord_responder.embed_message(
+                icon_url=inter.bot.user.avatar.url,
+                description=embed_description,
+                bot_user_name=inter.me.display_name,
+                author=inter.author
+            )
+
+            await discord_responder.send_embed_list(inter, embed_list)
+            return
+
+        # author is not super user
+        if not db_author.super_user:
+            embed_description = f"{inter.author.mention} is not super user"
+
+            embed_list = discord_responder.embed_message(
+                icon_url=inter.bot.user.avatar.url,
+                description=embed_description,
+                bot_user_name=inter.me.display_name,
+                author=inter.author
+            )
+
+            await discord_responder.send_embed_list(inter, embed_list)
+            return
+
+        # initializing embed default values
+        embed_title = None
+        embed_description = None
+        field_dict_list = []
+
+        if option == "user":
+            user_count = db_responder.read_user_count()
+
+            embed_title = f"{inter.me.display_name} User Count"
+            embed_description = f"{user_count} users"
+
+        elif option == "player":
+            player_count = db_responder.read_player_count()
+
+            embed_title = f"{inter.me.display_name} Player Count"
+            embed_description = f"{player_count} players"
+
+        elif option == "guild":
+            guild_count = db_responder.read_guild_count()
+
+            embed_title = f"{inter.me.display_name} Guild Count"
+            embed_description = f"{guild_count} guilds"
+
+        elif option == "clan":
+            clan_count = db_responder.read_clan_count()
+
+            embed_title = f"{inter.me.display_name} Clan Count"
+            embed_description = f"{clan_count} clans"
 
         else:
             field_dict_list = [{

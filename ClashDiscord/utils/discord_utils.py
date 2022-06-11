@@ -58,7 +58,7 @@ async def autocomp_emoji_name(
 command_param_dict = {
     'user': commands.Param(
         name="user",
-        description="*optional* user to search for active player",
+        description="*optional* user to specify for command",
         default=None
     ),
     'required_user': commands.Param(
@@ -216,6 +216,22 @@ command_param_dict = {
         name="emoji_name",
         description="options for emoji name"
     ),
+    'discord_role': commands.Param(
+        name="option",
+        description="*optional* options for discord role returns",
+        default="me",
+        choices=[
+            "me", "member", "all"
+        ]
+    ),
+    'discord_nickname': commands.Param(
+        name="option",
+        description="*optional* options for discord nickname returns",
+        default="me",
+        choices=[
+            "me", "member", "all"
+        ]
+    ),
     'discord_user': commands.Param(
         name="option",
         description="*optional* options for discord user returns",
@@ -242,7 +258,7 @@ command_param_dict = {
         description="*optional* options for client player returns",
         default="show",
         choices=[
-            "claim", "show", "update", "remove", "sync"
+            "show", "sync", "update", "claim", "remove"
         ]
     ),
     'client_player_tag': commands.Param(
@@ -250,7 +266,11 @@ command_param_dict = {
         description="*optional* player tag",
         default=None
     ),
-    'client_guild': commands.Param(
+    'required_player_tag': commands.Param(
+        name="player_tag",
+        description="*required* player tag",
+    ),
+    'admin_guild': commands.Param(
         name="option",
         description="*optional* options for client guild returns",
         default="claim",
@@ -263,10 +283,18 @@ command_param_dict = {
         description="*optional* options for client clan returns",
         default="show",
         choices=[
-            "claim", "show", "remove"
+            "show"
         ]
     ),
-    'client_role': commands.Param(
+    'admin_clan': commands.Param(
+        name="option",
+        description="*optional* options for admin clan returns",
+        default="show",
+        choices=[
+            "show", "claim", "remove"
+        ]
+    ),
+    'admin_role': commands.Param(
         name="option",
         description="*optional* options for client role returns",
         default="show",
@@ -274,25 +302,40 @@ command_param_dict = {
             "show", "remove"
         ]
     ),
-    'client_role_mention': commands.Param(
+    'role_mention': commands.Param(
         name="role",
         description="*optional* mentioned discord role",
         default=None
     ),
-    'client_clan_rank_role': commands.Param(
+    'admin_clan_rank_role': commands.Param(
         name="option",
-        description="*optional* options for client clan and rank role returns",
+        description="*optional* options for admin clan and rank role returns",
         default="claim",
         choices=[
             "claim"
         ]
     ),
+    'admin_user': commands.Param(
+        name="option",
+        description="*optional* options for admin user returns",
+        default="player",
+        choices=[
+            "player", "sync", "update"
+        ]
+    ),
     'admin_player': commands.Param(
         name="option",
         description="*optional* options for admin player returns",
-        default="show",
         choices=[
-            "claim", "show", "remove", "sync"
+            "claim", "remove"
+        ]
+    ),
+    'superuser_user': commands.Param(
+        name="option",
+        description="*optional* options for superuser user returns",
+        default="players",
+        choices=[
+            "players", "sync", "claim", "remove"
         ]
     ),
     'superuser_guild': commands.Param(
@@ -319,9 +362,17 @@ command_param_dict = {
     'superuser_player': commands.Param(
         name="option",
         description="*optional* options for superuser player returns",
-        default="claim",
+        default="user",
         choices=[
-            "claim", "remove", "sync"
+            "user", "claim", "remove"
+        ]
+    ),
+    'superuser_count': commands.Param(
+        name="option",
+        description="*optional* options for superuser count returns",
+        default="user",
+        choices=[
+            "user", "player", "guild", "clan"
         ]
     ),
 }

@@ -6,7 +6,8 @@ from disnake.ext import commands
 from responders import (
     DiscordResponder as discord_responder,
     ClashResponder as clash_responder,
-    RazBotDB_Responder as db_responder
+    RazBotDB_Responder as db_responder,
+    AuthResponder as auth_responder
 )
 from utils import discord_utils
 
@@ -45,7 +46,7 @@ class Announce(commands.Cog):
         db_player_obj = db_responder.read_player_active(inter.author.id)
 
         verification_payload = (
-            await discord_responder.player_leadership_verification(
+            await auth_responder.player_leadership_verification(
                 db_player_obj, inter.author, inter.guild.id, self.coc_client))
         if not verification_payload['verified']:
             embed_list = discord_responder.embed_message(
@@ -55,7 +56,7 @@ class Announce(commands.Cog):
                 author=inter.author
             )
 
-            await discord_responder.xx(embed_list, inter)
+            await discord_responder.send_embed_list(embed_list, inter)
             return
 
         embed_title = f"**ANNOUNCEMENT**"
@@ -95,7 +96,7 @@ class Announce(commands.Cog):
         db_player_obj = db_responder.read_player_active(inter.author.id)
 
         verification_payload = (
-            await discord_responder.player_verification(
+            await auth_responder.player_verification(
                 db_player_obj, inter.author, self.coc_client))
         if not verification_payload['verified']:
             embed_list = discord_responder.embed_message(
@@ -175,13 +176,13 @@ class Announce(commands.Cog):
             db_player_obj = db_responder.read_player_active(inter.author.id)
 
             verification_payload = (
-                await discord_responder.clan_verification(
+                await auth_responder.clan_verification(
                     db_player_obj, inter.author, self.coc_client)
             )
         # role has been mentioned
         else:
             verification_payload = (
-                await discord_responder.clan_role_verification(
+                await auth_responder.clan_role_verification(
                     clan_role, self.coc_client))
 
         if not verification_payload['verified']:
@@ -294,12 +295,12 @@ class Announce(commands.Cog):
             db_player_obj = db_responder.read_player_active(inter.author.id)
 
             verification_payload = (
-                await discord_responder.clan_verification(
+                await auth_responder.clan_verification(
                     db_player_obj, inter.author, self.coc_client))
         # role has been mentioned
         else:
             verification_payload = (
-                await discord_responder.clan_role_verification(
+                await auth_responder.clan_role_verification(
                     clan_role, self.coc_client))
 
         if not verification_payload['verified']:
@@ -414,13 +415,13 @@ class Announce(commands.Cog):
             db_player_obj = db_responder.read_player_active(inter.author.id)
 
             verification_payload = (
-                await discord_responder.war_leadership_verification(
+                await auth_responder.war_leadership_verification(
                     db_player_obj, war_selection,
                     inter.author, inter.guild.id, self.coc_client))
         # role has been mentioned
         else:
             verification_payload = (
-                await discord_responder.clan_role_war_leadership_verification(
+                await auth_responder.clan_role_war_leadership_verification(
                     clan_role, war_selection,
                     inter.author, inter.guild.id, self.coc_client))
 
@@ -513,13 +514,13 @@ class Announce(commands.Cog):
             db_player_obj = db_responder.read_player_active(inter.author.id)
 
             verification_payload = (
-                await discord_responder.war_leadership_verification(
+                await auth_responder.war_leadership_verification(
                     db_player_obj, war_selection,
                     inter.author, inter.guild.id, self.coc_client))
         # role has been mentioned
         else:
             verification_payload = (
-                await discord_responder.clan_role_war_leadership_verification(
+                await auth_responder.clan_role_war_leadership_verification(
                     clan_role, war_selection,
                     inter.author, inter.guild.id, self.coc_client))
 

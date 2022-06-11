@@ -51,7 +51,7 @@ class ClashDiscord_Data(object):
                 emojis (list[obj]): list of emoji objects
     """
 
-    version = '2.4.1'
+    version = '2.4.2'
     author = "Razgriz#7805"
     description = ("Clash of Clans discord bot for discord member management "
                    "and various clash related info")
@@ -62,6 +62,8 @@ class ClashDiscord_Data(object):
         ClashDiscord_Category(
             'Super User', 'superuser',
             'ClashDiscord client based commands for super user', '🧠'),
+        ClashDiscord_Category(
+            'Admin', 'admin', 'ClashDiscord admin based commands', '🔑'),
         ClashDiscord_Category(
             'Client', 'client', 'ClashDiscord client based commands', '🤖'),
         ClashDiscord_Category(

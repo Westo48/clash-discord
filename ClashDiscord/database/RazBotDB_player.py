@@ -302,6 +302,52 @@ def delete_player(discord_id, player_tag):
         return False
 
 
+def delete_player_from_tag(player_tag):
+    """
+        Takes in player_tag, 
+        and deletes the requested user's player
+
+        Args:
+            player_tag (str): string of player's tag
+
+        Returns:
+            bool if player could be found after deletion query execution
+    """
+    # set up the query
+    # delete the requested
+    query = (
+        f"DELETE FROM player "
+        f"WHERE player_tag = '{player_tag}';"
+    )
+
+    # execute delete query
+    preset.delete(query)
+
+    # select and return player
+    data = select_player_from_tag(player_tag)
+    if data:
+        return True
+    else:
+        return False
+
+
+def select_player_count():
+    """
+        returns player count
+
+        Returns:
+            player_count: int of player count
+    """
+    # set up the query
+    query = (
+        f"SELECT COUNT(id) as player_count FROM player;"
+    )
+
+    # execute and return query
+    data = preset.select(query)
+    return data
+
+
 # todo some sort of confirmation
 def create_player_table():
     # set up the query

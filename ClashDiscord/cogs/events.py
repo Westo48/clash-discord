@@ -6,7 +6,8 @@ from responders import (
     DiscordResponder as discord_responder,
     ClashResponder as clash_responder,
     RazBotDB_Responder as db_responder,
-    linkApiResponder as link_responder
+    linkApiResponder as link_responder,
+    ClientResponder as client_responder
 )
 from utils import discord_utils
 
@@ -69,7 +70,7 @@ class Events(commands.Cog):
 
         # if the author of the reacted message is not clash discord
         if (reaction.message.author.id !=
-                discord_responder.get_client_discord_id()):
+                client_responder.get_client_discord_id()):
             return
 
         # if there are no embedded messages
