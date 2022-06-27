@@ -103,10 +103,17 @@ class SuperUser(commands.Cog):
             for db_player in db_player_list:
                 player = await clash_responder.get_player(
                     db_player.player_tag, self.coc_client)
+
+                # player not found in clash
+                if player is None:
+                    message += f"**{db_player.player_tag} not found in clash please remove**, "
+                    continue
+
                 if db_player.active:
                     message += f"{player.name} {player.tag} (active), "
                 else:
                     message += f"{player.name} {player.tag}, "
+
             # cuts the last two characters from the string ', '
             message = message[:-2]
 

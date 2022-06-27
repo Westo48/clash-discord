@@ -134,10 +134,17 @@ class Admin(commands.Cog):
             for db_player_obj in db_player_list:
                 player_obj = await clash_responder.get_player(
                     db_player_obj.player_tag, self.coc_client)
+
+                # player not found in clash
+                if player_obj is None:
+                    message += f"**{db_player_obj.player_tag} not found in clash please remove**, "
+                    continue
+
                 if db_player_obj.active:
                     message += f"{player_obj.name} {player_obj.tag} (active), "
                 else:
                     message += f"{player_obj.name} {player_obj.tag}, "
+
             # cuts the last two characters from the string ', '
             message = message[:-2]
             await inter.edit_original_message(content=message)
