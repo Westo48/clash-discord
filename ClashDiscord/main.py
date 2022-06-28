@@ -48,9 +48,13 @@ bot = commands.Bot(
     test_guilds=get_client_test_guilds())
 bot.remove_command('help')
 
+# only load Misc if there are test guilds
+# only if it is in dev
+if len(get_client_test_guilds()) != 0:
+    bot.add_cog(misc_cog.Misc(
+        bot, coc_client, client_data))
+
 bot.add_cog(help_cog.Help(
-    bot, coc_client, client_data))
-bot.add_cog(misc_cog.Misc(
     bot, coc_client, client_data))
 bot.add_cog(player_cog.Player(
     bot, coc_client, client_data))

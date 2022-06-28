@@ -66,7 +66,7 @@ class Client(commands.Cog):
         option: str = discord_utils.command_param_dict['client_user']
     ):
         """
-            claim your discord user
+            claim or remove your discord user
 
             Parameters
             ----------
