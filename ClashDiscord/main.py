@@ -48,7 +48,7 @@ bot = commands.InteractionBot(
 
 # only load Misc if there are test guilds
 # only if it is in dev
-if len(get_client_test_guilds()) != 0:
+if get_client_test_guilds() is not None:
     bot.add_cog(misc_cog.Misc(
         bot, coc_client, client_data))
 
