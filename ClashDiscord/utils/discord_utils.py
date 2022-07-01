@@ -270,9 +270,9 @@ command_param_dict = {
         name="player_tag",
         description="*required* player tag",
     ),
-    'admin_guild': commands.Param(
+    'admin_server': commands.Param(
         name="option",
-        description="*optional* options for client guild returns",
+        description="*optional* options for client server returns",
         default="claim",
         choices=[
             "claim"
@@ -338,17 +338,17 @@ command_param_dict = {
             "players", "sync", "claim", "remove"
         ]
     ),
-    'superuser_guild': commands.Param(
+    'superuser_server': commands.Param(
         name="option",
-        description="*optional* options for superuser guild returns",
+        description="*optional* options for superuser server returns",
         default="show",
         choices=[
             "show", "remove", "leave"
         ]
     ),
-    'guild_id': commands.Param(
-        name="guild_id",
-        description="*optional* id for guild",
+    'server_id': commands.Param(
+        name="server_id",
+        description="*optional* id for server",
         default=None
     ),
     'superuser_admin': commands.Param(
@@ -372,7 +372,7 @@ command_param_dict = {
         description="*optional* options for superuser count returns",
         default="user",
         choices=[
-            "user", "player", "guild", "clan"
+            "user", "player", "server", "clan"
         ]
     ),
 }

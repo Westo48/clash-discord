@@ -107,8 +107,8 @@ class HelpAdminBtn(disnake.ui.Button):
         # guild not claimed
         elif db_guild is None:
             field_dict_list.append({
-                'name': "guild not claimed",
-                'value': "please claim guild using `admin guild claim`"
+                'name': "server not claimed",
+                'value': "please claim server using `admin server claim`"
             })
 
         # user is not guild admin and is not an admin

@@ -149,7 +149,7 @@ class Discord(commands.Cog):
                     and not db_user_obj.super_user):
 
                 await inter.edit_original_message(
-                    content=f"{inter.author.mention} is not guild's admin")
+                    content=f"{inter.author.mention} is not server's admin")
                 return
 
             # telling the user that the bot is updating roles
@@ -325,7 +325,7 @@ class Discord(commands.Cog):
                     and not db_user_obj.super_user):
 
                 await inter.edit_original_message(
-                    content=f"{inter.author.mention} is not guild's admin")
+                    content=f"{inter.author.mention} is not server's admin")
                 return
 
             field_dict_list = []

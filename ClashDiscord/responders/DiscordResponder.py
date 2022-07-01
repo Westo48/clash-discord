@@ -490,7 +490,7 @@ def find_user_from_tag(player_obj, member_list):
 
         Args:
             player_obj (obj): clash player object
-            member_list (list): list of members in guild
+            member_list (list): list of members in server
 
         Returns:
             list: field_dict_list
@@ -527,7 +527,7 @@ def user_player_ping(player, member_list):
         Args:
             player (obj): clash player object
                 requires player.name and player.tag
-            member_list (list): list of members in guild
+            member_list (list): list of members in server
 
         Returns:
             string: returns user ping if possible and player info

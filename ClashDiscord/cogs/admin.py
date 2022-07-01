@@ -804,7 +804,7 @@ class Admin(commands.Cog):
             # user is not guild admin and is not super user
             if (not db_guild_obj.admin_user_id == inter.author.id
                     and not db_user_obj.super_user):
-                embed_description = f"{inter.author.mention} is not guild's admin"
+                embed_description = f"{inter.author.mention} is not server's admin"
 
                 embed_list = discord_responder.embed_message(
                     icon_url=inter.bot.user.avatar.url,
@@ -896,7 +896,7 @@ class Admin(commands.Cog):
             # user is not guild admin and is not super user
             if (not db_guild_obj.admin_user_id == inter.author.id
                     and not db_user_obj.super_user):
-                embed_description = f"{inter.author.mention} is not guild's admin"
+                embed_description = f"{inter.author.mention} is not server's admin"
 
                 embed_list = discord_responder.embed_message(
                     icon_url=inter.bot.user.avatar.url,
@@ -1013,7 +1013,7 @@ class Admin(commands.Cog):
             # user is not guild admin and is not super user
             if (not db_guild_obj.admin_user_id == inter.author.id
                     and not db_user_obj.super_user):
-                embed_description = f"{inter.author.mention} is not guild's admin"
+                embed_description = f"{inter.author.mention} is not server's admin"
 
                 embed_list = discord_responder.embed_message(
                     icon_url=inter.bot.user.avatar.url,
@@ -1150,7 +1150,7 @@ class Admin(commands.Cog):
             # user is not guild admin and is not super user
             if (not db_guild_obj.admin_user_id == inter.author.id
                     and not db_user_obj.super_user):
-                embed_description = f"{inter.author.mention} is not guild's admin"
+                embed_description = f"{inter.author.mention} is not server's admin"
 
                 embed_list = discord_responder.embed_message(
                     icon_url=inter.bot.user.avatar.url,
@@ -1281,7 +1281,7 @@ class Admin(commands.Cog):
             # user is not guild admin and is not super user
             if (not db_guild_obj.admin_user_id == inter.author.id
                     and not db_user_obj.super_user):
-                embed_description = f"{inter.author.mention} is not guild's admin"
+                embed_description = f"{inter.author.mention} is not server's admin"
 
                 embed_list = discord_responder.embed_message(
                     icon_url=inter.bot.user.avatar.url,
@@ -1469,7 +1469,7 @@ class Admin(commands.Cog):
             # user is not guild admin and is not super user
             if (not db_guild_obj.admin_user_id == inter.author.id
                     and not db_user_obj.super_user):
-                embed_description = f"{inter.author.mention} is not guild's admin"
+                embed_description = f"{inter.author.mention} is not server's admin"
 
                 embed_list = discord_responder.embed_message(
                     icon_url=inter.bot.user.avatar.url,
@@ -1661,7 +1661,7 @@ class Admin(commands.Cog):
             # user is not guild admin and is not super user
             if (not db_guild_obj.admin_user_id == inter.author.id
                     and not db_user_obj.super_user):
-                embed_description = f"{inter.author.mention} is not guild's admin"
+                embed_description = f"{inter.author.mention} is not server's admin"
 
                 embed_list = discord_responder.embed_message(
                     icon_url=inter.bot.user.avatar.url,
@@ -1738,18 +1738,18 @@ class Admin(commands.Cog):
         await discord_responder.send_embed_list(inter, embed_list)
 
     @admin.sub_command()
-    async def guild(
+    async def server(
         self,
         inter,
-        option: str = discord_utils.command_param_dict['admin_guild']
+        option: str = discord_utils.command_param_dict['admin_server']
     ):
         """
-            claim a discord guild and set yourself 
-            as the guild admin for ClashCommander
+            claim a discord server and set yourself 
+            as the server admin for ClashCommander
 
             Parameters
             ----------
-            option (optional): options for client guild returns
+            option (optional): options for client server returns
         """
 
         # initializing embed default values

@@ -765,7 +765,7 @@ class Client(commands.Cog):
             # user is not guild admin and is not super user
             if (not db_guild_obj.admin_user_id == inter.author.id
                     and not db_user_obj.super_user):
-                embed_description = f"{inter.author.mention} is not guild's admin"
+                embed_description = f"{inter.author.mention} is not server's admin"
 
                 embed_list = discord_responder.embed_message(
                     icon_url=inter.bot.user.avatar.url,

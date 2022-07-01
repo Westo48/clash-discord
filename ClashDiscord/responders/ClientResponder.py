@@ -121,7 +121,7 @@ def client_guild_info(guild, db_guild):
     if db_guild is None:
         field_dict_list.append({
             'name': f"{guild.name} not claimed",
-            'value': f"please claim the server using `client guild claim`"
+            'value': f"please claim the server using `admin server claim`"
         })
         return field_dict_list
 

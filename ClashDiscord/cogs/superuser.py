@@ -785,20 +785,20 @@ class SuperUser(commands.Cog):
         await discord_responder.send_embed_list(inter, embed_list)
 
     @superuser.sub_command()
-    async def guild(
+    async def server(
         self,
         inter,
-        option: str = discord_utils.command_param_dict['superuser_guild'],
-        guild_id: str = discord_utils.command_param_dict['guild_id']
+        option: str = discord_utils.command_param_dict['superuser_server'],
+        server_id: str = discord_utils.command_param_dict['server_id']
     ):
         """
             *super user* 
-            super user guild commands
+            super user server commands
 
             Parameters
             ----------
-            option (optional): options for superuser guild commands
-            guild_id (optional): guild id for removal
+            option (optional): options for superuser server commands
+            server_id (optional): server id for removal
         """
 
         await inter.response.defer()
@@ -838,8 +838,8 @@ class SuperUser(commands.Cog):
         field_dict_list = []
 
         if option == "show":
-            embed_title = f"**ClashDiscord Guilds**"
-            embed_description = f"Guild Count: {len(inter.client.guilds)}"
+            embed_title = f"**ClashDiscord Servers**"
+            embed_description = f"Server Count: {len(inter.client.guilds)}"
 
             for guild in inter.client.guilds:
                 field_dict_list.append({
@@ -850,8 +850,8 @@ class SuperUser(commands.Cog):
         elif option == "remove":
             if guild_id is None:
                 embed_description = (
-                    f"guild id not specified, "
-                    f"please provide guild id to remove a guild")
+                    f"server id not specified, "
+                    f"please provide server id to remove a server")
 
                 embed_list = discord_responder.embed_message(
                     icon_url=inter.bot.user.avatar.url,
@@ -870,7 +870,7 @@ class SuperUser(commands.Cog):
 
             # guild isn't claimed
             if not db_guild:
-                embed_description = f"guild with id {guild_id} is not claimed"
+                embed_description = f"server with id {guild_id} is not claimed"
 
                 embed_list = discord_responder.embed_message(
                     icon_url=inter.bot.user.avatar.url,
@@ -886,17 +886,17 @@ class SuperUser(commands.Cog):
 
             # guild was deleted properly
             if deleted_guild is None:
-                embed_description = f"guild with id {guild_id} was deleted"
+                embed_description = f"server with id {guild_id} was deleted"
 
             # guild could not be deleted
             else:
-                embed_description = f"guild with id {guild_id} could not be deleted"
+                embed_description = f"server with id {guild_id} could not be deleted"
 
         elif option == "leave":
             if guild_id is None:
                 embed_description = (
-                    f"guild id not specified, "
-                    f"please provide guild id to leave a guild")
+                    f"server id not specified, "
+                    f"please provide server id to leave a server")
 
                 embed_list = discord_responder.embed_message(
                     icon_url=inter.bot.user.avatar.url,
@@ -916,7 +916,7 @@ class SuperUser(commands.Cog):
             # bot isn't in guild
             if guild is None:
                 embed_description = (f"{inter.me.display_name} "
-                                     f"is not in guild {guild_id}")
+                                     f"is not in server {guild_id}")
 
                 embed_list = discord_responder.embed_message(
                     icon_url=inter.bot.user.avatar.url,
@@ -934,12 +934,12 @@ class SuperUser(commands.Cog):
             # guild was left properly
             if left_guild is None:
                 embed_description = (f"{inter.me.display_name} left "
-                                     f"guild {guild.name} id {guild.id}")
+                                     f"server {guild.name} id {guild.id}")
 
             # guild could not be left
             else:
                 embed_description = (f"{inter.me.display_name} could not leave "
-                                     f"guild {guild.name} id {guild.id}")
+                                     f"server {guild.name} id {guild.id}")
 
         else:
             field_dict_list = [{
@@ -1022,11 +1022,11 @@ class SuperUser(commands.Cog):
             embed_title = f"{inter.me.display_name} Player Count"
             embed_description = f"{player_count} players"
 
-        elif option == "guild":
+        elif option == "server":
             guild_count = db_responder.read_guild_count()
 
-            embed_title = f"{inter.me.display_name} Guild Count"
-            embed_description = f"{guild_count} guilds"
+            embed_title = f"{inter.me.display_name} Server Count"
+            embed_description = f"{guild_count} servers"
 
         elif option == "clan":
             clan_count = db_responder.read_clan_count()

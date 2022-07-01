@@ -61,11 +61,11 @@ class ClashDiscord_Data(object):
     bot_categories = [
         ClashDiscord_Category(
             'Super User', 'superuser',
-            'ClashDiscord client based commands for super user', '🧠'),
+            'Clash Commander client based commands for super user', '🧠'),
         ClashDiscord_Category(
-            'Admin', 'admin', 'ClashDiscord admin based commands', '🔑'),
+            'Admin', 'admin', 'Clash Commander admin based commands', '🔑'),
         ClashDiscord_Category(
-            'Client', 'client', 'ClashDiscord client based commands', '🤖'),
+            'Client', 'client', 'Clash Commander client based commands', '🤖'),
         ClashDiscord_Category(
             'Discord', 'discord', 'Discord based commands', '💻'),
         ClashDiscord_Category(

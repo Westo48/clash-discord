@@ -46,8 +46,8 @@ def help_admin(
     # guild not claimed
     if db_guild is None:
         field_dict_list.append({
-            'name': "guild not claimed",
-            'value': "please claim guild using `admin guild claim`"
+            'name': "server not claimed",
+            'value': "please claim server using `admin server claim`"
         })
         return field_dict_list
 
@@ -71,8 +71,8 @@ def help_admin(
 
         if len(field_dict_list) == 0:
             field_dict_list.append({
-                'name': "guild not claimed",
-                'value': "please claim guild using `admin guild claim`"
+                'name': "server not claimed",
+                'value': "please claim server using `admin server claim`"
             })
             return field_dict_list
 
@@ -91,8 +91,8 @@ def help_client(
     # guild not claimed
     if db_guild is None:
         field_dict_list.append({
-            'name': "guild not claimed",
-            'value': "please claim guild using `admin guild claim`"
+            'name': "server not claimed",
+            'value': "please claim server using `admin server claim`"
         })
         return field_dict_list
 
@@ -105,8 +105,8 @@ def help_client(
 
         if len(field_dict_list) == 0:
             field_dict_list.append({
-                'name': "guild not claimed",
-                'value': "please claim guild using `admin guild claim`"
+                'name': "server not claimed",
+                'value': "please claim server using `admin server claim`"
             })
             return field_dict_list
 
