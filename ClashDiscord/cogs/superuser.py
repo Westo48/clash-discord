@@ -6,7 +6,10 @@ from responders import (
     RazBotDB_Responder as db_responder,
     linkApiResponder as link_responder
 )
-from responders.ClientResponder import client_player_list
+from responders.ClientResponder import (
+    client_player_list,
+    client_user_profile
+)
 from utils import discord_utils
 from linkAPI.client import LinkApiClient
 from linkAPI.errors import *
@@ -82,7 +85,35 @@ class SuperUser(commands.Cog):
         embed_description = None
         field_dict_list = []
 
-        if option == "players":
+        if option == "profile":
+            db_player_list = db_responder.read_player_list(user.id)
+
+            # user has no claimed players
+            if len(db_player_list) == 0:
+                embed_description = (f"{user.mention} does not have any "
+                                     f"claimed players")
+
+                embed_list = discord_responder.embed_message(
+                    icon_url=inter.bot.user.avatar.url,
+                    description=embed_description,
+                    bot_user_name=inter.me.display_name,
+                    author=inter.author
+                )
+
+                await discord_responder.send_embed_list(inter, embed_list)
+                return
+
+            embed_title = f"{user.display_name} Profile"
+            embed_description = f"Player Count: {len(db_player_list)}"
+
+            field_dict_list = await client_user_profile(
+                db_player_list=db_player_list,
+                user=user,
+                discord_emoji_list=inter.client.emojis,
+                client_emoji_list=self.client_data.emojis,
+                coc_client=self.coc_client)
+
+        elif option == "player list":
             db_player_list = db_responder.read_player_list(user.id)
 
             # user has no claimed players
@@ -136,7 +167,7 @@ class SuperUser(commands.Cog):
             embed_description = (
                 f"data for {user.mention} has been properly synced")
 
-        if option == "claim":
+        elif option == "claim":
             db_user = db_responder.claim_user(user.id)
 
             # user wasn't claimed and now is
@@ -216,6 +247,7 @@ class SuperUser(commands.Cog):
 
             embed_description = (
                 f"user {user.mention} removed properly")
+
         else:
             field_dict_list = [{
                 'name': "incorrect option selected",

@@ -1,5 +1,12 @@
 import data.RazBot_Data as RazBot_Data
-from responders.ClashResponder import get_player
+from responders.ClashResponder import (
+    get_player,
+    get_clan
+)
+from responders.DiscordResponder import (
+    get_emoji,
+    get_clan_war_league_emoji
+)
 
 from responders.AuthResponder import player_verification
 
@@ -197,3 +204,96 @@ async def client_player_list(db_player_list, user, coc_client):
     message = message[:-1]
 
     return message
+
+
+async def client_user_profile(
+    db_player_list, user,
+    discord_emoji_list, client_emoji_list, coc_client
+):
+    field_dict_list = []
+
+    for db_player in db_player_list:
+        player = await get_player(
+            db_player.player_tag, coc_client)
+
+        # player not found in clash
+        if player is None:
+            field_dict_list.append({
+                'name': f"{db_player.player_tag} player not found",
+                'value': f"consider removing player"
+            })
+
+            continue
+
+        th_emoji = get_emoji(
+            player.town_hall, discord_emoji_list, client_emoji_list)
+        league_emoji = get_emoji(
+            player.league.name, discord_emoji_list, client_emoji_list)
+
+        player_string = f"{player.name} {player.tag}"
+
+        field_name = f"{th_emoji} {league_emoji} {player_string}"
+
+        field_value = ""
+
+        hero_value = ""
+        for hero in player.heroes:
+            # hero isn't a home base hero
+            if not hero.is_home_base:
+                continue
+
+            hero_emoji = get_emoji(
+                hero.name, discord_emoji_list, client_emoji_list)
+
+            hero_value += f"{hero_emoji} {hero.level} "
+
+        if hero_value != "":
+            # remove trailing space in hero value
+            hero_value = hero_value[:-1]
+
+            field_value += f"{hero_value}\n"
+
+        pet_value = ""
+        for pet in player.hero_pets:
+            # pet isn't a home base pet
+            if not pet.is_home_base:
+                continue
+
+            pet_emoji = get_emoji(
+                pet.name, discord_emoji_list, client_emoji_list)
+
+            pet_value += f"{pet_emoji} {pet.level} "
+
+        if pet_value != "":
+            # remove trailing space in pet value
+            pet_value = pet_value[:-1]
+
+            field_value += f"{pet_value}\n"
+
+        clan_value = ""
+        if player.clan:
+            clan = await get_clan(player.clan.tag, coc_client)
+
+            clan_war_league_emoji = get_clan_war_league_emoji(
+                clan.war_league.name, discord_emoji_list, client_emoji_list)
+
+            clan_value += f"{clan_war_league_emoji} "
+
+            clan_value += f"[{player.clan.name}]({player.clan.share_link}): "
+            clan_value += f"{player.role.in_game_name}\n"
+        else:
+            clan_value += f"not in a clan\n"
+
+        field_value += clan_value
+
+        player_link = f"[{player.name}]({player.share_link})"
+
+        field_value += player_link
+
+        field_dict_list.append({
+            'name': field_name,
+            'value': field_value,
+            'inline': False
+        })
+
+    return field_dict_list
