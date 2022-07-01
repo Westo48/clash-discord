@@ -4,6 +4,7 @@ from linkAPI.client import LinkApiClient
 from linkAPI.errors import ConflictError
 from responders import (
     DiscordResponder as discord_responder,
+    HelpResponder as help_responder,
     ClashResponder as clash_responder,
     RazBotDB_Responder as db_responder,
     linkApiResponder as link_responder,
@@ -61,68 +62,6 @@ class Events(commands.Cog):
     @commands.Cog.listener()
     async def on_member_remove(self, member):
         print(f'{member} has left {member.guild.name} id {member.guild.id}')
-
-    @commands.Cog.listener()
-    async def on_reaction_add(self, reaction, user):
-        # if the reactor is a bot
-        if user.bot:
-            return
-
-        # if the author of the reacted message is not clash discord
-        if (reaction.message.author.id !=
-                client_responder.get_client_discord_id()):
-            return
-
-        # if there are no embedded messages
-        if len(reaction.message.embeds) == 0:
-            return
-
-        # if clash discord embedded message is not a help message
-        if 'help' not in reaction.message.embeds[0].title:
-            return
-
-        ctx = await self.bot.get_context(reaction.message)
-
-        db_guild_obj = db_responder.read_guild(ctx.guild.id)
-        db_player_obj = db_responder.read_player_active(user.id)
-
-        if db_player_obj:
-            player_obj = await clash_responder.get_player(
-                db_player_obj.player_tag, self.coc_client)
-        else:
-            player_obj = None
-
-        bot_category = discord_responder.help_emoji_to_category(
-            reaction.emoji, self.client_data.bot_categories)
-
-        help_dict = discord_responder.help_switch(
-            db_guild_obj, db_player_obj, player_obj, user.id, reaction.emoji,
-            bot_category, self.client_data.bot_categories, ctx.bot.all_slash_commands)
-        field_dict_list = help_dict['field_dict_list']
-        emoji_list = help_dict['emoji_list']
-
-        if bot_category:
-            embed_title = f"{ctx.bot.user.name} {bot_category.name} help"
-        else:
-            embed_title = f"{ctx.bot.user.name} help menu"
-
-        embed_list = discord_responder.embed_message(
-            icon_url=ctx.bot.user.avatar.url,
-            title=embed_title,
-            bot_user_name=ctx.bot.user.name,
-            field_list=field_dict_list,
-            author=user
-        )
-
-        for embed in embed_list:
-            await reaction.message.edit(embed=embed)
-
-        await reaction.message.clear_reactions()
-        if bot_category:
-            await reaction.message.add_reaction(self.client_data.back_emoji)
-        else:
-            for emoji in emoji_list:
-                await reaction.message.add_reaction(emoji)
 
     @commands.Cog.listener()
     async def on_guild_role_delete(self, role):

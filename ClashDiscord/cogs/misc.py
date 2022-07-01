@@ -1,10 +1,5 @@
 import disnake
 from disnake.ext import commands
-from responders import (
-    DiscordResponder as discord_responder,
-    ClashResponder as clash_responder
-)
-from utils import discord_utils
 
 
 class Misc(commands.Cog):

@@ -22,11 +22,14 @@ def clan_info(
         clan_obj, discord_emoji_list, client_emoji_list):
     field_dict_list = []
 
-    field_dict_list.append({
-        'name': "**Description**",
-        'value': clan_obj.description,
-        'inline': False
-    })
+    if (clan_obj.description is not None
+            and clan_obj.description != ""):
+        field_dict_list.append({
+            'name': "**Description**",
+            'value': clan_obj.description,
+            'inline': False
+        })
+
     if len(clan_obj.labels) != 0:
         label_value = ""
         for label in clan_obj.labels:

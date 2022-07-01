@@ -140,7 +140,7 @@ async def player_leadership_verification(db_player_obj, user_obj, guild_id, coc_
         Args:
             db_player_obj (obj): player object from db
             user_obj (obj): discord user obj
-            guild_id (obj): discord guild id
+            guild_id (obj): discord server id
             coc_client (obj): coc.py client
 
         Returns:
@@ -165,8 +165,8 @@ async def player_leadership_verification(db_player_obj, user_obj, guild_id, coc_
         return {
             'verified': False,
             'field_dict_list': [{
-                'name': f"guild is not claimed",
-                'value': f"guild must be claimed"
+                'name': f"server is not claimed",
+                'value': f"server must be claimed"
             }],
             'player_obj': None
         }
@@ -349,7 +349,7 @@ async def clan_leadership_verification(
         Args:
             db_player_obj (obj): player object from db
             user_obj (obj): discord user obj
-            guild_id (obj): discord guild id
+            guild_id (obj): discord server id
             coc_client (obj): coc.py client
 
         Returns:
@@ -545,7 +545,7 @@ async def war_leadership_verification(
             war_selection (str): cwl war selection
                 ["preparation", "current", "upcoming", None]
             user_obj (obj): discord user obj
-            guild_id (obj): discord guild id
+            guild_id (obj): discord server id
             coc_client (obj): coc.py client
 
         Returns:
@@ -747,7 +747,7 @@ async def cwl_group_leadership_verification(db_player_obj, user_obj, guild_id, c
         Args:
             db_player_obj (obj): player object from db
             user_obj (obj): discord user obj
-            guild_id (obj): discord guild id
+            guild_id (obj): discord server id
             coc_client (obj): coc.py client
         Returns:
             dict: verification_payload
@@ -907,7 +907,7 @@ async def cwl_war_leadership_verification(db_player_obj, user_obj, guild_id, coc
         Args:
             db_player_obj (obj): player object from db
             user_obj (obj): discord user obj
-            guild_id (obj): discord guild id
+            guild_id (obj): discord server id
             coc_client (obj): coc.py client
         Returns:
             dict: verification_payload
@@ -1079,7 +1079,7 @@ async def clan_role_player_verification(
         Args:
             clan_role (obj): discord role
             user (obj): discord user object
-            guild_id (obj): discord guild id
+            guild_id (obj): discord server id
             coc_client (obj): coc.py client
 
         Returns:
@@ -1178,7 +1178,7 @@ async def clan_role_player_leadership_verification(
         Args:
             clan_role (obj): discord role
             user (obj): discord user object
-            guild_id (obj): discord guild id
+            guild_id (obj): discord server id
             coc_client (obj): coc.py client
 
         Returns:
@@ -1379,7 +1379,7 @@ async def clan_role_war_leadership_verification(
             war_selection (str): cwl war selection
                 ["preparation", "current", "upcoming", None]
             user (obj): discord user obj
-            guild_id (obj): discord guild id
+            guild_id (obj): discord server id
             coc_client (obj): coc.py client
 
         Returns:
@@ -1581,7 +1581,7 @@ async def clan_role_cwl_group_leadership_verification(
         Args:
             clan_role (obj): discord role
             user (obj): discord user obj
-            guild_id (obj): discord guild id
+            guild_id (obj): discord server id
             coc_client (obj): coc.py client
         Returns:
             dict: verification_payload
@@ -1648,7 +1648,7 @@ def guild_admin_verification(
     inter: ApplicationCommandInteraction
 ):
     """
-        verifying author is a guild admin, admin user, or super user
+        verifying author is a server admin, admin user, or super user
         and returning verification payload
         Args:
             inter (obj): disnake ApplicationCommandInteraction 

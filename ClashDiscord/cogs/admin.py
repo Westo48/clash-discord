@@ -7,6 +7,10 @@ from responders import (
     linkApiResponder as link_responder,
     AuthResponder as auth_responder
 )
+from responders.ClientResponder import (
+    client_player_list,
+    client_user_profile
+)
 from utils import discord_utils
 from linkAPI.client import LinkApiClient
 from linkAPI.errors import *
@@ -112,7 +116,7 @@ class Admin(commands.Cog):
         embed_description = None
         field_dict_list = []
 
-        if option == "player":
+        if option == "profile":
             db_player_list = db_responder.read_player_list(user.id)
 
             # user has no claimed players
@@ -130,23 +134,39 @@ class Admin(commands.Cog):
                 await discord_responder.send_embed_list(inter, embed_list)
                 return
 
-            message = f"{user.mention} has claimed "
-            for db_player_obj in db_player_list:
-                player_obj = await clash_responder.get_player(
-                    db_player_obj.player_tag, self.coc_client)
+            embed_title = f"{user.display_name} Profile"
+            embed_description = f"Player Count: {len(db_player_list)}"
 
-                # player not found in clash
-                if player_obj is None:
-                    message += f"**{db_player_obj.player_tag} not found in clash please remove**, "
-                    continue
+            field_dict_list = await client_user_profile(
+                db_player_list=db_player_list,
+                user=user,
+                discord_emoji_list=inter.client.emojis,
+                client_emoji_list=self.client_data.emojis,
+                coc_client=self.coc_client)
 
-                if db_player_obj.active:
-                    message += f"{player_obj.name} {player_obj.tag} (active), "
-                else:
-                    message += f"{player_obj.name} {player_obj.tag}, "
+        elif option == "player list":
+            db_player_list = db_responder.read_player_list(user.id)
 
-            # cuts the last two characters from the string ', '
-            message = message[:-2]
+            # user has no claimed players
+            if len(db_player_list) == 0:
+                embed_description = (f"{user.mention} does not have any "
+                                     f"claimed players")
+
+                embed_list = discord_responder.embed_message(
+                    icon_url=inter.bot.user.avatar.url,
+                    description=embed_description,
+                    bot_user_name=inter.me.display_name,
+                    author=inter.author
+                )
+
+                await discord_responder.send_embed_list(inter, embed_list)
+                return
+
+            message = await client_player_list(
+                db_player_list=db_player_list,
+                user=user,
+                coc_client=self.coc_client)
+
             await inter.edit_original_message(content=message)
             return
 
@@ -283,8 +303,10 @@ class Admin(commands.Cog):
 
         embed_list = discord_responder.embed_message(
             icon_url=inter.bot.user.avatar.url,
+            title=embed_title,
             description=embed_description,
             bot_user_name=inter.me.display_name,
+            field_list=field_dict_list,
             author=inter.author)
 
         await discord_responder.send_embed_list(inter, embed_list)
@@ -804,7 +826,7 @@ class Admin(commands.Cog):
             # user is not guild admin and is not super user
             if (not db_guild_obj.admin_user_id == inter.author.id
                     and not db_user_obj.super_user):
-                embed_description = f"{inter.author.mention} is not guild's admin"
+                embed_description = f"{inter.author.mention} is not server's admin"
 
                 embed_list = discord_responder.embed_message(
                     icon_url=inter.bot.user.avatar.url,
@@ -896,7 +918,7 @@ class Admin(commands.Cog):
             # user is not guild admin and is not super user
             if (not db_guild_obj.admin_user_id == inter.author.id
                     and not db_user_obj.super_user):
-                embed_description = f"{inter.author.mention} is not guild's admin"
+                embed_description = f"{inter.author.mention} is not server's admin"
 
                 embed_list = discord_responder.embed_message(
                     icon_url=inter.bot.user.avatar.url,
@@ -1013,7 +1035,7 @@ class Admin(commands.Cog):
             # user is not guild admin and is not super user
             if (not db_guild_obj.admin_user_id == inter.author.id
                     and not db_user_obj.super_user):
-                embed_description = f"{inter.author.mention} is not guild's admin"
+                embed_description = f"{inter.author.mention} is not server's admin"
 
                 embed_list = discord_responder.embed_message(
                     icon_url=inter.bot.user.avatar.url,
@@ -1150,7 +1172,7 @@ class Admin(commands.Cog):
             # user is not guild admin and is not super user
             if (not db_guild_obj.admin_user_id == inter.author.id
                     and not db_user_obj.super_user):
-                embed_description = f"{inter.author.mention} is not guild's admin"
+                embed_description = f"{inter.author.mention} is not server's admin"
 
                 embed_list = discord_responder.embed_message(
                     icon_url=inter.bot.user.avatar.url,
@@ -1281,7 +1303,7 @@ class Admin(commands.Cog):
             # user is not guild admin and is not super user
             if (not db_guild_obj.admin_user_id == inter.author.id
                     and not db_user_obj.super_user):
-                embed_description = f"{inter.author.mention} is not guild's admin"
+                embed_description = f"{inter.author.mention} is not server's admin"
 
                 embed_list = discord_responder.embed_message(
                     icon_url=inter.bot.user.avatar.url,
@@ -1469,7 +1491,7 @@ class Admin(commands.Cog):
             # user is not guild admin and is not super user
             if (not db_guild_obj.admin_user_id == inter.author.id
                     and not db_user_obj.super_user):
-                embed_description = f"{inter.author.mention} is not guild's admin"
+                embed_description = f"{inter.author.mention} is not server's admin"
 
                 embed_list = discord_responder.embed_message(
                     icon_url=inter.bot.user.avatar.url,
@@ -1661,7 +1683,7 @@ class Admin(commands.Cog):
             # user is not guild admin and is not super user
             if (not db_guild_obj.admin_user_id == inter.author.id
                     and not db_user_obj.super_user):
-                embed_description = f"{inter.author.mention} is not guild's admin"
+                embed_description = f"{inter.author.mention} is not server's admin"
 
                 embed_list = discord_responder.embed_message(
                     icon_url=inter.bot.user.avatar.url,
@@ -1738,18 +1760,18 @@ class Admin(commands.Cog):
         await discord_responder.send_embed_list(inter, embed_list)
 
     @admin.sub_command()
-    async def guild(
+    async def server(
         self,
         inter,
-        option: str = discord_utils.command_param_dict['admin_guild']
+        option: str = discord_utils.command_param_dict['admin_server']
     ):
         """
-            claim a discord guild and set yourself 
-            as the guild admin for ClashCommander
+            claim a discord server and set yourself 
+            as the server admin for ClashCommander
 
             Parameters
             ----------
-            option (optional): options for client guild returns
+            option (optional): options for client server returns
         """
 
         # initializing embed default values

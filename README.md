@@ -111,7 +111,17 @@ Once setup is complete you will be able to interact with ClashCommander using th
 
   - client user
 
-    - claims the user by discord user id within ClashCommander
+    - _client user options_
+      - options for `client user` command
+      - `profile` _default_ - return your user profile
+      - `player list` - list claimed players
+        - _this command is great for copying tags from mobile_
+      - `update` - updates the requested player as your active player
+        - _values needed_ - `player tag`
+      - `sync` - syncs your player information with LinkAPI centralized data
+      - `claim` - claim your user
+      - `remove` - removes your user
+        - _also removes all linked players_
 
   - client player
 
@@ -119,12 +129,8 @@ Once setup is complete you will be able to interact with ClashCommander using th
       - options for `client player` command
       - `claim` - links a specified player to your user
         - _values needed_ - `player tag` `api key`
-      - `show` _default_ - return all claimed players
-      - `update` - updates the requested player as your active player
-        - _values needed_ - `player tag`
       - `remove` - removes the linked player from your user
         - _values needed_ - `player tag`
-      - `sync` - syncs your player information with LinkAPI centralized data
 
   - client clan
 
@@ -140,7 +146,9 @@ Once setup is complete you will be able to interact with ClashCommander using th
 
     - _admin user options_
       - options for `admin player` command
-      - `player` _default_ - return all claimed players for user
+      - `profile` _default_ - return specified user profile
+      - `player list` - list claimed players for specified user
+        - _this command is great for copying tags from mobile_
       - `sync` - syncs player information with LinkAPI centralized data for user
       - `update` - updates the requested player as the active player for the user
         - _values needed_ - `player tag`

@@ -6,6 +6,10 @@ from responders import (
     RazBotDB_Responder as db_responder,
     linkApiResponder as link_responder
 )
+from responders.ClientResponder import (
+    client_player_list,
+    client_user_profile
+)
 from utils import discord_utils
 from linkAPI.client import LinkApiClient
 from linkAPI.errors import *
@@ -81,7 +85,7 @@ class SuperUser(commands.Cog):
         embed_description = None
         field_dict_list = []
 
-        if option == "players":
+        if option == "profile":
             db_player_list = db_responder.read_player_list(user.id)
 
             # user has no claimed players
@@ -99,23 +103,38 @@ class SuperUser(commands.Cog):
                 await discord_responder.send_embed_list(inter, embed_list)
                 return
 
-            message = f"{user.mention} has claimed "
-            for db_player in db_player_list:
-                player = await clash_responder.get_player(
-                    db_player.player_tag, self.coc_client)
+            embed_title = f"{user.display_name} Profile"
+            embed_description = f"Player Count: {len(db_player_list)}"
 
-                # player not found in clash
-                if player is None:
-                    message += f"**{db_player.player_tag} not found in clash please remove**, "
-                    continue
+            field_dict_list = await client_user_profile(
+                db_player_list=db_player_list,
+                user=user,
+                discord_emoji_list=inter.client.emojis,
+                client_emoji_list=self.client_data.emojis,
+                coc_client=self.coc_client)
 
-                if db_player.active:
-                    message += f"{player.name} {player.tag} (active), "
-                else:
-                    message += f"{player.name} {player.tag}, "
+        elif option == "player list":
+            db_player_list = db_responder.read_player_list(user.id)
 
-            # cuts the last two characters from the string ', '
-            message = message[:-2]
+            # user has no claimed players
+            if len(db_player_list) == 0:
+                embed_description = (f"{user.mention} does not have any "
+                                     f"claimed players")
+
+                embed_list = discord_responder.embed_message(
+                    icon_url=inter.bot.user.avatar.url,
+                    description=embed_description,
+                    bot_user_name=inter.me.display_name,
+                    author=inter.author
+                )
+
+                await discord_responder.send_embed_list(inter, embed_list)
+                return
+
+            message = await client_player_list(
+                db_player_list=db_player_list,
+                user=user,
+                coc_client=self.coc_client)
 
             await inter.send(message)
 
@@ -148,7 +167,7 @@ class SuperUser(commands.Cog):
             embed_description = (
                 f"data for {user.mention} has been properly synced")
 
-        if option == "claim":
+        elif option == "claim":
             db_user = db_responder.claim_user(user.id)
 
             # user wasn't claimed and now is
@@ -228,6 +247,7 @@ class SuperUser(commands.Cog):
 
             embed_description = (
                 f"user {user.mention} removed properly")
+
         else:
             field_dict_list = [{
                 'name': "incorrect option selected",
@@ -785,20 +805,20 @@ class SuperUser(commands.Cog):
         await discord_responder.send_embed_list(inter, embed_list)
 
     @superuser.sub_command()
-    async def guild(
+    async def server(
         self,
         inter,
-        option: str = discord_utils.command_param_dict['superuser_guild'],
-        guild_id: str = discord_utils.command_param_dict['guild_id']
+        option: str = discord_utils.command_param_dict['superuser_server'],
+        server_id: str = discord_utils.command_param_dict['server_id']
     ):
         """
             *super user* 
-            super user guild commands
+            super user server commands
 
             Parameters
             ----------
-            option (optional): options for superuser guild commands
-            guild_id (optional): guild id for removal
+            option (optional): options for superuser server commands
+            server_id (optional): server id for removal
         """
 
         await inter.response.defer()
@@ -838,8 +858,8 @@ class SuperUser(commands.Cog):
         field_dict_list = []
 
         if option == "show":
-            embed_title = f"**ClashDiscord Guilds**"
-            embed_description = f"Guild Count: {len(inter.client.guilds)}"
+            embed_title = f"**ClashDiscord Servers**"
+            embed_description = f"Server Count: {len(inter.client.guilds)}"
 
             for guild in inter.client.guilds:
                 field_dict_list.append({
@@ -850,8 +870,8 @@ class SuperUser(commands.Cog):
         elif option == "remove":
             if guild_id is None:
                 embed_description = (
-                    f"guild id not specified, "
-                    f"please provide guild id to remove a guild")
+                    f"server id not specified, "
+                    f"please provide server id to remove a server")
 
                 embed_list = discord_responder.embed_message(
                     icon_url=inter.bot.user.avatar.url,
@@ -870,7 +890,7 @@ class SuperUser(commands.Cog):
 
             # guild isn't claimed
             if not db_guild:
-                embed_description = f"guild with id {guild_id} is not claimed"
+                embed_description = f"server with id {guild_id} is not claimed"
 
                 embed_list = discord_responder.embed_message(
                     icon_url=inter.bot.user.avatar.url,
@@ -886,17 +906,17 @@ class SuperUser(commands.Cog):
 
             # guild was deleted properly
             if deleted_guild is None:
-                embed_description = f"guild with id {guild_id} was deleted"
+                embed_description = f"server with id {guild_id} was deleted"
 
             # guild could not be deleted
             else:
-                embed_description = f"guild with id {guild_id} could not be deleted"
+                embed_description = f"server with id {guild_id} could not be deleted"
 
         elif option == "leave":
             if guild_id is None:
                 embed_description = (
-                    f"guild id not specified, "
-                    f"please provide guild id to leave a guild")
+                    f"server id not specified, "
+                    f"please provide server id to leave a server")
 
                 embed_list = discord_responder.embed_message(
                     icon_url=inter.bot.user.avatar.url,
@@ -916,7 +936,7 @@ class SuperUser(commands.Cog):
             # bot isn't in guild
             if guild is None:
                 embed_description = (f"{inter.me.display_name} "
-                                     f"is not in guild {guild_id}")
+                                     f"is not in server {guild_id}")
 
                 embed_list = discord_responder.embed_message(
                     icon_url=inter.bot.user.avatar.url,
@@ -934,12 +954,12 @@ class SuperUser(commands.Cog):
             # guild was left properly
             if left_guild is None:
                 embed_description = (f"{inter.me.display_name} left "
-                                     f"guild {guild.name} id {guild.id}")
+                                     f"server {guild.name} id {guild.id}")
 
             # guild could not be left
             else:
                 embed_description = (f"{inter.me.display_name} could not leave "
-                                     f"guild {guild.name} id {guild.id}")
+                                     f"server {guild.name} id {guild.id}")
 
         else:
             field_dict_list = [{
@@ -1022,11 +1042,11 @@ class SuperUser(commands.Cog):
             embed_title = f"{inter.me.display_name} Player Count"
             embed_description = f"{player_count} players"
 
-        elif option == "guild":
+        elif option == "server":
             guild_count = db_responder.read_guild_count()
 
-            embed_title = f"{inter.me.display_name} Guild Count"
-            embed_description = f"{guild_count} guilds"
+            embed_title = f"{inter.me.display_name} Server Count"
+            embed_description = f"{guild_count} servers"
 
         elif option == "clan":
             clan_count = db_responder.read_clan_count()

@@ -248,17 +248,16 @@ command_param_dict = {
     'client_user': commands.Param(
         name="option",
         description="*optional* options for client user returns",
-        default="claim",
+        default="profile",
         choices=[
-            "claim", "remove"
+            "profile", "player list", "update", "sync", "claim", "remove"
         ]
     ),
     'client_player': commands.Param(
         name="option",
         description="*optional* options for client player returns",
-        default="show",
         choices=[
-            "show", "sync", "update", "claim", "remove"
+            "claim", "remove"
         ]
     ),
     'client_player_tag': commands.Param(
@@ -270,9 +269,9 @@ command_param_dict = {
         name="player_tag",
         description="*required* player tag",
     ),
-    'admin_guild': commands.Param(
+    'admin_server': commands.Param(
         name="option",
-        description="*optional* options for client guild returns",
+        description="*optional* options for client server returns",
         default="claim",
         choices=[
             "claim"
@@ -318,9 +317,9 @@ command_param_dict = {
     'admin_user': commands.Param(
         name="option",
         description="*optional* options for admin user returns",
-        default="player",
+        default="profile",
         choices=[
-            "player", "sync", "update"
+            "profile", "player list", "sync", "update"
         ]
     ),
     'admin_player': commands.Param(
@@ -333,22 +332,22 @@ command_param_dict = {
     'superuser_user': commands.Param(
         name="option",
         description="*optional* options for superuser user returns",
-        default="players",
+        default="profile",
         choices=[
-            "players", "sync", "claim", "remove"
+            "profile", "player list", "sync", "claim", "remove"
         ]
     ),
-    'superuser_guild': commands.Param(
+    'superuser_server': commands.Param(
         name="option",
-        description="*optional* options for superuser guild returns",
+        description="*optional* options for superuser server returns",
         default="show",
         choices=[
             "show", "remove", "leave"
         ]
     ),
-    'guild_id': commands.Param(
-        name="guild_id",
-        description="*optional* id for guild",
+    'server_id': commands.Param(
+        name="server_id",
+        description="*optional* id for server",
         default=None
     ),
     'superuser_admin': commands.Param(
@@ -372,7 +371,7 @@ command_param_dict = {
         description="*optional* options for superuser count returns",
         default="user",
         choices=[
-            "user", "player", "guild", "clan"
+            "user", "player", "server", "clan"
         ]
     ),
 }
