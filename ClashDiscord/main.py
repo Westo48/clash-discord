@@ -42,15 +42,13 @@ linkapi_client = LinkApiClient(
 intents = disnake.Intents.default()
 intents.members = True
 
-bot = commands.Bot(
-    command_prefix=client_data.prefix,
+bot = commands.InteractionBot(
     intents=intents,
     test_guilds=get_client_test_guilds())
-bot.remove_command('help')
 
 # only load Misc if there are test guilds
 # only if it is in dev
-if len(get_client_test_guilds()) != 0:
+if len(bot._test_guilds) != 0:
     bot.add_cog(misc_cog.Misc(
         bot, coc_client, client_data))
 

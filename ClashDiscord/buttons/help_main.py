@@ -1,5 +1,5 @@
 import disnake
-from disnake.ext.commands import Bot
+from disnake.ext.commands import InteractionBot
 
 from data import ClashDiscord_Client_Data as ClientData
 from responders import (
@@ -10,7 +10,9 @@ from responders import (
 
 class HelpMainBtn(disnake.ui.Button):
     def __init__(
-            self, bot: Bot, client_data: ClientData.ClashDiscord_Data):
+        self, bot: InteractionBot,
+        client_data: ClientData.ClashDiscord_Data
+    ):
         super().__init__(
             label="Back", style=disnake.ButtonStyle.primary)
         self.bot = bot

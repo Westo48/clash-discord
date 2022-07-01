@@ -1,5 +1,5 @@
 import disnake
-from disnake.ext.commands import Bot
+from disnake.ext.commands import InteractionBot
 
 from data import ClashDiscord_Client_Data as ClientData
 from views.help_view import HelpMainView
@@ -13,7 +13,9 @@ from responders import (
 
 class HelpSuperUserBtn(disnake.ui.Button):
     def __init__(
-            self, bot: Bot, client_data: ClientData.ClashDiscord_Data):
+        self, bot: InteractionBot,
+        client_data: ClientData.ClashDiscord_Data
+    ):
         super().__init__(
             label="Super User", style=disnake.ButtonStyle.primary)
         self.bot = bot
@@ -77,7 +79,9 @@ class HelpSuperUserBtn(disnake.ui.Button):
 
 class HelpAdminBtn(disnake.ui.Button):
     def __init__(
-            self, bot: Bot, client_data: ClientData.ClashDiscord_Data):
+        self, bot: InteractionBot,
+        client_data: ClientData.ClashDiscord_Data
+    ):
         super().__init__(
             label="Admin", style=disnake.ButtonStyle.primary)
         self.bot = bot
@@ -149,7 +153,9 @@ class HelpAdminBtn(disnake.ui.Button):
 
 class HelpClientBtn(disnake.ui.Button):
     def __init__(
-            self, bot: Bot, client_data: ClientData.ClashDiscord_Data):
+        self, bot: InteractionBot,
+        client_data: ClientData.ClashDiscord_Data
+    ):
         super().__init__(
             label="Client", style=disnake.ButtonStyle.primary)
         self.bot = bot
@@ -196,7 +202,9 @@ class HelpClientBtn(disnake.ui.Button):
 
 class HelpDiscordBtn(disnake.ui.Button):
     def __init__(
-            self, bot: Bot, client_data: ClientData.ClashDiscord_Data):
+        self, bot: InteractionBot,
+        client_data: ClientData.ClashDiscord_Data
+    ):
         super().__init__(
             label="Discord", style=disnake.ButtonStyle.primary)
         self.bot = bot
@@ -243,7 +251,9 @@ class HelpDiscordBtn(disnake.ui.Button):
 
 class HelpAnnounceBtn(disnake.ui.Button):
     def __init__(
-            self, bot: Bot, client_data: ClientData.ClashDiscord_Data):
+        self, bot: InteractionBot,
+        client_data: ClientData.ClashDiscord_Data
+    ):
         super().__init__(
             label="Announce", style=disnake.ButtonStyle.primary)
         self.bot = bot
@@ -290,7 +300,9 @@ class HelpAnnounceBtn(disnake.ui.Button):
 
 class HelpPlayerBtn(disnake.ui.Button):
     def __init__(
-            self, bot: Bot, client_data: ClientData.ClashDiscord_Data):
+        self, bot: InteractionBot,
+        client_data: ClientData.ClashDiscord_Data
+    ):
         super().__init__(
             label="Player", style=disnake.ButtonStyle.primary)
         self.bot = bot
@@ -337,7 +349,9 @@ class HelpPlayerBtn(disnake.ui.Button):
 
 class HelpClanBtn(disnake.ui.Button):
     def __init__(
-            self, bot: Bot, client_data: ClientData.ClashDiscord_Data):
+        self, bot: InteractionBot,
+        client_data: ClientData.ClashDiscord_Data
+    ):
         super().__init__(
             label="Clan", style=disnake.ButtonStyle.primary)
         self.bot = bot
@@ -384,7 +398,9 @@ class HelpClanBtn(disnake.ui.Button):
 
 class HelpWarBtn(disnake.ui.Button):
     def __init__(
-            self, bot: Bot, client_data: ClientData.ClashDiscord_Data):
+        self, bot: InteractionBot,
+        client_data: ClientData.ClashDiscord_Data
+    ):
         super().__init__(
             label="War", style=disnake.ButtonStyle.primary)
         self.bot = bot
@@ -431,7 +447,9 @@ class HelpWarBtn(disnake.ui.Button):
 
 class HelpCWLBtn(disnake.ui.Button):
     def __init__(
-            self, bot: Bot, client_data: ClientData.ClashDiscord_Data):
+        self, bot: InteractionBot,
+        client_data: ClientData.ClashDiscord_Data
+    ):
         super().__init__(
             label="CWL", style=disnake.ButtonStyle.primary)
         self.bot = bot
