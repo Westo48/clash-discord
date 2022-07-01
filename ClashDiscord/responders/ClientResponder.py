@@ -1,4 +1,5 @@
 import data.RazBot_Data as RazBot_Data
+from responders.ClashResponder import get_player
 
 from responders.AuthResponder import player_verification
 
@@ -172,3 +173,27 @@ async def client_player_info(author, db_players, coc_client):
         })
 
     return field_dict_list
+
+
+async def client_player_list(db_player_list, user, coc_client):
+
+    message = f"{user.mention} has claimed:\n\n"
+
+    for db_player in db_player_list:
+        player = await get_player(
+            db_player.player_tag, coc_client)
+
+        # player not found in clash
+        if player is None:
+            message += f"**{db_player.player_tag} not found in clash please remove**\n"
+            continue
+
+        if db_player.active:
+            message += f"{player.name} {player.tag} (active)\n"
+        else:
+            message += f"{player.name} {player.tag}\n"
+
+    # cuts the last one character from the string '\n'
+    message = message[:-1]
+
+    return message

@@ -333,10 +333,10 @@ class Client(commands.Cog):
                     f"{player_obj.tag} for {inter.author.mention}")
 
         elif option == "show":
-            db_player_obj_list = db_responder.read_player_list(inter.author.id)
+            db_player_list = db_responder.read_player_list(inter.author.id)
 
             # user has no claimed players
-            if len(db_player_obj_list) == 0:
+            if len(db_player_list) == 0:
                 embed_description = (f"{inter.author.mention} does not have any "
                                      f"claimed players")
 
@@ -350,23 +350,10 @@ class Client(commands.Cog):
                 await discord_responder.send_embed_list(inter, embed_list)
                 return
 
-            message = f"{inter.author.mention} has claimed "
-            for db_player_obj in db_player_obj_list:
-                player_obj = await clash_responder.get_player(
-                    db_player_obj.player_tag, self.coc_client)
-
-                # player not found in clash
-                if player_obj is None:
-                    message += f"**{db_player_obj.player_tag} not found in clash please remove**, "
-                    continue
-
-                if db_player_obj.active:
-                    message += f"{player_obj.name} {player_obj.tag} (active), "
-                else:
-                    message += f"{player_obj.name} {player_obj.tag}, "
-
-            # cuts the last two characters from the string ', '
-            message = message[:-2]
+            message = await client_responder.client_player_list(
+                db_player_list=db_player_list,
+                user=inter.author,
+                coc_client=self.coc_client)
 
             await inter.send(message)
 

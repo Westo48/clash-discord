@@ -7,6 +7,7 @@ from responders import (
     linkApiResponder as link_responder,
     AuthResponder as auth_responder
 )
+from responders.ClientResponder import client_player_list
 from utils import discord_utils
 from linkAPI.client import LinkApiClient
 from linkAPI.errors import *
@@ -130,23 +131,11 @@ class Admin(commands.Cog):
                 await discord_responder.send_embed_list(inter, embed_list)
                 return
 
-            message = f"{user.mention} has claimed "
-            for db_player_obj in db_player_list:
-                player_obj = await clash_responder.get_player(
-                    db_player_obj.player_tag, self.coc_client)
+            message = await client_player_list(
+                db_player_list=db_player_list,
+                user=user,
+                coc_client=self.coc_client)
 
-                # player not found in clash
-                if player_obj is None:
-                    message += f"**{db_player_obj.player_tag} not found in clash please remove**, "
-                    continue
-
-                if db_player_obj.active:
-                    message += f"{player_obj.name} {player_obj.tag} (active), "
-                else:
-                    message += f"{player_obj.name} {player_obj.tag}, "
-
-            # cuts the last two characters from the string ', '
-            message = message[:-2]
             await inter.edit_original_message(content=message)
             return
 

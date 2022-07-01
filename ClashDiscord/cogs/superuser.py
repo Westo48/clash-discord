@@ -6,6 +6,7 @@ from responders import (
     RazBotDB_Responder as db_responder,
     linkApiResponder as link_responder
 )
+from responders.ClientResponder import client_player_list
 from utils import discord_utils
 from linkAPI.client import LinkApiClient
 from linkAPI.errors import *
@@ -99,23 +100,10 @@ class SuperUser(commands.Cog):
                 await discord_responder.send_embed_list(inter, embed_list)
                 return
 
-            message = f"{user.mention} has claimed "
-            for db_player in db_player_list:
-                player = await clash_responder.get_player(
-                    db_player.player_tag, self.coc_client)
-
-                # player not found in clash
-                if player is None:
-                    message += f"**{db_player.player_tag} not found in clash please remove**, "
-                    continue
-
-                if db_player.active:
-                    message += f"{player.name} {player.tag} (active), "
-                else:
-                    message += f"{player.name} {player.tag}, "
-
-            # cuts the last two characters from the string ', '
-            message = message[:-2]
+            message = await client_player_list(
+                db_player_list=db_player_list,
+                user=user,
+                coc_client=self.coc_client)
 
             await inter.send(message)
 
