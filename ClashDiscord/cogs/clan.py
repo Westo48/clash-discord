@@ -509,7 +509,6 @@ class Clan(commands.Cog):
             embed_list = discord_responder.embed_message(
                 icon_url=inter.bot.user.avatar.url,
                 title=embed_title,
-                description=embed_description,
                 bot_user_name=inter.me.display_name,
                 thumbnail=clan.badge.small,
                 field_list=field_dict_list,
