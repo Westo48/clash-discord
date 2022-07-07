@@ -165,17 +165,17 @@ class Clan(commands.Cog):
         field_dict_list = []
 
         if option == "overview":
-            embed_title = f"{clan.name} lineup"
+            embed_title = f"{clan.name} Lineup"
             embed_description = await clan_responder.clan_lineup(
                 clan, self.coc_client, inter.client.emojis, self.client_data.emojis)
 
         elif option == "member":
-            embed_title = f"{clan.name} member lineup"
+            embed_title = f"{clan.name} Member Lineup"
             field_dict_list = await clan_responder.clan_lineup_member(
                 clan, self.coc_client, inter.client.emojis, self.client_data.emojis)
 
         elif option == "count":
-            embed_title = f"{clan.name} lineup count"
+            embed_title = f"{clan.name} Lineup Count"
             field_dict_list = await clan_responder.clan_lineup_count(
                 clan, self.coc_client, inter.client.emojis, self.client_data.emojis)
 
@@ -266,12 +266,12 @@ class Clan(commands.Cog):
         field_dict_list = []
 
         if option == "overview":
-            embed_title = f"{clan.name} war preference"
+            embed_title = f"{clan.name} War Preference"
             embed_description = await clan_responder.war_preference_member(
                 clan, self.coc_client, inter.client.emojis, self.client_data.emojis)
 
         elif option == "count":
-            embed_title = f"{clan.name} war preference"
+            embed_title = f"{clan.name} War Preference"
             field_dict_list = await clan_responder.war_preference_clan(
                 clan, self.coc_client, inter.client.emojis, self.client_data.emojis)
 
@@ -441,7 +441,7 @@ class Clan(commands.Cog):
 
         # super troop not specified for search
         if super_troop is None:
-            embed_title = f"{clan.name} active super troops"
+            embed_title = f"{clan.name} Active Super Troops"
 
             field_dict_list = await clan_responder.clan_super_troop_active(
                 clan, inter.client.emojis, self.client_data.emojis, self.coc_client)
