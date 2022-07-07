@@ -51,7 +51,7 @@ class ClashDiscord_Data(object):
                 emojis (list[obj]): list of emoji objects
     """
 
-    version = '2.4.5'
+    version = '2.4.6'
     author = "Razgriz#7805"
     description = ("Clash of Clans discord bot for discord member management "
                    "and various clash related info")
