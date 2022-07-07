@@ -349,7 +349,7 @@ class Player(commands.Cog):
         )
         embed_list = discord_responder.embed_message(
             icon_url=inter.bot.user.avatar.url,
-            title=f"{player.name} Super Troops",
+            title=f"{player.name} Active Super Troops",
             bot_user_name=inter.me.display_name,
             thumbnail=embed_thumbnail,
             field_list=field_dict_list,
