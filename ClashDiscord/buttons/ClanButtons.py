@@ -175,7 +175,7 @@ class ClanSuperTroopBtn(Button):
         client_data: ClientData.ClashDiscord_Data,
         coc_client,
         clan: Clan,
-        btn_name: str = "Super Troop",
+        btn_name: str = "Super Troops",
         btn_style: ButtonStyle = ButtonStyle.primary
     ):
         super().__init__(
