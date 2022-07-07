@@ -174,20 +174,21 @@ class CWL(commands.Cog):
             return
 
         elif option == "clan":
+            embed_list = []
+
             for clan in cwl_group_obj.clans:
                 embed_description = cwl_responder.cwl_lineup_clan(
                     clan, self.coc_client, inter.client.emojis, self.client_data.emojis)
 
-                embed_list = discord_responder.embed_message(
+                embed_list.extend(discord_responder.embed_message(
                     icon_url=inter.bot.user.avatar.url,
                     title=f"{clan.name} {clan.tag} CWL Lineup",
                     bot_user_name=inter.me.display_name,
                     thumbnail=clan.badge.small,
                     description=embed_description,
-                    author=inter.author
-                )
+                    author=inter.author))
 
-                await discord_responder.send_embed_list(inter, embed_list)
+            await discord_responder.send_embed_list(inter, embed_list)
 
             return
 
