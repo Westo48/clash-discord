@@ -113,7 +113,6 @@ class CWLGroupScoreboardBtn(Button):
         coc_client,
         clan: Clan,
         group: ClanWarLeagueGroup,
-        war: ClanWar,
         btn_name: str = "Group Scoreboard",
         btn_style: ButtonStyle = ButtonStyle.primary
     ):
@@ -124,7 +123,6 @@ class CWLGroupScoreboardBtn(Button):
         self.coc_client = coc_client
         self.clan = clan
         self.group = group
-        self.war = war
 
     async def callback(
             self,
@@ -156,18 +154,6 @@ class CWLGroupScoreboardBtn(Button):
             await inter.edit_original_message(embeds=embed_list)
             return
 
-        if self.war is None:
-            embed_description = f"could not find war"
-
-            embed_list = embed_message(
-                icon_url=inter.bot.user.avatar.url,
-                bot_user_name=inter.me.display_name,
-                description=embed_description,
-                author=inter.author)
-
-            await inter.edit_original_message(embeds=embed_list)
-            return
-
         btn_name = self.label
 
         self.label = f"Please Wait"
@@ -178,7 +164,7 @@ class CWLGroupScoreboardBtn(Button):
             f"Clan War {self.clan.war_league.name}",
             inter.client.emojis,
             self.client_data.emojis)
-        embed_title = f"CWL {league_emoji} {self.war_league.name} Group"
+        embed_title = f"CWL {league_emoji} {self.clan.war_league.name} Group"
 
         field_dict_list = await cwl_scoreboard_group(
             self.group,
