@@ -1,4 +1,4 @@
-from disnake.ui import View, Button
+from disnake.ui import View
 from coc.players import Player
 from data import ClashDiscord_Client_Data as ClientData
 from buttons.PlayerButtons import (
