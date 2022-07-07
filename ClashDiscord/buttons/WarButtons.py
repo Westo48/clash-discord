@@ -17,7 +17,7 @@ class WarInfoBtn(Button):
         client_data: ClientData.ClashDiscord_Data,
         coc_client,
         war: ClanWar,
-        btn_name: str = "Info",
+        btn_name: str = "War Info",
         btn_style: ButtonStyle = ButtonStyle.primary
     ):
         super().__init__(
@@ -69,7 +69,7 @@ class WarClanLineupBtn(Button):
         client_data: ClientData.ClashDiscord_Data,
         coc_client,
         war: ClanWar,
-        btn_name: str = "Clan Lineup",
+        btn_name: str = "War Clan Lineup",
         btn_style: ButtonStyle = ButtonStyle.primary
     ):
         super().__init__(
@@ -119,7 +119,7 @@ class WarNoAttackBtn(Button):
         client_data: ClientData.ClashDiscord_Data,
         coc_client,
         war: ClanWar,
-        btn_name: str = "No Attack",
+        btn_name: str = "War No Attack",
         btn_style: ButtonStyle = ButtonStyle.primary
     ):
         super().__init__(
