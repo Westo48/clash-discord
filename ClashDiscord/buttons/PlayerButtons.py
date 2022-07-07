@@ -163,7 +163,7 @@ class PlayerSuperTroopBtn(Button):
         )
         embed_list = embed_message(
             icon_url=inter.bot.user.avatar.url,
-            title=f"{self.player.name} Super Troops",
+            title=f"{self.player.name} Active Super Troops",
             bot_user_name=inter.me.display_name,
             thumbnail=embed_thumbnail,
             field_list=field_dict_list,
