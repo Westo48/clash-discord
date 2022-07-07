@@ -45,6 +45,12 @@ class WarInfoBtn(Button):
             await inter.edit_original_message(embeds=embed_list)
             return
 
+        btn_name = self.label
+
+        self.label = f"Please Wait"
+
+        await inter.edit_original_message(view=self.view)
+
         field_dict_list = war_scoreboard(
             self.war, inter.client.emojis, self.client_data.emojis)
 
@@ -56,8 +62,11 @@ class WarInfoBtn(Button):
             field_list=field_dict_list,
             author=inter.author)
 
+        self.label = btn_name
+
         # edit the original message with the updated embeds
-        await inter.edit_original_message(embeds=embed_list)
+        await inter.edit_original_message(
+            embeds=embed_list, view=self.view)
 
 
 # * class WarOverviewLineupBtn(Button):
@@ -97,6 +106,12 @@ class WarClanLineupBtn(Button):
             await inter.edit_original_message(embeds=embed_list)
             return
 
+        btn_name = self.label
+
+        self.label = f"Please Wait"
+
+        await inter.edit_original_message(view=self.view)
+
         embed_title = f"{self.war.clan.name} vs. {self.war.opponent.name}"
         field_dict_list = war_lineup_clan(
             self.war, inter.client.emojis, self.client_data.emojis)
@@ -109,8 +124,11 @@ class WarClanLineupBtn(Button):
             field_list=field_dict_list,
             author=inter.author)
 
+        self.label = btn_name
+
         # edit the original message with the updated embeds
-        await inter.edit_original_message(embeds=embed_list)
+        await inter.edit_original_message(
+            embeds=embed_list, view=self.view)
 
 
 class WarNoAttackBtn(Button):
@@ -147,6 +165,12 @@ class WarNoAttackBtn(Button):
             await inter.edit_original_message(embeds=embed_list)
             return
 
+        btn_name = self.label
+
+        self.label = f"Please Wait"
+
+        await inter.edit_original_message(view=self.view)
+
         embed_title = f"{self.war.clan.name} vs. {self.war.opponent.name}"
 
         # setting missed_attacks to None
@@ -162,8 +186,11 @@ class WarNoAttackBtn(Button):
             field_list=field_dict_list,
             author=inter.author)
 
+        self.label = btn_name
+
         # edit the original message with the updated embeds
-        await inter.edit_original_message(embeds=embed_list)
+        await inter.edit_original_message(
+            embeds=embed_list, view=self.view)
 
 
 # * Scoreboard
