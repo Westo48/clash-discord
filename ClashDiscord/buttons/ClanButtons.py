@@ -227,7 +227,7 @@ class ClanSuperTroopBtn(Button):
 
         await inter.edit_original_message(view=self.view)
 
-        embed_title = f"{self.clan.name} active super troops"
+        embed_title = f"{self.clan.name} Active Super Troops"
 
         field_dict_list = await clan_super_troop_active(
             self.clan,
