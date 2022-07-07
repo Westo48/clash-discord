@@ -1,5 +1,9 @@
 import disnake
+from disnake.ui import View, Button
 from disnake.ext import commands
+from views import ViewModels
+from buttons.ButtonModels import (
+    LinkButton)
 from responders import (
     DiscordResponder as discord_responder,
     ClashResponder as clash_responder,
@@ -177,17 +181,27 @@ class Player(commands.Cog):
             author=inter.author
         ))
 
-        await discord_responder.send_embed_list(inter, embed_list)
+        button_list: list[Button] = []
 
-        player_links = ""
+        url = player_responder.link_clash_of_stats(player)
 
-        player_links += player_responder.link_clash_of_stats(player)
+        # clash of stats player link
+        button_list.append(LinkButton(
+            btn_name=f"{player.name} Clash of Stats",
+            url=url))
 
-        player_links += "\n\n"
+        url = player_responder.link_chocolate_clash(player)
 
-        player_links += player_responder.link_chocolate_clash(player)
+        # chocolate clash player link
+        button_list.append(LinkButton(
+            btn_name=f"{player.name} Chocolate Clash",
+            url=url))
 
-        await inter.send(content=player_links)
+        player_button_links: View = ViewModels.ButtonListView(
+            buttons=button_list)
+
+        await inter.send(
+            embeds=embed_list, view=player_button_links)
 
     @player.sub_command_group()
     async def unit(self, inter):

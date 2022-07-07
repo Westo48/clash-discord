@@ -464,7 +464,7 @@ def link_clash_of_stats(player):
         f"({clash_of_stats_player_url})"
     )
 
-    return formatted_string
+    return clash_of_stats_player_url
 
 
 def link_chocolate_clash(player):
@@ -478,7 +478,7 @@ def link_chocolate_clash(player):
             [str]: string of formatted player's link to Chocolate Clash page
     """
 
-    base_url = "https://chocolateclash.com/cc_n/member.php?tag="
+    base_url = "https://fwa.chocolateclash.com/cc_n/member.php?tag="
     player_url = player.tag.replace("#", "")
 
     chocolateclash_player_url = base_url+player_url
@@ -488,4 +488,4 @@ def link_chocolate_clash(player):
         f"({chocolateclash_player_url})"
     )
 
-    return formatted_string
+    return chocolateclash_player_url
