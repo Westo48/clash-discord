@@ -42,5 +42,5 @@ class ClanView(View):
         self.add_item(ClanSuperTroopBtn(
             client_data=client_data,
             coc_client=coc_client,
-            player=clan,
+            clan=clan,
             btn_name=f"{clan.name} Super Troops"))

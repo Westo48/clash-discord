@@ -97,6 +97,12 @@ class ClanLineupBtn(Button):
             await inter.edit_original_message(embeds=embed_list)
             return
 
+        btn_name = self.label
+
+        self.label = f"Please Wait"
+
+        await inter.edit_original_message(view=self.view)
+
         embed_title = f"{self.clan.name} Lineup"
         embed_description = await clan_lineup(
             self.clan,
@@ -112,8 +118,11 @@ class ClanLineupBtn(Button):
             thumbnail=self.clan.badge.small,
             author=inter.author)
 
+        self.label = btn_name
+
         # edit the original message with the updated embeds
-        await inter.edit_original_message(embeds=embed_list)
+        await inter.edit_original_message(
+            embeds=embed_list, view=self.view)
 
 
 class ClanWarPreferenceBtn(Button):
@@ -150,6 +159,12 @@ class ClanWarPreferenceBtn(Button):
             await inter.edit_original_message(embeds=embed_list)
             return
 
+        btn_name = self.label
+
+        self.label = f"Please Wait"
+
+        await inter.edit_original_message(view=self.view)
+
         embed_title = f"{self.clan.name} War Preference"
         embed_description = await war_preference_member(
             self.clan,
@@ -165,8 +180,11 @@ class ClanWarPreferenceBtn(Button):
             thumbnail=self.clan.badge.small,
             author=inter.author)
 
+        self.label = btn_name
+
         # edit the original message with the updated embeds
-        await inter.edit_original_message(embeds=embed_list)
+        await inter.edit_original_message(
+            embeds=embed_list, view=self.view)
 
 
 class ClanSuperTroopBtn(Button):
@@ -203,6 +221,12 @@ class ClanSuperTroopBtn(Button):
             await inter.edit_original_message(embeds=embed_list)
             return
 
+        btn_name = self.label
+
+        self.label = f"Please Wait"
+
+        await inter.edit_original_message(view=self.view)
+
         embed_title = f"{self.clan.name} active super troops"
 
         field_dict_list = await clan_super_troop_active(
@@ -214,10 +238,13 @@ class ClanSuperTroopBtn(Button):
         embed_list = embed_message(
             icon_url=inter.bot.user.avatar.url,
             title=embed_title,
-            description=embed_description,
             bot_user_name=inter.me.display_name,
+            field_list=field_dict_list,
             thumbnail=self.clan.badge.small,
             author=inter.author)
 
+        self.label = btn_name
+
         # edit the original message with the updated embeds
-        await inter.edit_original_message(embeds=embed_list)
+        await inter.edit_original_message(
+            embeds=embed_list, view=self.view)
