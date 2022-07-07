@@ -10,6 +10,7 @@ from responders import (
     AuthResponder as auth_responder,
     WarResponder as war_responder
 )
+from views.WarView import WarView
 from utils import discord_utils
 
 
@@ -80,7 +81,14 @@ class War(commands.Cog):
             author=inter.author
         )
 
-        await discord_responder.send_embed_list(inter, embed_list)
+        view = WarView(
+            client_data=self.client_data,
+            coc_client=self.coc_client,
+            war=war_obj)
+
+        await inter.send(
+            embeds=embed_list,
+            view=view)
 
     @war.sub_command()
     async def noattack(
@@ -138,7 +146,14 @@ class War(commands.Cog):
             author=inter.author
         )
 
-        await discord_responder.send_embed_list(inter, embed_list)
+        view = WarView(
+            client_data=self.client_data,
+            coc_client=self.coc_client,
+            war=war_obj)
+
+        await inter.send(
+            embeds=embed_list,
+            view=view)
 
     @war.sub_command()
     async def open(
@@ -462,6 +477,25 @@ class War(commands.Cog):
             field_dict_list = war_responder.war_lineup_clan(
                 war_obj, inter.client.emojis, self.client_data.emojis)
 
+            embed_list = discord_responder.embed_message(
+                icon_url=inter.bot.user.avatar.url,
+                title=embed_title,
+                bot_user_name=inter.me.display_name,
+                thumbnail=war_obj.clan.badge.small,
+                field_list=field_dict_list,
+                author=inter.author)
+
+            view = WarView(
+                client_data=self.client_data,
+                coc_client=self.coc_client,
+                war=war_obj)
+
+            await inter.send(
+                embeds=embed_list,
+                view=view)
+
+            return
+
         elif option == "member":
             embed_title = f"{war_obj.clan.name} vs. {war_obj.opponent.name}"
 
@@ -512,7 +546,6 @@ class War(commands.Cog):
             bot_user_name=inter.me.display_name,
             thumbnail=war_obj.clan.badge.small,
             field_list=field_dict_list,
-            author=inter.author
-        )
+            author=inter.author)
 
         await discord_responder.send_embed_list(inter, embed_list)
