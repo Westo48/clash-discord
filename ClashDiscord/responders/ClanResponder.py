@@ -250,11 +250,11 @@ async def war_preference_member(
 
         if player.war_opted_in:
             in_string += (
-                f"{in_emoji} {th_emoji} {player.name}\n")
+                f"{in_emoji} {th_emoji} {player.name} {player.tag}\n")
 
         else:
             out_string += (
-                f"{out_emoji} {th_emoji} {player.name}\n")
+                f"{out_emoji} {th_emoji} {player.name} {player.tag}\n")
 
     embed_description = in_string+out_string
 
