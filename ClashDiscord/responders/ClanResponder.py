@@ -119,7 +119,9 @@ async def clan_lineup(
         th_emoji = get_th_emoji(
             player.town_hall, discord_emoji_list, client_emoji_list)
 
-        return_string += f"{member.clan_rank}: {th_emoji} {player.name}"
+        return_string += (
+            f"{member.clan_rank}: {th_emoji} {player.name} "
+            f"{player.tag}")
         return_string += "\n"
 
     # remove the last 1 character of the string
@@ -163,8 +165,9 @@ async def clan_lineup_member(
         th_emoji = get_th_emoji(
             player.town_hall, discord_emoji_list, client_emoji_list)
 
-        field_name = (f"{member.clan_rank}: {th_emoji} {player.name} "
-                      f"{player.tag} {player.role.in_game_name}")
+        field_name = (f"{member.clan_rank}: {th_emoji} {player.name}\n"
+                      f"{player.tag}\n"
+                      f"{player.role.in_game_name}")
 
         field_value = ""
 
@@ -248,11 +251,11 @@ async def war_preference_member(
 
         if player.war_opted_in:
             in_string += (
-                f"{in_emoji} {th_emoji} {player.name}\n")
+                f"{in_emoji} {th_emoji} {player.name} {player.tag}\n")
 
         else:
             out_string += (
-                f"{out_emoji} {th_emoji} {player.name}\n")
+                f"{out_emoji} {th_emoji} {player.name} {player.tag}\n")
 
     embed_description = in_string+out_string
 

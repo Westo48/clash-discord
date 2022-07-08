@@ -150,7 +150,8 @@ def war_clan_scoreboard(
 
         field_dict_list.append({
             "name": (
-                f"{position_index}: {th_emoji} {scored_member.name}"
+                f"{position_index}: {th_emoji} {scored_member.name}\n"
+                f"{scored_member.tag}"
             ),
             "value": (
                 f"{scored_member.stars} {star_emoji}\n"
@@ -245,7 +246,8 @@ def war_no_attack(war: ClanWar, missed_attacks, discord_emoji_list, client_emoji
 
         field_dict_list.append({
             'name': (f"{map_position_index}: {th_emoji} "
-                     f"{member.name} {member.tag}"),
+                     f"{member.name}\n"
+                     f"{member.tag}"),
             'value': (f"{missed_string}"
                       f"{missing_attack_count} {missing_attack_string}")
         })
@@ -298,14 +300,14 @@ def war_clan_stars(war_obj, discord_emoji_list, client_emoji_list):
                 field_value = f"did not attack"
 
             field_dict_list.append({
-                'name': (f"{member_obj.map_position}. {member_obj.name} "
-                         f"{th_emoji}\n"),
+                'name': (f"{member_obj.map_position}: {th_emoji} {member_obj.name}\n"
+                         f"{member_obj.tag}"),
                 'value': field_value
             })
         else:
             field_dict_list.append({
-                'name': (f"{member_obj.map_position}. {member_obj.name} "
-                         f"{th_emoji}"),
+                'name': (f"{member_obj.map_position}: {th_emoji} {member_obj.name}\n"
+                         f"{member_obj.tag}"),
                 'value': (
                     f"attacked {len(member_obj.attacks)} "
                     f"{clash_responder.string_attack_times(member_obj.attacks)}\n"
@@ -353,8 +355,8 @@ def war_all_attacks(war_obj, discord_emoji_list, client_emoji_list):
                 field_value = f"did not attack"
 
             field_dict_list.append({
-                'name': (f"{member_obj.map_position}. {member_obj.name} "
-                         f"{th_emoji}"),
+                'name': (f"{member_obj.map_position}: {th_emoji} {member_obj.name}\n"
+                         f"{member_obj.tag}"),
                 'value': field_value
             })
 
@@ -372,26 +374,27 @@ def war_all_attacks(war_obj, discord_emoji_list, client_emoji_list):
 
             if attack_obj.stars == 3:
                 field_value += (
-                    f"{defender_obj.map_position}. "
-                    f"{defender_obj.name} {defender_th_emoji}\n"
-                    f"{star_string} 100%\n\n"
-                )
+                    f"{defender_obj.map_position}: "
+                    f"{defender_th_emoji} {defender_obj.name}\n"
+                    f"{defender_obj.tag}\n"
+                    f"{star_string} 100%\n\n")
             else:
                 field_value += (
-                    f"{defender_obj.map_position}. "
-                    f"{defender_obj.name} {defender_th_emoji}\n"
+                    f"{defender_obj.map_position}: "
+                    f"{defender_th_emoji} {defender_obj.name}\n"
+                    f"{defender_obj.tag}\n"
                     f"{star_string} "
-                    f"{round(attack_obj.destruction, 2)}%\n\n"
-                )
+                    f"{round(attack_obj.destruction, 2)}%\n\n")
 
         # remove trailing space in field value
         field_value = field_value[:-2]
 
         field_dict_list.append({
             'name': (
-                f"{member_obj.map_position}. "
-                f"{member_obj.name} "
-                f"{th_emoji}"
+                f"{member_obj.map_position}: "
+                f"{th_emoji} "
+                f"{member_obj.name}\n"
+                f"{member_obj.tag}"
             ),
             'value': field_value
         })
@@ -434,7 +437,8 @@ def war_open_bases(
             field_dict_list.append({
                 "name": (
                     f"{position_index}: {opponent_th_emoji} "
-                    f"{opponent.name} {opponent.tag}"
+                    f"{opponent.name}\n"
+                    f"{opponent.tag}"
                 ),
                 "value": (
                     f"not attacked"
@@ -455,7 +459,8 @@ def war_open_bases(
             field_dict_list.append({
                 "name": (
                     f"{position_index}: {opponent_th_emoji} "
-                    f"{opponent.name} {opponent.tag}"
+                    f"{opponent.name}\n"
+                    f"{opponent.tag}"
                 ),
                 "value": (
                     f"{star_string} "
@@ -514,7 +519,10 @@ def war_member_score(war_obj, player):
     return field_dict_list
 
 
-def war_clan_score(war_obj):
+def war_clan_score(
+        war_obj: ClanWar,
+        discord_emoji_list,
+        client_emoji_list):
     "returns a response list of all member scores"
     return_list = []
     if war_obj.state == "notInWar":
@@ -538,9 +546,18 @@ def war_clan_score(war_obj):
 
     scored_member_list = sorted(
         scored_member_list, key=lambda member: member.score, reverse=True)
+    index = 0
     for member in scored_member_list:
+        th_emoji = get_th_emoji(
+            member.town_hall,
+            discord_emoji_list,
+            client_emoji_list)
+
+        index += 1
         return_list.append({
-            "name": member.name,
+            "name": (
+                f"{index}: {th_emoji} {member.name}\n"
+                f"{member.tag}"),
             "value": f"{round(member.score, 3)}"
         })
     return return_list
@@ -620,8 +637,8 @@ def war_lineup_clan(war_obj, discord_emoji_list, client_emoji_list):
         field_dict_list.append({
             "name": f"{map_position_index}",
             "value": (
-                f"{member_th_emoji} | {clan_member.name}\n"
-                f"{opp_th_emoji} | {opp_member_obj.name}\n"
+                f"{member_th_emoji} | {clan_member.name} {clan_member.tag}\n"
+                f"{opp_th_emoji} | {opp_member_obj.name} {opp_member_obj.tag}"
             ),
             "inline": False
         })
@@ -647,9 +664,15 @@ async def war_lineup_member(
         th_emoji = get_emoji(
             player.town_hall, discord_emoji_list, client_emoji_list)
 
-        field_name = f"{map_position_index}: {player.name} {player.tag}"
+        field_name = (
+            f"{map_position_index}: {th_emoji} {player.name}\n"
+            f"{player.tag}")
 
-        field_value = f"{th_emoji}"
+        if player.clan is None:
+            field_value = f"not in a clan"
+
+        else:
+            field_value = f"Rank: {player.role.in_game_name}"
 
         for hero in player.heroes:
             if not hero.is_home_base:
