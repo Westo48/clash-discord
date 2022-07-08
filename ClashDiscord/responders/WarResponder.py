@@ -7,6 +7,7 @@ from coc import (
     GatewayError,
     ClanWar,
 )
+from responders.ClashResponder import member_score
 
 from responders.DiscordResponder import get_emoji, get_th_emoji
 import responders.ClashResponder as clash_responder
@@ -100,6 +101,64 @@ def war_scoreboard(war, discord_emoji_list, client_emoji_list):
     opp_scoreboard_fields = clash_responder.war_clan_scoreboard(
         war, war.opponent, star_emoji)
     field_dict_list.extend(opp_scoreboard_fields)
+
+    return field_dict_list
+
+
+def war_clan_scoreboard(
+        war: ClanWar,
+        discord_emoji_list,
+        client_emoji_list,
+        bot_name: str):
+
+    if war is None:
+        return [{
+            'name': f"not in war",
+            'value': f"you are not in war"
+        }]
+
+    if war.state == "preparation":
+        time_string = clash_responder.string_date_time(war)
+
+        return [{
+            'name': f"{time_string}",
+            'value': f"left before war starts, nobody has attacked"
+        }]
+
+    field_dict_list = []
+
+    scored_members = []
+    for member in war.clan.members:
+        scored_members.append(member_score(
+            war_member=member,
+            war_obj=war))
+
+    scored_members.sort(reverse=True, key=lambda x: (
+        x.stars, x.destruction, x.score))
+
+    position_index = 0
+    for scored_member in scored_members:
+        position_index += 1
+
+        th_emoji = get_th_emoji(
+            scored_member.town_hall,
+            discord_emoji_list,
+            client_emoji_list)
+
+        star_emoji = get_emoji(
+            "War Star", discord_emoji_list, client_emoji_list)
+
+        field_dict_list.append({
+            "name": (
+                f"{position_index}: {th_emoji} {scored_member.name}"
+            ),
+            "value": (
+                f"{scored_member.stars} {star_emoji}\n"
+                f"{round(scored_member.destruction, 2)}% destruction\n"
+                f"{scored_member.attack_count}/"
+                f"{scored_member.potential_attack_count} attacks\n"
+                f"{round(scored_member.score, 2)} "
+                f"{bot_name} score")})
 
     return field_dict_list
 

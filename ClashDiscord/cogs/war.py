@@ -306,6 +306,76 @@ class War(commands.Cog):
 
         await discord_responder.send_embed_list(inter, embed_list)
 
+    @war.sub_command()
+    async def scoreboard(
+        self,
+        inter: Interaction,
+        clan_role: disnake.Role = discord_utils.command_param_dict['clan_role'],
+        war_selection: str = discord_utils.command_param_dict['war_selection']
+    ):
+        """
+            shows the scoreboard for members in war
+
+            Parameters
+            ----------
+            option (optional): options for war star returns
+            clan_role (optional): clan role to use linked clan
+            war_selection (optional): cwl war selection
+        """
+
+        # role not mentioned
+        if clan_role is None:
+            db_player_obj = db_responder.read_player_active(inter.author.id)
+
+            verification_payload = (
+                await auth_responder.war_verification(
+                    db_player_obj, war_selection,
+                    inter.author, self.coc_client))
+        # role has been mentioned
+        else:
+            verification_payload = (
+                await auth_responder.clan_role_war_verification(
+                    clan_role, war_selection,
+                    self.coc_client))
+
+        if not verification_payload['verified']:
+            embed_list = discord_responder.embed_message(
+                icon_url=inter.bot.user.avatar.url,
+                bot_user_name=inter.me.display_name,
+                field_list=verification_payload['field_dict_list'],
+                author=inter.author
+            )
+
+            await discord_responder.send_embed_list(inter, embed_list)
+            return
+
+        war = verification_payload['war_obj']
+
+        field_dict_list = war_responder.war_clan_scoreboard(
+            war=war,
+            discord_emoji_list=inter.client.emojis,
+            client_emoji_list=self.client_data.emojis,
+            bot_name=inter.me.display_name)
+
+        embed_title = f"{war.clan.name} vs. {war.opponent.name}"
+
+        embed_list = discord_responder.embed_message(
+            icon_url=inter.bot.user.avatar.url,
+            title=embed_title,
+            bot_user_name=inter.me.display_name,
+            thumbnail=war.clan.badge.small,
+            field_list=field_dict_list,
+            author=inter.author)
+
+        view = WarView(
+            client_data=self.client_data,
+            coc_client=self.coc_client,
+            war=war)
+
+        await inter.send(
+            embeds=embed_list,
+            view=view)
+
     @war.sub_command_group()
     async def score(self, inter):
         """
