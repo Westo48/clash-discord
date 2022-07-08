@@ -86,31 +86,36 @@ def cwl_info_scoreboard(war, discord_emoji_list, client_emoji_list):
     return field_dict_list
 
 
-def cwl_lineup(cwl_group):
-    message = (
-        "```\n"
-        "CWL Lineup\n"
-        "14 | 13 | 12 | 11 | 10 | 9  | 8\n"
-        "-------------------------------\n"
-    )
+def cwl_lineup(cwl_group: ClanWarLeagueGroup,
+               discord_emoji_list, client_emoji_list):
+    field_dict_list = []
+
     for clan in cwl_group.clans:
-        lineup_message = f"{clan.name} {clan.tag}\n"
-        clan_lineup_dict = clash_responder.cwl_clan_lineup(clan)
-        for th in clan_lineup_dict:
-            if th >= 8:
-                lineup_message += f"{clan_lineup_dict[th]}"
-                if clan_lineup_dict[th] >= 10:
-                    # if it is a double digit number
-                    lineup_message += " | "
-                else:
-                    # if it is a single digit number add an extra space
-                    lineup_message += "  | "
-        # removes the last 4 characters '  | ' of the string
-        lineup_message = lineup_message[:-4]
-        lineup_message += "\n\n"
-        message += lineup_message
-    message += "```"
-    return message
+
+        field_name = f"{clan.name} {clan.tag}"
+
+        th_count_dict = clash_responder.war_clan_lineup(clan)
+
+        field_value = ""
+
+        for th in th_count_dict:
+            if th_count_dict[th] == 0:
+                continue
+
+            th_emoji = get_th_emoji(
+                coc_name=th,
+                discord_emoji_list=discord_emoji_list,
+                client_emoji_list=client_emoji_list)
+
+            field_value += f"{th_emoji}: {th_count_dict[th]}\n"
+
+        field_dict_list.append({
+            'name': field_name,
+            'value': field_value,
+            'inline': False
+        })
+
+    return field_dict_list
 
 
 def cwl_lineup_clan(

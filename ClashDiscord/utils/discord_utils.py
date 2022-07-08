@@ -204,6 +204,14 @@ command_param_dict = {
             "overview", "clan", "member"
         ]
     ),
+    'cwl_lineup': commands.Param(
+        name="option",
+        description="*optional* options for cwl lineup returns",
+        default="overview",
+        choices=[
+            "overview", "clan", "member"
+        ]
+    ),
     'cwl_scoreboard': commands.Param(
         name="option",
         description="*optional* options for cwl scoreboard returns",

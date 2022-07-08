@@ -8,7 +8,7 @@ from coc import (
     ClanWar,
 )
 
-from responders.DiscordResponder import get_emoji
+from responders.DiscordResponder import get_emoji, get_th_emoji
 import responders.ClashResponder as clash_responder
 
 
@@ -487,50 +487,62 @@ def war_clan_score(war_obj):
     return return_list
 
 
-def war_lineup_overview(war_obj):
-    # prepping message and title
-    message = (
-        "```\n"
-        "War Lineup\n"
-        "14 | 13 | 12 | 11 | 10 | 9  | 8\n"
-        "-------------------------------\n"
-    )
-    # prepping clan lineup message
-    clan_lineup = f"{war_obj.clan.name}\n"
-    clan_lineup_dict = clash_responder.war_clan_lineup(war_obj.clan)
-    for th in clan_lineup_dict:
-        if th >= 8:
-            clan_lineup += f"{clan_lineup_dict[th]}"
-            if clan_lineup_dict[th] >= 10:
-                # if it is a double digit number
-                clan_lineup += " | "
-            else:
-                # if it is a single digit number add an extra space
-                clan_lineup += "  | "
-    # removes the last 4 characters '  | ' of the string
-    clan_lineup = clan_lineup[:-4]
-    clan_lineup += "\n\n"
-    message += clan_lineup
+def war_lineup_overview(
+        war: ClanWar,
+        discord_emoji_list, client_emoji_list):
+    field_dict_list = []
 
-    # prepping opponent lineup message
-    opp_lineup = f"{war_obj.opponent.name}\n"
-    opp_lineup_dict = clash_responder.war_clan_lineup(war_obj.opponent)
-    for th in opp_lineup_dict:
-        if th >= 8:
-            opp_lineup += f"{opp_lineup_dict[th]}"
-            if opp_lineup_dict[th] >= 10:
-                # if it is a double digit number
-                opp_lineup += " | "
-            else:
-                # if it is a single digit number add an extra space
-                opp_lineup += "  | "
-    # removes the last 4 characters '  | ' of the string
-    opp_lineup = opp_lineup[:-4]
-    opp_lineup += "\n\n"
-    message += opp_lineup
+    clan_th_count_dict = clash_responder.war_clan_lineup(war.clan)
 
-    message += "```"
-    return message
+    field_name = f"{war.clan.name} {war.clan.tag}"
+
+    th_count_dict = clash_responder.war_clan_lineup(war.clan)
+
+    field_value = ""
+
+    for th in th_count_dict:
+        if th_count_dict[th] == 0:
+            continue
+
+        th_emoji = get_th_emoji(
+            coc_name=th,
+            discord_emoji_list=discord_emoji_list,
+            client_emoji_list=client_emoji_list)
+
+        field_value += f"{th_emoji}: {th_count_dict[th]}\n"
+
+    field_dict_list.append({
+        'name': field_name,
+        'value': field_value,
+        'inline': False
+    })
+
+    opp_th_count_dict = clash_responder.war_clan_lineup(war.opponent)
+
+    field_name = f"{war.opponent.name} {war.opponent.tag}"
+
+    th_count_dict = clash_responder.war_clan_lineup(war.opponent)
+
+    field_value = ""
+
+    for th in th_count_dict:
+        if th_count_dict[th] == 0:
+            continue
+
+        th_emoji = get_th_emoji(
+            coc_name=th,
+            discord_emoji_list=discord_emoji_list,
+            client_emoji_list=client_emoji_list)
+
+        field_value += f"{th_emoji}: {th_count_dict[th]}\n"
+
+    field_dict_list.append({
+        'name': field_name,
+        'value': field_value,
+        'inline': False
+    })
+
+    return field_dict_list
 
 
 def war_lineup_clan(war_obj, discord_emoji_list, client_emoji_list):

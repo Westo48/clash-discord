@@ -467,10 +467,12 @@ class War(commands.Cog):
         war_obj = verification_payload['war_obj']
 
         if option == "overview":
-            await inter.edit_original_message(
-                content=war_responder.war_lineup_overview(war_obj))
+            embed_title = f"{war_obj.clan.name} vs. {war_obj.opponent.name}"
 
-            return
+            field_dict_list = war_responder.war_lineup_overview(
+                war=war_obj,
+                discord_emoji_list=inter.client.emojis,
+                client_emoji_list=self.client_data.emojis)
 
         elif option == "clan":
             embed_title = f"{war_obj.clan.name} vs. {war_obj.opponent.name}"

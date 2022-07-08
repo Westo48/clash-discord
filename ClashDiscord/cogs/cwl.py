@@ -139,8 +139,8 @@ class CWL(commands.Cog):
     @cwl.sub_command()
     async def lineup(
         self,
-        inter,
-        option: str = discord_utils.command_param_dict['war_lineup'],
+        inter: disnake.ApplicationCommandInteraction,
+        option: str = discord_utils.command_param_dict['cwl_lineup'],
         clan_role: disnake.Role = discord_utils.command_param_dict['clan_role']
     ):
         """
@@ -174,11 +174,48 @@ class CWL(commands.Cog):
             await discord_responder.send_embed_list(inter, embed_list)
             return
 
+        # get the clan object from player or clan
+        if "clan_obj" in verification_payload:
+            clan = verification_payload['clan_obj']
+
+        elif "player_obj" in verification_payload:
+            clan = await verification_payload['player_obj'].get_detailed_clan()
+
         cwl_group_obj = verification_payload['cwl_group_obj']
 
         if option == "overview":
-            await inter.edit_original_message(
-                content=cwl_responder.cwl_lineup(cwl_group_obj))
+
+            league_emoji = discord_responder.get_emoji(
+                f"Clan War {clan.war_league.name}",
+                inter.client.emojis,
+                self.client_data.emojis)
+
+            embed_title = (
+                f"CWL {league_emoji} {clan.war_league.name} "
+                "Group Lineup")
+
+            field_dict_list = cwl_responder.cwl_lineup(
+                cwl_group=cwl_group_obj,
+                discord_emoji_list=inter.client.emojis,
+                client_emoji_list=self.client_data.emojis)
+
+            embed_list = discord_responder.embed_message(
+                icon_url=inter.bot.user.avatar.url,
+                title=embed_title,
+                field_list=field_dict_list,
+                bot_user_name=inter.me.display_name,
+                thumbnail=clan.badge.small,
+                author=inter.author)
+
+            view = CWLView(
+                client_data=self.client_data,
+                coc_client=self.coc_client,
+                clan=clan,
+                group=cwl_group_obj)
+
+            await inter.send(
+                embeds=embed_list,
+                view=view)
 
             return
 
