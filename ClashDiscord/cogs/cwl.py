@@ -394,8 +394,15 @@ class CWL(commands.Cog):
                     author=inter.author
                 )
 
-            await discord_responder.send_embed_list(
-                inter, embed_list=embed_list)
+            view = CWLView(
+                client_data=self.client_data,
+                coc_client=self.coc_client,
+                clan=clan,
+                group=cwl_group)
+
+            await inter.send(
+                embeds=embed_list,
+                view=view)
 
             return
 
