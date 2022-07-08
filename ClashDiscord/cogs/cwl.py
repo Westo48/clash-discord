@@ -183,7 +183,7 @@ class CWL(commands.Cog):
 
         cwl_group_obj = verification_payload['cwl_group_obj']
 
-        if option == "overview":
+        if option == "count":
 
             league_emoji = discord_responder.get_emoji(
                 f"Clan War {clan.war_league.name}",

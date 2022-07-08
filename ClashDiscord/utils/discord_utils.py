@@ -201,15 +201,15 @@ command_param_dict = {
         description="*optional* options for war lineup returns",
         default="clan",
         choices=[
-            "overview", "clan", "member"
+             "count", "clan", "member"
         ]
     ),
     'cwl_lineup': commands.Param(
         name="option",
         description="*optional* options for cwl lineup returns",
-        default="overview",
+        default="count",
         choices=[
-            "overview", "clan", "member"
+            "count", "clan", "member"
         ]
     ),
     'war_scoreboard': commands.Param(
