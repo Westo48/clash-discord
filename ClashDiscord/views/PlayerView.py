@@ -35,4 +35,4 @@ class PlayerView(View):
             client_data=client_data,
             coc_client=coc_client,
             player=player,
-            btn_name=f"{player.name} Super Troop"))
+            btn_name=f"{player.name} Super Troops"))
