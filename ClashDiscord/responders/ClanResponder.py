@@ -119,7 +119,9 @@ async def clan_lineup(
         th_emoji = get_th_emoji(
             player.town_hall, discord_emoji_list, client_emoji_list)
 
-        return_string += f"{member.clan_rank}: {th_emoji} {player.name}"
+        return_string += (
+            f"{member.clan_rank}: {th_emoji} {player.name} "
+            f"{player.tag}")
         return_string += "\n"
 
     # remove the last 1 character of the string
