@@ -4,7 +4,7 @@ from data import ClashDiscord_Client_Data as ClientData
 from buttons.WarButtons import (
     WarInfoBtn,
     WarClanLineupBtn,
-    WarNoAttackBtn)
+    WarMissingAttacksBtn)
 
 
 class WarView(View):
@@ -32,11 +32,11 @@ class WarView(View):
             war=war,
             btn_name=f"{war.clan.name} War Clan Lineup"))
 
-        # * WAR NOATTACK
-        self.add_item(WarNoAttackBtn(
+        # * WAR MISSING ATTACKS
+        self.add_item(WarMissingAttacksBtn(
             client_data=client_data,
             coc_client=coc_client,
             war=war,
-            btn_name=f"{war.clan.name} War No Attack"))
+            btn_name=f"{war.clan.name} War Missing Attacks"))
 
         # * SCOREBOARD

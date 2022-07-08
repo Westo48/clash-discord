@@ -131,13 +131,13 @@ class WarClanLineupBtn(Button):
             embeds=embed_list, view=self.view)
 
 
-class WarNoAttackBtn(Button):
+class WarMissingAttacksBtn(Button):
     def __init__(
         self,
         client_data: ClientData.ClashDiscord_Data,
         coc_client,
         war: ClanWar,
-        btn_name: str = "War No Attack",
+        btn_name: str = "War Missing Attacks",
         btn_style: ButtonStyle = ButtonStyle.primary
     ):
         super().__init__(
