@@ -428,7 +428,7 @@ class Clan(commands.Cog):
         await discord_responder.send_embed_list(inter, embed_list)
 
     @clan.sub_command()
-    async def supertroop(
+    async def supertroops(
         self,
         inter,
         super_troop: str = commands.Param(
