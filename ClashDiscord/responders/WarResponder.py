@@ -150,7 +150,8 @@ def war_clan_scoreboard(
 
         field_dict_list.append({
             "name": (
-                f"{position_index}: {th_emoji} {scored_member.name}"
+                f"{position_index}: {th_emoji} {scored_member.name} "
+                f"{scored_member.tag}"
             ),
             "value": (
                 f"{scored_member.stars} {star_emoji}\n"
@@ -515,7 +516,10 @@ def war_member_score(war_obj, player):
     return field_dict_list
 
 
-def war_clan_score(war_obj):
+def war_clan_score(
+        war_obj: ClanWar,
+        discord_emoji_list,
+        client_emoji_list):
     "returns a response list of all member scores"
     return_list = []
     if war_obj.state == "notInWar":
@@ -539,9 +543,16 @@ def war_clan_score(war_obj):
 
     scored_member_list = sorted(
         scored_member_list, key=lambda member: member.score, reverse=True)
+    index = 0
     for member in scored_member_list:
+        th_emoji = get_th_emoji(
+            member.town_hall,
+            discord_emoji_list,
+            client_emoji_list)
+
+        index += 1
         return_list.append({
-            "name": member.name,
+            "name": f"{index}: {th_emoji} {member.name} {member.tag}",
             "value": f"{round(member.score, 3)}"
         })
     return return_list
@@ -621,8 +632,8 @@ def war_lineup_clan(war_obj, discord_emoji_list, client_emoji_list):
         field_dict_list.append({
             "name": f"{map_position_index}",
             "value": (
-                f"{member_th_emoji} | {clan_member.name}\n"
-                f"{opp_th_emoji} | {opp_member_obj.name}\n"
+                f"{member_th_emoji} | {clan_member.name} {clan_member.tag}\n"
+                f"{opp_th_emoji} | {opp_member_obj.name} {opp_member_obj.tag}\n"
             ),
             "inline": False
         })
