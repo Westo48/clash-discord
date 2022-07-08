@@ -13,6 +13,7 @@ from responders.CWLResponder import (
     cwl_clan_noatk)
 from responders.ClashResponder import (
     cwl_current_round)
+from responders.AuthResponder import war_verification_clan
 from responders.DiscordResponder import (
     embed_message,
     get_emoji)
@@ -25,7 +26,6 @@ class CWLInfoBtn(Button):
         coc_client,
         clan: Clan,
         group: ClanWarLeagueGroup,
-        war: ClanWar,
         btn_name: str = "CWL Info",
         btn_style: ButtonStyle = ButtonStyle.primary
     ):
@@ -36,7 +36,6 @@ class CWLInfoBtn(Button):
         self.coc_client = coc_client
         self.clan = clan
         self.group = group
-        self.war = war
 
     async def callback(
             self,
@@ -45,7 +44,7 @@ class CWLInfoBtn(Button):
         await inter.response.defer()
 
         if self.group is None:
-            embed_description = f"could not find war"
+            embed_description = f"could not find CWL group"
 
             embed_list = embed_message(
                 icon_url=inter.bot.user.avatar.url,
@@ -68,6 +67,23 @@ class CWLInfoBtn(Button):
             await inter.edit_original_message(embeds=embed_list)
             return
 
+        verification_payload = await war_verification_clan(
+            clan=self.clan,
+            war_selection=None,
+            coc_client=self.coc_client)
+
+        if not verification_payload['verified']:
+            embed_list = embed_message(
+                icon_url=inter.bot.user.avatar.url,
+                bot_user_name=inter.me.display_name,
+                field_list=verification_payload['field_dict_list'],
+                author=inter.author)
+
+            await inter.edit_original_message(embeds=embed_list)
+            return
+
+        war = verification_payload['war']
+
         btn_name = self.label
 
         self.label = f"Please Wait"
@@ -83,12 +99,12 @@ class CWLInfoBtn(Button):
 
         # get current round number
         round_number = cwl_current_round(
-            self.group, self.war)
+            self.group, war)
 
         embed_description = f"Round {round_number}/{self.group.number_of_rounds}"
 
         field_dict_list = cwl_info_scoreboard(
-            self.war, inter.client.emojis, self.client_data.emojis)
+            war, inter.client.emojis, self.client_data.emojis)
 
         embed_list = embed_message(
             icon_url=inter.bot.user.avatar.url,
@@ -134,7 +150,7 @@ class CWLGroupScoreboardBtn(Button):
         await inter.response.defer()
 
         if self.group is None:
-            embed_description = f"could not find war"
+            embed_description = f"could not find CWL group"
 
             embed_list = embed_message(
                 icon_url=inter.bot.user.avatar.url,
@@ -197,7 +213,7 @@ class CWLRoundScoreboardBtn(Button):
         coc_client,
         clan: Clan,
         group: ClanWarLeagueGroup,
-        btn_name: str = "CWL Round Scoreboard",
+        btn_name: str = "CWL Rounds Scoreboard",
         btn_style: ButtonStyle = ButtonStyle.primary
     ):
         super().__init__(
@@ -215,7 +231,7 @@ class CWLRoundScoreboardBtn(Button):
         await inter.response.defer()
 
         if self.group is None:
-            embed_description = f"could not find war"
+            embed_description = f"could not find CWL group"
 
             embed_list = embed_message(
                 icon_url=inter.bot.user.avatar.url,
@@ -255,7 +271,6 @@ class CWLRoundScoreboardBtn(Button):
             icon_url=inter.bot.user.avatar.url,
             bot_user_name=inter.me.display_name,
             title=embed_title,
-            description=embed_description,
             thumbnail=self.clan.badge.small,
             author=inter.author
         ))
@@ -282,7 +297,6 @@ class CWLRoundScoreboardBtn(Button):
                 icon_url=inter.bot.user.avatar.url,
                 bot_user_name=inter.me.display_name,
                 title=embed_title,
-                description=embed_description,
                 field_list=field_dict_list,
                 author=inter.author
             ))
@@ -297,7 +311,6 @@ class CWLRoundScoreboardBtn(Button):
                 icon_url=inter.bot.user.avatar.url,
                 bot_user_name=inter.me.display_name,
                 title=embed_title,
-                description=embed_description,
                 field_list=field_dict_list,
                 thumbnail=self.clan.badge.small,
                 author=inter.author
@@ -335,7 +348,7 @@ class CWLClanScoreboardBtn(Button):
         await inter.response.defer()
 
         if self.group is None:
-            embed_description = f"could not find war"
+            embed_description = f"could not find CWL group"
 
             embed_list = embed_message(
                 icon_url=inter.bot.user.avatar.url,
@@ -410,14 +423,14 @@ class CWLClanScoreboardBtn(Button):
             embeds=embed_list, view=self.view)
 
 
-class CWLNoAttackBtn(Button):
+class CWLMissingAttacksBtn(Button):
     def __init__(
         self,
         client_data: ClientData.ClashDiscord_Data,
         coc_client,
         clan: Clan,
         group: ClanWarLeagueGroup,
-        btn_name: str = "CWL No Attack",
+        btn_name: str = "CWL Missing Attacks",
         btn_style: ButtonStyle = ButtonStyle.primary
     ):
         super().__init__(
@@ -435,7 +448,7 @@ class CWLNoAttackBtn(Button):
         await inter.response.defer()
 
         if self.group is None:
-            embed_description = f"could not find war"
+            embed_description = f"could not find CWL group"
 
             embed_list = embed_message(
                 icon_url=inter.bot.user.avatar.url,

@@ -91,7 +91,7 @@ class War(commands.Cog):
             view=view)
 
     @war.sub_command()
-    async def noattack(
+    async def missingattacks(
         self,
         inter,
         missed_attacks: int = discord_utils.command_param_dict['missed_attacks'],
