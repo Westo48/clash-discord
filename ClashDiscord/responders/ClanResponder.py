@@ -165,8 +165,9 @@ async def clan_lineup_member(
         th_emoji = get_th_emoji(
             player.town_hall, discord_emoji_list, client_emoji_list)
 
-        field_name = (f"{member.clan_rank}: {th_emoji} {player.name} "
-                      f"{player.tag} {player.role.in_game_name}")
+        field_name = (f"{member.clan_rank}: {th_emoji} {player.name}\n"
+                      f"{player.tag}\n"
+                      f"{player.role.in_game_name}")
 
         field_value = ""
 

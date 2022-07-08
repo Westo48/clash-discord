@@ -91,6 +91,154 @@ class War(commands.Cog):
             view=view)
 
     @war.sub_command()
+    async def lineup(
+        self,
+        inter,
+        option: str = discord_utils.command_param_dict['war_lineup'],
+        clan_role: disnake.Role = discord_utils.command_param_dict['clan_role'],
+        war_selection: str = discord_utils.command_param_dict['war_selection']
+    ):
+        """
+            war town hall lineup 
+            *default option is clan*
+
+            Parameters
+            ----------
+            option (optional): options for war lineup returns
+            clan_role (optional): clan role to use linked clan
+            war_selection (optional): cwl war selection
+        """
+
+        # role not mentioned
+        if clan_role is None:
+            db_player_obj = db_responder.read_player_active(inter.author.id)
+
+            verification_payload = await auth_responder.war_verification(
+                db_player_obj, war_selection, inter.author, self.coc_client)
+        # role has been mentioned
+        else:
+            verification_payload = await auth_responder.clan_role_war_verification(
+                clan_role, war_selection, self.coc_client)
+
+        if not verification_payload['verified']:
+            embed_list = discord_responder.embed_message(
+                icon_url=inter.bot.user.avatar.url,
+                bot_user_name=inter.me.display_name,
+                field_list=verification_payload['field_dict_list'],
+                author=inter.author
+            )
+
+            await discord_responder.send_embed_list(inter, embed_list)
+            return
+
+        war_obj = verification_payload['war_obj']
+
+        if option == "count":
+            embed_title = f"{war_obj.clan.name} vs. {war_obj.opponent.name}"
+
+            field_dict_list = war_responder.war_lineup_overview(
+                war=war_obj,
+                discord_emoji_list=inter.client.emojis,
+                client_emoji_list=self.client_data.emojis)
+
+            embed_list = discord_responder.embed_message(
+                icon_url=inter.bot.user.avatar.url,
+                title=embed_title,
+                bot_user_name=inter.me.display_name,
+                thumbnail=war_obj.clan.badge.small,
+                field_list=field_dict_list,
+                author=inter.author)
+
+            view = WarView(
+                client_data=self.client_data,
+                coc_client=self.coc_client,
+                war=war_obj)
+
+            await inter.send(
+                embeds=embed_list,
+                view=view)
+
+            return
+
+        elif option == "clan":
+            embed_title = f"{war_obj.clan.name} vs. {war_obj.opponent.name}"
+            field_dict_list = war_responder.war_lineup_clan(
+                war_obj, inter.client.emojis, self.client_data.emojis)
+
+            embed_list = discord_responder.embed_message(
+                icon_url=inter.bot.user.avatar.url,
+                title=embed_title,
+                bot_user_name=inter.me.display_name,
+                thumbnail=war_obj.clan.badge.small,
+                field_list=field_dict_list,
+                author=inter.author)
+
+            view = WarView(
+                client_data=self.client_data,
+                coc_client=self.coc_client,
+                war=war_obj)
+
+            await inter.send(
+                embeds=embed_list,
+                view=view)
+
+            return
+
+        elif option == "member":
+            embed_title = f"{war_obj.clan.name} vs. {war_obj.opponent.name}"
+
+            # running clan's members
+            field_dict_list = await war_responder.war_lineup_member(
+                war_obj.clan, self.coc_client,
+                inter.client.emojis, self.client_data.emojis)
+
+            embed_list = discord_responder.embed_message(
+                icon_url=inter.bot.user.avatar.url,
+                title=embed_title,
+                bot_user_name=inter.me.display_name,
+                thumbnail=war_obj.clan.badge.small,
+                field_list=field_dict_list,
+                author=inter.author
+            )
+
+            await discord_responder.send_embed_list(inter, embed_list)
+
+            # running opponent's members
+            field_dict_list = await war_responder.war_lineup_member(
+                war_obj.opponent, self.coc_client,
+                inter.client.emojis, self.client_data.emojis)
+
+            embed_list = discord_responder.embed_message(
+                icon_url=inter.bot.user.avatar.url,
+                title=embed_title,
+                bot_user_name=inter.me.display_name,
+                thumbnail=war_obj.clan.badge.small,
+                field_list=field_dict_list,
+                author=inter.author
+            )
+
+            await discord_responder.send_embed_list(inter, embed_list)
+
+            return
+
+        else:
+            embed_title = None
+            field_dict_list = [{
+                'name': "incorrect option selected",
+                'value': "please select a different option"
+            }]
+
+        embed_list = discord_responder.embed_message(
+            icon_url=inter.bot.user.avatar.url,
+            title=embed_title,
+            bot_user_name=inter.me.display_name,
+            thumbnail=war_obj.clan.badge.small,
+            field_list=field_dict_list,
+            author=inter.author)
+
+        await discord_responder.send_embed_list(inter, embed_list)
+
+    @war.sub_command()
     async def missingattacks(
         self,
         inter,
@@ -492,153 +640,5 @@ class War(commands.Cog):
             field_list=field_dict_list,
             author=inter.author
         )
-
-        await discord_responder.send_embed_list(inter, embed_list)
-
-    @war.sub_command()
-    async def lineup(
-        self,
-        inter,
-        option: str = discord_utils.command_param_dict['war_lineup'],
-        clan_role: disnake.Role = discord_utils.command_param_dict['clan_role'],
-        war_selection: str = discord_utils.command_param_dict['war_selection']
-    ):
-        """
-            war town hall lineup 
-            *default option is clan*
-
-            Parameters
-            ----------
-            option (optional): options for war lineup returns
-            clan_role (optional): clan role to use linked clan
-            war_selection (optional): cwl war selection
-        """
-
-        # role not mentioned
-        if clan_role is None:
-            db_player_obj = db_responder.read_player_active(inter.author.id)
-
-            verification_payload = await auth_responder.war_verification(
-                db_player_obj, war_selection, inter.author, self.coc_client)
-        # role has been mentioned
-        else:
-            verification_payload = await auth_responder.clan_role_war_verification(
-                clan_role, war_selection, self.coc_client)
-
-        if not verification_payload['verified']:
-            embed_list = discord_responder.embed_message(
-                icon_url=inter.bot.user.avatar.url,
-                bot_user_name=inter.me.display_name,
-                field_list=verification_payload['field_dict_list'],
-                author=inter.author
-            )
-
-            await discord_responder.send_embed_list(inter, embed_list)
-            return
-
-        war_obj = verification_payload['war_obj']
-
-        if option == "count":
-            embed_title = f"{war_obj.clan.name} vs. {war_obj.opponent.name}"
-
-            field_dict_list = war_responder.war_lineup_overview(
-                war=war_obj,
-                discord_emoji_list=inter.client.emojis,
-                client_emoji_list=self.client_data.emojis)
-
-            embed_list = discord_responder.embed_message(
-                icon_url=inter.bot.user.avatar.url,
-                title=embed_title,
-                bot_user_name=inter.me.display_name,
-                thumbnail=war_obj.clan.badge.small,
-                field_list=field_dict_list,
-                author=inter.author)
-
-            view = WarView(
-                client_data=self.client_data,
-                coc_client=self.coc_client,
-                war=war_obj)
-
-            await inter.send(
-                embeds=embed_list,
-                view=view)
-
-            return
-
-        elif option == "clan":
-            embed_title = f"{war_obj.clan.name} vs. {war_obj.opponent.name}"
-            field_dict_list = war_responder.war_lineup_clan(
-                war_obj, inter.client.emojis, self.client_data.emojis)
-
-            embed_list = discord_responder.embed_message(
-                icon_url=inter.bot.user.avatar.url,
-                title=embed_title,
-                bot_user_name=inter.me.display_name,
-                thumbnail=war_obj.clan.badge.small,
-                field_list=field_dict_list,
-                author=inter.author)
-
-            view = WarView(
-                client_data=self.client_data,
-                coc_client=self.coc_client,
-                war=war_obj)
-
-            await inter.send(
-                embeds=embed_list,
-                view=view)
-
-            return
-
-        elif option == "member":
-            embed_title = f"{war_obj.clan.name} vs. {war_obj.opponent.name}"
-
-            # running clan's members
-            field_dict_list = await war_responder.war_lineup_member(
-                war_obj.clan, self.coc_client,
-                inter.client.emojis, self.client_data.emojis)
-
-            embed_list = discord_responder.embed_message(
-                icon_url=inter.bot.user.avatar.url,
-                title=embed_title,
-                bot_user_name=inter.me.display_name,
-                thumbnail=war_obj.clan.badge.small,
-                field_list=field_dict_list,
-                author=inter.author
-            )
-
-            await discord_responder.send_embed_list(inter, embed_list)
-
-            # running opponent's members
-            field_dict_list = await war_responder.war_lineup_member(
-                war_obj.opponent, self.coc_client,
-                inter.client.emojis, self.client_data.emojis)
-
-            embed_list = discord_responder.embed_message(
-                icon_url=inter.bot.user.avatar.url,
-                title=embed_title,
-                bot_user_name=inter.me.display_name,
-                thumbnail=war_obj.clan.badge.small,
-                field_list=field_dict_list,
-                author=inter.author
-            )
-
-            await discord_responder.send_embed_list(inter, embed_list)
-
-            return
-
-        else:
-            embed_title = None
-            field_dict_list = [{
-                'name': "incorrect option selected",
-                'value': "please select a different option"
-            }]
-
-        embed_list = discord_responder.embed_message(
-            icon_url=inter.bot.user.avatar.url,
-            title=embed_title,
-            bot_user_name=inter.me.display_name,
-            thumbnail=war_obj.clan.badge.small,
-            field_list=field_dict_list,
-            author=inter.author)
 
         await discord_responder.send_embed_list(inter, embed_list)

@@ -166,14 +166,14 @@ async def cwl_lineup_member(
             player.town_hall, discord_emoji_list, client_emoji_list)
 
         field_name = (
-            f"{map_position_index}: {th_emoji} {player.name} "
+            f"{map_position_index}: {th_emoji} {player.name}\n"
             f"{player.tag}")
 
         if player.clan is None:
             field_value = f"not in a clan"
 
         else:
-            field_value = f"rank: {player.role.in_game_name}"
+            field_value = f"Rank: {player.role.in_game_name}"
 
         for hero in player.heroes:
             if not hero.is_home_base:
@@ -218,7 +218,9 @@ async def cwl_clan_score(
             member.town_hall, discord_emoji_list, client_emoji_list)
 
         field_dict_list.append({
-            'name': f"{index}: {th_emoji} {member.name} {member.tag}",
+            'name': (
+                f"{index}: {th_emoji} {member.name}\n"
+                f"{member.tag}"),
             'value': f"{round(member.score, 3)}"
         })
     return field_dict_list
@@ -272,7 +274,9 @@ async def cwl_clan_noatk(
             member.potential_attack_count)
 
         field_dict_list.append({
-            'name': f"{th_emoji} {member.name} {member.tag}",
+            'name': (
+                f"{th_emoji} {member.name}\n"
+                f"{member.tag}"),
             'value': (f"{member.attack_count}/{member.potential_attack_count} "
                       f"{attack_string}")
         })
@@ -488,7 +492,7 @@ async def cwl_scoreboard_clan(
 
         field_dict_list.append({
             "name": (
-                f"{position_index}: {th_emoji} {scored_member.name} "
+                f"{position_index}: {th_emoji} {scored_member.name}\n"
                 f"{scored_member.tag}"
             ),
             "value": (
