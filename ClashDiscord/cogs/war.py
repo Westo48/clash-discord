@@ -536,13 +536,32 @@ class War(commands.Cog):
 
         war_obj = verification_payload['war_obj']
 
-        if option == "overview":
+        if option == "count":
             embed_title = f"{war_obj.clan.name} vs. {war_obj.opponent.name}"
 
             field_dict_list = war_responder.war_lineup_overview(
                 war=war_obj,
                 discord_emoji_list=inter.client.emojis,
                 client_emoji_list=self.client_data.emojis)
+
+            embed_list = discord_responder.embed_message(
+                icon_url=inter.bot.user.avatar.url,
+                title=embed_title,
+                bot_user_name=inter.me.display_name,
+                thumbnail=war_obj.clan.badge.small,
+                field_list=field_dict_list,
+                author=inter.author)
+
+            view = WarView(
+                client_data=self.client_data,
+                coc_client=self.coc_client,
+                war=war_obj)
+
+            await inter.send(
+                embeds=embed_list,
+                view=view)
+
+            return
 
         elif option == "clan":
             embed_title = f"{war_obj.clan.name} vs. {war_obj.opponent.name}"

@@ -3,7 +3,8 @@ from coc.wars import ClanWar
 from data import ClashDiscord_Client_Data as ClientData
 from buttons.WarButtons import (
     WarInfoBtn,
-    WarClanLineupBtn,
+    WarLineupClanBtn,
+    WarLineupCountBtn,
     WarMissingAttacksBtn,
     WarClanScoreboardBtn)
 
@@ -24,14 +25,19 @@ class WarView(View):
             war=war,
             btn_name=f"{war.clan.name} War Info"))
 
-        # * OVERVIEW LINEUP
-
         # * CLAN LINEUP
-        self.add_item(WarClanLineupBtn(
+        self.add_item(WarLineupClanBtn(
             client_data=client_data,
             coc_client=coc_client,
             war=war,
             btn_name=f"{war.clan.name} War Clan Lineup"))
+
+        # * COUNT LINEUP
+        self.add_item(WarLineupCountBtn(
+            client_data=client_data,
+            coc_client=coc_client,
+            war=war,
+            btn_name=f"{war.clan.name} War Lineup Count"))
 
         # * WAR CLAN SCOREBOARD
         self.add_item(WarClanScoreboardBtn(
