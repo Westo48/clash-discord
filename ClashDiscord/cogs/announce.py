@@ -486,7 +486,7 @@ class Announce(commands.Cog):
                     inter, content=content, channel=channel)
 
     @announce.sub_command()
-    async def warnoattack(
+    async def warmissingattacks(
         self,
         inter: ApplicationCommandInteraction,
         channel: disnake.TextChannel = discord_utils.command_param_dict['channel'],

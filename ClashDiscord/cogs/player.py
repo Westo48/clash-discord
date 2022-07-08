@@ -285,7 +285,7 @@ class Player(commands.Cog):
         await inter.send(embeds=embed_list, view=view)
 
     @player.sub_command()
-    async def supertroop(
+    async def supertroops(
         self,
         inter,
         user: disnake.User = discord_utils.command_param_dict['user'],

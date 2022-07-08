@@ -290,11 +290,11 @@ Once setup is complete you will be able to interact with ClashCommander using th
         - `cwl_war_selection` - _only for cwl_ specify whether to look for the previous, current, or upcoming war
           - _defaults to current_
 
-  - announce warnoatk `channel` `message`
+  - announce warmissingattacks `channel` `message`
     - announces message to channel, pings all in war missing attacks
     - _restricted to leaders and co-leaders_
-    - _announce warnoattack options_
-      - options for `announce warnoattack` command
+    - _announce warmissingattacks options_
+      - options for `announce warmissingattacks` command
         - `clan_role` - mention a role linked to a clan to get that clan's information
           - _if no clan role is specified, then the user's active player's clan will be used_
         - `missed_attacks` - returns players who missed exactly the specified missed attack count
@@ -392,11 +392,11 @@ Once setup is complete you will be able to interact with ClashCommander using th
 
     - displays war information
 
-  - war noattack
+  - war missingattacks
 
     - lists players that missed attacks in war
-    - _war noattack option_
-      - option for `war noattack` command
+    - _war missingattacks option_
+      - option for `war missingattacks` command
       - `missed_attacks` - returns players who missed exactly the specified missed attack count
         - _if not specified, then it will simply return all who are or have missed attacks_
 
@@ -466,7 +466,7 @@ Once setup is complete you will be able to interact with ClashCommander using th
       - `rounds` - cwl scoreboard for each round
       - `clan` - cwl scoreboard for each clan member
 
-  - cwl noattack
+  - cwl missingattacks
 
     - lists players that missed attacks in cwl
 

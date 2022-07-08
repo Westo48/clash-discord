@@ -534,6 +534,137 @@ async def war_verification(
     return verification_payload
 
 
+async def war_verification_clan(
+        clan: Clan, war_selection, coc_client):
+    """
+        verifying a war
+        and returning verification payload
+
+        Args:
+            clan (obj): clan object from coc.py
+            war_selection (str): cwl war selection
+                ["preparation", "current", "upcoming", None]
+            coc_client (obj): coc.py client
+
+        Returns:
+            dict: verification_payload
+                (verified, field_dict_list, clan, war)
+    """
+
+    cwl_group = await clash_responder.get_cwl_group(
+        clan.tag, coc_client)
+
+    cwl_enum_round = coc_utils.get_war_specified(war_selection, cwl_group)
+
+    try:
+        war = await coc_client.get_current_war(
+            clan.tag, cwl_round=cwl_enum_round)
+
+        # specifically for last day of CWl
+        if cwl_group is not None:
+            # amount of rounds matches the number of rounds
+            if len(cwl_group.rounds) == cwl_group.number_of_rounds:
+                last_round_war = await coc_client.get_league_war(cwl_group.rounds[-1][0])
+
+                # last war is either in war or war ended
+                if last_round_war.state != "preparation":
+                    # change current to prep
+                    if cwl_enum_round == WarRound.current_war:
+                        cwl_enum_round = WarRound.current_preparation
+
+                    # change current previous to current
+                    elif cwl_enum_round == WarRound.previous_war:
+                        cwl_enum_round = WarRound.current_war
+
+                    war = await coc_client.get_current_war(
+                        clan.tag, cwl_round=cwl_enum_round)
+
+    except Maintenance:
+        return {
+            'verified': False,
+            'field_dict_list': [{
+                'name': "Clash of Clans is under maintenance",
+                'value': "please try again later"
+            }],
+            'clan': None,
+            'war': None
+        }
+    except NotFound:
+        return {
+            'verified': False,
+            'field_dict_list': [{
+                'name': "war not found",
+                'value': f"{clan.name} {clan.tag}"
+            }],
+            'clan': clan,
+            'war': None
+        }
+    except PrivateWarLog:
+        return {
+            'verified': False,
+            'field_dict_list': [{
+                'name': f"{clan.name} {clan.tag}",
+                'value': "war log is private"
+            }],
+            'clan': clan,
+            'war': None
+        }
+    except GatewayError:
+        return {
+            'verified': False,
+            'field_dict_list': [{
+                'name': "coc.py ran into a gateway error",
+                'value': "please try again later"
+            }],
+            'clan': clan,
+            'war': None
+        }
+    except TypeError:
+        return {
+            'verified': False,
+            'field_dict_list': [{
+                'name': "ClashDiscord ran into a type error",
+                'value': "please try again later"
+            }],
+            'clan': clan,
+            'war': None
+        }
+
+    # clan is not in war
+    if not war:
+        return {
+            'verified': False,
+            'field_dict_list': [{
+                'name': (f"{clan.name} "
+                         f"{clan.tag}"),
+                'value': "not in war"
+            }],
+            'clan': clan,
+            'war': None
+        }
+
+    # clan is not in war
+    if war.state == "notInWar":
+        return {
+            'verified': False,
+            'field_dict_list': [{
+                'name': (f"{clan.name} "
+                         f"{clan.tag}"),
+                'value': "not in war"
+            }],
+            'clan': clan,
+            'war': None
+        }
+
+    verification_payload = {
+        'verified': True,
+        'field_dict_list': None,
+        'clan': clan,
+        'war': war
+    }
+    return verification_payload
+
+
 async def war_leadership_verification(
         db_player_obj, war_selection, user_obj, guild_id, coc_client):
     """

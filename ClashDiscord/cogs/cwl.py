@@ -8,6 +8,7 @@ from responders import (
     AuthResponder as auth_responder,
     CWLResponder as cwl_responder
 )
+from views.CWLView import CWLView
 from utils import discord_utils
 
 
@@ -125,13 +126,21 @@ class CWL(commands.Cog):
             field_list=field_dict_list,
             author=inter.author)
 
-        await discord_responder.send_embed_list(inter, embed_list)
+        view = CWLView(
+            client_data=self.client_data,
+            coc_client=self.coc_client,
+            clan=clan,
+            group=cwl_group)
+
+        await inter.send(
+            embeds=embed_list,
+            view=view)
 
     @cwl.sub_command()
     async def lineup(
         self,
-        inter,
-        option: str = discord_utils.command_param_dict['war_lineup'],
+        inter: disnake.ApplicationCommandInteraction,
+        option: str = discord_utils.command_param_dict['cwl_lineup'],
         clan_role: disnake.Role = discord_utils.command_param_dict['clan_role']
     ):
         """
@@ -165,29 +174,67 @@ class CWL(commands.Cog):
             await discord_responder.send_embed_list(inter, embed_list)
             return
 
+        # get the clan object from player or clan
+        if "clan_obj" in verification_payload:
+            clan = verification_payload['clan_obj']
+
+        elif "player_obj" in verification_payload:
+            clan = await verification_payload['player_obj'].get_detailed_clan()
+
         cwl_group_obj = verification_payload['cwl_group_obj']
 
-        if option == "overview":
-            await inter.edit_original_message(
-                content=cwl_responder.cwl_lineup(cwl_group_obj))
+        if option == "count":
+
+            league_emoji = discord_responder.get_emoji(
+                f"Clan War {clan.war_league.name}",
+                inter.client.emojis,
+                self.client_data.emojis)
+
+            embed_title = (
+                f"CWL {league_emoji} {clan.war_league.name} "
+                "Group Lineup")
+
+            field_dict_list = cwl_responder.cwl_lineup(
+                cwl_group=cwl_group_obj,
+                discord_emoji_list=inter.client.emojis,
+                client_emoji_list=self.client_data.emojis)
+
+            embed_list = discord_responder.embed_message(
+                icon_url=inter.bot.user.avatar.url,
+                title=embed_title,
+                field_list=field_dict_list,
+                bot_user_name=inter.me.display_name,
+                thumbnail=clan.badge.small,
+                author=inter.author)
+
+            view = CWLView(
+                client_data=self.client_data,
+                coc_client=self.coc_client,
+                clan=clan,
+                group=cwl_group_obj)
+
+            await inter.send(
+                embeds=embed_list,
+                view=view)
 
             return
 
         elif option == "clan":
+            embed_list = []
+
             for clan in cwl_group_obj.clans:
                 embed_description = cwl_responder.cwl_lineup_clan(
                     clan, self.coc_client, inter.client.emojis, self.client_data.emojis)
 
-                embed_list = discord_responder.embed_message(
+                embed_list.extend(discord_responder.embed_message(
                     icon_url=inter.bot.user.avatar.url,
                     title=f"{clan.name} {clan.tag} CWL Lineup",
                     bot_user_name=inter.me.display_name,
                     thumbnail=clan.badge.small,
                     description=embed_description,
-                    author=inter.author
-                )
+                    author=inter.author))
 
-                await discord_responder.send_embed_list(inter, embed_list)
+            await discord_responder.send_embed_list(inter, embed_list)
 
             return
 
@@ -400,16 +447,23 @@ class CWL(commands.Cog):
             author=inter.author
         )
 
-        await discord_responder.send_embed_list(inter, embed_list)
+        view = CWLView(
+            client_data=self.client_data,
+            coc_client=self.coc_client,
+            clan=clan,
+            group=cwl_group)
+
+        await inter.send(
+            embeds=embed_list,
+            view=view)
 
     @cwl.sub_command()
-    async def noattack(
+    async def missingattacks(
         self,
         inter,
         clan_role: disnake.Role = discord_utils.command_param_dict['clan_role']
     ):
         """
-            *leadership*
             lists players that missed attacks in cwl
 
             Parameters
@@ -422,14 +476,14 @@ class CWL(commands.Cog):
             db_player_obj = db_responder.read_player_active(inter.author.id)
 
             verification_payload = (
-                await auth_responder.cwl_group_leadership_verification(
-                    db_player_obj, inter.author, inter.guild.id, self.coc_client)
+                await auth_responder.cwl_group_verification(
+                    db_player_obj, inter.author, self.coc_client)
             )
         # role has been mentioned
         else:
             verification_payload = (
-                await auth_responder.clan_role_cwl_group_leadership_verification(
-                    clan_role, inter.author, inter.guild.id, self.coc_client))
+                await auth_responder.clan_role_cwl_group_verification(
+                    clan_role, self.coc_client))
 
         if not verification_payload['verified']:
             embed_list = discord_responder.embed_message(
@@ -442,8 +496,13 @@ class CWL(commands.Cog):
             await discord_responder.send_embed_list(inter, embed_list)
             return
 
-        player_obj = verification_payload['player_obj']
-        clan_obj = verification_payload['clan_obj']
+        # get the clan object from player or clan
+        if "clan_obj" in verification_payload:
+            clan_obj = verification_payload['clan_obj']
+
+        elif "player_obj" in verification_payload:
+            clan_obj = await verification_payload['player_obj'].get_detailed_clan()
+
         cwl_group_obj = verification_payload['cwl_group_obj']
 
         field_dict_list = await cwl_responder.cwl_clan_noatk(
@@ -452,14 +511,22 @@ class CWL(commands.Cog):
 
         embed_list = discord_responder.embed_message(
             icon_url=inter.bot.user.avatar.url,
-            title=f"{clan_obj.name} CWL missed attacks",
+            title=f"{clan_obj.name} CWL Missed Attacks",
             bot_user_name=inter.me.display_name,
             thumbnail=clan_obj.badge.small,
             field_list=field_dict_list,
             author=inter.author
         )
 
-        await discord_responder.send_embed_list(inter, embed_list)
+        view = CWLView(
+            client_data=self.client_data,
+            coc_client=self.coc_client,
+            clan=clan_obj,
+            group=cwl_group_obj)
+
+        await inter.send(
+            embeds=embed_list,
+            view=view)
 
     @cwl.sub_command_group()
     async def score(self, inter):
@@ -582,7 +649,8 @@ class CWL(commands.Cog):
         cwl_group_obj = verification_payload['cwl_group_obj']
 
         field_dict_list = await cwl_responder.cwl_clan_score(
-            clan_obj, cwl_group_obj)
+            clan_obj, cwl_group_obj,
+            inter.client.emojis, self.client_data.emojis)
         embed_list = discord_responder.embed_message(
             icon_url=inter.bot.user.avatar.url,
             title=f"{clan_obj.name} CWL scores",
