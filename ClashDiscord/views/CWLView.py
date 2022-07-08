@@ -5,6 +5,7 @@ from coc.wars import (
 from data import ClashDiscord_Client_Data as ClientData
 from buttons.CWLButtons import (
     CWLInfoBtn,
+    CWLLineupBtn,
     CWLGroupScoreboardBtn,
     CWLRoundScoreboardBtn,
     CWLClanScoreboardBtn,
@@ -29,6 +30,14 @@ class CWLView(View):
             group=group,
             btn_name=f"{clan.name} CWL Info"))
 
+        # * CWL LINEUP
+        self.add_item(CWLLineupBtn(
+            client_data=client_data,
+            coc_client=coc_client,
+            clan=clan,
+            group=group,
+            btn_name=f"{clan.name} CWL Lineup"))
+
         # * CWL GROUP SCOREBOARD
         self.add_item(CWLGroupScoreboardBtn(
             client_data=client_data,
@@ -51,9 +60,9 @@ class CWLView(View):
             coc_client=coc_client,
             clan=clan,
             group=group,
-            btn_name=f"{clan.name} CWL Rounds Scoreboard"))
+            btn_name=f"{clan.name} CWL Clan Scoreboard"))
 
-        # * CWL MIsSING ATTACKS
+        # * CWL MISSING ATTACKS
         self.add_item(CWLMissingAttacksBtn(
             client_data=client_data,
             coc_client=coc_client,
