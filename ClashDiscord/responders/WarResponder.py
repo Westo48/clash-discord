@@ -298,14 +298,14 @@ def war_clan_stars(war_obj, discord_emoji_list, client_emoji_list):
                 field_value = f"did not attack"
 
             field_dict_list.append({
-                'name': (f"{member_obj.map_position}. {member_obj.name} "
-                         f"{th_emoji}\n"),
+                'name': (f"{member_obj.map_position}: {th_emoji} {member_obj.name} "
+                         f"{member_obj.tag}\n"),
                 'value': field_value
             })
         else:
             field_dict_list.append({
-                'name': (f"{member_obj.map_position}. {member_obj.name} "
-                         f"{th_emoji}"),
+                'name': (f"{member_obj.map_position}: {th_emoji} {member_obj.name} "
+                         f"{member_obj.tag}\n"),
                 'value': (
                     f"attacked {len(member_obj.attacks)} "
                     f"{clash_responder.string_attack_times(member_obj.attacks)}\n"
@@ -353,8 +353,8 @@ def war_all_attacks(war_obj, discord_emoji_list, client_emoji_list):
                 field_value = f"did not attack"
 
             field_dict_list.append({
-                'name': (f"{member_obj.map_position}. {member_obj.name} "
-                         f"{th_emoji}"),
+                'name': (f"{member_obj.map_position}: {th_emoji} {member_obj.name} "
+                         f"{member_obj.tag}"),
                 'value': field_value
             })
 
@@ -372,26 +372,27 @@ def war_all_attacks(war_obj, discord_emoji_list, client_emoji_list):
 
             if attack_obj.stars == 3:
                 field_value += (
-                    f"{defender_obj.map_position}. "
-                    f"{defender_obj.name} {defender_th_emoji}\n"
-                    f"{star_string} 100%\n\n"
-                )
+                    f"{defender_obj.map_position}: "
+                    f"{defender_th_emoji} {defender_obj.name} "
+                    f"{defender_obj.tag}\n"
+                    f"{star_string} 100%\n\n")
             else:
                 field_value += (
-                    f"{defender_obj.map_position}. "
-                    f"{defender_obj.name} {defender_th_emoji}\n"
+                    f"{defender_obj.map_position}: "
+                    f"{defender_th_emoji} {defender_obj.name} "
+                    f"{defender_obj.tag}\n"
                     f"{star_string} "
-                    f"{round(attack_obj.destruction, 2)}%\n\n"
-                )
+                    f"{round(attack_obj.destruction, 2)}%\n\n")
 
         # remove trailing space in field value
         field_value = field_value[:-2]
 
         field_dict_list.append({
             'name': (
-                f"{member_obj.map_position}. "
+                f"{member_obj.map_position}: "
+                f"{th_emoji} "
                 f"{member_obj.name} "
-                f"{th_emoji}"
+                f"{member_obj.tag}"
             ),
             'value': field_value
         })
