@@ -725,6 +725,7 @@ def cwl_member_score(cwl_wars, cwl_member):
                 Instance Attributes
                     tag (str): WarMember's player tag
                     name (str): WarMember's player name
+                    town_hall (int): WarMember's town hall level
                     participated_wars (int): rounds participated
                     potential_attack_count (int): potential attacks
                     attack_count (int): attacks made
@@ -735,13 +736,14 @@ def cwl_member_score(cwl_wars, cwl_member):
         """
 
         def __init__(
-            self, tag, name, participated_wars,
+            self, tag, name, town_hall, participated_wars,
             potential_attack_count, attack_count,
             stars, destruction,
             round_scores, score
         ):
             self.tag = tag
             self.name = name
+            self.town_hall = town_hall
             self.participated_wars = participated_wars
             self.potential_attack_count = potential_attack_count
             self.attack_count = attack_count
@@ -753,6 +755,7 @@ def cwl_member_score(cwl_wars, cwl_member):
     scored_member = ScoredCWLMember(
         tag=cwl_member.tag,
         name=cwl_member.name,
+        town_hall=cwl_member.town_hall,
         participated_wars=0,
         potential_attack_count=0,
         attack_count=0,

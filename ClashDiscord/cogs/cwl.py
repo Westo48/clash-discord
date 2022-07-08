@@ -649,7 +649,8 @@ class CWL(commands.Cog):
         cwl_group_obj = verification_payload['cwl_group_obj']
 
         field_dict_list = await cwl_responder.cwl_clan_score(
-            clan_obj, cwl_group_obj)
+            clan_obj, cwl_group_obj,
+            inter.client.emojis, self.client_data.emojis)
         embed_list = discord_responder.embed_message(
             icon_url=inter.bot.user.avatar.url,
             title=f"{clan_obj.name} CWL scores",

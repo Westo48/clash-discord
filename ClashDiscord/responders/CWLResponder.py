@@ -133,7 +133,9 @@ def cwl_lineup_clan(
         th_emoji = get_th_emoji(
             member.town_hall, discord_emoji_list, client_emoji_list)
 
-        return_string += f"{count_index}: {th_emoji} {member.name}"
+        return_string += (
+            f"{count_index}: {th_emoji} {member.name} "
+            f"{member.tag}")
         return_string += "\n"
 
     # remove the last 1 character of the string
@@ -163,9 +165,15 @@ async def cwl_lineup_member(
         th_emoji = get_emoji(
             player.town_hall, discord_emoji_list, client_emoji_list)
 
-        field_name = f"{map_position_index}: {player.name} {player.tag}"
+        field_name = (
+            f"{map_position_index}: {th_emoji} {player.name} "
+            f"{player.tag}")
 
-        field_value = f"{th_emoji}"
+        if player.clan is None:
+            field_value = f"not in a clan"
+
+        else:
+            field_value = f"rank: {player.role.in_game_name}"
 
         for hero in player.heroes:
             if not hero.is_home_base:
@@ -186,7 +194,9 @@ async def cwl_lineup_member(
     return field_dict_list
 
 
-async def cwl_clan_score(clan_obj, cwl_group: ClanWarLeagueGroup):
+async def cwl_clan_score(
+        clan_obj, cwl_group: ClanWarLeagueGroup,
+        discord_emoji_list, client_emoji_list):
     if not cwl_group:
         return [{
             'name': f"{clan_obj.name} is not in CWL",
@@ -201,16 +211,22 @@ async def cwl_clan_score(clan_obj, cwl_group: ClanWarLeagueGroup):
         scored_members, key=lambda member: member.score, reverse=True)
 
     field_dict_list = []
+    index = 0
     for member in sorted_scored_members:
+        index += 1
+        th_emoji = get_emoji(
+            member.town_hall, discord_emoji_list, client_emoji_list)
+
         field_dict_list.append({
-            'name': member.name,
+            'name': f"{index}: {th_emoji} {member.name} {member.tag}",
             'value': f"{round(member.score, 3)}"
         })
     return field_dict_list
 
 
-async def cwl_clan_noatk(clan, cwl_group: ClanWarLeagueGroup,
-                         coc_client, discord_emoji_list, client_emoji_list):
+async def cwl_clan_noatk(
+        clan, cwl_group: ClanWarLeagueGroup,
+        coc_client, discord_emoji_list, client_emoji_list):
     if cwl_group is None:
         return [{
             'name': f"{clan.name} is not in CWL",
@@ -242,24 +258,23 @@ async def cwl_clan_noatk(clan, cwl_group: ClanWarLeagueGroup,
     if len(no_atk_members) == 0:
         return [{
             'name': f"no missed attacks",
-            'value': (f"all {len(cwl_clan.members)} {clan.name} "
-                      f"cwl members attacked")
+            'value': (
+                f"all {len(cwl_clan.members)} {clan.name} "
+                f"cwl members attacked")
         }]
 
     field_dict_list = []
     for member in no_atk_members:
-        player = await coc_client.get_player(member.tag)
         th_emoji = get_th_emoji(
-            player.town_hall, discord_emoji_list, client_emoji_list)
+            member.town_hall, discord_emoji_list, client_emoji_list)
 
-        attacks_missed = member.potential_attack_count - member.attack_count
-
-        attack_string = clash_responder.string_attack(attacks_missed)
+        attack_string = clash_responder.string_attack(
+            member.potential_attack_count)
 
         field_dict_list.append({
-            'name': f"{th_emoji} {player.name}",
+            'name': f"{th_emoji} {member.name} {member.tag}",
             'value': (f"{member.attack_count}/{member.potential_attack_count} "
-                      f"attacks")
+                      f"{attack_string}")
         })
     return field_dict_list
 
@@ -467,12 +482,14 @@ async def cwl_scoreboard_clan(
             destruction = scored_member.destruction
 
         else:
-            destruction = (scored_member.destruction
-                           / scored_member.participated_wars)
+            destruction = (
+                scored_member.destruction
+                / scored_member.participated_wars)
 
         field_dict_list.append({
             "name": (
-                f"{position_index}: {th_emoji} {scored_member.name}"
+                f"{position_index}: {th_emoji} {scored_member.name} "
+                f"{scored_member.tag}"
             ),
             "value": (
                 f"{scored_member.stars} {star_emoji}\n"
