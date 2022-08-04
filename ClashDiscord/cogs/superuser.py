@@ -679,8 +679,27 @@ class SuperUser(commands.Cog):
             return
 
         if option == "user":
-            field_dict_list.append(discord_responder.find_user_from_tag(
-                player, inter.guild.members))
+            db_user = db_responder.read_user_from_tag(player.tag)
+
+            if not db_user:
+                embed_description = (
+                    f"user with player {player.name} {player.tag} "
+                    f"was not found")
+
+                embed_list = discord_responder.embed_message(
+                    icon_url=inter.bot.user.avatar.url,
+                    description=embed_description,
+                    bot_user_name=inter.me.display_name,
+                    author=inter.author
+                )
+
+                await discord_responder.send_embed_list(inter, embed_list)
+                return
+
+            field_dict_list = [{
+                'name': f"{player.name} {player.tag}",
+                'value': f"User: <@{db_user.discord_id}>"
+            }]
 
             embed_list = discord_responder.embed_message(
                 icon_url=inter.bot.user.avatar.url,
