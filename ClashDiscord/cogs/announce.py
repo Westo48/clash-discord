@@ -56,7 +56,7 @@ class Announce(commands.Cog):
                 author=inter.author
             )
 
-            await discord_responder.send_embed_list(embed_list, inter)
+            await discord_responder.send_embed_list(inter, embed_list)
             return
 
         embed_title = f"**ANNOUNCEMENT**"
