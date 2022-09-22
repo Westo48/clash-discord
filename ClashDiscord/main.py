@@ -11,6 +11,7 @@ from cogs import (
     cwl as cwl_cog,
     discord as discord_cog,
     announce as announce_cog,
+    user as user_cog,
     client as client_cog,
     admin as admin_cog,
     superuser as superuser_cog,
@@ -65,6 +66,8 @@ bot.add_cog(cwl_cog.CWL(
 bot.add_cog(discord_cog.Discord(
     bot, coc_client, client_data))
 bot.add_cog(announce_cog.Announce(
+    bot, coc_client, client_data))
+bot.add_cog(user_cog.User(
     bot, coc_client, client_data))
 bot.add_cog(client_cog.Client(
     bot, coc_client, client_data, linkapi_client))
