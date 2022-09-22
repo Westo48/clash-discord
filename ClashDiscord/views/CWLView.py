@@ -16,6 +16,7 @@ class CWLView(View):
 
     def __init__(
             self,
+            discord_emojis: list,
             client_data: ClientData.ClashDiscord_Data,
             coc_client,
             clan: Clan,
@@ -24,6 +25,7 @@ class CWLView(View):
 
         # * INFO
         self.add_item(CWLInfoBtn(
+            discord_emojis=discord_emojis,
             client_data=client_data,
             coc_client=coc_client,
             clan=clan,
@@ -32,6 +34,7 @@ class CWLView(View):
 
         # * CWL LINEUP
         self.add_item(CWLLineupBtn(
+            discord_emojis=discord_emojis,
             client_data=client_data,
             coc_client=coc_client,
             clan=clan,
@@ -40,6 +43,7 @@ class CWLView(View):
 
         # * CWL GROUP SCOREBOARD
         self.add_item(CWLGroupScoreboardBtn(
+            discord_emojis=discord_emojis,
             client_data=client_data,
             coc_client=coc_client,
             clan=clan,
@@ -48,6 +52,7 @@ class CWLView(View):
 
         # * CWL ROUND SCOREBOARD
         self.add_item(CWLRoundScoreboardBtn(
+            discord_emojis=discord_emojis,
             client_data=client_data,
             coc_client=coc_client,
             clan=clan,
@@ -56,6 +61,7 @@ class CWLView(View):
 
         # * CWL CLAN SCOREBOARD
         self.add_item(CWLClanScoreboardBtn(
+            discord_emojis=discord_emojis,
             client_data=client_data,
             coc_client=coc_client,
             clan=clan,
@@ -64,6 +70,7 @@ class CWLView(View):
 
         # * CWL MISSING ATTACKS
         self.add_item(CWLMissingAttacksBtn(
+            discord_emojis=discord_emojis,
             client_data=client_data,
             coc_client=coc_client,
             clan=clan,

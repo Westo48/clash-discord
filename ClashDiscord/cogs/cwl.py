@@ -127,6 +127,7 @@ class CWL(commands.Cog):
             author=inter.author)
 
         view = CWLView(
+            discord_emojis=inter.client.emojis,
             client_data=self.client_data,
             coc_client=self.coc_client,
             clan=clan,
@@ -208,6 +209,7 @@ class CWL(commands.Cog):
                 author=inter.author)
 
             view = CWLView(
+                discord_emojis=inter.client.emojis,
                 client_data=self.client_data,
                 coc_client=self.coc_client,
                 clan=clan,
@@ -395,6 +397,7 @@ class CWL(commands.Cog):
                 )
 
             view = CWLView(
+                discord_emojis=inter.client.emojis,
                 client_data=self.client_data,
                 coc_client=self.coc_client,
                 clan=clan,
@@ -455,6 +458,7 @@ class CWL(commands.Cog):
         )
 
         view = CWLView(
+            discord_emojis=inter.client.emojis,
             client_data=self.client_data,
             coc_client=self.coc_client,
             clan=clan,
@@ -526,6 +530,7 @@ class CWL(commands.Cog):
         )
 
         view = CWLView(
+            discord_emojis=inter.client.emojis,
             client_data=self.client_data,
             coc_client=self.coc_client,
             clan=clan_obj,

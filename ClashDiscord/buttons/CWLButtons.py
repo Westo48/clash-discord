@@ -23,6 +23,7 @@ from responders.DiscordResponder import (
 class CWLInfoBtn(Button):
     def __init__(
         self,
+        discord_emojis: list,
         client_data: ClientData.ClashDiscord_Data,
         coc_client,
         clan: Clan,
@@ -33,6 +34,7 @@ class CWLInfoBtn(Button):
         super().__init__(
             label=btn_name,
             style=btn_style)
+        self.discord_emojis = discord_emojis
         self.client_data = client_data
         self.coc_client = coc_client
         self.clan = clan
@@ -48,7 +50,7 @@ class CWLInfoBtn(Button):
             embed_description = f"could not find CWL group"
 
             embed_list = embed_message(
-                icon_url=inter.bot.user.avatar.url,
+                icon_url=inter.me.avatar.url,
                 bot_user_name=inter.me.display_name,
                 description=embed_description,
                 author=inter.author)
@@ -60,7 +62,7 @@ class CWLInfoBtn(Button):
             embed_description = f"could not find clan"
 
             embed_list = embed_message(
-                icon_url=inter.bot.user.avatar.url,
+                icon_url=inter.me.avatar.url,
                 bot_user_name=inter.me.display_name,
                 description=embed_description,
                 author=inter.author)
@@ -75,7 +77,7 @@ class CWLInfoBtn(Button):
 
         if not verification_payload['verified']:
             embed_list = embed_message(
-                icon_url=inter.bot.user.avatar.url,
+                icon_url=inter.me.avatar.url,
                 bot_user_name=inter.me.display_name,
                 field_list=verification_payload['field_dict_list'],
                 author=inter.author)
@@ -93,7 +95,7 @@ class CWLInfoBtn(Button):
 
         league_emoji = get_emoji(
             f"Clan War {self.clan.war_league.name}",
-            inter.client.emojis,
+            self.discord_emojis,
             self.client_data.emojis)
 
         embed_title = f"CWL {league_emoji} {self.clan.war_league.name} Group"
@@ -105,10 +107,10 @@ class CWLInfoBtn(Button):
         embed_description = f"Round {round_number}/{self.group.number_of_rounds}"
 
         field_dict_list = cwl_info_scoreboard(
-            war, inter.client.emojis, self.client_data.emojis)
+            war, self.discord_emojis, self.client_data.emojis)
 
         embed_list = embed_message(
-            icon_url=inter.bot.user.avatar.url,
+            icon_url=inter.me.avatar.url,
             title=embed_title,
             description=embed_description,
             bot_user_name=inter.me.display_name,
@@ -126,6 +128,7 @@ class CWLInfoBtn(Button):
 class CWLLineupBtn(Button):
     def __init__(
         self,
+        discord_emojis: list,
         client_data: ClientData.ClashDiscord_Data,
         coc_client,
         clan: Clan,
@@ -136,6 +139,7 @@ class CWLLineupBtn(Button):
         super().__init__(
             label=btn_name,
             style=btn_style)
+        self.discord_emojis = discord_emojis
         self.client_data = client_data
         self.coc_client = coc_client
         self.clan = clan
@@ -151,7 +155,7 @@ class CWLLineupBtn(Button):
             embed_description = f"could not find CWL group"
 
             embed_list = embed_message(
-                icon_url=inter.bot.user.avatar.url,
+                icon_url=inter.me.avatar.url,
                 bot_user_name=inter.me.display_name,
                 description=embed_description,
                 author=inter.author)
@@ -163,7 +167,7 @@ class CWLLineupBtn(Button):
             embed_description = f"could not find clan"
 
             embed_list = embed_message(
-                icon_url=inter.bot.user.avatar.url,
+                icon_url=inter.me.avatar.url,
                 bot_user_name=inter.me.display_name,
                 description=embed_description,
                 author=inter.author)
@@ -179,7 +183,7 @@ class CWLLineupBtn(Button):
 
         league_emoji = get_emoji(
             f"Clan War {self.clan.war_league.name}",
-            inter.client.emojis,
+            self.discord_emojis,
             self.client_data.emojis)
 
         embed_title = (
@@ -188,11 +192,11 @@ class CWLLineupBtn(Button):
 
         field_dict_list = cwl_lineup(
             cwl_group=self.group,
-            discord_emoji_list=inter.client.emojis,
+            discord_emoji_list=self.discord_emojis,
             client_emoji_list=self.client_data.emojis)
 
         embed_list = embed_message(
-            icon_url=inter.bot.user.avatar.url,
+            icon_url=inter.me.avatar.url,
             title=embed_title,
             field_list=field_dict_list,
             bot_user_name=inter.me.display_name,
@@ -209,6 +213,7 @@ class CWLLineupBtn(Button):
 class CWLGroupScoreboardBtn(Button):
     def __init__(
         self,
+        discord_emojis: list,
         client_data: ClientData.ClashDiscord_Data,
         coc_client,
         clan: Clan,
@@ -219,6 +224,7 @@ class CWLGroupScoreboardBtn(Button):
         super().__init__(
             label=btn_name,
             style=btn_style)
+        self.discord_emojis = discord_emojis
         self.client_data = client_data
         self.coc_client = coc_client
         self.clan = clan
@@ -234,7 +240,7 @@ class CWLGroupScoreboardBtn(Button):
             embed_description = f"could not find CWL group"
 
             embed_list = embed_message(
-                icon_url=inter.bot.user.avatar.url,
+                icon_url=inter.me.avatar.url,
                 bot_user_name=inter.me.display_name,
                 description=embed_description,
                 author=inter.author)
@@ -246,7 +252,7 @@ class CWLGroupScoreboardBtn(Button):
             embed_description = f"could not find clan"
 
             embed_list = embed_message(
-                icon_url=inter.bot.user.avatar.url,
+                icon_url=inter.me.avatar.url,
                 bot_user_name=inter.me.display_name,
                 description=embed_description,
                 author=inter.author)
@@ -262,18 +268,18 @@ class CWLGroupScoreboardBtn(Button):
 
         league_emoji = get_emoji(
             f"Clan War {self.clan.war_league.name}",
-            inter.client.emojis,
+            self.discord_emojis,
             self.client_data.emojis)
         embed_title = f"CWL {league_emoji} {self.clan.war_league.name} Group"
 
         field_dict_list = await cwl_scoreboard_group(
             self.group,
-            inter.client.emojis,
+            self.discord_emojis,
             self.client_data.emojis,
             self.coc_client)
 
         embed_list = embed_message(
-            icon_url=inter.bot.user.avatar.url,
+            icon_url=inter.me.avatar.url,
             title=embed_title,
             bot_user_name=inter.me.display_name,
             thumbnail=self.clan.badge.small,
@@ -290,6 +296,7 @@ class CWLGroupScoreboardBtn(Button):
 class CWLRoundScoreboardBtn(Button):
     def __init__(
         self,
+        discord_emojis: list,
         client_data: ClientData.ClashDiscord_Data,
         coc_client,
         clan: Clan,
@@ -300,6 +307,7 @@ class CWLRoundScoreboardBtn(Button):
         super().__init__(
             label=btn_name,
             style=btn_style)
+        self.discord_emojis = discord_emojis
         self.client_data = client_data
         self.coc_client = coc_client
         self.clan = clan
@@ -315,7 +323,7 @@ class CWLRoundScoreboardBtn(Button):
             embed_description = f"could not find CWL group"
 
             embed_list = embed_message(
-                icon_url=inter.bot.user.avatar.url,
+                icon_url=inter.me.avatar.url,
                 bot_user_name=inter.me.display_name,
                 description=embed_description,
                 author=inter.author)
@@ -327,7 +335,7 @@ class CWLRoundScoreboardBtn(Button):
             embed_description = f"could not find clan"
 
             embed_list = embed_message(
-                icon_url=inter.bot.user.avatar.url,
+                icon_url=inter.me.avatar.url,
                 bot_user_name=inter.me.display_name,
                 description=embed_description,
                 author=inter.author)
@@ -344,12 +352,12 @@ class CWLRoundScoreboardBtn(Button):
         embed_list = []
         league_emoji = get_emoji(
             f"Clan War {self.clan.war_league.name}",
-            inter.client.emojis,
+            self.discord_emojis,
             self.client_data.emojis)
         embed_title = f"CWL {league_emoji} {self.clan.war_league.name} Group"
 
         embed_list.extend(embed_message(
-            icon_url=inter.bot.user.avatar.url,
+            icon_url=inter.me.avatar.url,
             bot_user_name=inter.me.display_name,
             title=embed_title,
             thumbnail=self.clan.badge.small,
@@ -367,7 +375,7 @@ class CWLRoundScoreboardBtn(Button):
 
             field_dict_list = await cwl_scoreboard_round(
                 self.group, cwl_round, round_index,
-                inter.client.emojis, self.client_data.emojis,
+                self.discord_emojis, self.client_data.emojis,
                 self.coc_client)
 
             # update round index
@@ -375,7 +383,7 @@ class CWLRoundScoreboardBtn(Button):
             embed_title = f"**Round: {round_index}**"
 
             embed_list.extend(embed_message(
-                icon_url=inter.bot.user.avatar.url,
+                icon_url=inter.me.avatar.url,
                 bot_user_name=inter.me.display_name,
                 title=embed_title,
                 field_list=field_dict_list,
@@ -389,7 +397,7 @@ class CWLRoundScoreboardBtn(Button):
             }]
 
             embed_list = embed_message(
-                icon_url=inter.bot.user.avatar.url,
+                icon_url=inter.me.avatar.url,
                 bot_user_name=inter.me.display_name,
                 title=embed_title,
                 field_list=field_dict_list,
@@ -407,6 +415,7 @@ class CWLRoundScoreboardBtn(Button):
 class CWLClanScoreboardBtn(Button):
     def __init__(
         self,
+        discord_emojis: list,
         client_data: ClientData.ClashDiscord_Data,
         coc_client,
         clan: Clan,
@@ -417,6 +426,7 @@ class CWLClanScoreboardBtn(Button):
         super().__init__(
             label=btn_name,
             style=btn_style)
+        self.discord_emojis = discord_emojis
         self.client_data = client_data
         self.coc_client = coc_client
         self.clan = clan
@@ -432,7 +442,7 @@ class CWLClanScoreboardBtn(Button):
             embed_description = f"could not find CWL group"
 
             embed_list = embed_message(
-                icon_url=inter.bot.user.avatar.url,
+                icon_url=inter.me.avatar.url,
                 bot_user_name=inter.me.display_name,
                 description=embed_description,
                 author=inter.author)
@@ -444,7 +454,7 @@ class CWLClanScoreboardBtn(Button):
             embed_description = f"could not find clan"
 
             embed_list = embed_message(
-                icon_url=inter.bot.user.avatar.url,
+                icon_url=inter.me.avatar.url,
                 bot_user_name=inter.me.display_name,
                 description=embed_description,
                 author=inter.author)
@@ -460,7 +470,7 @@ class CWLClanScoreboardBtn(Button):
 
         league_emoji = get_emoji(
             f"Clan War {self.clan.war_league.name}",
-            inter.client.emojis,
+            self.discord_emojis,
             self.client_data.emojis)
         embed_title = f"CWL {league_emoji} {self.clan.war_league.name} Group"
         embed_description = f"**{self.clan.name} {self.clan.tag}**"
@@ -486,10 +496,10 @@ class CWLClanScoreboardBtn(Button):
         else:
             field_dict_list = await cwl_scoreboard_clan(
                 inter, self.group, self.clan, self.coc_client,
-                inter.client.emojis, self.client_data.emojis)
+                self.discord_emojis, self.client_data.emojis)
 
         embed_list = embed_message(
-            icon_url=inter.bot.user.avatar.url,
+            icon_url=inter.me.avatar.url,
             bot_user_name=inter.me.display_name,
             title=embed_title,
             description=embed_description,
@@ -507,6 +517,7 @@ class CWLClanScoreboardBtn(Button):
 class CWLMissingAttacksBtn(Button):
     def __init__(
         self,
+        discord_emojis: list,
         client_data: ClientData.ClashDiscord_Data,
         coc_client,
         clan: Clan,
@@ -517,6 +528,7 @@ class CWLMissingAttacksBtn(Button):
         super().__init__(
             label=btn_name,
             style=btn_style)
+        self.discord_emojis = discord_emojis
         self.client_data = client_data
         self.coc_client = coc_client
         self.clan = clan
@@ -532,7 +544,7 @@ class CWLMissingAttacksBtn(Button):
             embed_description = f"could not find CWL group"
 
             embed_list = embed_message(
-                icon_url=inter.bot.user.avatar.url,
+                icon_url=inter.me.avatar.url,
                 bot_user_name=inter.me.display_name,
                 description=embed_description,
                 author=inter.author)
@@ -544,7 +556,7 @@ class CWLMissingAttacksBtn(Button):
             embed_description = f"could not find clan"
 
             embed_list = embed_message(
-                icon_url=inter.bot.user.avatar.url,
+                icon_url=inter.me.avatar.url,
                 bot_user_name=inter.me.display_name,
                 description=embed_description,
                 author=inter.author)
@@ -562,10 +574,10 @@ class CWLMissingAttacksBtn(Button):
 
         field_dict_list = await cwl_clan_noatk(
             self.clan, self.group, self.coc_client,
-            inter.client.emojis, self.client_data.emojis)
+            self.discord_emojis, self.client_data.emojis)
 
         embed_list = embed_message(
-            icon_url=inter.bot.user.avatar.url,
+            icon_url=inter.me.avatar.url,
             title=embed_title,
             bot_user_name=inter.me.display_name,
             thumbnail=self.clan.badge.small,
