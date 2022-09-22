@@ -13,6 +13,7 @@ class WarView(View):
 
     def __init__(
             self,
+            discord_emojis: list,
             client_data: ClientData.ClashDiscord_Data,
             coc_client,
             war: ClanWar):
@@ -20,6 +21,7 @@ class WarView(View):
 
         # * INFO
         self.add_item(WarInfoBtn(
+            discord_emojis=discord_emojis,
             client_data=client_data,
             coc_client=coc_client,
             war=war,
@@ -27,6 +29,7 @@ class WarView(View):
 
         # * CLAN LINEUP
         self.add_item(WarLineupClanBtn(
+            discord_emojis=discord_emojis,
             client_data=client_data,
             coc_client=coc_client,
             war=war,
@@ -34,6 +37,7 @@ class WarView(View):
 
         # * COUNT LINEUP
         self.add_item(WarLineupCountBtn(
+            discord_emojis=discord_emojis,
             client_data=client_data,
             coc_client=coc_client,
             war=war,
@@ -41,6 +45,7 @@ class WarView(View):
 
         # * WAR CLAN SCOREBOARD
         self.add_item(WarClanScoreboardBtn(
+            discord_emojis=discord_emojis,
             client_data=client_data,
             coc_client=coc_client,
             war=war,
@@ -48,6 +53,7 @@ class WarView(View):
 
         # * WAR MISSING ATTACKS
         self.add_item(WarMissingAttacksBtn(
+            discord_emojis=discord_emojis,
             client_data=client_data,
             coc_client=coc_client,
             war=war,

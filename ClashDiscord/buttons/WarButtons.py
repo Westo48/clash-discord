@@ -16,6 +16,7 @@ from responders.DiscordResponder import embed_message
 class WarInfoBtn(Button):
     def __init__(
         self,
+        discord_emojis: list,
         client_data: ClientData.ClashDiscord_Data,
         coc_client,
         war: ClanWar,
@@ -25,6 +26,7 @@ class WarInfoBtn(Button):
         super().__init__(
             label=btn_name,
             style=btn_style)
+        self.discord_emojis = discord_emojis
         self.client_data = client_data
         self.coc_client = coc_client
         self.war = war
@@ -39,7 +41,7 @@ class WarInfoBtn(Button):
             embed_description = f"could not find war"
 
             embed_list = embed_message(
-                icon_url=inter.bot.user.avatar.url,
+                icon_url=inter.me.avatar.url,
                 bot_user_name=inter.me.display_name,
                 description=embed_description,
                 author=inter.author)
@@ -54,10 +56,10 @@ class WarInfoBtn(Button):
         await inter.edit_original_message(view=self.view)
 
         field_dict_list = war_scoreboard(
-            self.war, inter.client.emojis, self.client_data.emojis)
+            self.war, self.discord_emojis, self.client_data.emojis)
 
         embed_list = embed_message(
-            icon_url=inter.bot.user.avatar.url,
+            icon_url=inter.me.avatar.url,
             title=f"{self.war.clan.name} vs. {self.war.opponent.name}",
             bot_user_name=inter.me.display_name,
             thumbnail=self.war.clan.badge.small,
@@ -74,6 +76,7 @@ class WarInfoBtn(Button):
 class WarLineupCountBtn(Button):
     def __init__(
         self,
+        discord_emojis: list,
         client_data: ClientData.ClashDiscord_Data,
         coc_client,
         war: ClanWar,
@@ -83,6 +86,7 @@ class WarLineupCountBtn(Button):
         super().__init__(
             label=btn_name,
             style=btn_style)
+        self.discord_emojis = discord_emojis
         self.client_data = client_data
         self.coc_client = coc_client
         self.war = war
@@ -97,7 +101,7 @@ class WarLineupCountBtn(Button):
             embed_description = f"could not find war"
 
             embed_list = embed_message(
-                icon_url=inter.bot.user.avatar.url,
+                icon_url=inter.me.avatar.url,
                 bot_user_name=inter.me.display_name,
                 description=embed_description,
                 author=inter.author)
@@ -113,10 +117,10 @@ class WarLineupCountBtn(Button):
 
         embed_title = f"{self.war.clan.name} vs. {self.war.opponent.name}"
         field_dict_list = war_lineup_overview(
-            self.war, inter.client.emojis, self.client_data.emojis)
+            self.war, self.discord_emojis, self.client_data.emojis)
 
         embed_list = embed_message(
-            icon_url=inter.bot.user.avatar.url,
+            icon_url=inter.me.avatar.url,
             title=embed_title,
             bot_user_name=inter.me.display_name,
             thumbnail=self.war.clan.badge.small,
@@ -133,6 +137,7 @@ class WarLineupCountBtn(Button):
 class WarLineupClanBtn(Button):
     def __init__(
         self,
+        discord_emojis: list,
         client_data: ClientData.ClashDiscord_Data,
         coc_client,
         war: ClanWar,
@@ -142,6 +147,7 @@ class WarLineupClanBtn(Button):
         super().__init__(
             label=btn_name,
             style=btn_style)
+        self.discord_emojis = discord_emojis
         self.client_data = client_data
         self.coc_client = coc_client
         self.war = war
@@ -156,7 +162,7 @@ class WarLineupClanBtn(Button):
             embed_description = f"could not find war"
 
             embed_list = embed_message(
-                icon_url=inter.bot.user.avatar.url,
+                icon_url=inter.me.avatar.url,
                 bot_user_name=inter.me.display_name,
                 description=embed_description,
                 author=inter.author)
@@ -172,10 +178,10 @@ class WarLineupClanBtn(Button):
 
         embed_title = f"{self.war.clan.name} vs. {self.war.opponent.name}"
         field_dict_list = war_lineup_clan(
-            self.war, inter.client.emojis, self.client_data.emojis)
+            self.war, self.discord_emojis, self.client_data.emojis)
 
         embed_list = embed_message(
-            icon_url=inter.bot.user.avatar.url,
+            icon_url=inter.me.avatar.url,
             title=embed_title,
             bot_user_name=inter.me.display_name,
             thumbnail=self.war.clan.badge.small,
@@ -192,6 +198,7 @@ class WarLineupClanBtn(Button):
 class WarMissingAttacksBtn(Button):
     def __init__(
         self,
+        discord_emojis: list,
         client_data: ClientData.ClashDiscord_Data,
         coc_client,
         war: ClanWar,
@@ -201,6 +208,7 @@ class WarMissingAttacksBtn(Button):
         super().__init__(
             label=btn_name,
             style=btn_style)
+        self.discord_emojis = discord_emojis
         self.client_data = client_data
         self.coc_client = coc_client
         self.war = war
@@ -215,7 +223,7 @@ class WarMissingAttacksBtn(Button):
             embed_description = f"could not find war"
 
             embed_list = embed_message(
-                icon_url=inter.bot.user.avatar.url,
+                icon_url=inter.me.avatar.url,
                 bot_user_name=inter.me.display_name,
                 description=embed_description,
                 author=inter.author)
@@ -234,10 +242,10 @@ class WarMissingAttacksBtn(Button):
         # setting missed_attacks to None
         field_dict_list = war_no_attack(
             self.war, None,
-            inter.client.emojis, self.client_data.emojis)
+            self.discord_emojis, self.client_data.emojis)
 
         embed_list = embed_message(
-            icon_url=inter.bot.user.avatar.url,
+            icon_url=inter.me.avatar.url,
             title=embed_title,
             bot_user_name=inter.me.display_name,
             thumbnail=self.war.clan.badge.small,
@@ -254,6 +262,7 @@ class WarMissingAttacksBtn(Button):
 class WarClanScoreboardBtn(Button):
     def __init__(
         self,
+        discord_emojis: list,
         client_data: ClientData.ClashDiscord_Data,
         coc_client,
         war: ClanWar,
@@ -263,6 +272,7 @@ class WarClanScoreboardBtn(Button):
         super().__init__(
             label=btn_name,
             style=btn_style)
+        self.discord_emojis = discord_emojis
         self.client_data = client_data
         self.coc_client = coc_client
         self.war = war
@@ -277,7 +287,7 @@ class WarClanScoreboardBtn(Button):
             embed_description = f"could not find war"
 
             embed_list = embed_message(
-                icon_url=inter.bot.user.avatar.url,
+                icon_url=inter.me.avatar.url,
                 bot_user_name=inter.me.display_name,
                 description=embed_description,
                 author=inter.author)
@@ -293,14 +303,14 @@ class WarClanScoreboardBtn(Button):
 
         field_dict_list = war_clan_scoreboard(
             war=self.war,
-            discord_emoji_list=inter.client.emojis,
+            discord_emoji_list=self.discord_emojis,
             client_emoji_list=self.client_data.emojis,
             bot_name=inter.me.display_name)
 
         embed_title = f"{self.war.clan.name} vs. {self.war.opponent.name}"
 
         embed_list = embed_message(
-            icon_url=inter.bot.user.avatar.url,
+            icon_url=inter.me.avatar.url,
             title=embed_title,
             bot_user_name=inter.me.display_name,
             thumbnail=self.war.clan.badge.small,

@@ -82,6 +82,7 @@ class War(commands.Cog):
         )
 
         view = WarView(
+            discord_emojis=inter.client.emojis,
             client_data=self.client_data,
             coc_client=self.coc_client,
             war=war_obj)
@@ -150,6 +151,7 @@ class War(commands.Cog):
                 author=inter.author)
 
             view = WarView(
+                discord_emojis=inter.client.emojis,
                 client_data=self.client_data,
                 coc_client=self.coc_client,
                 war=war_obj)
@@ -174,6 +176,7 @@ class War(commands.Cog):
                 author=inter.author)
 
             view = WarView(
+                discord_emojis=inter.client.emojis,
                 client_data=self.client_data,
                 coc_client=self.coc_client,
                 war=war_obj)
@@ -295,6 +298,7 @@ class War(commands.Cog):
         )
 
         view = WarView(
+            discord_emojis=inter.client.emojis,
             client_data=self.client_data,
             coc_client=self.coc_client,
             war=war_obj)
@@ -516,6 +520,7 @@ class War(commands.Cog):
             author=inter.author)
 
         view = WarView(
+            discord_emojis=inter.client.emojis,
             client_data=self.client_data,
             coc_client=self.coc_client,
             war=war)
