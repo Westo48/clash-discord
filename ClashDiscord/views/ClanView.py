@@ -12,6 +12,7 @@ class ClanView(View):
 
     def __init__(
             self,
+            discord_emojis: list,
             client_data: ClientData.ClashDiscord_Data,
             coc_client,
             clan: Clan):
@@ -19,6 +20,7 @@ class ClanView(View):
 
         # * INFO
         self.add_item(ClanInfoBtn(
+            discord_emojis=discord_emojis,
             client_data=client_data,
             coc_client=coc_client,
             clan=clan,
@@ -26,6 +28,7 @@ class ClanView(View):
 
         # * LINEUP
         self.add_item(ClanLineupBtn(
+            discord_emojis=discord_emojis,
             client_data=client_data,
             coc_client=coc_client,
             clan=clan,
@@ -33,6 +36,7 @@ class ClanView(View):
 
         # * WAR PREFERENCE
         self.add_item(ClanWarPreferenceBtn(
+            discord_emojis=discord_emojis,
             client_data=client_data,
             coc_client=coc_client,
             clan=clan,
@@ -40,6 +44,7 @@ class ClanView(View):
 
         # * SUPER TROOP
         self.add_item(ClanSuperTroopBtn(
+            discord_emojis=discord_emojis,
             client_data=client_data,
             coc_client=coc_client,
             clan=clan,

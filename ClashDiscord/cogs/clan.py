@@ -96,6 +96,7 @@ class Clan(commands.Cog):
             author=inter.author)
 
         view = ClanView(
+            discord_emojis=inter.client.emojis,
             client_data=self.client_data,
             coc_client=self.coc_client,
             clan=clan)
@@ -180,6 +181,7 @@ class Clan(commands.Cog):
                 self.client_data.emojis)
 
             view = ClanView(
+                discord_emojis=inter.client.emojis,
                 client_data=self.client_data,
                 coc_client=self.coc_client,
                 clan=clan)
@@ -303,6 +305,7 @@ class Clan(commands.Cog):
                 self.client_data.emojis)
 
             view = ClanView(
+                discord_emojis=inter.client.emojis,
                 client_data=self.client_data,
                 coc_client=self.coc_client,
                 clan=clan)
@@ -506,6 +509,7 @@ class Clan(commands.Cog):
                 self.coc_client)
 
             view = ClanView(
+                discord_emojis=inter.client.emojis,
                 client_data=self.client_data,
                 coc_client=self.coc_client,
                 clan=clan)

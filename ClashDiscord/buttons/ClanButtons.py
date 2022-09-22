@@ -15,6 +15,7 @@ from responders.DiscordResponder import embed_message
 class ClanInfoBtn(Button):
     def __init__(
         self,
+        discord_emojis: list,
         client_data: ClientData.ClashDiscord_Data,
         coc_client,
         clan: Clan,
@@ -24,6 +25,7 @@ class ClanInfoBtn(Button):
         super().__init__(
             label=btn_name,
             style=btn_style)
+        self.discord_emojis = discord_emojis
         self.client_data = client_data
         self.coc_client = coc_client
         self.clan = clan
@@ -38,7 +40,7 @@ class ClanInfoBtn(Button):
             embed_description = f"could not find clan"
 
             embed_list = embed_message(
-                icon_url=inter.bot.user.avatar.url,
+                icon_url=inter.me.avatar.url,
                 bot_user_name=inter.me.display_name,
                 description=embed_description,
                 author=inter.author)
@@ -48,11 +50,11 @@ class ClanInfoBtn(Button):
 
         field_dict_list = clan_info(
             self.clan,
-            inter.client.emojis,
+            self.discord_emojis,
             self.client_data.emojis)
 
         embed_list = embed_message(
-            icon_url=inter.bot.user.avatar.url,
+            icon_url=inter.me.avatar.url,
             title=f"{self.clan.name} {self.clan.tag}",
             bot_user_name=inter.me.display_name,
             thumbnail=self.clan.badge.small,
@@ -66,6 +68,7 @@ class ClanInfoBtn(Button):
 class ClanLineupBtn(Button):
     def __init__(
         self,
+        discord_emojis: list,
         client_data: ClientData.ClashDiscord_Data,
         coc_client,
         clan: Clan,
@@ -75,6 +78,7 @@ class ClanLineupBtn(Button):
         super().__init__(
             label=btn_name,
             style=btn_style)
+        self.discord_emojis = discord_emojis
         self.client_data = client_data
         self.coc_client = coc_client
         self.clan = clan
@@ -89,7 +93,7 @@ class ClanLineupBtn(Button):
             embed_description = f"could not find clan"
 
             embed_list = embed_message(
-                icon_url=inter.bot.user.avatar.url,
+                icon_url=inter.me.avatar.url,
                 bot_user_name=inter.me.display_name,
                 description=embed_description,
                 author=inter.author)
@@ -107,11 +111,11 @@ class ClanLineupBtn(Button):
         embed_description = await clan_lineup(
             self.clan,
             self.coc_client,
-            inter.client.emojis,
+            self.discord_emojis,
             self.client_data.emojis)
 
         embed_list = embed_message(
-            icon_url=inter.bot.user.avatar.url,
+            icon_url=inter.me.avatar.url,
             title=embed_title,
             description=embed_description,
             bot_user_name=inter.me.display_name,
@@ -128,6 +132,7 @@ class ClanLineupBtn(Button):
 class ClanWarPreferenceBtn(Button):
     def __init__(
         self,
+        discord_emojis: list,
         client_data: ClientData.ClashDiscord_Data,
         coc_client,
         clan: Clan,
@@ -137,6 +142,7 @@ class ClanWarPreferenceBtn(Button):
         super().__init__(
             label=btn_name,
             style=btn_style)
+        self.discord_emojis = discord_emojis
         self.client_data = client_data
         self.coc_client = coc_client
         self.clan = clan
@@ -151,7 +157,7 @@ class ClanWarPreferenceBtn(Button):
             embed_description = f"could not find clan"
 
             embed_list = embed_message(
-                icon_url=inter.bot.user.avatar.url,
+                icon_url=inter.me.avatar.url,
                 bot_user_name=inter.me.display_name,
                 description=embed_description,
                 author=inter.author)
@@ -169,13 +175,13 @@ class ClanWarPreferenceBtn(Button):
         description_list = await war_preference_member(
             self.clan,
             self.coc_client,
-            inter.client.emojis,
+            self.discord_emojis,
             self.client_data.emojis)
 
         embed_list = []
         for embed_description in description_list:
             embed_list.extend(embed_message(
-                icon_url=inter.bot.user.avatar.url,
+                icon_url=inter.me.avatar.url,
                 title=embed_title,
                 description=embed_description,
                 bot_user_name=inter.me.display_name,
@@ -192,6 +198,7 @@ class ClanWarPreferenceBtn(Button):
 class ClanSuperTroopBtn(Button):
     def __init__(
         self,
+        discord_emojis: list,
         client_data: ClientData.ClashDiscord_Data,
         coc_client,
         clan: Clan,
@@ -201,6 +208,7 @@ class ClanSuperTroopBtn(Button):
         super().__init__(
             label=btn_name,
             style=btn_style)
+        self.discord_emojis = discord_emojis
         self.client_data = client_data
         self.coc_client = coc_client
         self.clan = clan
@@ -215,7 +223,7 @@ class ClanSuperTroopBtn(Button):
             embed_description = f"could not find clan"
 
             embed_list = embed_message(
-                icon_url=inter.bot.user.avatar.url,
+                icon_url=inter.me.avatar.url,
                 bot_user_name=inter.me.display_name,
                 description=embed_description,
                 author=inter.author)
@@ -233,12 +241,12 @@ class ClanSuperTroopBtn(Button):
 
         field_dict_list = await clan_super_troop_active(
             self.clan,
-            inter.client.emojis,
+            self.discord_emojis,
             self.client_data.emojis,
             self.coc_client)
 
         embed_list = embed_message(
-            icon_url=inter.bot.user.avatar.url,
+            icon_url=inter.me.avatar.url,
             title=embed_title,
             bot_user_name=inter.me.display_name,
             field_list=field_dict_list,
