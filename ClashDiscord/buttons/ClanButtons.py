@@ -166,19 +166,21 @@ class ClanWarPreferenceBtn(Button):
         await inter.edit_original_message(view=self.view)
 
         embed_title = f"{self.clan.name} War Preference"
-        embed_description = await war_preference_member(
+        description_list = await war_preference_member(
             self.clan,
             self.coc_client,
             inter.client.emojis,
             self.client_data.emojis)
 
-        embed_list = embed_message(
-            icon_url=inter.bot.user.avatar.url,
-            title=embed_title,
-            description=embed_description,
-            bot_user_name=inter.me.display_name,
-            thumbnail=self.clan.badge.small,
-            author=inter.author)
+        embed_list = []
+        for embed_description in description_list:
+            embed_list.extend(embed_message(
+                icon_url=inter.bot.user.avatar.url,
+                title=embed_title,
+                description=embed_description,
+                bot_user_name=inter.me.display_name,
+                thumbnail=self.clan.badge.small,
+                author=inter.author))
 
         self.label = btn_name
 

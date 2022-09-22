@@ -296,7 +296,7 @@ class Clan(commands.Cog):
 
         if option == "overview":
             embed_title = f"{clan.name} War Preference"
-            embed_description = await clan_responder.war_preference_member(
+            description_list = await clan_responder.war_preference_member(
                 clan,
                 self.coc_client,
                 inter.client.emojis,
@@ -307,14 +307,18 @@ class Clan(commands.Cog):
                 coc_client=self.coc_client,
                 clan=clan)
 
-            embed_list = discord_responder.embed_message(
-                icon_url=inter.bot.user.avatar.url,
-                title=embed_title,
-                description=embed_description,
-                bot_user_name=inter.me.display_name,
-                thumbnail=clan.badge.small,
-                field_list=field_dict_list,
-                author=inter.author)
+            # initialize embed list
+            embed_list = []
+
+            for embed_description in description_list:
+                embed_list.extend(discord_responder.embed_message(
+                    icon_url=inter.bot.user.avatar.url,
+                    title=embed_title,
+                    description=embed_description,
+                    bot_user_name=inter.me.display_name,
+                    thumbnail=clan.badge.small,
+                    field_list=field_dict_list,
+                    author=inter.author))
 
             await inter.send(
                 embeds=embed_list,

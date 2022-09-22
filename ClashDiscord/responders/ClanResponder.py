@@ -240,29 +240,59 @@ async def war_preference_member(
     out_emoji = get_war_opted_in_emoji(
         "False", discord_emoji_list, client_emoji_list)
 
-    embed_description = ""
     in_string = ""
     out_string = ""
+    description_list = []
 
     for member in clan_obj.members:
+        member_string = ""
         player = await coc_client.get_player(member.tag)
         th_emoji = get_emoji(
             player.town_hall, discord_emoji_list, client_emoji_list)
 
         if player.war_opted_in:
-            in_string += (
+            member_string = (
                 f"{in_emoji} {th_emoji} {player.name} {player.tag}\n")
 
         else:
-            out_string += (
+            member_string = (
                 f"{out_emoji} {th_emoji} {player.name} {player.tag}\n")
 
-    embed_description = in_string+out_string
+        # new description length is over 4096
+        # 4096 is discord embed description max
+        # add string to description list
+        # clear in string and out string
+        if len(in_string)+len(out_string)+len(member_string) >= 4096:
+            description_string = in_string+out_string
 
-    # remove trailing space in field value
-    embed_description = embed_description[:-1]
+            # remove trailing space in field value
+            description_string = description_string[:-1]
 
-    return embed_description
+            # add string to list
+            description_list.append(in_string+out_string)
+
+            # clear in string and out string
+            in_string = ""
+            out_string = ""
+
+        if player.war_opted_in:
+            in_string += member_string
+
+        else:
+            out_string += member_string
+
+    # in string or out string has values
+    # add strings to list
+    if in_string != "" or out_string != "":
+        description_string = in_string+out_string
+
+        # remove trailing space in field value
+        description_string = description_string[:-1]
+
+        # add string to list
+        description_list.append(in_string+out_string)
+
+    return description_list
 
 
 def donation(clan_obj, donator_list, unit_name,
