@@ -98,6 +98,7 @@ class Player(commands.Cog):
             author=inter.author)
 
         view = PlayerView(
+            discord_emojis=inter.client.emojis,
             client_data=self.client_data,
             coc_client=self.coc_client,
             player=player)
@@ -278,6 +279,7 @@ class Player(commands.Cog):
             author=inter.author)
 
         view = PlayerView(
+            discord_emojis=inter.client.emojis,
             client_data=self.client_data,
             coc_client=self.coc_client,
             player=player)
@@ -356,6 +358,7 @@ class Player(commands.Cog):
             author=inter.author)
 
         view = PlayerView(
+            discord_emojis=inter.client.emojis,
             client_data=self.client_data,
             coc_client=self.coc_client,
             player=player)

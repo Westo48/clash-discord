@@ -11,6 +11,7 @@ class PlayerView(View):
 
     def __init__(
             self,
+            discord_emojis: list,
             client_data: ClientData.ClashDiscord_Data,
             coc_client,
             player: Player):
@@ -18,6 +19,7 @@ class PlayerView(View):
 
         # * INFO
         self.add_item(PlayerInfoBtn(
+            discord_emojis=discord_emojis,
             client_data=client_data,
             coc_client=coc_client,
             player=player,
@@ -25,6 +27,7 @@ class PlayerView(View):
 
         # * UNITS
         self.add_item(PlayerUnitsBtn(
+            discord_emojis=discord_emojis,
             client_data=client_data,
             coc_client=coc_client,
             player=player,
@@ -32,6 +35,7 @@ class PlayerView(View):
 
         # * SUPER TROOP
         self.add_item(PlayerSuperTroopBtn(
+            discord_emojis=discord_emojis,
             client_data=client_data,
             coc_client=coc_client,
             player=player,

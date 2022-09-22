@@ -17,6 +17,7 @@ from responders.DiscordResponder import (
 class PlayerInfoBtn(Button):
     def __init__(
         self,
+        discord_emojis: list,
         client_data: ClientData.ClashDiscord_Data,
         coc_client,
         player: Player,
@@ -26,6 +27,7 @@ class PlayerInfoBtn(Button):
         super().__init__(
             label=btn_name,
             style=btn_style)
+        self.discord_emojis = discord_emojis
         self.client_data = client_data
         self.coc_client = coc_client
         self.player = player
@@ -40,7 +42,7 @@ class PlayerInfoBtn(Button):
             embed_description = f"could not find player"
 
             embed_list = embed_message(
-                icon_url=inter.bot.user.avatar.url,
+                icon_url=inter.me.avatar.url,
                 bot_user_name=inter.me.display_name,
                 description=embed_description,
                 author=inter.author)
@@ -51,10 +53,10 @@ class PlayerInfoBtn(Button):
         embed_thumbnail = get_town_hall_url(self.player)
 
         field_dict_list = player_info(
-            self.player, inter.client.emojis, self.client_data.emojis)
+            self.player, self.discord_emojis, self.client_data.emojis)
 
         embed_list = embed_message(
-            icon_url=inter.bot.user.avatar.url,
+            icon_url=inter.me.avatar.url,
             title=f"{self.player.name} {self.player.tag}",
             bot_user_name=inter.me.display_name,
             thumbnail=embed_thumbnail,
@@ -68,6 +70,7 @@ class PlayerInfoBtn(Button):
 class PlayerUnitsBtn(Button):
     def __init__(
         self,
+        discord_emojis: list,
         client_data: ClientData.ClashDiscord_Data,
         coc_client,
         player: Player,
@@ -77,6 +80,7 @@ class PlayerUnitsBtn(Button):
         super().__init__(
             label=btn_name,
             style=btn_style)
+        self.discord_emojis = discord_emojis
         self.client_data = client_data
         self.coc_client = coc_client
         self.player = player
@@ -91,7 +95,7 @@ class PlayerUnitsBtn(Button):
             embed_description = f"could not find player"
 
             embed_list = embed_message(
-                icon_url=inter.bot.user.avatar.url,
+                icon_url=inter.me.avatar.url,
                 bot_user_name=inter.me.display_name,
                 description=embed_description,
                 author=inter.author)
@@ -103,11 +107,11 @@ class PlayerUnitsBtn(Button):
         embed_thumbnail = get_town_hall_url(self.player)
 
         field_dict_list = unit_lvl_all(
-            self.player, inter.client.emojis, self.client_data.emojis
+            self.player, self.discord_emojis, self.client_data.emojis
         )
 
         embed_list = embed_message(
-            icon_url=inter.bot.user.avatar.url,
+            icon_url=inter.me.avatar.url,
             title=title_string,
             bot_user_name=inter.me.display_name,
             thumbnail=embed_thumbnail,
@@ -121,6 +125,7 @@ class PlayerUnitsBtn(Button):
 class PlayerSuperTroopBtn(Button):
     def __init__(
         self,
+        discord_emojis: list,
         client_data: ClientData.ClashDiscord_Data,
         coc_client,
         player: Player,
@@ -130,6 +135,7 @@ class PlayerSuperTroopBtn(Button):
         super().__init__(
             label=btn_name,
             style=btn_style)
+        self.discord_emojis = discord_emojis
         self.client_data = client_data
         self.coc_client = coc_client
         self.player = player
@@ -144,7 +150,7 @@ class PlayerSuperTroopBtn(Button):
             embed_description = f"could not find player"
 
             embed_list = embed_message(
-                icon_url=inter.bot.user.avatar.url,
+                icon_url=inter.me.avatar.url,
                 bot_user_name=inter.me.display_name,
                 description=embed_description,
                 author=inter.author)
@@ -159,10 +165,10 @@ class PlayerSuperTroopBtn(Button):
 
         field_dict_list = active_super_troops(
             self.player, active_super_troop_list,
-            inter.client.emojis, self.client_data.emojis
+            self.discord_emojis, self.client_data.emojis
         )
         embed_list = embed_message(
-            icon_url=inter.bot.user.avatar.url,
+            icon_url=inter.me.avatar.url,
             title=f"{self.player.name} Active Super Troops",
             bot_user_name=inter.me.display_name,
             thumbnail=embed_thumbnail,
