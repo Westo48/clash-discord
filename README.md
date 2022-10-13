@@ -493,7 +493,7 @@ There aren't many required packages, but here are the few that are required and 
 - [disnake](https://github.com/DisnakeDev/disnake)
   - 2.3.2
 - [coc.py](https://github.com/mathsman5133/coc.py)
-  - 2.0.0
+  - 2.1.3
 - PyMySQL
   - 1.0.2
 - requests
