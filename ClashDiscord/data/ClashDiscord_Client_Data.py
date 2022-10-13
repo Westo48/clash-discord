@@ -172,6 +172,12 @@ class ClashDiscord_Data(object):
             coc_name="Dragon Rider"
         ),
         ClashDiscord_Emoji(
+            display_name="Electro Titan",
+            discord_id=1029824219170754691,
+            discord_name="troop_electro_titan",
+            coc_name="Electro Titan"
+        ),
+        ClashDiscord_Emoji(
             display_name="Minion",
             discord_id=929203826051932160,
             discord_name="troop_minion",
@@ -286,6 +292,12 @@ class ClashDiscord_Data(object):
             coc_name="Flame Flinger"
         ),
         ClashDiscord_Emoji(
+            display_name="Battle Drill",
+            discord_id=1029824664152846336,
+            discord_name="siege_battle_drill",
+            coc_name="Battle Drill"
+        ),
+        ClashDiscord_Emoji(
             display_name="Lightning Spell",
             discord_id=929206569990766673,
             discord_name="spell_lightning_spell",
@@ -326,6 +338,12 @@ class ClashDiscord_Data(object):
             discord_id=929206647602151424,
             discord_name="spell_invisibility_spell",
             coc_name="Invisibility Spell"
+        ),
+        ClashDiscord_Emoji(
+            display_name="Recall Spell",
+            discord_id=1029824976695595110,
+            discord_name="spell_recall_spell",
+            coc_name="Recall Spell"
         ),
         ClashDiscord_Emoji(
             display_name="Poison Spell",
@@ -380,6 +398,30 @@ class ClashDiscord_Data(object):
             discord_id=929208683190161439,
             discord_name="pet_unicorn",
             coc_name="Unicorn"
+        ),
+        ClashDiscord_Emoji(
+            display_name="Frosty",
+            discord_id=1029835469644644353,
+            discord_name="pet_frosty",
+            coc_name="Frosty"
+        ),
+        ClashDiscord_Emoji(
+            display_name="Diggy",
+            discord_id=1029836029953314927,
+            discord_name="pet_diggy",
+            coc_name="Diggy"
+        ),
+        ClashDiscord_Emoji(
+            display_name="Poison Lizard",
+            discord_id=1029836163902611557,
+            discord_name="pet_poison_lizard",
+            coc_name="Poison Lizard"
+        ),
+        ClashDiscord_Emoji(
+            display_name="Phoenix",
+            discord_id=1029836265501249608,
+            discord_name="pet_phoenix",
+            coc_name="Phoenix"
         ),
         ClashDiscord_Emoji(
             display_name="Town Hall 1",
@@ -458,6 +500,12 @@ class ClashDiscord_Data(object):
             discord_id=929415746314969118,
             discord_name="th_14",
             coc_name="Town Hall 14"
+        ),
+        ClashDiscord_Emoji(
+            display_name="Town Hall 15",
+            discord_id=1029413842435973120,
+            discord_name="th_15",
+            coc_name="Town Hall 15"
         ),
         ClashDiscord_Emoji(
             display_name="Clan Wars",
