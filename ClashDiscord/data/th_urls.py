@@ -39,7 +39,8 @@ th_url_list = [
     TH_Url(11, "https://i.imgur.com/7mKqDyo.png"),
     TH_Url(12, "https://i.imgur.com/AAsgIrK.png"),
     TH_Url(13, "https://i.imgur.com/EfOqiD1.png"),
-    TH_Url(14, "https://i.imgur.com/cCmQhpw.png")
+    TH_Url(14, "https://i.imgur.com/cCmQhpw.png"),
+    TH_Url(15, "https://i.imgur.com/EtpfHot.png")
 ]
 
 th_url_dict = {
@@ -56,5 +57,6 @@ th_url_dict = {
     11: "https://i.imgur.com/7mKqDyo.png",
     12: "https://i.imgur.com/AAsgIrK.png",
     13: "https://i.imgur.com/EfOqiD1.png",
-    14: "https://i.imgur.com/cCmQhpw.png"
+    14: "https://i.imgur.com/cCmQhpw.png",
+    15: "https://i.imgur.com/EtpfHot.png"
 }
