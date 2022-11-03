@@ -6,6 +6,7 @@ from coc.errors import Maintenance, NotFound, PrivateWarLog, GatewayError
 
 
 th_lineup_dict = {
+    15: 0,
     14: 0,
     13: 0,
     12: 0,
