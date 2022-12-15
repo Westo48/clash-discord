@@ -173,7 +173,7 @@ class ClashDiscord_Data(object):
         ),
         ClashDiscord_Emoji(
             display_name="Electro Titan",
-            discord_id=1029824219170754691,
+            discord_id=1053023160502603836,
             discord_name="troop_electro_titan",
             coc_name="Electro Titan"
         ),
