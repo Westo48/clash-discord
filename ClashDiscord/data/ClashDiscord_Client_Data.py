@@ -730,6 +730,12 @@ class ClashDiscord_Data(object):
             coc_name="Super Bowler"
         ),
         ClashDiscord_Emoji(
+            display_name="Super Miner",
+            discord_id=1053020343222149161,
+            discord_name="super_troop_super_miner",
+            coc_name="Super Miner"
+        ),
+        ClashDiscord_Emoji(
             display_name="In",
             discord_id=929407005536428102,
             discord_name="icon_green_tick",
