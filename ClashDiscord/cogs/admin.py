@@ -57,7 +57,7 @@ class Admin(commands.Cog):
 
         if not verification_payload['verified']:
 
-            embed_description = verification_payload["embed_description"]
+            embed_description = verification_payload["embed_list"]
 
             embed_list = discord_responder.embed_message(
                 icon_url=inter.bot.user.avatar.url,
@@ -336,7 +336,7 @@ class Admin(commands.Cog):
 
         if not verification_payload['verified']:
 
-            embed_description = verification_payload["embed_description"]
+            embed_description = verification_payload["embed_list"]
 
             embed_list = discord_responder.embed_message(
                 icon_url=inter.bot.user.avatar.url,
@@ -694,7 +694,7 @@ class Admin(commands.Cog):
 
         if not verification_payload['verified']:
 
-            embed_description = verification_payload["embed_description"]
+            embed_description = verification_payload["embed_list"]
 
             embed_list = discord_responder.embed_message(
                 icon_url=inter.bot.user.avatar.url,
