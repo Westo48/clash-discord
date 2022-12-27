@@ -51,10 +51,11 @@ class ClashDiscord_Data(object):
                 emojis (list[obj]): list of emoji objects
     """
 
-    version = '2.5.0'
+    version = '2.5.1'
     author = "Razgriz#7805"
-    description = ("Clash of Clans discord bot for discord member management "
-                   "and various clash related info")
+    description = (
+        "Clash of Clans discord bot for discord member management "
+        "and various clash related info")
     prefix = '/'
     embed_color = 1752220
     back_emoji = '◀️'
@@ -173,7 +174,7 @@ class ClashDiscord_Data(object):
         ),
         ClashDiscord_Emoji(
             display_name="Electro Titan",
-            discord_id=1029824219170754691,
+            discord_id=1053023160502603836,
             discord_name="troop_electro_titan",
             coc_name="Electro Titan"
         ),
@@ -728,6 +729,12 @@ class ClashDiscord_Data(object):
             discord_id=929220939969867776,
             discord_name="super_troop_super_bowler",
             coc_name="Super Bowler"
+        ),
+        ClashDiscord_Emoji(
+            display_name="Super Miner",
+            discord_id=1053020343222149161,
+            discord_name="super_troop_super_miner",
+            coc_name="Super Miner"
         ),
         ClashDiscord_Emoji(
             display_name="In",
