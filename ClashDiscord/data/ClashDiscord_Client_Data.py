@@ -51,10 +51,11 @@ class ClashDiscord_Data(object):
                 emojis (list[obj]): list of emoji objects
     """
 
-    version = '2.5.0'
+    version = '2.5.1'
     author = "Razgriz#7805"
-    description = ("Clash of Clans discord bot for discord member management "
-                   "and various clash related info")
+    description = (
+        "Clash of Clans discord bot for discord member management "
+        "and various clash related info")
     prefix = '/'
     embed_color = 1752220
     back_emoji = '◀️'
