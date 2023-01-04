@@ -10,6 +10,7 @@ from responders import (
     AuthResponder as auth_responder
 )
 from utils import discord_utils
+import time
 
 
 class Discord(commands.Cog):
@@ -37,7 +38,6 @@ class Discord(commands.Cog):
             update roles
             *member requires leadership*
             *all requires admin*
-
             Parameters
             ----------
             option (optional): options for discord role command
@@ -222,7 +222,6 @@ class Discord(commands.Cog):
             update nicknames based on active clash player
             *member requires leadership*
             *all requires admin*
-
             Parameters
             ----------
             option (optional): options for discord nickname command
@@ -366,7 +365,6 @@ class Discord(commands.Cog):
     ):
         """
             sends specified emoji
-
             Parameters
             ----------
             coc_name: name of emoji to search for
@@ -386,6 +384,7 @@ class Discord(commands.Cog):
             inter, content=emoji, channel=inter.channel)
 
         if message_sent:
+            time.sleep(1)
             await inter.edit_original_message(content=f"{emoji} emoji sent")
 
     @discord.sub_command()
@@ -399,7 +398,6 @@ class Discord(commands.Cog):
         """
             returns the user linked to a requested player 
             *default option is clan*
-
             Parameters
             ----------
             option (optional): options for discord user returns

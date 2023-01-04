@@ -25,6 +25,7 @@ from responders import (
 import data.ClashDiscord_Client_Data as ClashDiscord_Client_Data
 from data.th_urls import get_th_url
 from disnake.utils import get
+import time
 
 
 # DISCORD
@@ -228,8 +229,9 @@ async def send_embed_list(
     for embed in embed_list:
         embed_str = ""
         # embed is the disnake.Embed instance
-        fields = [embed.title, embed.description,
-                  embed.footer.text, embed.author.name]
+        fields = [
+            embed.title, embed.description,
+            embed.footer.text, embed.author.name]
 
         fields.extend([field.name for field in embed.fields])
         fields.extend([field.value for field in embed.fields])
@@ -271,6 +273,7 @@ async def send_embed_list(
 
         # try to send the embeds to specified channel
         try:
+
             await channel.send(embeds=embeds)
 
             # edit original message if the message was sent to channel
@@ -284,6 +287,9 @@ async def send_embed_list(
                 description=embed_description,
                 author=inter.author)
 
+            # wait 1 second to get past rate limiting
+            time.sleep(1)
+
             await inter.edit_original_message(embeds=embed_list)
             continue
 
@@ -291,8 +297,9 @@ async def send_embed_list(
         # possible that bot does not have access for that
         except:
             embed_title = "message could not be sent"
-            embed_description = (f"please ensure bot is in "
-                                 f"channel {channel.mention}")
+            embed_description = (
+                f"please ensure bot is in "
+                f"channel {channel.mention}")
 
             embed_list = embed_message(
                 icon_url=inter.bot.user.avatar.url,
@@ -313,11 +320,17 @@ async def send_embed_list(
     if channel is None:
         if len(content) >= 2000:
             while len(content) >= 2000:
+                # wait 1 second to get past rate limiting
+                time.sleep(1)
+
                 # send the first 2K characters of the string
                 await inter.send(content=content[:2000])
 
                 # remove the first 2K characters of the string
                 content = content[2000:]
+
+        # wait 1 second to get past rate limiting
+        time.sleep(1)
 
         await inter.send(content=content)
         return True
@@ -326,11 +339,17 @@ async def send_embed_list(
     try:
         if len(content) >= 2000:
             while len(content) >= 2000:
+                # wait 1 second to get past rate limiting
+                time.sleep(1)
+
                 # send the first 2K characters of the string
                 await channel.send(content=content[:2000])
 
                 # remove the first 2K characters of the string
                 content = content[2000:]
+
+        # wait 1 second to get past rate limiting
+        time.sleep(1)
 
         await channel.send(content=content)
 
@@ -345,6 +364,9 @@ async def send_embed_list(
             description=embed_description,
             author=inter.author)
 
+        # wait 1 second to get past rate limiting
+        time.sleep(1)
+
         await inter.edit_original_message(embeds=embed_list)
         return True
 
@@ -352,8 +374,9 @@ async def send_embed_list(
     # possible that bot does not have access for that
     except:
         embed_title = "message could not be sent"
-        embed_description = (f"please ensure bot is in "
-                             f"channel {channel.mention}")
+        embed_description = (
+            f"please ensure bot is in "
+            f"channel {channel.mention}")
 
         embed_list = embed_message(
             icon_url=inter.bot.user.avatar.url,
@@ -361,6 +384,9 @@ async def send_embed_list(
             title=embed_title,
             description=embed_description,
             author=inter.author)
+
+        # wait 1 second to get past rate limiting
+        time.sleep(1)
 
         await inter.edit_original_message(embeds=embed_list)
 
@@ -487,11 +513,9 @@ def get_clan_war_league_emoji(coc_name, discord_emoji_list, client_emoji_list):
 def find_user_from_tag(player_obj, member_list):
     """
         finding a user from a requested player
-
         Args:
             player_obj (obj): clash player object
             member_list (list): list of members in server
-
         Returns:
             list: field_dict_list
     """
@@ -523,12 +547,10 @@ def find_user_from_tag(player_obj, member_list):
 def user_player_ping(player, member_list):
     """
         turning a player into a user ping
-
         Args:
             player (obj): clash player object
                 requires player.name and player.tag
             member_list (list): list of members in server
-
         Returns:
             string: returns user ping if possible and player info
     """
@@ -551,12 +573,10 @@ def user_player_ping(player, member_list):
 async def update_roles(user, guild, coc_client):
     """
         update roles and return embed dict list
-
         Args:
             user ([disnake.User]): [object for user getting roled]
             guild ([disnake.Guild]): [guild command was called]
             coc_client ([coc.py client]): [coc.py client]
-
         Returns:
             [embed_dict_list]: [list]
                 embed_dict:
@@ -810,13 +830,11 @@ def role_add_remove_list(needed_role_list, current_role_list):
     """
         Takes in list of needed and current role id's and
         returns add and remove lists of discord role id's
-
         Args:
             needed_role_list
                 needed_role_list (int): list of needed discord's role id
             current_role_list
                 needed_role_list (int): list of current discord's role id
-
         Returns:
             add_roles_list: list of role id's to add to discord user
             remove_roles_list: list of role id's to remove from discord user
