@@ -382,7 +382,7 @@ async def send_embed_list(
 
         # wait 1 second to get past rate limiting
         time.sleep(1)
-        
+
         await inter.edit_original_message(embeds=embed_list)
 
         return False
