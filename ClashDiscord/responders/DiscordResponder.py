@@ -229,8 +229,9 @@ async def send_embed_list(
     for embed in embed_list:
         embed_str = ""
         # embed is the disnake.Embed instance
-        fields = [embed.title, embed.description,
-                  embed.footer.text, embed.author.name]
+        fields = [
+            embed.title, embed.description,
+            embed.footer.text, embed.author.name]
 
         fields.extend([field.name for field in embed.fields])
         fields.extend([field.value for field in embed.fields])
@@ -272,6 +273,7 @@ async def send_embed_list(
 
         # try to send the embeds to specified channel
         try:
+
             await channel.send(embeds=embeds)
 
             # edit original message if the message was sent to channel
@@ -284,6 +286,9 @@ async def send_embed_list(
                 title=embed_title,
                 description=embed_description,
                 author=inter.author)
+
+            # wait 1 second to get past rate limiting
+            time.sleep(1)
 
             await inter.edit_original_message(embeds=embed_list)
             continue
