@@ -11,6 +11,8 @@ from responders import (
 )
 from utils import discord_utils
 
+import time
+
 
 class Announce(commands.Cog):
     def __init__(self, bot, coc_client, client_data):
@@ -262,6 +264,9 @@ class Announce(commands.Cog):
         for content in content_list:
             # making sure the content isn't empty
             if content != "":
+                # wait 1 second to get past rate limiting
+                time.sleep(1)
+                
                 await discord_responder.send_embed_list(
                     inter, content=content, channel=channel)
 
@@ -385,6 +390,9 @@ class Announce(commands.Cog):
         for content in content_list:
             # making sure the content isn't empty
             if content != "":
+                # wait 1 second to get past rate limiting
+                time.sleep(1)
+                
                 await discord_responder.send_embed_list(
                     inter, content=content, channel=channel)
 
@@ -482,6 +490,9 @@ class Announce(commands.Cog):
         for content in content_list:
             # making sure the content isn't empty
             if content != "":
+                # wait 1 second to get past rate limiting
+                time.sleep(1)
+                
                 await discord_responder.send_embed_list(
                     inter, content=content, channel=channel)
 
@@ -589,5 +600,8 @@ class Announce(commands.Cog):
         for content in content_list:
             # making sure the content isn't empty
             if content != "":
+                # wait 1 second to get past rate limiting
+                time.sleep(1)
+                
                 await discord_responder.send_embed_list(
                     inter, content=content, channel=channel)

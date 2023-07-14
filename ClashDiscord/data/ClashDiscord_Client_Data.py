@@ -233,6 +233,12 @@ class ClashDiscord_Data(object):
             coc_name="Headhunter"
         ),
         ClashDiscord_Emoji(
+            display_name="Apprentice Warden",
+            discord_id=1129269419193929769,
+            discord_name="troop_apprentice_warden",
+            coc_name="Apprentice Warden"
+        ),
+        ClashDiscord_Emoji(
             display_name="Barbarian King",
             discord_id=929205073056260208,
             discord_name="hero_barbarian_king",
@@ -735,6 +741,12 @@ class ClashDiscord_Data(object):
             discord_id=1053020343222149161,
             discord_name="super_troop_super_miner",
             coc_name="Super Miner"
+        ),
+        ClashDiscord_Emoji(
+            display_name="Super Hog Rider",
+            discord_id=1129268934533709866,
+            discord_name="super_troop_super_hog_rider",
+            coc_name="Super Hog Rider"
         ),
         ClashDiscord_Emoji(
             display_name="In",

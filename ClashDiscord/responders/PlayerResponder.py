@@ -149,7 +149,7 @@ def player_info(player_obj, discord_emoji_list, client_emoji_list):
         })
 
     pet_value = ""
-    for pet in player_obj.hero_pets:
+    for pet in player_obj.pets:
         # pet isn't a home base pet
         if not pet.is_home_base:
             continue
@@ -315,7 +315,7 @@ def pet_lvl_all(
     group_title = "Pets"
     # get unit group
     unit_group = []
-    for pet in player.hero_pets:
+    for pet in player.pets:
         # pet isn't a home base pet
         if not pet.is_home_base:
             continue
