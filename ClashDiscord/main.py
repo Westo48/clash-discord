@@ -80,8 +80,8 @@ async def main():
         bot, coc_client, client_data, linkapi_client))
     bot.add_cog(superuser_cog.SuperUser(
         bot, coc_client, client_data, linkapi_client))
-    # bot.add_cog(events_cog.Events(
-    #     bot, coc_client, client_data, linkapi_client))
+    bot.add_cog(events_cog.Events(
+        bot, coc_client, client_data, linkapi_client))
 
     await bot.start(get_client_token())
 
