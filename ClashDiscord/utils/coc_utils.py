@@ -1,7 +1,7 @@
 from coc import WarRound
 from coc.enums import (
     HERO_ORDER,
-    HERO_PETS_ORDER,
+    PETS_ORDER,
     HOME_TROOP_ORDER,
     SPELL_ORDER,
     SIEGE_MACHINE_ORDER,
@@ -18,9 +18,9 @@ def get_hero_order():
 
 def get_pet_order():
     """
-        returns coc.py HERO_PETS_ORDER
+        returns coc.py PETS_ORDER
     """
-    return HERO_PETS_ORDER
+    return PETS_ORDER
 
 
 def get_home_troop_order():
