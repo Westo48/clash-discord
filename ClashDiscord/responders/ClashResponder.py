@@ -20,11 +20,12 @@ th_lineup_dict = {
     4: 0,
     3: 0,
     2: 0,
-    1: 0
+    1: 0,
 }
 
 
 # Player
+
 
 async def get_player(player_tag, coc_client):
     try:
@@ -60,10 +61,10 @@ async def verify_token(api_key, player_tag, coc_client):
 
 def find_unit_name(unit_name):
     """
-        take in unit name and list of units
-        odered list of unit names from coc.py
-        then returns the unit name provided by coc.py,
-        returns None if not found
+    take in unit name and list of units
+    odered list of unit names from coc.py
+    then returns the unit name provided by coc.py,
+    returns None if not found
     """
 
     found_unit_name = find_hero_name(unit_name)
@@ -91,17 +92,17 @@ def find_unit_name(unit_name):
 
 def find_hero_name(unit_name):
     """
-        take in unit name
-        then returns the hero name provided by coc.py,
-        returns None if not found
+    take in unit name
+    then returns the hero name provided by coc.py,
+    returns None if not found
     """
 
     # formatting the name for P.E.K.K.A
-    unit_name = re.sub('[.]', '', unit_name)
+    unit_name = re.sub("[.]", "", unit_name)
     heroe_names = coc_utils.get_hero_order()
     for hero_name in heroe_names:
         # formatting the name for P.E.K.K.A
-        formatted_unit_name = re.sub('[.]', '', hero_name)
+        formatted_unit_name = re.sub("[.]", "", hero_name)
         if formatted_unit_name.lower() == unit_name.lower():
             return hero_name
     return None
@@ -109,17 +110,17 @@ def find_hero_name(unit_name):
 
 def find_pet_name(unit_name):
     """
-        take in unit name
-        then returns the pet name provided by coc.py,
-        returns None if not found
+    take in unit name
+    then returns the pet name provided by coc.py,
+    returns None if not found
     """
 
     # formatting the name for P.E.K.K.A
-    unit_name = re.sub('[.]', '', unit_name)
+    unit_name = re.sub("[.]", "", unit_name)
     pet_names = coc_utils.get_pet_order()
     for pet_name in pet_names:
         # formatting the name for P.E.K.K.A
-        formatted_unit_name = re.sub('[.]', '', pet_name)
+        formatted_unit_name = re.sub("[.]", "", pet_name)
         if formatted_unit_name.lower() == unit_name.lower():
             return pet_name
     return None
@@ -127,17 +128,17 @@ def find_pet_name(unit_name):
 
 def find_home_troop_name(unit_name):
     """
-        take in unit name
-        then returns the troop name provided by coc.py,
-        returns None if not found
+    take in unit name
+    then returns the troop name provided by coc.py,
+    returns None if not found
     """
 
     # formatting the name for P.E.K.K.A
-    unit_name = re.sub('[.]', '', unit_name)
+    unit_name = re.sub("[.]", "", unit_name)
     home_troop_names = coc_utils.get_home_troop_order()
     for troop_name in home_troop_names:
         # formatting the name for P.E.K.K.A
-        formatted_unit_name = re.sub('[.]', '', troop_name)
+        formatted_unit_name = re.sub("[.]", "", troop_name)
         if formatted_unit_name.lower() == unit_name.lower():
             return troop_name
     return None
@@ -145,17 +146,17 @@ def find_home_troop_name(unit_name):
 
 def find_spell_name(unit_name):
     """
-        take in unit name
-        then returns the spell name provided by coc.py,
-        returns None if not found
+    take in unit name
+    then returns the spell name provided by coc.py,
+    returns None if not found
     """
 
     # formatting the name for P.E.K.K.A
-    unit_name = re.sub('[.]', '', unit_name)
+    unit_name = re.sub("[.]", "", unit_name)
     spell_names = coc_utils.get_spell_order()
     for spell_name in spell_names:
         # formatting the name for P.E.K.K.A
-        formatted_unit_name = re.sub('[.]', '', spell_name)
+        formatted_unit_name = re.sub("[.]", "", spell_name)
         if formatted_unit_name.lower() == unit_name.lower():
             return spell_name
     return None
@@ -163,17 +164,17 @@ def find_spell_name(unit_name):
 
 def find_siege_name(unit_name):
     """
-        take in unit name
-        then returns the siege name provided by coc.py,
-        returns None if not found
+    take in unit name
+    then returns the siege name provided by coc.py,
+    returns None if not found
     """
 
     # formatting the name for P.E.K.K.A
-    unit_name = re.sub('[.]', '', unit_name)
+    unit_name = re.sub("[.]", "", unit_name)
     siege_names = coc_utils.get_siege_order()
     for siege_name in siege_names:
         # formatting the name for P.E.K.K.A
-        formatted_unit_name = re.sub('[.]', '', siege_name)
+        formatted_unit_name = re.sub("[.]", "", siege_name)
         if formatted_unit_name.lower() == unit_name.lower():
             return siege_name
     return None
@@ -181,17 +182,17 @@ def find_siege_name(unit_name):
 
 def find_super_troop_name(unit_name):
     """
-        take in unit name
-        then returns the super troop name provided by coc.py,
-        returns None if not found
+    take in unit name
+    then returns the super troop name provided by coc.py,
+    returns None if not found
     """
 
     # formatting the name for P.E.K.K.A
-    unit_name = re.sub('[.]', '', unit_name)
+    unit_name = re.sub("[.]", "", unit_name)
     super_troop_names = coc_utils.get_super_troop_order()
     for super_troop_name in super_troop_names:
         # formatting the name for P.E.K.K.A
-        formatted_unit_name = re.sub('[.]', '', super_troop_name)
+        formatted_unit_name = re.sub("[.]", "", super_troop_name)
         if formatted_unit_name.lower() == unit_name.lower():
             return super_troop_name
     return None
@@ -199,17 +200,17 @@ def find_super_troop_name(unit_name):
 
 def find_unit(unit_name, unit_list):
     """
-        take in unit name and list of units
-        odered list of unit objects from coc.py
-        then returns the unit object provided by coc.py,
-        returns None if not found
+    take in unit name and list of units
+    odered list of unit objects from coc.py
+    then returns the unit object provided by coc.py,
+    returns None if not found
     """
 
     # formatting the name for P.E.K.K.A
-    unit_name = re.sub('[.]', '', unit_name)
+    unit_name = re.sub("[.]", "", unit_name)
     for unit_obj in unit_list:
         # formatting the name for P.E.K.K.A
-        formatted_unit_name = re.sub('[.]', '', unit_obj.name)
+        formatted_unit_name = re.sub("[.]", "", unit_obj.name)
         if formatted_unit_name.lower() == unit_name.lower():
             return unit_obj
     return None
@@ -217,15 +218,15 @@ def find_unit(unit_name, unit_list):
 
 def find_hero(player_obj, hero_name):
     """
-        finds a hero based on unformatted name given
+    finds a hero based on unformatted name given
 
-        Args:
-            player_obj (obj): coc.py player object
-            hero_name (str): requested hero name
+    Args:
+        player_obj (obj): coc.py player object
+        hero_name (str): requested hero name
 
-        Returns:
-            hero: object of coc.py hero
-            None: if hero is not found returns none
+    Returns:
+        hero: object of coc.py hero
+        None: if hero is not found returns none
     """
     # search in heroes
     coc_hero_obj = find_unit(hero_name, player_obj.heroes)
@@ -240,18 +241,18 @@ def find_hero(player_obj, hero_name):
 
 def find_pet(player_obj, pet_name):
     """
-        finds a pet based on unformatted name given
+    finds a pet based on unformatted name given
 
-        Args:
-            player_obj (obj): coc.py player object
-            pet_name (str): requested pet name
+    Args:
+        player_obj (obj): coc.py player object
+        pet_name (str): requested pet name
 
-        Returns:
-            pet: object of coc.py pet
-            None: if pet is not found returns none
+    Returns:
+        pet: object of coc.py pet
+        None: if pet is not found returns none
     """
     # search in pets
-    coc_pet_obj = find_unit(pet_name, player_obj.hero_pets)
+    coc_pet_obj = find_unit(pet_name, player_obj.pets)
 
     # pet is found based on name retun pet object
     if coc_pet_obj:
@@ -263,15 +264,15 @@ def find_pet(player_obj, pet_name):
 
 def find_home_troop(player_obj, troop_name):
     """
-        finds a home troop based on unformatted name given
+    finds a home troop based on unformatted name given
 
-        Args:
-            player_obj (obj): coc.py player object
-            troop_name (str): requested home troop name
+    Args:
+        player_obj (obj): coc.py player object
+        troop_name (str): requested home troop name
 
-        Returns:
-            troop: object of coc.py troop
-            None: if troop is not found returns none
+    Returns:
+        troop: object of coc.py troop
+        None: if troop is not found returns none
     """
     # search in home troops
     coc_troop_obj = find_unit(troop_name, player_obj.home_troops)
@@ -286,15 +287,15 @@ def find_home_troop(player_obj, troop_name):
 
 def find_siege(player_obj, siege_name):
     """
-        finds a siege based on unformatted name given
+    finds a siege based on unformatted name given
 
-        Args:
-            player_obj (obj): coc.py player object
-            siege_name (str): requested siege name
+    Args:
+        player_obj (obj): coc.py player object
+        siege_name (str): requested siege name
 
-        Returns:
-            siege: object of coc.py siege
-            None: if siege is not found returns none
+    Returns:
+        siege: object of coc.py siege
+        None: if siege is not found returns none
     """
     # search in sieges
     coc_siege_obj = find_unit(siege_name, player_obj.siege_machines)
@@ -309,15 +310,15 @@ def find_siege(player_obj, siege_name):
 
 def find_super_troop(player_obj, troop_name):
     """
-        finds a super troop based on unformatted name given
+    finds a super troop based on unformatted name given
 
-        Args:
-            player_obj (obj): coc.py player object
-            troop_name (str): requested super troop name
+    Args:
+        player_obj (obj): coc.py player object
+        troop_name (str): requested super troop name
 
-        Returns:
-            super_troop: object of coc.py super troop
-            None: if super troop is not found returns none
+    Returns:
+        super_troop: object of coc.py super troop
+        None: if super troop is not found returns none
     """
     # search in super troops
     coc_troop_obj = find_unit(troop_name, player_obj.super_troops)
@@ -332,15 +333,15 @@ def find_super_troop(player_obj, troop_name):
 
 def find_spell(player_obj, spell_name):
     """
-        finds a spell based on unformatted name given
+    finds a spell based on unformatted name given
 
-        Args:
-            player_obj (obj): coc.py player object
-            spell_name (str): requested spell name
+    Args:
+        player_obj (obj): coc.py player object
+        spell_name (str): requested spell name
 
-        Returns:
-            spell: object of coc.py spell
-            None: if spell is not found returns none
+    Returns:
+        spell: object of coc.py spell
+        None: if spell is not found returns none
     """
     # search in spells
     coc_spell_obj = find_unit(spell_name, player_obj.spells)
@@ -355,15 +356,15 @@ def find_spell(player_obj, spell_name):
 
 def find_builder_troop(player_obj, troop_name):
     """
-        finds a builder troop based on unformatted name given
+    finds a builder troop based on unformatted name given
 
-        Args:
-            player_obj (obj): coc.py player object
-            troop_name (str): requested builder troop name
+    Args:
+        player_obj (obj): coc.py player object
+        troop_name (str): requested builder troop name
 
-        Returns:
-            troop: object of coc.py troop
-            None: if troop is not found returns none
+    Returns:
+        troop: object of coc.py troop
+        None: if troop is not found returns none
     """
     # search in builder troops
     coc_troop_obj = find_unit(troop_name, player_obj.builder_troops)
@@ -378,15 +379,15 @@ def find_builder_troop(player_obj, troop_name):
 
 def find_player_unit(player_obj, unit_name):
     """
-        finds a unit based on unformatted name given
+    finds a unit based on unformatted name given
 
-        Args:
-            player_obj (obj): coc.py player object
-            unit_name (str): requested unit name
+    Args:
+        player_obj (obj): coc.py player object
+        unit_name (str): requested unit name
 
-        Returns:
-            coc_unit_obj: object of coc.py unit
-            None: if unit is not found returns none
+    Returns:
+        coc_unit_obj: object of coc.py unit
+        None: if unit is not found returns none
     """
     # search in heroes
     coc_unit_obj = find_hero(player_obj, unit_name)
@@ -429,39 +430,34 @@ def find_player_unit(player_obj, unit_name):
 
 def home_unit_names(coc):
     """
-        returns a list of all home unit names
+    returns a list of all home unit names
 
-        Args:
-            coc (obj): coc.py object
+    Args:
+        coc (obj): coc.py object
 
-        Returns:
-            home_unit_names: list of all unit names
+    Returns:
+        home_unit_names: list of all unit names
     """
-    return (
-        coc.HERO_ORDER +
-        coc.HERO_PETS_ORDER +
-        coc.HOME_TROOP_ORDER +
-        coc.SPELL_ORDER
-    )
+    return coc.HERO_ORDER + coc.PETS_ORDER + coc.HOME_TROOP_ORDER + coc.SPELL_ORDER
 
 
 def hero_units(coc_client):
     """
-        returns a list of all hero units
+    returns a list of all hero units
 
-        Args:
-            coc_client (obj): coc.py client
+    Args:
+        coc_client (obj): coc.py client
 
-        Returns:
-            hero_units: list of all units
+    Returns:
+        hero_units: list of all units
     """
     return coc_client._hero_holder.items
 
 
 def player_active_super_troops(player_obj):
     """
-        Returns a list of active super troops,
-        if no active super troops are found it will return an empty list
+    Returns a list of active super troops,
+    if no active super troops are found it will return an empty list
     """
     active_super_troops = []
     for troop_obj in player_obj.troops:
@@ -471,6 +467,7 @@ def player_active_super_troops(player_obj):
 
 
 # Clan
+
 
 async def get_clan(clan_tag, coc_client):
     try:
@@ -500,19 +497,19 @@ async def clan_lineup(clan_obj, coc_client):
 
 async def donation(clan_obj, unit_name, coc_client):
     """
-        Takes in the unit name and clan tag, returns a list of players
-        who can donate.
+    Takes in the unit name and clan tag, returns a list of players
+    who can donate.
 
-        Returns an empty list if nobody can donate requested unit.
-        Returns None if hero has been requested.
+    Returns an empty list if nobody can donate requested unit.
+    Returns None if hero has been requested.
 
-        Args:
-            unit_name (str): Name of requested unit.
-            clan_obj (obj): Clan object.
-            coc_client (obj): coc.py client
+    Args:
+        unit_name (str): Name of requested unit.
+        clan_obj (obj): Clan object.
+        coc_client (obj): coc.py client
 
-        Returns:
-            list: List of players who can donate.
+    Returns:
+        list: List of players who can donate.
     """
 
     class Donor(object):
@@ -569,8 +566,7 @@ async def donation(clan_obj, unit_name, coc_client):
         # go thru each member and return the donors that can donate max
         for member in member_list:
             # if the member can donate max unit
-            if ((member.unit_obj.level+donation_upgrade) >=
-                    member.unit_obj.max_level):
+            if (member.unit_obj.level + donation_upgrade) >= member.unit_obj.max_level:
                 # adding the donor's name to the donator list
                 donor_list.append(member)
         return donor_list
@@ -594,18 +590,18 @@ def clan_donation_upgrade(clan_obj):
 
 async def active_super_troop_search(clan_obj, super_troop_name, coc_client):
     """
-        Takes in the unit name and clan object, returns a list of players
-        who have super troop active.
+    Takes in the unit name and clan object, returns a list of players
+    who have super troop active.
 
-        Returns an empty list if nobody has the super troop active.
+    Returns an empty list if nobody has the super troop active.
 
-        Args:
-            super_troop_name (str): super troop name
-            clan_obj (obj): coc.py clan object
-            coc_client (obj): coc.py client
+    Args:
+        super_troop_name (str): super troop name
+        clan_obj (obj): coc.py clan object
+        coc_client (obj): coc.py client
 
-        Returns:
-            list: list of players who can donate
+    Returns:
+        list: list of players who can donate
     """
 
     donor_list = []
@@ -621,6 +617,7 @@ async def active_super_troop_search(clan_obj, super_troop_name, coc_client):
 
 
 # War
+
 
 async def get_war(clan_tag, coc_client):
     try:
@@ -645,16 +642,18 @@ def war_clan_scoreboard(war, war_clan, star_emoji):
     # clan: stars/potential stars, attacks/potential attacks, total destruction
     field_dict_list = []
 
-    field_dict_list.append({
-        'name': f"{war_clan.name}",
-        # value will be "star_count/potential_stars"
-        'value': (
-            f"{star_emoji}: {war_clan.stars}/{war_clan.max_stars}\n"
-            f"Attacks: {war_clan.attacks_used}/"
-            f"{war.team_size * war.attacks_per_member}\n"
-            f"Destruction: {round(war_clan.destruction, 2)}%"
-        )
-    })
+    field_dict_list.append(
+        {
+            "name": f"{war_clan.name}",
+            # value will be "star_count/potential_stars"
+            "value": (
+                f"{star_emoji}: {war_clan.stars}/{war_clan.max_stars}\n"
+                f"Attacks: {war_clan.attacks_used}/"
+                f"{war.team_size * war.attacks_per_member}\n"
+                f"Destruction: {round(war_clan.destruction, 2)}%"
+            ),
+        }
+    )
 
     return field_dict_list
 
@@ -670,12 +669,11 @@ def war_clan_lineup(war_clan_obj):
 
 def war_no_attack(war_obj, missed_attack_count):
     """
-        returns a list of members that have missed an attack
-        based on the missing attack count
+    returns a list of members that have missed an attack
+    based on the missing attack count
     """
     no_attack_members = []
     for member in war_obj.clan.members:
-
         # missed attack count option is not selected
         if missed_attack_count is None:
             # member is missing an attack
@@ -684,8 +682,7 @@ def war_no_attack(war_obj, missed_attack_count):
 
         # missed attack option is selected
         else:
-            member_missing_attacks = (
-                war_obj.attacks_per_member - len(member.attacks))
+            member_missing_attacks = war_obj.attacks_per_member - len(member.attacks)
 
             # member is missing the requested missed attack count
             if member_missing_attacks == missed_attack_count:
@@ -695,6 +692,7 @@ def war_no_attack(war_obj, missed_attack_count):
 
 
 # CWL Group
+
 
 async def get_cwl_group(clan_tag, coc_client):
     try:
@@ -722,25 +720,32 @@ def cwl_clan_lineup(cwl_group_clan):
 def cwl_member_score(cwl_wars, cwl_member):
     class ScoredCWLMember(object):
         """
-            ScoredWarMember
-                Instance Attributes
-                    tag (str): WarMember's player tag
-                    name (str): WarMember's player name
-                    town_hall (int): WarMember's town hall level
-                    participated_wars (int): rounds participated
-                    potential_attack_count (int): potential attacks
-                    attack_count (int): attacks made
-                    stars (int): stars earned
-                    destruction (int): destruction percentage earned
-                    round_scores (list[int]): scores for each round
-                    score (int): WarMember's war score
+        ScoredWarMember
+            Instance Attributes
+                tag (str): WarMember's player tag
+                name (str): WarMember's player name
+                town_hall (int): WarMember's town hall level
+                participated_wars (int): rounds participated
+                potential_attack_count (int): potential attacks
+                attack_count (int): attacks made
+                stars (int): stars earned
+                destruction (int): destruction percentage earned
+                round_scores (list[int]): scores for each round
+                score (int): WarMember's war score
         """
 
         def __init__(
-            self, tag, name, town_hall, participated_wars,
-            potential_attack_count, attack_count,
-            stars, destruction,
-            round_scores, score
+            self,
+            tag,
+            name,
+            town_hall,
+            participated_wars,
+            potential_attack_count,
+            attack_count,
+            stars,
+            destruction,
+            round_scores,
+            score,
         ):
             self.tag = tag
             self.name = name
@@ -763,7 +768,8 @@ def cwl_member_score(cwl_wars, cwl_member):
         stars=0,
         destruction=0,
         round_scores=[],
-        score=0)
+        score=0,
+    )
     # for each war getting that war score and war count
     for war in cwl_wars:
         # do not include wars that are not even in preparation
@@ -803,7 +809,8 @@ def cwl_member_score(cwl_wars, cwl_member):
     # there have been 2 or more completed wars
     if len(cwl_wars) >= 2:
         participation_multiplier = math.log(
-            scored_member.participated_wars, len(cwl_wars))
+            scored_member.participated_wars, len(cwl_wars)
+        )
 
     # there have only been 0-1 wars
     else:
@@ -839,11 +846,11 @@ async def cwl_clan_member_scoreboard_list(cwl_group, clan_obj):
 async def cwl_clan_scoreboard(cwl_group, clan):
     class CWLScoreboardClan(object):
         """
-            ScoredWarMember
-                Instance Attributes
-                    clan (str): coc.py clan object
-                    stars (int): clan's stars in cwl
-                    destruction (int): clan's desctruction in cwl
+        ScoredWarMember
+            Instance Attributes
+                clan (str): coc.py clan object
+                stars (int): clan's stars in cwl
+                destruction (int): clan's desctruction in cwl
         """
 
         def __init__(self, clan, stars, destruction):
@@ -862,10 +869,7 @@ async def cwl_clan_scoreboard(cwl_group, clan):
         if war.status == "won":
             clan_stars += 10
 
-    return CWLScoreboardClan(
-        clan=clan,
-        stars=clan_stars,
-        destruction=clan_destruction)
+    return CWLScoreboardClan(clan=clan, stars=clan_stars, destruction=clan_destruction)
 
 
 def cwl_current_round(cwl_group, cwl_war):
@@ -884,25 +888,32 @@ def cwl_current_round(cwl_group, cwl_war):
 
 # UTILS
 
+
 def member_score(war_member, war_obj):
     class ScoredWarMember(object):
         """
-            ScoredWarMember
-                Instance Attributes
-                    tag (str): WarMember's player tag
-                    name (str): WarMember's player name
-                    town_hall (int): WarMember's town hall level
-                    potential_attack_count (int): potential attacks
-                    attack_count (int): attacks made
-                    stars (int): stars earned
-                    destruction (int): destruction percentage earned
-                    score (int): WarMember's war score
+        ScoredWarMember
+            Instance Attributes
+                tag (str): WarMember's player tag
+                name (str): WarMember's player name
+                town_hall (int): WarMember's town hall level
+                potential_attack_count (int): potential attacks
+                attack_count (int): attacks made
+                stars (int): stars earned
+                destruction (int): destruction percentage earned
+                score (int): WarMember's war score
         """
 
         def __init__(
-            self, tag, name, town_hall,
-            potential_attack_count, attack_count,
-            stars, destruction, score
+            self,
+            tag,
+            name,
+            town_hall,
+            potential_attack_count,
+            attack_count,
+            stars,
+            destruction,
+            score,
         ):
             self.tag = tag
             self.name = name
@@ -925,7 +936,7 @@ def member_score(war_member, war_obj):
 
     # reactivate below code when coc.py returns correct potential_attack_count
     # member_score = war_obj.potential_attack_count*(-100)
-    member_score = potential_attack_count*(-100)
+    member_score = potential_attack_count * (-100)
     for attack in war_member.attacks:
         # add 100 since the member attacked
         member_score += 100
@@ -937,25 +948,29 @@ def member_score(war_member, war_obj):
         destruction += scored_attack.destruction
         member_score += scored_attack.score
 
-    member_score = member_score/potential_attack_count
+    member_score = member_score / potential_attack_count
     # reactivate below code when coc.py returns correct potential_attack_count
     # member_score = member_score/war_obj.potential_attack_count
     return ScoredWarMember(
-        war_member.tag, war_member.name, war_member.town_hall,
-        potential_attack_count, attack_count,
-        stars, destruction,
-        member_score
+        war_member.tag,
+        war_member.name,
+        war_member.town_hall,
+        potential_attack_count,
+        attack_count,
+        stars,
+        destruction,
+        member_score,
     )
 
 
 def attack_score(attack, war_member, war_obj):
     class ScoredWarAttack(object):
         """
-            ScoredWarAttack
-                Instance Attributes
-                    stars (str): WarMemberAttack's stars earned
-                    destruction (str): WarMemberAttack's destruction earned
-                    score (int): WarMemberAttack's attack score
+        ScoredWarAttack
+            Instance Attributes
+                stars (str): WarMemberAttack's stars earned
+                destruction (str): WarMemberAttack's destruction earned
+                score (int): WarMemberAttack's attack score
         """
 
         def __init__(self, stars, destruction, score):
@@ -963,59 +978,58 @@ def attack_score(attack, war_member, war_obj):
             self.destruction = destruction
             self.score = score
 
-    star_score = attack.stars/3
-    des_score = attack.destruction/100
+    star_score = attack.stars / 3
+    des_score = attack.destruction / 100
     defender = find_defender(war_obj.opponent, attack.defender_tag)
-    th_difference = defender.town_hall-war_member.town_hall
-    attack_score = (((star_score*.75)+(des_score*.25))
-                    * th_multiplier(th_difference))
+    th_difference = defender.town_hall - war_member.town_hall
+    attack_score = ((star_score * 0.75) + (des_score * 0.25)) * th_multiplier(
+        th_difference
+    )
 
     return ScoredWarAttack(attack.stars, attack.destruction, attack_score)
 
 
 def string_date_time(war_obj):
     """
-        returns a string of the remaining time,
-        if warEnded or notInWar, then variables will be None
+    returns a string of the remaining time,
+    if warEnded or notInWar, then variables will be None
     """
-    if (war_obj.state == 'warEnded'
-            or war_obj.state == 'notInWar'):
+    if war_obj.state == "warEnded" or war_obj.state == "notInWar":
         return None
 
     if war_obj.state == "preparation":
         time_final = war_obj.start_time
     else:
         time_final = war_obj.end_time
-    days, hours, minutes, seconds = date_time_calculator(
-        time_final)
-    return_string = ''
+    days, hours, minutes, seconds = date_time_calculator(time_final)
+    return_string = ""
     if days > 0:
         if days == 1:
-            days_text = 'day'
+            days_text = "day"
         else:
-            days_text = 'days'
-        return_string += f'{days} {days_text}, '
+            days_text = "days"
+        return_string += f"{days} {days_text}, "
 
     if hours > 0:
         if hours == 1:
-            hour_text = 'hour'
+            hour_text = "hour"
         else:
-            hour_text = 'hours'
-        return_string += f'{hours} {hour_text}, '
+            hour_text = "hours"
+        return_string += f"{hours} {hour_text}, "
 
     if minutes > 0:
         if minutes == 1:
-            minute_text = 'minute'
+            minute_text = "minute"
         else:
-            minute_text = 'minutes'
-        return_string += f'{minutes} {minute_text}, '
+            minute_text = "minutes"
+        return_string += f"{minutes} {minute_text}, "
 
     if seconds > 0:
         if seconds == 1:
-            second_text = 'second'
+            second_text = "second"
         else:
-            second_text = 'seconds'
-        return_string += f'{seconds} {second_text}, '
+            second_text = "seconds"
+        return_string += f"{seconds} {second_text}, "
 
     # removing the ', ' from the end of the string
     return_string = return_string[:-2]
@@ -1025,30 +1039,28 @@ def string_date_time(war_obj):
 
 def date_time_calculator(time_final):
     """
-        calculates the difference between now and final time
+    calculates the difference between now and final time
     """
-    difference = time_final.time-time_final.now
+    difference = time_final.time - time_final.now
 
     days = difference.days
     seconds = difference.seconds
     minutes = int(seconds % 3600 / 60)
     hours = int(seconds / 3600)
-    remaining_seconds = (seconds - hours * 3600 - minutes * 60)
+    remaining_seconds = seconds - hours * 3600 - minutes * 60
 
     return days, hours, minutes, remaining_seconds
 
 
 def string_scoreboard(war_obj, star_emoji):
     """
-        Returns a string of the war score.
+    Returns a string of the war score.
     """
-    if (war_obj.state == 'preparation'
-            or war_obj.state == 'notInWar'):
+    if war_obj.state == "preparation" or war_obj.state == "notInWar":
         return None
 
-    star_difference = (war_obj.clan.stars - war_obj.opponent.stars)
-    destruction_difference = (war_obj.clan.destruction
-                              - war_obj.opponent.destruction)
+    star_difference = war_obj.clan.stars - war_obj.opponent.stars
+    destruction_difference = war_obj.clan.destruction - war_obj.opponent.destruction
 
     # there is a star difference
     if star_difference != 0:
@@ -1067,9 +1079,9 @@ def string_scoreboard(war_obj, star_emoji):
 
 def find_defender(war_clan_obj, defender_tag):
     """
-        Takes in a defender tag and returns 
-        a WarMember object. 
-        If it is not found then it will return None.
+    Takes in a defender tag and returns
+    a WarMember object.
+    If it is not found then it will return None.
     """
     for defender_member_obj in war_clan_obj.members:
         if defender_tag == defender_member_obj.tag:
@@ -1079,37 +1091,37 @@ def find_defender(war_clan_obj, defender_tag):
 
 def string_attack(attack_count):
     """
-        returns 'attack' or 'attacks' based on the number of attacks
+    returns 'attack' or 'attacks' based on the number of attacks
     """
     if attack_count == 1:
-        return 'attack'
+        return "attack"
     else:
-        return 'attacks'
+        return "attacks"
 
 
 def string_attack_times(member_attack_list):
     """
-        Returns 'time' or 'times' based on the number of attacks.
+    Returns 'time' or 'times' based on the number of attacks.
     """
     if len(member_attack_list) == 1:
-        return 'time'
+        return "time"
     else:
-        return 'times'
+        return "times"
 
 
 def string_member_stars(war_star_count):
     """
-        returns 'star' or 'stars' based on the number of stars
+    returns 'star' or 'stars' based on the number of stars
     """
     if war_star_count == 1:
-        return 'star'
+        return "star"
     else:
-        return 'stars'
+        return "stars"
 
 
 def th_multiplier(th_difference):
     """
-        TH multiplier matrix.
+    TH multiplier matrix.
     """
     if th_difference < -2:
         th_mult = 35
