@@ -30,8 +30,6 @@ from responders.ClientResponder import (
 )
 
 async def main():
-        
-
     client_data = ClashDiscord_Client_Data.ClashDiscord_Data()
 
     coc_client = coc.Client()
