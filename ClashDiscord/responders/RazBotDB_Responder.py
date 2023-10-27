@@ -178,6 +178,45 @@ def delete_user(discord_user_id):
         return None
 
 
+def reset_user(discord_user_id):
+    """
+        Resets user and their active player
+
+        Args:
+            discord_user_id (int): user's discord id
+
+        Returns:
+            bool: whether or not the reset was successful
+    """
+    db_active_player = read_player_active(
+        discord_user_id)
+
+    # active player found
+    # no need to change the active player
+    if db_active_player:
+        return True
+
+    # no active player found
+    # check if there are any other players
+    db_player_list = read_player_list(
+        discord_user_id)
+
+    # no additional players claimed
+    if len(db_player_list) == 0:
+        return True
+
+    # additional players claimed by user
+    # update the first as the new active
+    db_updated_player = update_player_active(
+        discord_user_id, db_player_list[0].player_tag)
+
+    # update not successful
+    if not db_updated_player:
+        return False
+
+    return True
+
+
 # player
 
 def claim_player(discord_user_id, player_tag):

@@ -445,31 +445,15 @@ class Client(commands.Cog):
 
                     await discord_responder.send_embed_list(inter, embed_list)
                     return
-
-            # confirm player has not been claimed
-            db_player_obj = db_responder.read_player_from_tag(player_obj.tag)
-            # player has already been claimed
-            if db_player_obj:
-                embed_description = (f"{player_obj.name} {player_obj.tag} "
-                                     f"has already been claimed")
-
-                embed_list = discord_responder.embed_message(
-                    icon_url=inter.bot.user.avatar.url,
-                    description=embed_description,
-                    bot_user_name=inter.me.display_name,
-                    author=inter.author
-                )
-
-                await discord_responder.send_embed_list(inter, embed_list)
-                return
-
+                
             # authenticate player api key
             player_verified = await clash_responder.verify_token(
                 api_key, player_obj.tag, self.coc_client)
             # api key could not be verified
             if not player_verified:
-                embed_description = (f"verification for "
-                                     f"player tag {player_obj.tag} has failed")
+                embed_description = (
+                    f"verification for "
+                    f"player tag {player_obj.tag} has failed")
 
                 embed_list = discord_responder.embed_message(
                     icon_url=inter.bot.user.avatar.url,
@@ -480,6 +464,51 @@ class Client(commands.Cog):
 
                 await discord_responder.send_embed_list(inter, embed_list)
                 return
+
+            # confirm player has not been claimed
+            player_user = db_responder.read_user_from_tag(player_obj.tag)
+            # player has already been claimed
+            if player_user:
+                # player already claimed by author
+                if player_user.discord_id == inter.author.id:
+                    embed_description = (
+                        f"you already claimed "
+                        f"{player_obj.name} {player_obj.tag}")
+
+                    embed_list = discord_responder.embed_message(
+                        icon_url=inter.bot.user.avatar.url,
+                        description=embed_description,
+                        bot_user_name=inter.me.display_name,
+                        author=inter.author)
+
+                    await discord_responder.send_embed_list(inter, embed_list)
+                    return
+
+                db_del_player = db_responder.delete_player(
+                    player_user.discord_id, player_obj.tag)
+
+                # player was not deleted
+                if db_del_player:
+                    embed_description = (
+                        f"{player_obj.name} {player_obj.tag} "
+                        f"already claimed and could not be deleted"
+                    )
+
+                    embed_list = discord_responder.embed_message(
+                        icon_url=inter.bot.user.avatar.url,
+                        description=embed_description,
+                        bot_user_name=inter.me.display_name,
+                        author=inter.author
+                    )
+
+                    await discord_responder.send_embed_list(inter, embed_list)
+                    return
+
+                # delete link api link
+                self.linkapi_client.delete_link(
+                    player_tag=player_tag)
+                
+                reset_user = db_responder.reset_user(player_user.discord_id)
 
             # add player link to link API
             try:
@@ -489,8 +518,9 @@ class Client(commands.Cog):
                     discord_user_id=db_user_obj.discord_id
                 )
             except ConflictError as arg:
-                embed_description = (f"{inter.author.mention}: {arg}\n\n"
-                                     f"please let {self.client_data.author} know")
+                embed_description = (
+                    f"{inter.author.mention}: {arg}\n\n"
+                    f"please let {self.client_data.author} know")
 
                 embed_list = discord_responder.embed_message(
                     icon_url=inter.bot.user.avatar.url,
