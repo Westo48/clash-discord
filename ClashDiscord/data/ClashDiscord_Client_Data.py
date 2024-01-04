@@ -179,6 +179,12 @@ class ClashDiscord_Data(object):
             coc_name="Electro Titan",
         ),
         ClashDiscord_Emoji(
+            display_name="Root Rider",
+            discord_id=1192485726600822794,
+            discord_name="troop_root_rider",
+            coc_name="Root Rider",
+        ),
+        ClashDiscord_Emoji(
             display_name="Minion",
             discord_id=929203826051932160,
             discord_name="troop_minion",
@@ -519,6 +525,12 @@ class ClashDiscord_Data(object):
             discord_id=1029413842435973120,
             discord_name="th_15",
             coc_name="Town Hall 15",
+        ),
+        ClashDiscord_Emoji(
+            display_name="Town Hall 16",
+            discord_id=1192484134954733570,
+            discord_name="th_16",
+            coc_name="Town Hall 16",
         ),
         ClashDiscord_Emoji(
             display_name="Clan Wars",
