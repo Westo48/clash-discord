@@ -51,7 +51,7 @@ class ClashDiscord_Data(object):
             emojis (list[obj]): list of emoji objects
     """
 
-    version = "2.5.3"
+    version = "2.5.4"
     author = "Razgriz#7805"
     description = (
         "Clash of Clans discord bot for discord member management "
@@ -177,6 +177,12 @@ class ClashDiscord_Data(object):
             discord_id=1053023160502603836,
             discord_name="troop_electro_titan",
             coc_name="Electro Titan",
+        ),
+        ClashDiscord_Emoji(
+            display_name="Root Rider",
+            discord_id=1192485726600822794,
+            discord_name="troop_root_rider",
+            coc_name="Root Rider",
         ),
         ClashDiscord_Emoji(
             display_name="Minion",
@@ -431,6 +437,12 @@ class ClashDiscord_Data(object):
             coc_name="Phoenix",
         ),
         ClashDiscord_Emoji(
+            display_name="Spirit Fox",
+            discord_id=1192484369416331405,
+            discord_name="pet_spirit_fox",
+            coc_name="Spirit Fox",
+        ),
+        ClashDiscord_Emoji(
             display_name="Town Hall 1",
             discord_id=929208930847043664,
             discord_name="th_1",
@@ -513,6 +525,12 @@ class ClashDiscord_Data(object):
             discord_id=1029413842435973120,
             discord_name="th_15",
             coc_name="Town Hall 15",
+        ),
+        ClashDiscord_Emoji(
+            display_name="Town Hall 16",
+            discord_id=1192484134954733570,
+            discord_name="th_16",
+            coc_name="Town Hall 16",
         ),
         ClashDiscord_Emoji(
             display_name="Clan Wars",
