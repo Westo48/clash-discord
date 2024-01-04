@@ -431,6 +431,12 @@ class ClashDiscord_Data(object):
             coc_name="Phoenix",
         ),
         ClashDiscord_Emoji(
+            display_name="Spirit Fox",
+            discord_id=1192484369416331405,
+            discord_name="pet_spirit_fox",
+            coc_name="Spirit Fox",
+        ),
+        ClashDiscord_Emoji(
             display_name="Town Hall 1",
             discord_id=929208930847043664,
             discord_name="th_1",
