@@ -389,6 +389,12 @@ class ClashDiscord_Data(object):
             coc_name="Bat Spell",
         ),
         ClashDiscord_Emoji(
+            display_name="Overgrowth Spell",
+            discord_id=1220932885008220241,
+            discord_name="spell_overgrowth",
+            coc_name="Overgrowth Spell",
+        ),
+        ClashDiscord_Emoji(
             display_name="L.A.S.S.I",
             discord_id=929208654085890078,
             discord_name="pet_lassi",
