@@ -245,6 +245,12 @@ class ClashDiscord_Data(object):
             coc_name="Apprentice Warden",
         ),
         ClashDiscord_Emoji(
+            display_name="Druid",
+            discord_id=1253084741910138921,
+            discord_name="troop_druid",
+            coc_name="Druid",
+        ),
+        ClashDiscord_Emoji(
             display_name="Barbarian King",
             discord_id=929205073056260208,
             discord_name="hero_barbarian_king",
@@ -447,6 +453,12 @@ class ClashDiscord_Data(object):
             discord_id=1192484369416331405,
             discord_name="pet_spirit_fox",
             coc_name="Spirit Fox",
+        ),
+        ClashDiscord_Emoji(
+            display_name="Angry Jelly",
+            discord_id=1253087805165277246,
+            discord_name="pet_angry_jelly",
+            coc_name="Angry Jelly",
         ),
         ClashDiscord_Emoji(
             display_name="Town Hall 1",
