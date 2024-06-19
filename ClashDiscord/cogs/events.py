@@ -83,13 +83,14 @@ class Events(commands.Cog):
 
     @commands.Cog.listener()
     async def on_guild_remove(self, guild):
-        # check if removed guild is a claimed guild
-        db_guild = db_responder.read_guild(guild.id)
+        pass
+        # # check if removed guild is a claimed guild
+        # db_guild = db_responder.read_guild(guild.id)
 
-        # guild was claimed
-        if db_guild:
-            deleted_guild = db_responder.delete_guild(guild.id)
-            return
+        # # guild was claimed
+        # if db_guild:
+        #     deleted_guild = db_responder.delete_guild(guild.id)
+        #     return
 
     @commands.Cog.listener()
     async def on_slash_command_error(self, inter, exception):
