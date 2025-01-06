@@ -478,7 +478,7 @@ def link_chocolate_clash(player):
             [str]: string of formatted player's link to Chocolate Clash page
     """
 
-    base_url = "https://fwa.chocolateclash.com/cc_n/member.php?tag="
+    base_url = "https://cc.fwafarm.com/cc_n/member.php?tag="
     player_url = player.tag.replace("#", "")
 
     chocolateclash_player_url = base_url+player_url

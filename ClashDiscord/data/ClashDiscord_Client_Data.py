@@ -251,6 +251,12 @@ class ClashDiscord_Data(object):
             coc_name="Druid",
         ),
         ClashDiscord_Emoji(
+            display_name="Thrower",
+            discord_id=1325602280342421618,
+            discord_name="troop_thrower",
+            coc_name="Thrower",
+        ),
+        ClashDiscord_Emoji(
             display_name="Barbarian King",
             discord_id=929205073056260208,
             discord_name="hero_barbarian_king",
@@ -273,6 +279,12 @@ class ClashDiscord_Data(object):
             discord_id=929217810897469480,
             discord_name="hero_royal_champion",
             coc_name="Royal Champion",
+        ),
+        ClashDiscord_Emoji(
+            display_name="Minion Prince",
+            discord_id=1325603110063837266,
+            discord_name="hero_minion_prince",
+            coc_name="Minion Prince",
         ),
         ClashDiscord_Emoji(
             display_name="Wall Wrecker",
@@ -399,6 +411,12 @@ class ClashDiscord_Data(object):
             discord_id=1220932885008220241,
             discord_name="spell_overgrowth",
             coc_name="Overgrowth Spell",
+        ),
+        ClashDiscord_Emoji(
+            display_name="Revive Spell",
+            discord_id=1325601418761076777,
+            discord_name="spell_revive",
+            coc_name="Revive Spell",
         ),
         ClashDiscord_Emoji(
             display_name="L.A.S.S.I",
@@ -549,6 +567,12 @@ class ClashDiscord_Data(object):
             discord_id=1192484134954733570,
             discord_name="th_16",
             coc_name="Town Hall 16",
+        ),
+        ClashDiscord_Emoji(
+            display_name="Town Hall 17",
+            discord_id=1325600296847806505,
+            discord_name="th_17",
+            coc_name="Town Hall 17",
         ),
         ClashDiscord_Emoji(
             display_name="Clan Wars",
