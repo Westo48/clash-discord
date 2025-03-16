@@ -329,6 +329,12 @@ class ClashDiscord_Data(object):
             coc_name="Battle Drill",
         ),
         ClashDiscord_Emoji(
+            display_name="Troop Launcher",
+            discord_id=1350680723689832581,
+            discord_name="siege_troop_launcher",
+            coc_name="Troop Launcher",
+        ),
+        ClashDiscord_Emoji(
             display_name="Lightning Spell",
             discord_id=929206569990766673,
             discord_name="spell_lightning_spell",
@@ -570,7 +576,7 @@ class ClashDiscord_Data(object):
         ),
         ClashDiscord_Emoji(
             display_name="Town Hall 17",
-            discord_id=1325600296847806505,
+            discord_id=1350677962894082119,
             discord_name="th_17",
             coc_name="Town Hall 17",
         ),
