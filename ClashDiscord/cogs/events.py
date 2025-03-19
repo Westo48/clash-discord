@@ -124,3 +124,31 @@ class Events(commands.Cog):
             await inter.send(
                 content=(f"there was an error that I have not accounted for, "
                          f"please let {self.client_data.author} know"))
+
+    @commands.Cog.listener()
+    async def on_application_command(
+            self,
+            inter: disnake.ApplicationCommandInteraction):
+        # initializing message and options
+        message = f"{inter.data.name}"
+        options = inter.data.options
+
+        # continue looping while options list is not empty
+        while (len(options) > 0):
+            for option in options:
+                message += f" {option.name}"
+                if option.value is not None:
+                    message += f": {option.value}"
+
+            # break out just in case if option.options is empty
+            if len(option.options) == 0:
+                break
+
+            # reset options list to next options list
+            options = option.options
+
+        print(
+            f"command used by "
+            f"{inter.author.display_name} {inter.author.id} "
+            f"in {inter.guild.name} {inter.guild.id}: "
+            f"{message}")

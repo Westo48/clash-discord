@@ -44,6 +44,15 @@ def embed_message(
 ):
     embed_list = []
 
+    # ! add end of life message to field list
+    field_list.append({
+        "name": "**:bangbang: this bot is reaching the end of its life :bangbang:**",
+        "value": (
+            "**please [add the new bot]"
+            "(https://discord.com/oauth2/authorize?client_id=1193785121824854097) "
+            "and remove this bot to continue using Clash Commander**"),
+        "inline": False})
+
     # no fields given
     if len(field_list) == 0:
         embed = initialize_embed(
@@ -315,6 +324,13 @@ async def send_embed_list(
     # end by sending content if provided
     if content is None:
         return True
+    
+    # ! add the end of life message to the content
+    content+=(
+        "\n\n:bangbang: **this bot is reaching the end of its life, "
+        "please [add the new bot]"
+        "(https://discord.com/oauth2/authorize?client_id=1193785121824854097) "
+        "and remove this bot to continue using Clash Commander** :bangbang:")
 
     # respond to interaction if channel is not provided
     if channel is None:

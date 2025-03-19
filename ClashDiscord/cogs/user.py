@@ -113,6 +113,14 @@ class User(commands.Cog):
             db_player_list=db_player_list,
             user=user,
             coc_client=self.coc_client)
+        
+        
+        # ! add end of life message to message
+        message+=(
+            "\n\n:bangbang: **this bot is reaching the end of its life, "
+            "please [add the new bot]"
+            "(https://discord.com/oauth2/authorize?client_id=1193785121824854097) "
+            "and remove this bot to continue using Clash Commander** :bangbang:")
 
         await inter.edit_original_message(content=message)
 
@@ -229,5 +237,12 @@ class User(commands.Cog):
             db_player_list=db_player_list,
             user=user,
             coc_client=self.coc_client)
+        
+        # ! add end of life message to message
+        message+=(
+            "\n\n:bangbang: **this bot is reaching the end of its life, "
+            "please [add the new bot]"
+            "(https://discord.com/oauth2/authorize?client_id=1193785121824854097) "
+            "and remove this bot to continue using Clash Commander** :bangbang:")
 
         await inter.edit_original_message(content=message)
